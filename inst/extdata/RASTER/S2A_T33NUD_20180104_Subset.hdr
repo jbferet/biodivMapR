@@ -1,0 +1,19 @@
+ENVI
+description = {S2A_T33NUD_20180104_Subset.1 S2A_T33NUD_20180104_Subset.2 S2A_T33NUD_20180104_Subset.3 S2A_T33NUD_20180104_Subset.4 S2A_T33NUD_20180104_Subset.5 S2A_T33NUD_20180104_Subset.6 S2A_T33NUD_20180104_Subset.7 S2A_T33NUD_20180104_Subset.8 S2A_T33NUD_20180104_Subset.9 S2A_T33NUD_20180104_Subset.10}
+samples = 2000
+lines = 2000
+bands = 10
+header offset = 0
+file type = {ENVI Standard}
+data type = 2
+data ignore value = -Inf
+interleave = BIL
+sensor type = Sentinel_2A
+byte order = 0
+map info = {projection, 1, 1, 346810 ,  359150 ,  10 ,  10}
+coordinate system string = {PROJCS["WGS_1984_UTM_Zone_33N",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",15],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["Meter",1]]}
+z plot range = {-32768 -32768 -32768 -32768 -32768 -32768 -32768 -32768 -32768 -32768 ,  32767 32767 32767 32767 32767 32767 32767 32767 32767 32767}
+wavelength = {496.6,560,664.5,703.9,740.2,782.5,835.1,864.8,1613.7,2202.4}
+band names = {band 02, band 03, band 04, band 05, band 06, band 07, band 08, band 08A, band 11, band 12}
+wavelength units = Nanometers
+default stretch = {0 1000 linear}

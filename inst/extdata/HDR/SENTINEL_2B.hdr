@@ -1,0 +1,20 @@
+ENVI
+description = { Template for HDR sentinel_2b }
+samples = 10980
+lines   = 10980
+bands   = 10
+header offset = 0
+file type = ENVI Standard
+data type = 2
+interleave = bil
+sensor type = Sentinel_2B
+byte order = 0
+data ignore value = -32768
+wavelength units = Nanometers
+map info = {UTM, 1, 1, XX, XX, XX, XX, 32, North,WGS-84}
+coordinate system string = {PROJCS["WGS_1984_UTM_Zone_32N",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",XX,XX]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",9],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["Meter",1]]}
+band names 		= {band 02, band 03, band 04, band 05, band 06, band 07, band 08, band 08A, band 11, band 12}
+purpose 		= {blue, green, red, vegetation classification, vegetation classification, vegetation classification, near infrared, vegetation classification, snow/ice/cloud discimination, snow/ice/cloud discrimination}
+wavelength	 	= {492.1, 559.0, 665.0, 703.8, 739.1, 779.7, 833.0, 864.0, 1610.4, 2185.7}
+bandwidth 		= {98, 46, 39, 20, 18, 28, 133, 32, 141, 238}
+resolution 		= {10, 10, 10, 10, 20, 20, 20, 10, 20, 20, 20}
