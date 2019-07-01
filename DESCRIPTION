@@ -1,5 +1,5 @@
 Package: DiversityMappR
-Title: DiversityMappR to map biodiversity from remotely sensed data
+Title: DiversityMappR: an R package for α- and β-diversity mapping using remotely-sensed images
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Jean-Baptiste",
