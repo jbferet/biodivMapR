@@ -19,7 +19,5 @@
 
 5- put the binary package ready to be installed in a directory publicly available where the data is stored as well.
 
-6- replace hard-coded instructions (e.g. Lib_CheckConvertData.R line 110 to get access to the HDR templates)
-
 7- CRAN & nettoyage du code
 

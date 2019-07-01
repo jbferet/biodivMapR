@@ -107,9 +107,7 @@ Convert.Raster2BIL = function(Raster.Path,Sensor = 'unknown',Output.Directory = 
 
 
   if (!Sensor=='unknown'){
-    # ! HARD-CODED
-    # HDR.Temp.Path = paste('DiversityMappR/data-raw/HDR/',Sensor,'.hdr',sep='')
-    HDR.Temp.Path = paste('D:/PUBLICATIONS/2019d_DiversityMappR/01_CODES/DiversityMappR/data-raw/HDR/',Sensor,'.hdr',sep='')
+    HDR.Temp.Path = system.file('extdata','HDR',paste0(Sensor,'.hdr'),package = 'DiversityMappR')
     if (file.exists(HDR.Temp.Path)){
       message('reading header template corresponding to the sensor located here:')
       print(HDR.Temp.Path)
