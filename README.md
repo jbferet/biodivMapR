@@ -9,5 +9,14 @@ devtools::install_git('https://gitlab.irstea.fr/jean-baptiste.feret/diversitymap
 ```
 
 # 2 Tutorial
-A tutorial script can be found in `Main_DiversityMapping.R`, showing the main steps of the processing. A tutorial vignette should soon be available.
+A tutorial vignette showing the main steps of the processing can be visualised with the following command line:
+```
+rstudioapi::viewer(system.file('doc', 'tutorial.html', package='DiversityMappR'))
+```
+or for non Rstudio session:
+```
+vignette('tutorial', package='DiversityMappR')
+```
+
+The corresponding script is available in file `examples/tutorial.R`.
 

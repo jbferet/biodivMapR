@@ -11,6 +11,15 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval=FALSE
+)
+```
+
+
 This tutorial aims at describing the processing workflow and giving the associated code to compute $\alpha$ and $\beta$ diversity maps on an extraction of Sentinel-2 image taken over Cameroun forest. The workflow is composed of the following steps:
 
 * define the processing parameters
@@ -35,8 +44,10 @@ If not they should be converted with function `Convert.Raster2BIL`.
 
 A mask can also be set to work on a selected part of the input image. The mask is expected to be a raster in the same format as the image (ENVI HDR), with values 0 = masked or 1 = selected. If no mask is to be used set `Input.Mask.File = FALSE`.
 
+The output directory defined with `Output.Dir` will contain all the results. For each image processed, a subdirectory will be automatically created after its name.
 
-```
+
+```{r Input / Output files}
 Input.Image.File  = system.file('extdata', 'RASTER', 'S2A_T33NUD_20180104_Subset', package = 'DiversityMappR')
 Check.Data.Format(Input.Image.File)
 
@@ -45,13 +56,10 @@ Input.Image.File  = Convert.Raster2BIL(Raster.Path = Input.Image.File,
                                        Convert.Integer = TRUE,
                                        Output.Directory = '~/test')
 Input.Mask.File   = FALSE
-```
 
-The output directory defined with `Output.Dir` will contain all the results. For each image processed, a subdirectory will be automatically created after its name.
-
-```
 Output.Dir        = 'RESULTS'
 ```
+
 
 ## Spatial resolution
 The algorithm estimates \alpha and \beta diversity within a window, that is also the output spatial resolution. It is defined in number of pixel s of the input image with parameter `Spatial.Res`, e.g. `Spatial.Res = 10` meaning a window of 10x10 pixels. It will be the spatial resolution of the ouput rasters.
@@ -61,14 +69,14 @@ A Spatial.Res too small results in low number of pixels per spatial unit, hence 
 
 In this example, the spatial resolution of the input raster. Setting `Spatial.Res = 10` will result in diversity maps of spatial resolution 100x100m.
 
-```
+```{r Spatial resolution}
 Spatial.Res = 10
 ```
 
 ## PCA filtering
 If set to `TRUE`, a second filtering based on PCA outliers is processed.
 
-```
+```{r PCA filtering}
 FilterPCA = TRUE
 ```
 
@@ -79,7 +87,7 @@ The use of computing ressources can be controled with the following parameters:
 * `MaxRAM` controls the size in GB of the input image chunks processed by each thread,
 * `nbclusters` controls the number of clusters (or centroids) used in kmeans of each thread. The larger the value the longer the computation time.
 
-```
+```{r Computing options}
 nbCPU         = 4
 MaxRAM        = 0.5
 nbclusters    = 50
@@ -88,7 +96,7 @@ nbclusters    = 50
 # Main processing worflow
 ## Mask non vegetated / shaded / cloudy pixels
 
-```
+```{r Mask non vegetated / shaded / cloudy pixels}
 NDVI.Thresh = 0.5
 Blue.Thresh = 500
 NIR.Thresh  = 1500
@@ -110,7 +118,7 @@ For this example PCA bands 1, 2 and 5 should be kept writting the following line
 
 Here is the code to perform PCA and select PCA bands:
 
-```
+```{r PCA}
 print("PERFORM PCA ON RASTER")
 PCA.Files  = Perform.PCA.Image(Input.Image.File, ImPathShade, Output.Dir,
                                FilterPCA = TRUE, nbCPU = nbCPU, MaxRAM = MaxRAM)
@@ -120,7 +128,7 @@ Select.Components(Input.Image.File, Output.Dir, PCA.Files, File.Open = TRUE)
 
 ## $\alpha$ and $\beta$ diversity maps
 
-```
+```{r alpha and beta diversity maps}
 print("MAP SPECTRAL SPECIES")
 Map.Spectral.Species(Input.Image.File, Output.Dir, PCA.Files,
                      nbCPU = nbCPU, MaxRAM = MaxRAM)
@@ -139,7 +147,7 @@ Map.Beta.Diversity(Input.Image.File, Output.Dir, Spatial.Res,
 # Validation
 The folowing code computes $\alpha$ and $\beta$ diversity from field plots and extracts the corresponding diversity index from previouly computed rasters in order to have a validation analysis.
 
-```
+```{r Validation}
 # location of the spectral species raster needed for validation
 TypePCA     = 'SPCA'
 Dir.Raster  = file.path(Output.Dir,basename(Input.Image.File),TypePCA,'SpectralSpecies')
@@ -167,7 +175,7 @@ Shannon.RS                  = c(Biodiv.Indicators$Shannon)[[1]]
 
 The tables are then written to tab-seperated files.
 
-```
+```{r Write validation}
 # write RS indicators
 ####################################################
 # write indicators for alpha diversity

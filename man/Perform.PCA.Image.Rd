@@ -15,15 +15,15 @@ Perform.PCA.Image(ImPath, ImPathShade, Output.Dir,
 
 \item{TypePCA}{Type of PCA (PCA, SPCA, NLPCA...)}
 
-\item{FilterPCA}{2nd filtering based on PCA}
+\item{FilterPCA}{boolean. If TRUE 2nd filtering based on PCA}
 
-\item{Excluded.WL}{Water Vapor Absorption domains (in nanometers). Can also be used to exclude spectific domains}
+\item{Excluded.WL}{boolean. Water Vapor Absorption domains (in nanometers). Can also be used to exclude spectific domains}
 
-\item{NbIter}{number of iteration to estimate diversity from the raster}
+\item{NbIter}{numeric. Number of iteration to estimate diversity from the raster.}
 
-\item{nbCPU}{number fo CPUs in use.}
+\item{nbCPU}{numeric. Number fo CPUs in use.}
 
-\item{MaxRAM}{maximum size of chunk in GB to limit RAM allocation when reading image file.}
+\item{MaxRAM}{numeric. Maximum size of chunk in GB to limit RAM allocation when reading image file.}
 
 \item{ImNames}{Path and name of the images to be processed}
 }
