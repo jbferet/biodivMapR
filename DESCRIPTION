@@ -3,13 +3,12 @@ Title: DiversityMappR: an R package for α- and β-diversity mapping using remot
 Version: 0.0.0.9000
 Authors@R: c( person("Jean-Baptiste", "Feret", email = "jb.feret@teledetection.fr", role = c("aut", "cre")),
     person("Florian", "de Boissieu", email = "florian.deboissieu@irstea.fr", role = c("ctb"), comment = "clean code, format as package"))
-           
 Description: this packages allows processing image data based on the method described in the following publication:
     Féret, J.-B., Asner, G.P., 2014. Mapping tropical forest canopy diversity using high-fidelity imaging spectroscopy. Ecol. Appl. 24, 1289–1296. https://doi.org/10.1890/13-1824.1
     It expects an image file as input, with a specific data format.
     ENVI HDR image with BIL interleave required
-License: What license it uses
 Encoding: UTF-8
+License: GPL3
 LazyData: true
 Imports: 
     dissUtils,
@@ -28,3 +27,6 @@ Imports:
     vegan,
     zip
 RoxygenNote: 6.1.1
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr

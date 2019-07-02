@@ -8,3 +8,6 @@ devtools::install_git('https://gitlab.irstea.fr/jean-baptiste.feret/diversitymap
                       credentials = git2r::cred_user_pass("uname", getPass::getPass()))
 ```
 
+# 2 Tutorial
+A tutorial script can be found in `Main_DiversityMapping.R`, showing the main steps of the processing. A tutorial vignette should soon be available.
+
