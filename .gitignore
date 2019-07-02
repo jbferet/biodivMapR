@@ -1,3 +1,6 @@
 .Rproj.user
 .Rbuildignore
 .Rhistory
+RESULTS
+02_REDACTION
+inst/doc
