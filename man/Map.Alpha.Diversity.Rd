@@ -10,21 +10,29 @@ Map.Alpha.Diversity(Input.Image.File, Output.Dir, Spatial.Unit,
   MapSTD = FALSE, nbCPU = FALSE, MaxRAM = FALSE)
 }
 \arguments{
-\item{Input.Image.File}{Path and name of the image to be processed}
+\item{Input.Image.File}{character. Path and name of the image to be processed.}
 
-\item{Output.Dir}{output directory}
+\item{Output.Dir}{character. Output directory.}
 
-\item{Spatial.Unit}{dimensions of the spatial unit}
+\item{Spatial.Unit}{numeric. Size of spatial units (in pixels) to compute diversity.}
 
-\item{TypePCA}{Type of PCA (PCA, SPCA, NLPCA...)}
+\item{TypePCA}{character. Type of PCA (PCA, SPCA, NLPCA...).}
 
-\item{nbclusters}{number of clusters defined in k-Means}
+\item{nbclusters}{numeric. Number of clusters defined in k-Means.}
 
-\item{MinSun}{minimum proportion of sunlit pixels required to consider plot}
+\item{MinSun}{numeric. Minimum proportion of sunlit pixels required to consider plot.}
 
-\item{pcelim}{minimum contribution (in %) required for a spectral species}
+\item{pcelim}{numeric. Minimum contribution (in \%) required for a spectral species.}
 
-\item{Index.Alpha}{'Shannon', 'Simpson, 'Fisher'}
+\item{Index.Alpha}{character. Either 'Shannon', 'Simpson' or 'Fisher'.}
+
+\item{FullRes}{boolean. Full resolution.}
+
+\item{LowRes}{boolean. Low resolution.}
+
+\item{nbCPU}{numeric. Number of CPUs to use in parallel.}
+
+\item{MaxRAM}{numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.}
 }
 \description{
 maps alpha diversity indicators  based on prior selection of PCs

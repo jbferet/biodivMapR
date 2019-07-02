@@ -9,15 +9,17 @@ Convert.Raster2BIL(Raster.Path, Sensor = "unknown",
   Multiplying.Factor = 1, Multiplying.Factor.Last = 1)
 }
 \arguments{
-\item{Raster.Path}{full path for the raster to be converted}
+\item{Raster.Path}{character. Full path for the raster to be converted}
 
-\item{Sensor}{name of the sensor}
+\item{Sensor}{character. Name of the sensor}
 
-\item{Convert.Integer}{should data be converted into integer ?}
+\item{Output.Directory}{character. Path to output directory.}
 
-\item{Multiplying.Factor}{multiplying factor (eg convert real reflectance values between 0 and 1 into integer between 0 and 10000)}
+\item{Convert.Integer}{boolean. Should data be converted into integer ?}
 
-\item{Multiplying.Factor.Last}{multiplying factor for last band}
+\item{Multiplying.Factor}{numeric. Multiplying factor (eg convert real reflectance values between 0 and 1 into integer between 0 and 10000).}
+
+\item{Multiplying.Factor.Last}{numeric. Multiplying factor for last band.}
 }
 \value{
 Output.Path path for the image converted into ENVI BIL format

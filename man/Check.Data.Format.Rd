@@ -11,9 +11,6 @@ Check.Data.Format(Raster.Path, Mask = FALSE)
 
 \item{Mask}{is the raster a mask?}
 }
-\value{
-Output.Path path for the image converted into ENVI BIL format
-}
 \description{
 Checks if the data to be processed has the format type expected
 }

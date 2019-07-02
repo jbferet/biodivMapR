@@ -2,13 +2,22 @@
 % Please edit documentation in R/Lib_ImageProcess.R
 \name{split.line}
 \alias{split.line}
-\title{Title}
+\title{ENVI functions}
 \usage{
 \method{split}{line}(x, separator, trim.blank = TRUE)
 }
 \arguments{
-\item{trim.blank}{}
+\item{x}{character.}
+
+\item{separator}{character}
+
+\item{trim.blank}{boolean.}
+}
+\value{
+list.
 }
 \description{
+based on https://github.com/cran/hyperSpec/blob/master/R/read.ENVI.R
+added wavelength, fwhm, ... to header reading
 Title
 }

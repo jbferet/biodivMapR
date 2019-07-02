@@ -8,12 +8,14 @@
 # ==============================================================================
 # This Library contains functions to manipulate & process raster images
 # Mainly applicable to ENVI HDR data wth BIL interleave
-# ============================================================================== 
+# ==============================================================================
 
 #' get projection of a raster or a vector
 #' @param Path.File path for a raster or vector (shapefile)
 #' @param Type 'raster' or 'vector'
-#' @return projection 
+#' @return projection
+#' @importFrom rgdal readOGR
+#' @export
 Get.Projection = function(Path.File,Type = 'raster'){
   if (Type == 'raster'){
     obj  = raster(Path.File)
@@ -26,10 +28,11 @@ Get.Projection = function(Path.File,Type = 'raster'){
   return(Projection)
 }
 
-# Get list of shapefiles in a directory
-#' 
+#' Get list of shapefiles in a directory
+#'
 #' @param Path.Shp path of the directory containing shapefiles
 #' @return list of shapefiles names
+#' @export
 Get.List.Shp = function(Path.Shp){
   if(typeof(Path.Shp)=='list'){
     List.Shp = c()
@@ -44,18 +47,19 @@ Get.List.Shp = function(Path.Shp){
   return(List.Shp)
 }
 
-#' reprojects a vector file and saves it
-#' @param Initial.File path for a shapefile to be reprojected
-#' @param Projection projection to be applied to Initial.File
-#' @param Reprojected.File path for the reprojected shapefile
-#' @return
+# reprojects a vector file and saves it
+# @param Initial.File path for a shapefile to be reprojected
+# @param Projection projection to be applied to Initial.File
+# @param Reprojected.File path for the reprojected shapefile
+# @return
+#' @importFrom rgdal readOGR
 Reproject.Vector = function(Initial.File,Projection,Reprojected.File){
-  
+
   Shp.Path      = dirname(Initial.File)
   Shp.Name      = file_path_sans_ext(basename(Initial.File))
   Vect.Init     = readOGR(Shp.Path,Shp.Name,verbose = FALSE)
   Proj.init     = projection(Vect.Init)
-  
+
   if (!Proj.init==Projection){
     Shp.Path      = dirname(Reprojected.File)
     Shp.Name      = file_path_sans_ext(basename(Reprojected.File))
@@ -66,9 +70,10 @@ Reproject.Vector = function(Initial.File,Projection,Reprojected.File){
 }
 
 # Extracts pixels coordinates from raster corresponding to an area defined by a vector
-#' @param Path.Raster path for the raster file. !! BIL expected
-#' @param Path.Vector path for the vector file. !! SHP expected
-#' @return ColRow list of coordinates of pixels corresponding to each polygon in shp
+# @param Path.Raster path for the raster file. !! BIL expected
+# @param Path.Vector path for the vector file. !! SHP expected
+# @return ColRow list of coordinates of pixels corresponding to each polygon in shp
+#' @importFrom rgdal readOGR
 Extract.Pixels.Coordinates = function(Path.Raster,Path.Vector){
   # read vector file
   Shp.Path    = dirname(Path.Vector)
@@ -78,7 +83,7 @@ Extract.Pixels.Coordinates = function(Path.Raster,Path.Vector){
   Raster      = raster(Path.Raster, band = 1)
   # extract pixel coordinates from raster based on vector
   XY  = raster::cellFromPolygon (Raster,Shp.Crop)
-  # for each polygon in the 
+  # for each polygon in the
   ColRow = list()
   for (i in 1:length(XY)){
     ColRow[[i]] = ind2sub(Raster,XY[[i]])
@@ -86,10 +91,10 @@ Extract.Pixels.Coordinates = function(Path.Raster,Path.Vector){
   return(ColRow)
 }
 
-#' Extracts pixels coordinates from raster corresponding to an area defined by a vector
-#' @param Path.Raster path for the raster file. !! BIL expected
-#' @param OGR.Vector  OGR for the vector file obtained from readOGR
-#' @return ColRow list of coordinates of pixels corresponding to each polygon in shp
+# Extracts pixels coordinates from raster corresponding to an area defined by a vector
+# @param Path.Raster path for the raster file. !! BIL expected
+# @param OGR.Vector  OGR for the vector file obtained from readOGR
+# @return ColRow list of coordinates of pixels corresponding to each polygon in shp
 Extract.Pixels.Coordinates.From.OGR = function(Path.Raster,OGR.Vector){
   # read raster info
   Raster      = raster(Path.Raster, band = 1)
@@ -99,7 +104,7 @@ Extract.Pixels.Coordinates.From.OGR = function(Path.Raster,OGR.Vector){
   if (OGR.Vector@class[1]=='SpatialPointsDataFrame'){
     XY  = raster::cellFromXY (Raster,OGR.Vector)
     ColRow[[1]] = ind2sub(Raster,XY)
-    
+
   } else if  (OGR.Vector@class[1]=='SpatialPolygonsDataFrame'){
     XY  = raster::cellFromPolygon (Raster,OGR.Vector)
     for (i in 1:length(XY)){
@@ -109,10 +114,10 @@ Extract.Pixels.Coordinates.From.OGR = function(Path.Raster,OGR.Vector){
   return(ColRow)
 }
 
-#' This function reads information directly from a zipfile
-#' @param Zip.Path path for the zipped binary image file in .BIL format and 
-#' @param HDR Header corresponding 
-#' @return Img.Data vecotr containing all image data
+# This function reads information directly from a zipfile
+# @param Zip.Path path for the zipped binary image file in .BIL format and
+# @param HDR Header corresponding
+# @return Img.Data vecotr containing all image data
 Read.Image.Zipfile = function(Zip.Path){
   # get HDR corresponding to zipfile
   ImPathHDR       = Get.HDR.Name(Zip.Path)
@@ -131,26 +136,28 @@ Read.Image.Zipfile = function(Zip.Path){
   return(Img.Data)
 }
 
-#' Computes alpha diversity metrics from distribution
-#' @param Distrib distribution of clusters
-#' @return Richness, Fisher, Shannon, Simpson
+# Computes alpha diversity metrics from distribution
+# @param Distrib distribution of clusters
+# @return Richness, Fisher, Shannon, Simpson
 Get.Alpha.Metrics = function(Distrib){
-  RichnessPlot  = specnumber(Distrib, MARGIN = 1)        # species richness
+  RichnessPlot  = vegan::specnumber(Distrib, MARGIN = 1)        # species richness
   # if (length(Distrib)>1){
   #   fisherPlot    = fisher.alpha(Distrib, MARGIN = 1)      # fisher's alpha
   # } else {
   #   fisherPlot    = 0
   # }
   FisherPlot    = 0
-  ShannonPlot   = diversity(Distrib, index = "shannon", MARGIN = 1, base = exp(1)) # shannon's alpha
-  SimpsonPlot   = diversity(Distrib, index = "simpson", MARGIN = 1, base = exp(1))  
-  return(list("Richness" = RichnessPlot,"fisher"=FisherPlot,"Shannon"=ShannonPlot,"Simpson"=SimpsonPlot))  
+  ShannonPlot   = vegan::diversity(Distrib, index = "shannon", MARGIN = 1, base = exp(1)) # shannon's alpha
+  SimpsonPlot   = vegan::diversity(Distrib, index = "simpson", MARGIN = 1, base = exp(1))
+  return(list("Richness" = RichnessPlot,"fisher"=FisherPlot,"Shannon"=ShannonPlot,"Simpson"=SimpsonPlot))
 }
 
 #' gets alpha diversity indicators from plot
 #' @param Raster SpectralSpecies file computed from DiverstyMapping method
 #' @param Plots list of shapefiles included in the raster
 #' @return alpha and beta diversity metrics
+#' @importFrom rgdal readOGR
+#' @export
 Get.Diversity.From.Plots = function(Raster, Plots,NbClusters = 50,Name.Plot = FALSE){
   # get hdr from raster
   HDR           = read.ENVI.header(paste(Raster,'.hdr',sep=''))
@@ -169,14 +176,14 @@ Get.Diversity.From.Plots = function(Raster, Plots,NbClusters = 50,Name.Plot = FA
   # for each plot
   Pixel.Inventory.All   = list()
   PolygonID             = 0
-  
+
   for (ip in 1:nbPlots){
     # prepare for possible reprojection
     File.Vector           = Plots[[ip]]
     Name.Vector[[ip]]     = file_path_sans_ext(basename(File.Vector))
     print(paste('Processing file ',Name.Vector[[ip]],sep=''))
     File.Vector.reproject = paste(Dir.Vector.reproject,'/',Name.Vector[[ip]],'.shp','sep'='')
-    
+
     if (file.exists(paste(file_path_sans_ext(File.Vector),'.shp',sep=''))){
       Plot                = readOGR(Dir.Vector,Name.Vector[[ip]],verbose = FALSE)
       # check if vector and rasters are in teh same referential
@@ -192,7 +199,7 @@ Get.Diversity.From.Plots = function(Raster, Plots,NbClusters = 50,Name.Plot = FA
     } else if (file.exists(paste(VectorFile,'kml','sep'='.'))){
       print('Please convert vector file to shpfile')
     }
-    
+
     # extract data corresponding to the raster
     XY          = Extract.Pixels.Coordinates.From.OGR(Raster,Plot)
     # if the plot is included in the raster
@@ -265,7 +272,7 @@ Get.Diversity.From.Plots = function(Raster, Plots,NbClusters = 50,Name.Plot = FA
   Shannon.AllRep  = do.call(rbind,Shannon.AllRep)
   Fisher.AllRep   = do.call(rbind,Fisher.AllRep)
   Simpson.AllRep  = do.call(rbind,Simpson.AllRep)
-  
+
   ###                 Compute beta diversity             ###
   # for each pair of plot, compute beta diversity indices
   BC = list()
@@ -276,7 +283,7 @@ Get.Diversity.From.Plots = function(Raster, Plots,NbClusters = 50,Name.Plot = FA
       SelFrequency        = Pixel.Inventory.All[[j]][[i]]$Freq
       MergeDiversity[SelSpectralSpecies,j] = SelFrequency
     }
-    BC[[i]] = vegdist(t(MergeDiversity),method="bray")
+    BC[[i]] = vegan::vegdist(t(MergeDiversity),method="bray")
   }
   BC_mean   = 0*BC[[1]]
   for(i in 1:nbRepetitions){
@@ -292,18 +299,19 @@ Get.Diversity.From.Plots = function(Raster, Plots,NbClusters = 50,Name.Plot = FA
   return(list("Richness" = Richness,"Fisher"=Fisher,"Shannon"=Shannon,"Simpson"=Simpson,'BCdiss' = BC_mean,"fisher.All"=Fisher.AllRep,"Shannon.All"=Shannon.AllRep,"Simpson.All"=Simpson.AllRep,'BCdiss.All' = BC,'Name.Plot'=Name.Plot))
 }
 
-#' build a vector file from raster footprint
-#' borrowed from https://johnbaumgartner.wordpress.com/2012/07/26/getting-rasters-into-shape-from-r/
-#' @param x path for a raster or raster object
-#' @param outshape path for a vector to be written
-#' @param gdalformat
-#' @param pypath 
-#' @param readpoly 
-#' @param quiet 
-#' @return NULL
+# build a vector file from raster footprint
+# borrowed from https://johnbaumgartner.wordpress.com/2012/07/26/getting-rasters-into-shape-from-r/
+# @param x path for a raster or raster object
+# @param outshape path for a vector to be written
+# @param gdalformat
+# @param pypath
+# @param readpoly
+# @param quiet
+# @return NULL
+#' @importFrom rgdal readOGR
 gdal_polygonizeR = function(x, outshape=NULL, gdalformat = 'ESRI Shapefile',
                             pypath=NULL, readpoly=TRUE, quiet=TRUE) {
-  
+
   if (readpoly==TRUE) require(rgdal)
   if (is.null(pypath)) {
     pypath <- Sys.which('gdal_polygonize.py')
@@ -341,11 +349,11 @@ gdal_polygonizeR = function(x, outshape=NULL, gdalformat = 'ESRI Shapefile',
   return(NULL)
 }
 
-#' create a binary mask file based on a matrix and the corresponding header
-#' @param Mask matrix of a binary mask
-#' @param HDR header corresponding to an image to be masked
-#' @param Path.Mask path for the mask
-#' @return
+# create a binary mask file based on a matrix and the corresponding header
+# @param Mask matrix of a binary mask
+# @param HDR header corresponding to an image to be masked
+# @param Path.Mask path for the mask
+# @return
 Create.Shademask=function(Mask,HDR,Path.Mask){
   ipix        = HDR$lines
   jpix        = HDR$samples

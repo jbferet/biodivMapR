@@ -21,14 +21,14 @@ Perform.PCA.Image(ImPath, ImPathShade, Output.Dir,
 
 \item{NbIter}{number of iteration to estimate diversity from the raster}
 
-\item{nbCPU}{number fo CPUs in use}
+\item{nbCPU}{number fo CPUs in use.}
 
-\item{MaxRAM}{max number of RAM allocated during data read (may require more RAM during data process)}
+\item{MaxRAM}{maximum size of chunk in GB to limit RAM allocation when reading image file.}
 
 \item{ImNames}{Path and name of the images to be processed}
 }
 \value{
-PCA.Files is a list of paths corresponding to resulting PCA files
+list of paths corresponding to resulting PCA files
 }
 \description{
 Performs PCA for all images and create PCA file with either all or a selection of PCs

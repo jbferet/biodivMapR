@@ -17,248 +17,252 @@
 #' @param Output.Dir output directory
 #' @param TypePCA Type of PCA (PCA, SPCA, NLPCA...)
 #' @param PCA.Files path for PCA file
-#' @param nbCPU
-#' @param MaxRAM
+#' @param nbCPU numeric. Number of CPUs to use in parallel.
+#' @param MaxRAM numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.
 #' @param nbclusters number of clusters defined in k-Means
 #'
-#' @return
 #' @export
-Map.Spectral.Species = function(Input.Image.File,Output.Dir,PCA.Files,TypePCA='SPCA',nbclusters=50,nbCPU = 1,MaxRAM=FALSE){
+Map.Spectral.Species <- function(Input.Image.File, Output.Dir, PCA.Files, TypePCA = "SPCA", nbclusters = 50, nbCPU = 1, MaxRAM = FALSE) {
 
   # for each image
-  Output.Dir2           = Define.Output.Dir(Output.Dir,Input.Image.File,TypePCA)
-  Output.Dir.SS         = Define.Output.SubDir(Output.Dir,Input.Image.File,TypePCA,'SpectralSpecies')
-  Output.Dir.PCA        = Define.Output.SubDir(Output.Dir,Input.Image.File,TypePCA,'PCA')
-  Spectral.Species.Path = paste(Output.Dir.SS,'SpectralSpecies',sep="")
+  Output.Dir2 <- Define.Output.Dir(Output.Dir, Input.Image.File, TypePCA)
+  Output.Dir.SS <- Define.Output.SubDir(Output.Dir, Input.Image.File, TypePCA, "SpectralSpecies")
+  Output.Dir.PCA <- Define.Output.SubDir(Output.Dir, Input.Image.File, TypePCA, "PCA")
+  Spectral.Species.Path <- paste(Output.Dir.SS, "SpectralSpecies", sep = "")
   # if no prior diversity map has been produced --> need PCA file
-  if (!file.exists(PCA.Files)){
-    message('')
-    message('*********************************************************')
-    message('WARNING: PCA file expected but not found')
+  if (!file.exists(PCA.Files)) {
+    message("")
+    message("*********************************************************")
+    message("WARNING: PCA file expected but not found")
     print(PCA.Files)
-    message('process aborted')
-    message('*********************************************************')
-    message('')
+    message("process aborted")
+    message("*********************************************************")
+    message("")
     stop()
   } else {
-    WS_Save = paste(Output.Dir2,'PCA_Info.RData',sep="")
+    WS_Save <- paste(Output.Dir2, "PCA_Info.RData", sep = "")
     load(file = WS_Save)
     ##            1- Select components used to perform clustering           ##
-    PC.Select.Path  = paste(Output.Dir.PCA,'Selected_Components.txt',sep="")
-    if (file.exists(PC.Select.Path)){
-      PC.Select       = read.table(PC.Select.Path)[[1]]
-      dataPCA         = PCA.model$dataPCA[,PC.Select]
-      if (length(PC.Select)==1){
-        dataPCA         = matrix(dataPCA,ncol = 1)
+    PC.Select.Path <- paste(Output.Dir.PCA, "Selected_Components.txt", sep = "")
+    if (file.exists(PC.Select.Path)) {
+      PC.Select <- read.table(PC.Select.Path)[[1]]
+      dataPCA <- PCA.model$dataPCA[, PC.Select]
+      if (length(PC.Select) == 1) {
+        dataPCA <- matrix(dataPCA, ncol = 1)
       }
-      message('Selected components:')
+      message("Selected components:")
       print(PC.Select)
-      message('Please add carriage return after last selected component if not part of the list')
-      message('If these do not match with your selection, please correct file following file:')
+      message("Please add carriage return after last selected component if not part of the list")
+      message("If these do not match with your selection, please correct file following file:")
       print(PC.Select.Path)
     } else {
-      print(paste('File named ',PC.Select.Path,'needs to be created first'))
-      print('Image processing aborted')
+      print(paste("File named ", PC.Select.Path, "needs to be created first"))
+      print("Image processing aborted")
       exit()
     }
     ##    2- PERFORM KMEANS FOR EACH ITERATION & DEFINE SPECTRAL SPECIES    ##
-    print('perform k-means clustering for each subset and define centroids')
+    print("perform k-means clustering for each subset and define centroids")
     # scaling factor subPCA between 0 and 1
-    Kmeans.info   = Init.Kmeans(dataPCA,Pix.Per.Iter,NbIter,nbclusters,nbCPU)
+    Kmeans.info <- Init.Kmeans(dataPCA, Pix.Per.Iter, NbIter, nbclusters, nbCPU)
     ##              3- ASSIGN SPECTRAL SPECIES TO EACH PIXEL                ##
-    print('apply Kmeans to the whole image and determine spectral species')
-    Apply.Kmeans(PCA.Files,PC.Select,ImPathShade,Kmeans.info,Spectral.Species.Path,nbCPU,MaxRAM)
+    print("apply Kmeans to the whole image and determine spectral species")
+    Apply.Kmeans(PCA.Files, PC.Select, ImPathShade, Kmeans.info, Spectral.Species.Path, nbCPU, MaxRAM)
   }
   return()
 }
 
-#' computes k-means from NbIter subsets taken from dataPCA
-#'
-#' @param dataPCA initial dataset sampled from PCA image
-#' @param Pix.Per.Iter number of pixels per iteration
-#' @param NbIter number of iterations
-#' @param nbCPU
-#' @param nbclusters number of clusters used in kmeans
-#'
-#' @return list of centroids and parameters needed to center/reduce data
-Init.Kmeans = function(dataPCA,Pix.Per.Iter,NbIter,nbclusters,nbCPU = 1){
-
-  m0        = apply(dataPCA, 2, function(x) min(x))
-  M0        = apply(dataPCA, 2, function(x) max(x))
-  d0        = M0-m0
-  dataPCA   = Center.Reduce(dataPCA,m0,d0)
+# computes k-means from NbIter subsets taken from dataPCA
+#
+# @param dataPCA initial dataset sampled from PCA image
+# @param Pix.Per.Iter number of pixels per iteration
+# @param NbIter number of iterations
+# @param nbCPU
+# @param nbclusters number of clusters used in kmeans
+#
+# @return list of centroids and parameters needed to center/reduce data
+#' @import future
+#' @importFrom future.apply future_lapply
+Init.Kmeans <- function(dataPCA, Pix.Per.Iter, NbIter, nbclusters, nbCPU = 1) {
+  m0 <- apply(dataPCA, 2, function(x) min(x))
+  M0 <- apply(dataPCA, 2, function(x) max(x))
+  d0 <- M0 - m0
+  dataPCA <- Center.Reduce(dataPCA, m0, d0)
   # get the dimensions of the images, and the number of subimages to process
-  dataPCA   = split(as.data.frame(dataPCA), rep(1:NbIter, each = Pix.Per.Iter))
+  dataPCA <- split(as.data.frame(dataPCA), rep(1:NbIter, each = Pix.Per.Iter))
   # multiprocess kmeans clustering
   plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
-  Schedule.Per.Thread = ceiling(length(dataPCA)/nbCPU)
-  res                 = future_lapply(dataPCA,FUN = kmeans, centers = nbclusters,iter.max = 50,nstart = 10,algorithm = c("Hartigan-Wong"),future.scheduling = Schedule.Per.Thread)
+  Schedule.Per.Thread <- ceiling(length(dataPCA) / nbCPU)
+  res <- future_lapply(dataPCA, FUN = kmeans, centers = nbclusters, iter.max = 50, nstart = 10, algorithm = c("Hartigan-Wong"), future.scheduling = Schedule.Per.Thread)
   plan(sequential)
-  Centroids = list(NbIter)
-  for (i in (1:NbIter)){
-    Centroids[[i]]=res[[i]]$centers
+  Centroids <- list(NbIter)
+  for (i in (1:NbIter)) {
+    Centroids[[i]] <- res[[i]]$centers
   }
-  my_list <- list("Centroids"=Centroids,"MinVal"=m0,"MaxVal"=M0,"Range"=d0)
+  my_list <- list("Centroids" = Centroids, "MinVal" = m0, "MaxVal" = M0, "Range" = d0)
   return(my_list)
 }
 
-#' Applies Kmeans clustering to PCA image
-#'
-#' @param PCA.Path path for the PCA image
-#' @param PC.Select PCs selected from PCA
-#' @param ImPathShade shade mask
-#' @param Kmeans.info information about kmeans computed in previous step
-#' @param nbCPU
-#' @param MaxRAM
-#' @param Spectral.Species.Path path for spectral species file to be written
-#'
-#' @return
-Apply.Kmeans=function(PCA.Path,PC.Select,ImPathShade,Kmeans.info,Spectral.Species.Path,nbCPU=1,MaxRAM=FALSE){
-
-  ImPathHDR   = Get.HDR.Name(PCA.Path)
-  HDR.PCA     = read.ENVI.header(ImPathHDR)
-  PCA.Format  = ENVI.Type2Bytes(HDR.PCA)
-  HDR.Shade   = Get.HDR.Name(ImPathShade)
-  HDR.Shade   = read.ENVI.header(HDR.Shade)
+# Applies Kmeans clustering to PCA image
+#
+# @param PCA.Path path for the PCA image
+# @param PC.Select PCs selected from PCA
+# @param ImPathShade shade mask
+# @param Kmeans.info information about kmeans computed in previous step
+# @param nbCPU
+# @param MaxRAM
+# @param Spectral.Species.Path path for spectral species file to be written
+#
+# @return
+Apply.Kmeans <- function(PCA.Path, PC.Select, ImPathShade, Kmeans.info, Spectral.Species.Path, nbCPU = 1, MaxRAM = FALSE) {
+  ImPathHDR <- Get.HDR.Name(PCA.Path)
+  HDR.PCA <- read.ENVI.header(ImPathHDR)
+  PCA.Format <- ENVI.Type2Bytes(HDR.PCA)
+  HDR.Shade <- Get.HDR.Name(ImPathShade)
+  HDR.Shade <- read.ENVI.header(HDR.Shade)
   # prepare for sequential processing: SeqRead.Image informs about byte location to read
-  if (MaxRAM==FALSE){
-    MaxRAM = 0.25
+  if (MaxRAM == FALSE) {
+    MaxRAM <- 0.25
   }
-  nbPieces      = Split.Image(HDR.PCA,MaxRAM)
-  SeqRead.PCA   = Where.To.Read(HDR.PCA,nbPieces)
-  SeqRead.Shade = Where.To.Read(HDR.Shade,nbPieces)
+  nbPieces <- Split.Image(HDR.PCA, MaxRAM)
+  SeqRead.PCA <- Where.To.Read(HDR.PCA, nbPieces)
+  SeqRead.Shade <- Where.To.Read(HDR.Shade, nbPieces)
   # create output file for spectral species assignment
-  HDR.SS          = HDR.PCA
-  nbIter          = size(Kmeans.info$Centroids)[2]
-  HDR.SS$bands    = nbIter
-  HDR.SS$`data type` = 1
-  Iter = list()
-  for (i in 1:nbIter){
-    Iter = c(Iter,paste('Iter',i))
-  }
-  Iter   = paste(Iter, collapse = ', ')
-  HDR.SS$`band names` = Iter
-  HDR.SS$wavelength   = NULL
-  HDR.SS$fwhm         = NULL
-  HDR.SS$resolution   = NULL
-  HDR.SS$bandwidth    = NULL
-  HDR.SS$purpose      = NULL
-  HDR.SS$`byte order` = Get.Byte.Order()
-  headerFpath = paste(Spectral.Species.Path,'.hdr',sep='')
+  HDR.SS <- HDR.PCA
+  nbIter <- length(Kmeans.info$Centroids)
+  HDR.SS$bands <- nbIter
+  HDR.SS$`data type` <- 1
+  Iter <- paste('Iter', 1:nbIter, collapse = ", ")
+  HDR.SS$`band names` <- Iter
+  HDR.SS$wavelength <- NULL
+  HDR.SS$fwhm <- NULL
+  HDR.SS$resolution <- NULL
+  HDR.SS$bandwidth <- NULL
+  HDR.SS$purpose <- NULL
+  HDR.SS$`byte order` <- Get.Byte.Order()
+  headerFpath <- paste(Spectral.Species.Path, ".hdr", sep = "")
   write.ENVI.header(HDR.SS, headerFpath)
   # create Spectral species file
-  fidSS       = file(description = Spectral.Species.Path, open = "wb", blocking = TRUE,
-                     encoding = getOption("encoding"), raw = FALSE)
+  fidSS <- file(
+    description = Spectral.Species.Path, open = "wb", blocking = TRUE,
+    encoding = getOption("encoding"), raw = FALSE
+  )
   close(fidSS)
 
-  for (i in 1:nbPieces){
-    print(paste("Spectral Species Piece #",i,'/',nbPieces))
-    Location.RW = list()
-    Location.RW$nbLines = SeqRead.PCA$Lines.Per.Chunk[i]
-    Location.RW$Byte.Start.PCA  = SeqRead.PCA$ReadByte.Start[i]
-    Location.RW$lenBin.PCA      = SeqRead.PCA$ReadByte.End[i]-SeqRead.PCA$ReadByte.Start[i]+1
-    Location.RW$Byte.Start.Shade= SeqRead.Shade$ReadByte.Start[i]
-    Location.RW$lenBin.Shade    = SeqRead.Shade$ReadByte.End[i]-SeqRead.Shade$ReadByte.Start[i]+1
-    Location.RW$Byte.Start.SS   = 1+(SeqRead.Shade$ReadByte.Start[i]-1)*nbIter
-    Location.RW$lenBin.SS       = nbIter*(SeqRead.Shade$ReadByte.End[i]-SeqRead.Shade$ReadByte.Start[i])+1
-    Compute.Spectral.Species(PCA.Path,ImPathShade,Spectral.Species.Path,Location.RW,PC.Select,Kmeans.info,nbCPU)
+  for (i in 1:nbPieces) {
+    print(paste("Spectral Species Piece #", i, "/", nbPieces))
+    Location.RW <- list()
+    Location.RW$nbLines <- SeqRead.PCA$Lines.Per.Chunk[i]
+    Location.RW$Byte.Start.PCA <- SeqRead.PCA$ReadByte.Start[i]
+    Location.RW$lenBin.PCA <- SeqRead.PCA$ReadByte.End[i] - SeqRead.PCA$ReadByte.Start[i] + 1
+    Location.RW$Byte.Start.Shade <- SeqRead.Shade$ReadByte.Start[i]
+    Location.RW$lenBin.Shade <- SeqRead.Shade$ReadByte.End[i] - SeqRead.Shade$ReadByte.Start[i] + 1
+    Location.RW$Byte.Start.SS <- 1 + (SeqRead.Shade$ReadByte.Start[i] - 1) * nbIter
+    Location.RW$lenBin.SS <- nbIter * (SeqRead.Shade$ReadByte.End[i] - SeqRead.Shade$ReadByte.Start[i]) + 1
+    Compute.Spectral.Species(PCA.Path, ImPathShade, Spectral.Species.Path, Location.RW, PC.Select, Kmeans.info, nbCPU)
   }
   return()
 }
 
-#' this function reads PCA file and defines the spectral species for each pixel
-#' based on the set of cluster centroids defined for each iteration
-#' applies kmeans --> closest cluster corresponds to the "spectral species"
-#'
-#' @param PCA.Path path for the PCA image
-#' @param ImPathShade shade mask
-#' @param Spectral.Species.Path path for spectral species file to be written
-#' @param Location.RW where to read/write information in binary file
-#' @param PC.Select PCs selected from PCA
-#' @param nbCPU
-#' @param Kmeans.info information about kmeans computed in previous step
-#'
-#' @return
-Compute.Spectral.Species=function(PCA.Path,ImPathShade,Spectral.Species.Path,Location.RW,PC.Select,Kmeans.info,nbCPU = 1){
+# this function reads PCA file and defines the spectral species for each pixel
+# based on the set of cluster centroids defined for each iteration
+# applies kmeans --> closest cluster corresponds to the "spectral species"
+#
+# @param PCA.Path path for the PCA image
+# @param ImPathShade shade mask
+# @param Spectral.Species.Path path for spectral species file to be written
+# @param Location.RW where to read/write information in binary file
+# @param PC.Select PCs selected from PCA
+# @param nbCPU
+# @param Kmeans.info information about kmeans computed in previous step
+#
+# @return
+#' @importFrom snow splitRows
+#' @import future
+#' @importFrom future.apply future_lapply
+Compute.Spectral.Species <- function(PCA.Path, ImPathShade, Spectral.Species.Path, Location.RW, PC.Select, Kmeans.info, nbCPU = 1) {
 
   # characteristics of the centroids computed during preprocessing
-  nbIter          = length(Kmeans.info$Centroids)
-  nbCentroids     = nrow(Kmeans.info$Centroids[[1]])
-  CentroidsArray  = do.call("rbind",Kmeans.info$Centroids)
+  nbIter <- length(Kmeans.info$Centroids)
+  nbCentroids <- nrow(Kmeans.info$Centroids[[1]])
+  CentroidsArray <- do.call("rbind", Kmeans.info$Centroids)
 
   # read shade file and PCA file
-  ShadeHDR      = Get.HDR.Name(ImPathShade)
-  HDR.Shade     = read.ENVI.header(ShadeHDR)
-  Shade.Format  = ENVI.Type2Bytes(HDR.Shade)
-  ImgFormat     = 'Shade'
-  Shade.Chunk   = Read.Image.Subset(ImPathShade,HDR.Shade,Location.RW$Byte.Start.Shade,Location.RW$lenBin.Shade,Location.RW$nbLines,Shade.Format,ImgFormat)
+  ShadeHDR <- Get.HDR.Name(ImPathShade)
+  HDR.Shade <- read.ENVI.header(ShadeHDR)
+  Shade.Format <- ENVI.Type2Bytes(HDR.Shade)
+  ImgFormat <- "Shade"
+  Shade.Chunk <- Read.Image.Subset(ImPathShade, HDR.Shade, Location.RW$Byte.Start.Shade, Location.RW$lenBin.Shade, Location.RW$nbLines, Shade.Format, ImgFormat)
 
-  PCA.HDR       = Get.HDR.Name(PCA.Path)
-  HDR.PCA       = read.ENVI.header(PCA.HDR)
-  PCA.Format    = ENVI.Type2Bytes(HDR.PCA)
+  PCA.HDR <- Get.HDR.Name(PCA.Path)
+  HDR.PCA <- read.ENVI.header(PCA.HDR)
+  PCA.Format <- ENVI.Type2Bytes(HDR.PCA)
   # read "unfolded" (2D) PCA image
-  ImgFormat     = '2D'
-  PCA.Chunk     = Read.Image.Subset(PCA.Path,HDR.PCA,Location.RW$Byte.Start.PCA,Location.RW$lenBin.PCA,Location.RW$nbLines,PCA.Format,ImgFormat)
-  PCA.Chunk     = PCA.Chunk[,PC.Select]
-  if (length(PC.Select)==1){
-    PCA.Chunk   = matrix(PCA.Chunk,ncol = 1)
+  ImgFormat <- "2D"
+  PCA.Chunk <- Read.Image.Subset(PCA.Path, HDR.PCA, Location.RW$Byte.Start.PCA, Location.RW$lenBin.PCA, Location.RW$nbLines, PCA.Format, ImgFormat)
+  PCA.Chunk <- PCA.Chunk[, PC.Select]
+  if (length(PC.Select) == 1) {
+    PCA.Chunk <- matrix(PCA.Chunk, ncol = 1)
   }
-  PCA.Chunk     = Center.Reduce(PCA.Chunk,Kmeans.info$MinVal,Kmeans.info$Range)
+  PCA.Chunk <- Center.Reduce(PCA.Chunk, Kmeans.info$MinVal, Kmeans.info$Range)
   # eliminate shaded pixels
-  keepShade     = which(Shade.Chunk==1)
-  PCA.Chunk     = matrix(PCA.Chunk[keepShade,],ncol=length(PC.Select))
+  keepShade <- which(Shade.Chunk == 1)
+  PCA.Chunk <- matrix(PCA.Chunk[keepShade, ], ncol = length(PC.Select))
 
   # Prepare writing of spectral species distribution file
-  SS.HDR        = Get.HDR.Name(Spectral.Species.Path)
-  HDR.SS        = read.ENVI.header(SS.HDR)
-  SS.Format     = ENVI.Type2Bytes(HDR.SS)
+  SS.HDR <- Get.HDR.Name(Spectral.Species.Path)
+  HDR.SS <- read.ENVI.header(SS.HDR)
+  SS.Format <- ENVI.Type2Bytes(HDR.SS)
 
   # for each pixel in the subset, compute the nearest cluster for each iteration
-  Nearest.Cluster = matrix(0,nrow=Location.RW$nbLines*HDR.PCA$samples,ncol=nbIter)
+  Nearest.Cluster <- matrix(0, nrow = Location.RW$nbLines * HDR.PCA$samples, ncol = nbIter)
   # rdist consumes RAM  --> divide data into pieces if too big and multiprocess
-  nbSamples.Per.Rdist = 25000
-  if (length(keepShade)>0){
-    nbSubsets     = ceiling(length(keepShade)/nbSamples.Per.Rdist)
-    PCA.Chunk     = splitRows(PCA.Chunk, nbSubsets)
+  nbSamples.Per.Rdist <- 25000
+  if (length(keepShade) > 0) {
+    nbSubsets <- ceiling(length(keepShade) / nbSamples.Per.Rdist)
+    PCA.Chunk <- splitRows(PCA.Chunk, nbSubsets)
 
     plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
-    Schedule.Per.Thread = ceiling(nbSubsets/nbCPU)
-    res                 = future_lapply(PCA.Chunk,FUN = RdistList, CentroidsArray = CentroidsArray,nbClusters = nrow(Kmeans.info$Centroids[[1]]),nbIter=nbIter,future.scheduling = Schedule.Per.Thread)
+    Schedule.Per.Thread <- ceiling(nbSubsets / nbCPU)
+    res <- future_lapply(PCA.Chunk, FUN = RdistList, CentroidsArray = CentroidsArray, nbClusters = nrow(Kmeans.info$Centroids[[1]]), nbIter = nbIter, future.scheduling = Schedule.Per.Thread)
     plan(sequential)
-    res = do.call("rbind",res)
-    Nearest.Cluster[keepShade,]=res
-    rm(res); gc()
+    res <- do.call("rbind", res)
+    Nearest.Cluster[keepShade, ] <- res
+    rm(res)
+    gc()
   }
-  Nearest.Cluster = array(Nearest.Cluster,c(Location.RW$nbLines,HDR.PCA$samples,nbIter))
+  Nearest.Cluster <- array(Nearest.Cluster, c(Location.RW$nbLines, HDR.PCA$samples, nbIter))
   # Write spectral species distribution in the output file
-  fidSS   = file(description = Spectral.Species.Path, open = "r+b", blocking = TRUE,
-                 encoding = getOption("encoding"), raw = FALSE)
-  Nearest.Cluster   = aperm(Nearest.Cluster,c(2,3,1))
-  if (!Location.RW$Byte.Start.SS==1){
-    seek(fidSS, where = SS.Format$Bytes*(Location.RW$Byte.Start.SS-1), origin = "start", rw = "write")
+  fidSS <- file(
+    description = Spectral.Species.Path, open = "r+b", blocking = TRUE,
+    encoding = getOption("encoding"), raw = FALSE
+  )
+  Nearest.Cluster <- aperm(Nearest.Cluster, c(2, 3, 1))
+  if (!Location.RW$Byte.Start.SS == 1) {
+    seek(fidSS, where = SS.Format$Bytes * (Location.RW$Byte.Start.SS - 1), origin = "start", rw = "write")
   }
-  writeBin(c(as.integer(Nearest.Cluster)), fidSS, size = SS.Format$Bytes,endian = .Platform$endian, useBytes = FALSE)
+  writeBin(c(as.integer(Nearest.Cluster)), fidSS, size = SS.Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
   close(fidSS)
-  rm(list=ls())
+  rm(list = ls())
   gc()
   return()
 }
 
-#' Compute distance between each pixel of input data and each of the nbClusters x nbIter centroids
-#'
-#' @param InputData
-#' @param CentroidsArray
-#' @param nbClusters
-#' @param nbIter
-#'
-#' @return ResDist
-RdistList=function(InputData,CentroidsArray,nbClusters,nbIter){
+# Compute distance between each pixel of input data and each of the nbClusters x nbIter centroids
+#
+# @param InputData
+# @param CentroidsArray
+# @param nbClusters
+# @param nbIter
+#
+# @return ResDist
+#' @importFrom fields rdist
+RdistList <- function(InputData, CentroidsArray, nbClusters, nbIter) {
   # number of pixels in input data
-  nbPixels      = nrow(InputData)
+  nbPixels <- nrow(InputData)
   # compute distance between each pixel and each centroid
-  cluster.dist  = rdist(InputData,CentroidsArray)
+  cluster.dist <- rdist(InputData, CentroidsArray)
   # reshape distance into a matrix: all pixels from iteration 1, then all pixels from it2...
-  cluster.dist  = matrix(aperm(array(cluster.dist,c(nbPixels,nbClusters,nbIter)),c(1,3,2)),nrow=nbPixels*nbIter)
-  ResDist       = matrix(max.col(-cluster.dist),nrow=nbPixels)
+  cluster.dist <- matrix(aperm(array(cluster.dist, c(nbPixels, nbClusters, nbIter)), c(1, 3, 2)), nrow = nbPixels * nbIter)
+  ResDist <- matrix(max.col(-cluster.dist), nrow = nbPixels)
   return(ResDist)
 }

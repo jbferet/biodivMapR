@@ -7,26 +7,36 @@
 Map.Beta.Diversity(Input.Image.File, Output.Dir, Spatial.Unit,
   TypePCA = "SPCA", nbclusters = 50, Nb.Units.Ordin = 2000,
   MinSun = 0.25, pcelim = 0.02, scaling = "PCO", FullRes = TRUE,
-  LowRes = FALSE, nbCPU = FALSE, MaxRAM = FALSE)
+  LowRes = FALSE, nbCPU = 1, MaxRAM = 0.25)
 }
 \arguments{
-\item{Input.Image.File}{Path and name of the image to be processed}
+\item{Input.Image.File}{character. Path and name of the image to be processed.}
 
-\item{Output.Dir}{output directory}
+\item{Output.Dir}{character. Output directory.}
 
-\item{Spatial.Unit}{dimensions of the spatial unit}
+\item{Spatial.Unit}{numeric. Dimensions of the spatial unit.}
 
-\item{TypePCA}{Type of PCA (PCA, SPCA, NLPCA...)}
+\item{TypePCA}{character. Type of PCA (PCA, SPCA, NLPCA...).}
 
-\item{nbclusters}{number of clusters defined in k-Means}
+\item{nbclusters}{numeric. Number of clusters defined in k-Means.}
 
-\item{Nb.Units.Ordin}{maximum number of spatial units to be processed in NMDS
+\item{Nb.Units.Ordin}{numeric. Maximum number of spatial units to be processed in NMDS.
 --> 1000 will be fast but may not capture important patterns if large area
 --> 4000 will be slow but may show better ability to capture landscape patterns}
 
-\item{MinSun}{minimum proportion of sunlit pixels required to consider plot}
+\item{MinSun}{numeric. Minimum proportion of sunlit pixels required to consider plot.}
 
-\item{pcelim}{minimum contribution (in %) required for a spectral species}
+\item{pcelim}{numeric. Minimum contribution (in \%) required for a spectral species}
+
+\item{scaling}{character. "PCO" or "NMDS".}
+
+\item{FullRes}{boolean.}
+
+\item{LowRes}{boolean.}
+
+\item{nbCPU}{numeric. Number of CPUs to use in parallel.}
+
+\item{MaxRAM}{numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.}
 }
 \description{
 maps beta diversity indicator based on spectral species distribution

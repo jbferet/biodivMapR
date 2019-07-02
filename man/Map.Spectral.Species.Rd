@@ -17,6 +17,10 @@ Map.Spectral.Species(Input.Image.File, Output.Dir, PCA.Files,
 \item{TypePCA}{Type of PCA (PCA, SPCA, NLPCA...)}
 
 \item{nbclusters}{number of clusters defined in k-Means}
+
+\item{nbCPU}{numeric. Number of CPUs to use in parallel.}
+
+\item{MaxRAM}{numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.}
 }
 \description{
 maps spectral species based on PCA file computed previously

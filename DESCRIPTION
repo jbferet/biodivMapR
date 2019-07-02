@@ -26,5 +26,6 @@ Imports:
     dissUtils,
     labdsv,
     raster,
-    rgdal
+    rgdal,
+    tools
 RoxygenNote: 6.1.1
