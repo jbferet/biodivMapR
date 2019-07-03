@@ -144,10 +144,10 @@ Map.Beta.Diversity(Input.Image.File, Output.Dir, Spatial.Res,
                    nbCPU = nbCPU, MaxRAM = MaxRAM)
 ```
 
-# Validation
+# $\alpha$ and $\beta$ diversity indices from vector layer
 The folowing code computes $\alpha$ and $\beta$ diversity from field plots and extracts the corresponding diversity index from previouly computed rasters in order to have a validation analysis.
 
-```{r Validation}
+```{r alpha and beta diversity indices from vector layer}
 # location of the spectral species raster needed for validation
 TypePCA     = 'SPCA'
 Dir.Raster  = file.path(Output.Dir,basename(Input.Image.File),TypePCA,'SpectralSpecies')

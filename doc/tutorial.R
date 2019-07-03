@@ -59,7 +59,7 @@ knitr::opts_chunk$set(
 #  Map.Beta.Diversity(Input.Image.File, Output.Dir, Spatial.Res,
 #                     nbCPU = nbCPU, MaxRAM = MaxRAM)
 
-## ----Validation----------------------------------------------------------
+## ----alpha and beta diversity indices from vector layer------------------
 #  # location of the spectral species raster needed for validation
 #  TypePCA     = 'SPCA'
 #  Dir.Raster  = file.path(Output.Dir,basename(Input.Image.File),TypePCA,'SpectralSpecies')
