@@ -21,6 +21,7 @@
 #'
 #' @return Output.Path path for the image converted into ENVI BIL format
 #' @import raster
+#' @import tools
 #' @export
 Convert.Raster2BIL <- function(Raster.Path, Sensor = "unknown", Output.Directory = FALSE, Convert.Integer = TRUE, Multiplying.Factor = 1, Multiplying.Factor.Last = 1) {
 

@@ -479,6 +479,7 @@ Get.Random.Subset.From.Image <- function(ImPath, HDR, ImPathShade, NbIter, Pix.P
 # does the system work with little endians or big endians?
 #
 # @return ByteOrder
+#' @import tools
 Get.Byte.Order <- function() {
   if (.Platform$endian == "little") {
     ByteOrder <- 0
@@ -567,7 +568,7 @@ Mean.Filter <- function(ImageInit, nbi, nbj, SizeFilt) {
   E <- padarray(ImageInit, c(SizeFilt, SizeFilt), "symmetric", "both")
   ImageSmooth <- matrix(0, nrow = nbi, ncol = nbj)
   Mat2D <- MatSun <- matrix(0, nrow = ((2 * SizeFilt) + 1)^2, ncol = nbj)
-  spl <- split(seq(1:nbj), 1:((2 * SizeFilt) + 1))
+  spl <- split(1:nbj, 1:((2 * SizeFilt) + 1))
   mid <- ceiling((((2 * SizeFilt) + 1)^2) / 2)
   for (i in (SizeFilt + 1):(nbi + SizeFilt)) {
     for (j in 1:((2 * SizeFilt) + 1)) {
@@ -1067,7 +1068,7 @@ ZipFile <- function(ImagePath) {
   ImageDir <- dirname(ImagePath)
   ImageName <- basename(ImagePath)
   setwd(ImageDir)
-  zip(zipfile = paste0(ImageName, ".zip"), files = ImageName)
+  zip::zip(zipfile = paste0(ImageName, ".zip"), files = ImageName)
   file.remove(ImageName)
   setwd(PathRoot)
   return()

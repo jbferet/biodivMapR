@@ -15,6 +15,7 @@
 #' @param Type 'raster' or 'vector'
 #' @return projection
 #' @importFrom rgdal readOGR
+#' @import tools
 #' @export
 Get.Projection = function(Path.File,Type = 'raster'){
   if (Type == 'raster'){
@@ -53,6 +54,7 @@ Get.List.Shp = function(Path.Shp){
 # @param Reprojected.File path for the reprojected shapefile
 # @return
 #' @importFrom rgdal readOGR
+#' @import tools
 Reproject.Vector = function(Initial.File,Projection,Reprojected.File){
 
   Shp.Path      = dirname(Initial.File)
@@ -74,6 +76,7 @@ Reproject.Vector = function(Initial.File,Projection,Reprojected.File){
 # @param Path.Vector path for the vector file. !! SHP expected
 # @return ColRow list of coordinates of pixels corresponding to each polygon in shp
 #' @importFrom rgdal readOGR
+#' @import tools
 Extract.Pixels.Coordinates = function(Path.Raster,Path.Vector){
   # read vector file
   Shp.Path    = dirname(Path.Vector)
@@ -157,6 +160,7 @@ Get.Alpha.Metrics = function(Distrib){
 #' @param Plots list of shapefiles included in the raster
 #' @return alpha and beta diversity metrics
 #' @importFrom rgdal readOGR
+#' @import tools
 #' @export
 Get.Diversity.From.Plots = function(Raster, Plots,NbClusters = 50,Name.Plot = FALSE){
   # get hdr from raster
