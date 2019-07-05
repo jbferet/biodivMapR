@@ -13,7 +13,7 @@ Perform.PCA.Image(ImPath, ImPathShade, Output.Dir,
 
 \item{Continuum.Removal}{boolean: should continuum removal be applied?}
 
-\item{TypePCA}{Type of PCA (PCA, SPCA, NLPCA...)}
+\item{TypePCA}{Type of PCA: "PCA" or "SPCA"}
 
 \item{FilterPCA}{boolean. If TRUE 2nd filtering based on PCA}
 

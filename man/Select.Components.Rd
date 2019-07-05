@@ -14,7 +14,7 @@ Select.Components(Input.Image.File, Output.Dir, PCA.Files,
 
 \item{PCA.Files}{path of PCA files}
 
-\item{TypePCA}{Type of PCA (PCA, SPCA, NLPCA...)}
+\item{TypePCA}{Type of PCA: "PCA" or "SPCA"}
 }
 \value{
 nothing

@@ -8,7 +8,7 @@ Description: this packages allows processing image data based on the method desc
     It expects an image file as input, with a specific data format.
     ENVI HDR image with BIL interleave required
 Encoding: UTF-8
-License: GPL3
+License: GPL-3
 LazyData: true
 Imports: 
     dissUtils,
@@ -23,6 +23,7 @@ Imports:
     rgdal,
     R.utils,
     snow,
+    stringr,
     tools,
     vegan,
     zip

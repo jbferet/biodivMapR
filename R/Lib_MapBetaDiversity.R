@@ -129,7 +129,6 @@ Get.Sunlit.Pixels <- function(ImPathSunlit, MinSun) {
 #' @importFrom future.apply future_lapply
 Compute.NMDS <- function(MatBCdist) {
   nbiterNMDS <- 4
-  library(doParallel)
   if (Sys.info()["sysname"] == "Windows") {
     nbCoresNMDS <- 2
   } else if (Sys.info()["sysname"] == "Linux") {

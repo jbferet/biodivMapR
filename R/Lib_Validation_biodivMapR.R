@@ -313,10 +313,10 @@ Get.Diversity.From.Plots = function(Raster, Plots,NbClusters = 50,Name.Plot = FA
 # @param quiet
 # @return NULL
 #' @importFrom rgdal readOGR
+#' @importFrom raster writeRaster
 gdal_polygonizeR = function(x, outshape=NULL, gdalformat = 'ESRI Shapefile',
                             pypath=NULL, readpoly=TRUE, quiet=TRUE) {
 
-  if (readpoly==TRUE) require(rgdal)
   if (is.null(pypath)) {
     pypath <- Sys.which('gdal_polygonize.py')
   }
@@ -335,7 +335,6 @@ gdal_polygonizeR = function(x, outshape=NULL, gdalformat = 'ESRI Shapefile',
     #                             sep='.')[f.exists])), call.=FALSE)
   } else outshape <- tempfile()
   if (is(x, 'Raster')) {
-    require(raster)
     writeRaster(x, {f <- tempfile(fileext='.tif')})
     rastpath <- normalizePath(f)
   } else if (is.character(x)) {

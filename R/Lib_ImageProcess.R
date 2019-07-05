@@ -997,9 +997,10 @@ Where.To.Write.Kernel <- function(HDR.SS, HDR.SSD, nbPieces, SE.Size) {
 # @param headerFpath Path of the hdr file
 #
 # @return
+#' @importFrom stringr str_count
 write.ENVI.header <- function(header, headerFpath) {
   h <- lapply(header, function(x) {
-    if (length(x) > 1 || (is.character(x) && stringr::str_count(x, "\\w+") > 1)) {
+    if (length(x) > 1 || (is.character(x) && str_count(x, "\\w+") > 1)) {
       x <- paste0("{", paste(x, collapse = ","), "}")
     }
     # convert last numerics

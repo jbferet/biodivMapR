@@ -14,7 +14,7 @@
 #' @param ImNames Path and name of the images to be processed
 #' @param Output.Dir output directory
 #' @param Continuum.Removal boolean: should continuum removal be applied?
-#' @param TypePCA Type of PCA (PCA, SPCA, NLPCA...)
+#' @param TypePCA Type of PCA: "PCA" or "SPCA"
 #' @param FilterPCA boolean. If TRUE 2nd filtering based on PCA
 #' @param Excluded.WL boolean. Water Vapor Absorption domains (in nanometers). Can also be used to exclude spectific domains
 #' @param NbIter numeric. Number of iteration to estimate diversity from the raster.
@@ -61,12 +61,12 @@ Perform.PCA.Image <- function(ImPath, ImPathShade, Output.Dir, Continuum.Removal
   print("perform PCA#1 on the subset image")
   if (TypePCA == "PCA" | TypePCA == "SPCA") {
     PCA.model <- pca(DataSubset, TypePCA)
-  } else if (TypePCA == "NLPCA") {
-    print("performing NL-PCA with autoencoder")
-    print("Make sure you properly installed and defined python environment if using this functionality")
-    tic()
-    PCA.model <- nlpca(DataSubset)
-    toc()
+  # } else if (TypePCA == "NLPCA") {
+  #   print("performing NL-PCA with autoencoder")
+  #   print("Make sure you properly installed and defined python environment if using this functionality")
+  #   tic()
+  #   PCA.model <- nlpca(DataSubset)
+  #   toc()
   }
 
   # if PCA based filtering:
@@ -111,11 +111,11 @@ Perform.PCA.Image <- function(ImPath, ImPathShade, Output.Dir, Continuum.Removal
     print("perform PCA#2 on the subset image")
     if (TypePCA == "PCA" | TypePCA == "SPCA") {
       PCA.model <- pca(DataSubset, TypePCA)
-    } else if (TypePCA == "NLPCA") {
-      print("performing NL-PCA with autoencoder")
-      tic()
-      PCA.model <- nlpca(DataSubset)
-      toc()
+    # } else if (TypePCA == "NLPCA") {
+    #   print("performing NL-PCA with autoencoder")
+    #   tic()
+    #   PCA.model <- nlpca(DataSubset)
+    #   toc()
     }
   }
   # Number of PCs computed and written in the PCA file: 30 if hyperspectral
@@ -242,24 +242,24 @@ Filter.PCA <- function(ImPath, HDR, ImPathShade, Shade.Update, Spectral, CR, PCA
     # Apply PCA
     if (TypePCA == "PCA" | TypePCA == "SPCA") {
       Image.Chunk <- t(t(PCA.model$eiV[, PCsel]) %*% t(Center.Reduce(Image.Chunk, PCA.model$mu, PCA.model$scale)))
-    } else if (TypePCA == "NLPCA") {
-      # apply a transformation to the dataset
-      Image.Chunk <- apply(Image.Chunk, 2, minmax, mode = "apply", MinX = PCA.model$MinVal, MaxX = PCA.model$MaxVal)
-      Image.Chunk2 <- matrix(NA, nrow = length(Image.Chunk[[1]]$data), ncol = length(Image.Chunk))
-      for (ii in 1:length(Image.Chunk)) {
-        Image.Chunk2[, ii] <- matrix(Image.Chunk[[ii]]$data, ncol = 1)
-      }
-      Image.Chunk <- Image.Chunk2
-      rm(Image.Chunk2)
-      intermediate_layer_model <- keras_model(inputs = PCA.model$Model$input, outputs = get_layer(PCA.model$Model, "bottleneck")$output)
-
-      # # use multithread to apply autoencoder...
-      # plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
-      # Image.Chunk     = splitRows(Image.Chunk, nbCPU)
-      # Image.Chunk     = future_lapply(Image.Chunk,FUN = predict.from.NLPCA,model  = intermediate_layer_model,future.scheduling = 1.0)
-      # plan(sequential)
-      # Image.Chunk     = rbind(Image.Chunk)
-      Image.Chunk <- predict(intermediate_layer_model, Image.Chunk)
+    # } else if (TypePCA == "NLPCA") {
+    #   # apply a transformation to the dataset
+    #   Image.Chunk <- apply(Image.Chunk, 2, minmax, mode = "apply", MinX = PCA.model$MinVal, MaxX = PCA.model$MaxVal)
+    #   Image.Chunk2 <- matrix(NA, nrow = length(Image.Chunk[[1]]$data), ncol = length(Image.Chunk))
+    #   for (ii in 1:length(Image.Chunk)) {
+    #     Image.Chunk2[, ii] <- matrix(Image.Chunk[[ii]]$data, ncol = 1)
+    #   }
+    #   Image.Chunk <- Image.Chunk2
+    #   rm(Image.Chunk2)
+    #   intermediate_layer_model <- keras_model(inputs = PCA.model$Model$input, outputs = get_layer(PCA.model$Model, "bottleneck")$output)
+    #
+    #   # # use multithread to apply autoencoder...
+    #   # plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
+    #   # Image.Chunk     = splitRows(Image.Chunk, nbCPU)
+    #   # Image.Chunk     = future_lapply(Image.Chunk,FUN = predict.from.NLPCA,model  = intermediate_layer_model,future.scheduling = 1.0)
+    #   # plan(sequential)
+    #   # Image.Chunk     = rbind(Image.Chunk)
+    #   Image.Chunk <- predict(intermediate_layer_model, Image.Chunk)
     }
 
     # get PCA of the group of line and rearrange the data to write it correctly in the output file
@@ -395,24 +395,24 @@ Create.PCA.Image <- function(ImPath, ImPathShade, PCA.Path, PCA.model, Spectral,
     # Apply PCA
     if (TypePCA == "PCA" | TypePCA == "SPCA") {
       Image.Chunk <- t(t(PCA.model$eiV[, 1:Nb.PCs]) %*% t(Center.Reduce(Image.Chunk, PCA.model$mu, PCA.model$scale)))
-    } else if (TypePCA == "NLPCA") {
-      # apply a transformation to the dataset
-      Image.Chunk <- apply(Image.Chunk, 2, minmax, mode = "apply", MinX = PCA.model$MinVal, MaxX = PCA.model$MaxVal)
-      Image.Chunk2 <- matrix(NA, nrow = length(Image.Chunk[[1]]$data), ncol = length(Image.Chunk))
-      for (ii in 1:length(Image.Chunk)) {
-        Image.Chunk2[, ii] <- matrix(Image.Chunk[[ii]]$data, ncol = 1)
-      }
-      Image.Chunk <- Image.Chunk2
-      rm(Image.Chunk2)
-      intermediate_layer_model <- keras_model(inputs = PCA.model$Model$input, outputs = get_layer(PCA.model$Model, "bottleneck")$output)
-
-      # # use multithread to apply autoencoder...
-      # plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
-      # Image.Chunk     = splitRows(Image.Chunk, nbCPU)
-      # Image.Chunk     = future_lapply(Image.Chunk,FUN = predict.from.NLPCA,model  = intermediate_layer_model,future.scheduling = 1.0)
-      # plan(sequential)
-      # Image.Chunk     = rbind(Image.Chunk)
-      Image.Chunk <- predict(intermediate_layer_model, Image.Chunk)
+    # } else if (TypePCA == "NLPCA") {
+    #   # apply a transformation to the dataset
+    #   Image.Chunk <- apply(Image.Chunk, 2, minmax, mode = "apply", MinX = PCA.model$MinVal, MaxX = PCA.model$MaxVal)
+    #   Image.Chunk2 <- matrix(NA, nrow = length(Image.Chunk[[1]]$data), ncol = length(Image.Chunk))
+    #   for (ii in 1:length(Image.Chunk)) {
+    #     Image.Chunk2[, ii] <- matrix(Image.Chunk[[ii]]$data, ncol = 1)
+    #   }
+    #   Image.Chunk <- Image.Chunk2
+    #   rm(Image.Chunk2)
+    #   intermediate_layer_model <- keras_model(inputs = PCA.model$Model$input, outputs = get_layer(PCA.model$Model, "bottleneck")$output)
+    #
+    #   # # use multithread to apply autoencoder...
+    #   # plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
+    #   # Image.Chunk     = splitRows(Image.Chunk, nbCPU)
+    #   # Image.Chunk     = future_lapply(Image.Chunk,FUN = predict.from.NLPCA,model  = intermediate_layer_model,future.scheduling = 1.0)
+    #   # plan(sequential)
+    #   # Image.Chunk     = rbind(Image.Chunk)
+    #   Image.Chunk <- predict(intermediate_layer_model, Image.Chunk)
     }
 
     # get PCA of the group of line and rearrange the data to write it correctly in the output file
@@ -444,97 +444,97 @@ Create.PCA.Image <- function(ImPath, ImPathShade, PCA.Path, PCA.model, Spectral,
 }
 
 
-# Function to perform NLPCA
+# # Function to perform NLPCA
+# #
+# # @param DataSubset matrix to apply NLPCA on
+# #
+# # @return list of PCA parameters (PCs from X, mean, eigenvectors and values)
+# nlpca <- function(DataSubset) {
 #
-# @param DataSubset matrix to apply NLPCA on
+#   # put between 0 and 1
+#   x_train <- apply(DataSubset, 2, minmax, mode = "define")
+#   Subset <- list()
+#   nb.Vars <- ncol(DataSubset)
+#   Subset$DataSubset <- matrix(NA, nrow = nrow(DataSubset), ncol = nb.Vars)
+#   for (i in 1:nb.Vars) {
+#     Subset$DataSubset[, i] <- matrix(x_train[[i]]$data, ncol = 1)
+#     Subset$MinVal[i] <- x_train[[i]]$MinX
+#     Subset$MaxVal[i] <- x_train[[i]]$MaxX
+#   }
+#   # define number of pixels to be used for NL-PCA
+#   nbSubsamples.NLPCA <- 100000
+#   # autoencoder in keras
+#   # set training data
+#   x_train <- as.matrix(Subset$DataSubset)
 #
-# @return list of PCA parameters (PCs from X, mean, eigenvectors and values)
-nlpca <- function(DataSubset) {
-
-  # put between 0 and 1
-  x_train <- apply(DataSubset, 2, minmax, mode = "define")
-  Subset <- list()
-  nb.Vars <- ncol(DataSubset)
-  Subset$DataSubset <- matrix(NA, nrow = nrow(DataSubset), ncol = nb.Vars)
-  for (i in 1:nb.Vars) {
-    Subset$DataSubset[, i] <- matrix(x_train[[i]]$data, ncol = 1)
-    Subset$MinVal[i] <- x_train[[i]]$MinX
-    Subset$MaxVal[i] <- x_train[[i]]$MaxX
-  }
-  # define number of pixels to be used for NL-PCA
-  nbSubsamples.NLPCA <- 100000
-  # autoencoder in keras
-  # set training data
-  x_train <- as.matrix(Subset$DataSubset)
-
-  # set model
-  model <- keras_model_sequential()
-  if (nb.Vars < 12) {
-    model %>%
-      layer_dense(units = 6, activation = "tanh", input_shape = ncol(x_train)) %>%
-      layer_dense(units = 3, activation = "tanh", name = "bottleneck") %>%
-      layer_dense(units = 6, activation = "tanh") %>%
-      layer_dense(units = ncol(x_train))
-  } else if (nb.Vars > 100) {
-    model %>%
-      layer_dense(units = 100, activation = "tanh", input_shape = ncol(x_train)) %>%
-      layer_dense(units = 80, activation = "tanh") %>%
-      layer_dense(units = 60, activation = "tanh") %>%
-      layer_dense(units = 40, activation = "tanh") %>%
-      layer_dense(units = 20, activation = "tanh", name = "bottleneck") %>%
-      layer_dense(units = 40, activation = "tanh") %>%
-      layer_dense(units = 60, activation = "tanh") %>%
-      layer_dense(units = 80, activation = "tanh") %>%
-      layer_dense(units = 100, activation = "tanh") %>%
-      layer_dense(units = ncol(x_train))
-  } else if (nb.Vars <= 100) {
-    model %>%
-      layer_dense(units = 80, activation = "tanh", input_shape = ncol(x_train)) %>%
-      layer_dense(units = 60, activation = "tanh") %>%
-      layer_dense(units = 40, activation = "tanh") %>%
-      layer_dense(units = 20, activation = "tanh", name = "bottleneck") %>%
-      layer_dense(units = 40, activation = "tanh") %>%
-      layer_dense(units = 60, activation = "tanh") %>%
-      layer_dense(units = 80, activation = "tanh") %>%
-      layer_dense(units = ncol(x_train))
-  }
-  # view model layers
-  summary(model)
-  # compile model
-  model %>% keras::compile(
-    loss = "mean_squared_error",
-    optimizer = "adam"
-  )
-
-  # fit model
-  Sampling <- sample(nrow(x_train))
-  model %>% keras::fit(
-    x = x_train[Sampling[1:nbSubsamples.NLPCA], ],
-    y = x_train[Sampling[1:nbSubsamples.NLPCA], ],
-    epochs = 100,
-    verbose = 0
-  )
-  # # evaluate the performance of the model
-  # mse.ae2 <- keras::evaluate(model, x_train, x_train)
-  # mse.ae2
-  # extract the bottleneck layer
-  intermediate_layer_model <- keras_model(inputs = model$input, outputs = get_layer(model, "bottleneck")$output)
-  intermediate_output <- predict(intermediate_layer_model, x_train)
-  my_list <- list("Model" = model, "dataPCA" = intermediate_output, "MinVal" = Subset$MinVal, "MaxVal" = Subset$MaxVal)
-  return(my_list)
-}
-
-# applies NLPCA to data
+#   # set model
+#   model <- keras_model_sequential()
+#   if (nb.Vars < 12) {
+#     model %>%
+#       layer_dense(units = 6, activation = "tanh", input_shape = ncol(x_train)) %>%
+#       layer_dense(units = 3, activation = "tanh", name = "bottleneck") %>%
+#       layer_dense(units = 6, activation = "tanh") %>%
+#       layer_dense(units = ncol(x_train))
+#   } else if (nb.Vars > 100) {
+#     model %>%
+#       layer_dense(units = 100, activation = "tanh", input_shape = ncol(x_train)) %>%
+#       layer_dense(units = 80, activation = "tanh") %>%
+#       layer_dense(units = 60, activation = "tanh") %>%
+#       layer_dense(units = 40, activation = "tanh") %>%
+#       layer_dense(units = 20, activation = "tanh", name = "bottleneck") %>%
+#       layer_dense(units = 40, activation = "tanh") %>%
+#       layer_dense(units = 60, activation = "tanh") %>%
+#       layer_dense(units = 80, activation = "tanh") %>%
+#       layer_dense(units = 100, activation = "tanh") %>%
+#       layer_dense(units = ncol(x_train))
+#   } else if (nb.Vars <= 100) {
+#     model %>%
+#       layer_dense(units = 80, activation = "tanh", input_shape = ncol(x_train)) %>%
+#       layer_dense(units = 60, activation = "tanh") %>%
+#       layer_dense(units = 40, activation = "tanh") %>%
+#       layer_dense(units = 20, activation = "tanh", name = "bottleneck") %>%
+#       layer_dense(units = 40, activation = "tanh") %>%
+#       layer_dense(units = 60, activation = "tanh") %>%
+#       layer_dense(units = 80, activation = "tanh") %>%
+#       layer_dense(units = ncol(x_train))
+#   }
+#   # view model layers
+#   summary(model)
+#   # compile model
+#   model %>% keras::compile(
+#     loss = "mean_squared_error",
+#     optimizer = "adam"
+#   )
 #
-# @param Data matrix to apply NLPCA on
-# @param model.AutoEncod model defined previously
-#
-# @return Image.Chunk after NLPCA
-#' @importFrom future.apply future_lapply
-predict.from.NLPCA <- function(Data, model.AutoEncod) {
-  Image.Chunk <- future_lapply(Data, FUN = predict.from.NLPCA, model = model.AutoEncod, future.scheduling = 1.0)
-  return(Image.Chunk)
-}
+#   # fit model
+#   Sampling <- sample(nrow(x_train))
+#   model %>% keras::fit(
+#     x = x_train[Sampling[1:nbSubsamples.NLPCA], ],
+#     y = x_train[Sampling[1:nbSubsamples.NLPCA], ],
+#     epochs = 100,
+#     verbose = 0
+#   )
+#   # # evaluate the performance of the model
+#   # mse.ae2 <- keras::evaluate(model, x_train, x_train)
+#   # mse.ae2
+#   # extract the bottleneck layer
+#   intermediate_layer_model <- keras_model(inputs = model$input, outputs = get_layer(model, "bottleneck")$output)
+#   intermediate_output <- predict(intermediate_layer_model, x_train)
+#   my_list <- list("Model" = model, "dataPCA" = intermediate_output, "MinVal" = Subset$MinVal, "MaxVal" = Subset$MaxVal)
+#   return(my_list)
+# }
+
+# # applies NLPCA to data
+# #
+# # @param Data matrix to apply NLPCA on
+# # @param model.AutoEncod model defined previously
+# #
+# # @return Image.Chunk after NLPCA
+# # @importFrom future.apply future_lapply
+# predict.from.NLPCA <- function(Data, model.AutoEncod) {
+#   Image.Chunk <- future_lapply(Data, FUN = predict.from.NLPCA, model = model.AutoEncod, future.scheduling = 1.0)
+#   return(Image.Chunk)
+# }
 
 # Function to perform PCA on a matrix
 #
@@ -620,7 +620,7 @@ Define.Pixels.Per.Iter <- function(ImNames, NbIter = NbIter) {
 #' @param Output.Dir output directory
 #' @param Input.Image.File path for image to be processed
 #' @param PCA.Files path of PCA files
-#' @param TypePCA Type of PCA (PCA, SPCA, NLPCA...)
+#' @param TypePCA Type of PCA: "PCA" or "SPCA"
 #'
 #' @return nothing
 #' @export
