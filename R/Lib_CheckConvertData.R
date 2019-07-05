@@ -23,7 +23,7 @@
 #' @import raster
 #' @import tools
 #' @export
-Convert.Raster2BIL <- function(Raster.Path, Sensor = "unknown", Output.Directory = FALSE, Convert.Integer = TRUE, Multiplying.Factor = 1, Multiplying.Factor.Last = 1) {
+raster2BIL <- function(Raster.Path, Sensor = "unknown", Output.Directory = FALSE, Convert.Integer = TRUE, Multiplying.Factor = 1, Multiplying.Factor.Last = 1) {
 
   # get directory and file name of original image
   Input.File <- basename(Raster.Path)
@@ -159,7 +159,7 @@ Convert.Raster2BIL <- function(Raster.Path, Sensor = "unknown", Output.Directory
 #' @param Mask is the raster a mask?
 #'
 #' @export
-Check.Data.Format <- function(Raster.Path, Mask = FALSE) {
+check_data <- function(Raster.Path, Mask = FALSE) {
   HDR.Path <- Get.HDR.Name(Raster.Path)
   # check if the hdr file exists
   if (file.exists(HDR.Path)) {

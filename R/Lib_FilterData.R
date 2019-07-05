@@ -14,7 +14,7 @@
 #' @param Image.Path Path of the image to be processed
 #' @param Mask.Path Path of the mask corresponding to the image
 #' @param Output.Dir output directory
-#' @param TypePCA Type of PCA (PCA, SPCA, NLPCA...)
+#' @param TypePCA Type of PCA: "PCA" or "SPCA"
 #' @param NDVI.Thresh NDVI threshold applied to produce a mask (select pixels with NDVI>NDVI.Thresh)
 #' @param Blue.Thresh Blue threshold applied to produce a mask (select pixels with Blue refl < Blue.Thresh --> filter clouds) refl expected between 0 and 10000
 #' @param NIR.Thresh NIR threshold applied to produce a mask (select pixels with NIR refl < NIR.Thresh) refl expected between 0 and 10000

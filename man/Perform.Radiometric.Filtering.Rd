@@ -15,7 +15,7 @@ Perform.Radiometric.Filtering(Image.Path, Mask.Path, Output.Dir,
 
 \item{Output.Dir}{output directory}
 
-\item{TypePCA}{Type of PCA (PCA, SPCA, NLPCA...)}
+\item{TypePCA}{Type of PCA: "PCA" or "SPCA"}
 
 \item{NDVI.Thresh}{NDVI threshold applied to produce a mask (select pixels with NDVI>NDVI.Thresh)}
 

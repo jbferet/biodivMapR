@@ -1,23 +1,14 @@
-1- link raw data included in data-raw, or put it in a directory publicly available where the package will be proposed.
+# TODO
 
-2- hide all functions except:
-- Check.Data.Format
-- Convert.Raster2BIL
-- Perform.Radiometric.Filtering
-- Perform.PCA.Images
-- Select.Components
-- Map.Spectral.Species
-- Map.Alpha.Diversity
-- Map.Beta.Diversity
-- Get.List.Shp
-- Get.Projection
-- Get.Diversity.From.Plots
+1- put use case data in another repository/ftp to reduce package size, include smaller data for tests
 
-3- add manual help based on 'Main_DiversityMapping.R'
+2- clean code (optimize):
+  - rename functions without upper case and dots
+  - reduce dependcies (matlab)
 
-4- produce a binary/compiled packages for version beta
+3- include tests
 
-5- put the binary package ready to be installed in a directory publicly available where the data is stored as well.
+4- submit to CRAN
 
-7- CRAN & nettoyage du code
+
 

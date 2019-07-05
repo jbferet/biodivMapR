@@ -11,39 +11,40 @@
 # ==============================================================================
 
 #' get projection of a raster or a vector
-#' @param Path.File path for a raster or vector (shapefile)
-#' @param Type 'raster' or 'vector'
+#' @param file path for a raster or vector (shapefile)
+#' @param type 'raster' or 'vector'
 #' @return projection
+#' @importFrom raster raster shapefile projection
 #' @importFrom rgdal readOGR
 #' @import tools
 #' @export
-Get.Projection = function(Path.File,Type = 'raster'){
+projection.file <- function(file, type = 'raster'){
   if (Type == 'raster'){
-    obj  = raster(Path.File)
+    obj <- raster(file)
   } else if (Type == 'vector'){
-    Shp.Path      = dirname(Path.File)
-    Shp.Name      = file_path_sans_ext(basename(Path.File))
+    Shp.Path      = dirname(file)
+    Shp.Name      = file_path_sans_ext(basename(file))
     obj  = readOGR(dsn = Shp.Path,layer = Shp.Name,verbose = FALSE)
   }
-  Projection  = projection(obj)
-  return(Projection)
+  projstr <- projection(obj)
+  return(projstr)
 }
 
 #' Get list of shapefiles in a directory
 #'
-#' @param Path.Shp path of the directory containing shapefiles
+#' @param x character or list. Directory containing shapefiles
 #' @return list of shapefiles names
 #' @export
-Get.List.Shp = function(Path.Shp){
-  if(typeof(Path.Shp)=='list'){
+list.shp <- function(x){
+  if(typeof(x)=='list'){
     List.Shp = c()
     ii = 0
-    for (shp in Path.Shp){
+    for (shp in x){
       ii = ii+1
-      List.Shp[ii]  = grep(dir(shp, pattern = '.shp', full.names = TRUE, ignore.case = FALSE,include.dirs = FALSE), pattern='.xml', inv=T, value=T)
+      List.Shp[ii]  = dir(shp, pattern = '.shp$', full.names = TRUE, ignore.case = FALSE,include.dirs = FALSE)
     }
   } else if(typeof(Path.Shp)=='character'){
-    List.Shp  = grep(dir(Path.Shp, pattern = '.shp', full.names = TRUE, ignore.case = FALSE,include.dirs = FALSE), pattern='.xml', inv=T, value=T)
+    List.Shp  = dir(Path.Shp, pattern = '.shp', full.names = TRUE, ignore.case = FALSE,include.dirs = FALSE)
   }
   return(List.Shp)
 }
@@ -162,7 +163,7 @@ Get.Alpha.Metrics = function(Distrib){
 #' @importFrom rgdal readOGR
 #' @import tools
 #' @export
-Get.Diversity.From.Plots = function(Raster, Plots,NbClusters = 50,Name.Plot = FALSE){
+diversity_from_plots = function(Raster, Plots,NbClusters = 50,Name.Plot = FALSE){
   # get hdr from raster
   HDR           = read.ENVI.header(paste(Raster,'.hdr',sep=''))
   nbRepetitions = HDR$bands

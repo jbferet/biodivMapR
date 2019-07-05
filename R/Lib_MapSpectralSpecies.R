@@ -15,7 +15,7 @@
 #'
 #' @param Input.Image.File Path and name of the image to be processed
 #' @param Output.Dir output directory
-#' @param TypePCA Type of PCA (PCA, SPCA, NLPCA...)
+#' @param TypePCA Type of PCA: "PCA" or "SPCA"
 #' @param PCA.Files path for PCA file
 #' @param nbCPU numeric. Number of CPUs to use in parallel.
 #' @param MaxRAM numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.
@@ -80,8 +80,9 @@ Map.Spectral.Species <- function(Input.Image.File, Output.Dir, PCA.Files, TypePC
 # @param nbclusters number of clusters used in kmeans
 #
 # @return list of centroids and parameters needed to center/reduce data
-#' @import future
+#' @importFrom future plan multiprocess sequential
 #' @importFrom future.apply future_lapply
+#' @importFrom stats kmeans
 Init.Kmeans <- function(dataPCA, Pix.Per.Iter, NbIter, nbclusters, nbCPU = 1) {
   m0 <- apply(dataPCA, 2, function(x) min(x))
   M0 <- apply(dataPCA, 2, function(x) max(x))
@@ -92,7 +93,8 @@ Init.Kmeans <- function(dataPCA, Pix.Per.Iter, NbIter, nbclusters, nbCPU = 1) {
   # multiprocess kmeans clustering
   plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
   Schedule.Per.Thread <- ceiling(length(dataPCA) / nbCPU)
-  res <- future_lapply(dataPCA, FUN = kmeans, centers = nbclusters, iter.max = 50, nstart = 10, algorithm = c("Hartigan-Wong"), future.scheduling = Schedule.Per.Thread)
+  res <- future_lapply(dataPCA, FUN = kmeans, centers = nbclusters, iter.max = 50, nstart = 10,
+                       algorithm = c("Hartigan-Wong"), future.scheduling = Schedule.Per.Thread)
   plan(sequential)
   Centroids <- list(NbIter)
   for (i in (1:NbIter)) {
@@ -177,7 +179,7 @@ Apply.Kmeans <- function(PCA.Path, PC.Select, ImPathShade, Kmeans.info, Spectral
 #
 # @return
 #' @importFrom snow splitRows
-#' @import future
+#' @importFrom future plan multiprocess sequential
 #' @importFrom future.apply future_lapply
 Compute.Spectral.Species <- function(PCA.Path, ImPathShade, Spectral.Species.Path, Location.RW, PC.Select, Kmeans.info, nbCPU = 1) {
 

@@ -14,7 +14,7 @@ Map.Spectral.Species(Input.Image.File, Output.Dir, PCA.Files,
 
 \item{PCA.Files}{path for PCA file}
 
-\item{TypePCA}{Type of PCA (PCA, SPCA, NLPCA...)}
+\item{TypePCA}{Type of PCA: "PCA" or "SPCA"}
 
 \item{nbclusters}{number of clusters defined in k-Means}
 

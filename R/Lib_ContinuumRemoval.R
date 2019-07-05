@@ -17,7 +17,7 @@
 #
 # @return samples from image and updated number of pixels to sampel if necessary
 #' @importFrom snow splitRows
-#' @import future
+#' @importFrom future plan multiprocess sequential
 #' @importFrom future.apply future_lapply
 Apply.Continuum.Removal <- function(Spectral.Data, Spectral, nbCPU = 1) {
   if (!length(Spectral$WaterVapor) == 0) {

@@ -90,7 +90,6 @@ Map.Beta.Diversity.TestnbCluster <- function(Input.Image.File, Output.Dir, Spati
 # @param MinSun minimum proportion of sunlit pixels required
 #
 # @return
-#' @importFrom future plan
 Get.Sunlit.Pixels <- function(ImPathSunlit, MinSun) {
 
   # Filter out spatial units showing poor illumination
@@ -126,6 +125,7 @@ Get.Sunlit.Pixels <- function(ImPathSunlit, MinSun) {
 # @param MatBCdist BC dissimilarity matrix
 #
 # @return BetaNMDS.sel
+#' @importFrom future plan multiprocess sequential
 #' @importFrom future.apply future_lapply
 Compute.NMDS <- function(MatBCdist) {
   nbiterNMDS <- 4
@@ -169,7 +169,7 @@ Compute.NMDS <- function(MatBCdist) {
 #
 # @return Ordination.est coordinates of each spatial unit in ordination space
 #' @importFrom snow splitRows
-#' @import future
+#' @importFrom future plan multiprocess sequential
 #' @importFrom future.apply future_lapply
 Ordination.to.NN <- function(Beta.Ordination.sel, SSD.Path, Sample.Sel, coordTotSort, NbIter, nbclusters, pcelim, nbCPU = FALSE) {
   nb.Sunlit <- dim(coordTotSort)[1]

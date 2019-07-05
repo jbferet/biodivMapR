@@ -26,7 +26,7 @@
 #' @param Index.Alpha character. Either 'Shannon', 'Simpson' or 'Fisher'.
 #'
 #' @export
-Map.Alpha.Diversity <- function(Input.Image.File, Output.Dir, Spatial.Unit,
+alpha_div <- function(Input.Image.File, Output.Dir, Spatial.Unit,
                                 TypePCA = "SPCA", nbclusters = 50,
                                 MinSun = 0.25, pcelim = 0.02,
                                 Index.Alpha = "Shannon", FullRes = TRUE,
@@ -153,7 +153,7 @@ Map.Alpha.Diversity.TestnbCluster <- function(ImNames, Output.Dir, Spatial.Unit,
 # @param MinSun minimum proportion of sunlit pixels required to consider plot
 #
 # @return list of mean and SD of alpha diversity metrics
-#' @import future
+#' @importFrom future plan multiprocess sequential
 #' @importFrom future.apply future_lapply
 Compute.Alpha.Diversity <- function(Spectral.Species.Path, Spatial.Unit, nbclusters, MinSun, pcelim, nbCPU = FALSE, MaxRAM = FALSE, Index.Alpha = "Shannon") {
   ##      read SpectralSpecies file and write distribution per spatial unit   ##
