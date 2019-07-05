@@ -1,6 +1,6 @@
 # ==============================================================================
-# DiversityMappR
-# Lib_ValidationDiversityMappR.R
+# biodivMapR
+# Lib_ValidationbiodivMapR.R
 # ==============================================================================
 # PROGRAMMERS:
 # Jean-Baptiste FERET <jb.feret@irstea.fr>

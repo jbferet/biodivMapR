@@ -1,5 +1,5 @@
 # ===============================================================================
-# DiversityMappR
+# biodivMapR
 # ===============================================================================
 # PROGRAMMERS:
 #
@@ -7,7 +7,7 @@
 #
 # Copyright 2019/06 Jean-Baptiste FERET
 #
-# DiversityMappR is free software: you can redistribute it and/or modify
+# biodivMapR is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
@@ -27,7 +27,7 @@
 ################################################################################
 # path (absolute or relative) for the image to process
 # expected to be in ENVI HDR format, BIL interleaved
-Input.Image.File  = system.file('extdata', 'RASTER', 'S2A_T33NUD_20180104_Subset', package = 'DiversityMappR')
+Input.Image.File  = system.file('extdata', 'RASTER', 'S2A_T33NUD_20180104_Subset', package = 'biodivMapR')
 Check.Data.Format(Input.Image.File)
 
 # convert the image using Convert.Raster2BIL if not in the proper format
@@ -114,7 +114,7 @@ Name.Raster = 'SpectralSpecies'
 Path.Raster = file.path(Dir.Raster,Name.Raster)
 
 # location of the directory where shapefiles used for validation are saved
-vect        = system.file('extdata', 'VECTOR', package = 'DiversityMappR')
+vect        = system.file('extdata', 'VECTOR', package = 'biodivMapR')
 Shannon.All = list()
 
 # list vector data

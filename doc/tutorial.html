@@ -14,7 +14,7 @@
 
 <meta name="date" content="2019-07-03" />
 
-<title>Tutorial for DiversityMappR</title>
+<title>Tutorial for biodivMapR</title>
 
 
 
@@ -93,7 +93,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 
-<h1 class="title toc-ignore">Tutorial for DiversityMappR</h1>
+<h1 class="title toc-ignore">Tutorial for biodivMapR</h1>
 <h4 class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
 <h4 class="date">2019-07-03</h4>
 
@@ -121,7 +121,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>The input images are expected to be in ENVI HDR format, BIL interleaved. To check if the flormat is good use fucntion <code>Check.Data.Format</code>. If not they should be converted with function <code>Convert.Raster2BIL</code>.</p>
 <p>A mask can also be set to work on a selected part of the input image. The mask is expected to be a raster in the same format as the image (ENVI HDR), with values 0 = masked or 1 = selected. If no mask is to be used set <code>Input.Mask.File = FALSE</code>.</p>
 <p>The output directory defined with <code>Output.Dir</code> will contain all the results. For each image processed, a subdirectory will be automatically created after its name.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Input.Image.File  =<span class="st"> </span><span class="kw">system.file</span>(<span class="st">'extdata'</span>, <span class="st">'RASTER'</span>, <span class="st">'S2A_T33NUD_20180104_Subset'</span>, <span class="dt">package =</span> <span class="st">'DiversityMappR'</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Input.Image.File  =<span class="st"> </span><span class="kw">system.file</span>(<span class="st">'extdata'</span>, <span class="st">'RASTER'</span>, <span class="st">'S2A_T33NUD_20180104_Subset'</span>, <span class="dt">package =</span> <span class="st">'biodivMapR'</span>)
 <span class="kw">Check.Data.Format</span>(Input.Image.File)
 
 Input.Image.File  =<span class="st"> </span><span class="kw">Convert.Raster2BIL</span>(<span class="dt">Raster.Path =</span> Input.Image.File,
@@ -210,7 +210,7 @@ Name.Raster =<span class="st"> 'SpectralSpecies'</span>
 Path.Raster =<span class="st"> </span><span class="kw">file.path</span>(Dir.Raster,Name.Raster)
 
 <span class="co"># location of the directory where shapefiles used for validation are saved</span>
-vect        =<span class="st"> </span><span class="kw">system.file</span>(<span class="st">'extdata'</span>, <span class="st">'VECTOR'</span>, <span class="dt">package =</span> <span class="st">'DiversityMappR'</span>)
+vect        =<span class="st"> </span><span class="kw">system.file</span>(<span class="st">'extdata'</span>, <span class="st">'VECTOR'</span>, <span class="dt">package =</span> <span class="st">'biodivMapR'</span>)
 Shannon.All =<span class="st"> </span><span class="kw">list</span>() <span class="co"># ??</span>
 
 <span class="co"># list vector data</span>

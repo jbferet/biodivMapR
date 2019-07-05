@@ -1,5 +1,5 @@
 # ==============================================================================
-# DiversityMappR
+# biodivMapR
 # Lib_CheckConvertData.R
 # ==============================================================================
 # PROGRAMMERS:
@@ -113,7 +113,7 @@ Convert.Raster2BIL <- function(Raster.Path, Sensor = "unknown", Output.Directory
 
 
   if (!Sensor == "unknown") {
-    HDR.Temp.Path <- system.file("extdata", "HDR", paste0(Sensor, ".hdr"), package = "DiversityMappR")
+    HDR.Temp.Path <- system.file("extdata", "HDR", paste0(Sensor, ".hdr"), package = "biodivMapR")
     if (file.exists(HDR.Temp.Path)) {
       message("reading header template corresponding to the sensor located here:")
       print(HDR.Temp.Path)

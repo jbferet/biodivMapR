@@ -6,7 +6,7 @@ knitr::opts_chunk$set(
 )
 
 ## ----Input / Output files------------------------------------------------
-#  Input.Image.File  = system.file('extdata', 'RASTER', 'S2A_T33NUD_20180104_Subset', package = 'DiversityMappR')
+#  Input.Image.File  = system.file('extdata', 'RASTER', 'S2A_T33NUD_20180104_Subset', package = 'biodivMapR')
 #  Check.Data.Format(Input.Image.File)
 #  
 #  Input.Image.File  = Convert.Raster2BIL(Raster.Path = Input.Image.File,
@@ -67,7 +67,7 @@ knitr::opts_chunk$set(
 #  Path.Raster = file.path(Dir.Raster,Name.Raster)
 #  
 #  # location of the directory where shapefiles used for validation are saved
-#  vect        = system.file('extdata', 'VECTOR', package = 'DiversityMappR')
+#  vect        = system.file('extdata', 'VECTOR', package = 'biodivMapR')
 #  Shannon.All = list() # ??
 #  
 #  # list vector data

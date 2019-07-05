@@ -1,5 +1,5 @@
-Package: DiversityMappR
-Title: DiversityMappR: an R package for α- and β-diversity mapping using remotely-sensed images
+Package: biodivMapR
+Title: biodivMapR: an R package for α- and β-diversity mapping using remotely-sensed images
 Version: 0.0.0.9000
 Authors@R: c( person("Jean-Baptiste", "Feret", email = "jb.feret@teledetection.fr", role = c("aut", "cre")),
     person("Florian", "de Boissieu", email = "florian.deboissieu@irstea.fr", role = c("ctb"), comment = "clean code, format as package"))
