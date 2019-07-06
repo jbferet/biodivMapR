@@ -29,7 +29,7 @@
 #' @param pcelim numeric. Minimum contribution (in \%) required for a spectral species
 #'
 #' @export
-Map.Beta.Diversity <- function(Input.Image.File, Output.Dir, Spatial.Unit,
+map_beta_div <- function(Input.Image.File, Output.Dir, Spatial.Unit,
                                TypePCA = "SPCA", nbclusters = 50,
                                Nb.Units.Ordin = 2000, MinSun = 0.25,
                                pcelim = 0.02, scaling = "PCO", FullRes = TRUE,

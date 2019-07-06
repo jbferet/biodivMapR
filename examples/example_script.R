@@ -28,10 +28,10 @@
 # path (absolute or relative) for the image to process
 # expected to be in ENVI HDR format, BIL interleaved
 Input.Image.File  = system.file('extdata', 'RASTER', 'S2A_T33NUD_20180104_Subset', package = 'biodivMapR')
-Check.Data.Format(Input.Image.File)
+check_data(Input.Image.File)
 
 # convert the image using Convert.Raster2BIL if not in the proper format
-Input.Image.File  = Convert.Raster2BIL(Raster.Path = Input.Image.File,
+Input.Image.File  = raster2BIL(Raster.Path = Input.Image.File,
                                        Sensor = 'SENTINEL_2A',
                                        Convert.Integer = TRUE,
                                        Output.Directory = '~/test')
@@ -59,7 +59,7 @@ FilterPCA         = TRUE
 ################################################################################
 ##      Check if the image format is compatible with codes (ENVI BIL)         ##
 ################################################################################
-Check.Data.Format(Input.Image.File)
+check_data(Input.Image.File)
 
 ################################################################################
 ##                    DEFINE PARAMETERS FOR METHOD                            ##
@@ -98,10 +98,10 @@ Map.Spectral.Species(Input.Image.File,Output.Dir,PCA.Files,nbCPU=nbCPU,MaxRAM=Ma
 print("MAP ALPHA DIVERSITY")
 # Index.Alpha   = c('Shannon','Simpson')
 Index.Alpha   = c('Shannon')
-Map.Alpha.Diversity(Input.Image.File,Output.Dir,Spatial.Res,nbCPU=nbCPU,MaxRAM=MaxRAM,Index.Alpha = Index.Alpha)
+map_alpha_div(Input.Image.File,Output.Dir,Spatial.Res,nbCPU=nbCPU,MaxRAM=MaxRAM,Index.Alpha = Index.Alpha)
 
 print("MAP BETA DIVERSITY")
-Map.Beta.Diversity(Input.Image.File,Output.Dir,Spatial.Res,nbCPU=nbCPU,MaxRAM=MaxRAM)
+map_beta_div(Input.Image.File,Output.Dir,Spatial.Res,nbCPU=nbCPU,MaxRAM=MaxRAM)
 
 ################################################################################
 ##          COMPUTE ALPHA AND BETA DIVERSITY FROM FIELD PLOTS                 ##
@@ -118,15 +118,15 @@ vect        = system.file('extdata', 'VECTOR', package = 'biodivMapR')
 Shannon.All = list()
 
 # list vector data
-Path.Vector         = Get.List.Shp(vect)
+Path.Vector         = list.shp(vect)
 Name.Vector         = tools::file_path_sans_ext(basename(Path.Vector))
 
 # read raster data including projection
 RasterStack         = stack(Path.Raster)
-Projection.Raster   = Get.Projection(Path.Raster,'raster')
+Projection.Raster   = projection.file(Path.Raster,'raster')
 
 # get alpha and beta diversity indicators corresponding to shapefiles
-Biodiv.Indicators           = Get.Diversity.From.Plots(Raster = Path.Raster, Plots = Path.Vector,NbClusters = nbclusters)
+Biodiv.Indicators           = diversity_from_plots(Raster = Path.Raster, Plots = Path.Vector,NbClusters = nbclusters)
 # if no name
 Biodiv.Indicators$Name.Plot = seq(1,length(Biodiv.Indicators$Shannon[[1]]),by = 1)
 Shannon.RS                  = c(Biodiv.Indicators$Shannon)[[1]]

@@ -26,7 +26,7 @@
 #' @param Index.Alpha character. Either 'Shannon', 'Simpson' or 'Fisher'.
 #'
 #' @export
-alpha_div <- function(Input.Image.File, Output.Dir, Spatial.Unit,
+map_alpha_div <- function(Input.Image.File, Output.Dir, Spatial.Unit,
                                 TypePCA = "SPCA", nbclusters = 50,
                                 MinSun = 0.25, pcelim = 0.02,
                                 Index.Alpha = "Shannon", FullRes = TRUE,

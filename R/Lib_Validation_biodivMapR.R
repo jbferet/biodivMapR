@@ -192,7 +192,7 @@ diversity_from_plots = function(Raster, Plots,NbClusters = 50,Name.Plot = FALSE)
     if (file.exists(paste(file_path_sans_ext(File.Vector),'.shp',sep=''))){
       Plot                = readOGR(Dir.Vector,Name.Vector[[ip]],verbose = FALSE)
       # check if vector and rasters are in teh same referential
-      Projection.Plot     = Get.Projection(File.Vector,'vector')
+      Projection.Plot     = projection.file(File.Vector,'vector')
       # if not, convert vector file
       if (!Projection.Raster==Projection.Plot){
         if (!file.exists(File.Vector.reproject)){
