@@ -43,8 +43,8 @@ list.shp <- function(x){
       ii = ii+1
       List.Shp[ii]  = dir(shp, pattern = '.shp$', full.names = TRUE, ignore.case = FALSE,include.dirs = FALSE)
     }
-  } else if(typeof(Path.Shp)=='character'){
-    List.Shp  = dir(Path.Shp, pattern = '.shp', full.names = TRUE, ignore.case = FALSE,include.dirs = FALSE)
+  } else if(typeof(x)=='character'){
+    List.Shp  = dir(x, pattern = '.shp$', full.names = TRUE, ignore.case = FALSE,include.dirs = FALSE)
   }
   return(List.Shp)
 }
