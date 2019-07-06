@@ -19,9 +19,9 @@
 #' @import tools
 #' @export
 projection.file <- function(file, type = 'raster'){
-  if (Type == 'raster'){
+  if (type == 'raster'){
     obj <- raster(file)
-  } else if (Type == 'vector'){
+  } else if (type == 'vector'){
     Shp.Path      = dirname(file)
     Shp.Name      = file_path_sans_ext(basename(file))
     obj  = readOGR(dsn = Shp.Path,layer = Shp.Name,verbose = FALSE)
