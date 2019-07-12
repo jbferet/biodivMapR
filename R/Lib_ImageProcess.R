@@ -49,13 +49,13 @@ Center.Reduce <- function(X, m, sig) {
 # change resolution in a HDR file
 #
 # @param HDR information read from a header file
-# @param Spatial.Unit multiplying factor for initial resolution
+# @param window_size multiplying factor for initial resolution
 #
 # @return updated HDR information
-Change.Resolution.HDR <- function(HDR, Spatial.Unit) {
+Change.Resolution.HDR <- function(HDR, window_size) {
   MapInfo <- strsplit(HDR$`map info`, split = ",")
-  MapInfo[[1]][6] <- as.numeric(MapInfo[[1]][6]) * Spatial.Unit
-  MapInfo[[1]][7] <- as.numeric(MapInfo[[1]][7]) * Spatial.Unit
+  MapInfo[[1]][6] <- as.numeric(MapInfo[[1]][6]) * window_size
+  MapInfo[[1]][7] <- as.numeric(MapInfo[[1]][7]) * window_size
   HDR$`map info` <- paste(MapInfo[[1]], collapse = ",")
   return(HDR)
 }
@@ -1050,13 +1050,13 @@ Split.Image <- function(HDR, LimitSizeGb = FALSE) {
 # revert resolution in a HDR file
 #
 # @param HDR information read from a header file
-# @param Spatial.Unit multiplying factor for initial resolution
+# @param window_size multiplying factor for initial resolution
 #
 # @return updated HDR information
-Revert.Resolution.HDR <- function(HDR, Spatial.Unit) {
+Revert.Resolution.HDR <- function(HDR, window_size) {
   MapInfo <- strsplit(HDR$`map info`, split = ",")
-  MapInfo[[1]][6] <- as.numeric(MapInfo[[1]][6]) / Spatial.Unit
-  MapInfo[[1]][7] <- as.numeric(MapInfo[[1]][7]) / Spatial.Unit
+  MapInfo[[1]][6] <- as.numeric(MapInfo[[1]][6]) / window_size
+  MapInfo[[1]][7] <- as.numeric(MapInfo[[1]][7]) / window_size
   HDR$`map info` <- paste(MapInfo[[1]], collapse = ",")
   return(HDR)
 }

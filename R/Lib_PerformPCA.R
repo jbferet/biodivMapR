@@ -23,7 +23,7 @@
 #'
 #' @return list of paths corresponding to resulting PCA files
 #' @export
-Perform.PCA.Image <- function(ImPath, ImPathShade, Output.Dir, Continuum.Removal = TRUE, TypePCA = "SPCA", FilterPCA = FALSE, Excluded.WL = FALSE, NbIter = 20, nbCPU = 1, MaxRAM = 0.25) {
+perform_PCA  <- function(ImPath, ImPathShade, Output.Dir, Continuum.Removal = TRUE, TypePCA = "SPCA", FilterPCA = FALSE, Excluded.WL = FALSE, NbIter = 20, nbCPU = 1, MaxRAM = 0.25) {
   # define the path corresponding to image, mask and output directory
   ImNames <- list()
   ImNames$Input.Image <- ImPath
@@ -34,7 +34,7 @@ Perform.PCA.Image <- function(ImPath, ImPathShade, Output.Dir, Continuum.Removal
   # Extract valid data subset and check validity
   print("Extract pixels from the images to perform PCA on a subset")
   # define number of pixels to be extracted from the image for each iteration
-  Pix.Per.Iter <- Define.Pixels.Per.Iter(ImNames, NbIter = NbIter)
+  Pix.Per.Iter <- define_pixels_per_iter(ImNames, NbIter = NbIter)
   nb.Pix.To.Sample <- NbIter * Pix.Per.Iter
   ImPathHDR <- Get.HDR.Name(ImPath)
   HDR <- read.ENVI.header(ImPathHDR)
@@ -42,7 +42,7 @@ Perform.PCA.Image <- function(ImPath, ImPathShade, Output.Dir, Continuum.Removal
   Subset <- Get.Random.Subset.From.Image(ImPath, HDR, ImPathShade, NbIter, Pix.Per.Iter)
   # if needed, apply continuum removal
   if (Continuum.Removal == TRUE) {
-    Subset$DataSubset <- Apply.Continuum.Removal(Subset$DataSubset, Spectral, nbCPU = nbCPU)
+    Subset$DataSubset <- apply_continuum_removal(Subset$DataSubset, Spectral, nbCPU = nbCPU)
   }
   # if number of pixels available inferior number initial sample size
   if (Subset$nbPix2Sample < nb.Pix.To.Sample) {
@@ -86,13 +86,13 @@ Perform.PCA.Image <- function(ImPath, ImPathShade, Output.Dir, Continuum.Removal
     }
     Shade.Update <- paste(Output.Dir2, "ShadeMask_Update_PCA", sep = "")
     Subset.PCA <- PCA.model$dataPCA[, PCsel]
-    ImPathShade <- Filter.PCA(ImPath, HDR, ImPathShade, Shade.Update, Spectral, Continuum.Removal, PCA.model, PCsel, TypePCA, nbCPU = nbCPU, MaxRAM = MaxRAM)
+    ImPathShade <- filter_PCA(ImPath, HDR, ImPathShade, Shade.Update, Spectral, Continuum.Removal, PCA.model, PCsel, TypePCA, nbCPU = nbCPU, MaxRAM = MaxRAM)
     ## Compute PCA 2 based on the updated shade mask ##
     # extract a random selection of pixels from image
     Subset <- Get.Random.Subset.From.Image(ImPath, HDR, ImPathShade, NbIter, Pix.Per.Iter)
     # if needed, apply continuum removal
     if (Continuum.Removal == TRUE) {
-      Subset$DataSubset <- Apply.Continuum.Removal(Subset$DataSubset, Spectral, nbCPU = nbCPU)
+      Subset$DataSubset <- apply_continuum_removal(Subset$DataSubset, Spectral, nbCPU = nbCPU)
     }
     # if number of pixels available inferior number initial sample size
     if (Subset$nbPix2Sample < nb.Pix.To.Sample) {
@@ -127,7 +127,7 @@ Perform.PCA.Image <- function(ImPath, ImPathShade, Output.Dir, Continuum.Removal
   print("Apply PCA model to the whole image")
   Output.Dir.PCA <- Define.Output.SubDir(Output.Dir, ImPath, TypePCA, "PCA")
   PCA.Path <- paste(Output.Dir.PCA, "OutputPCA_", Nb.PCs, "_PCs", sep = "")
-  Create.PCA.Image(ImPath, ImPathShade, PCA.Path, PCA.model, Spectral, Nb.PCs, Continuum.Removal, TypePCA, nbCPU, MaxRAM = MaxRAM)
+  write_PCA_raster(ImPath, ImPathShade, PCA.Path, PCA.model, Spectral, Nb.PCs, Continuum.Removal, TypePCA, nbCPU, MaxRAM = MaxRAM)
   # save workspace for this stage
   WS_Save <- paste(Output.Dir2, "PCA_Info.RData", sep = "")
   save(PCA.model, Pix.Per.Iter, NbIter, ImPathShade, file = WS_Save)
@@ -150,7 +150,7 @@ Perform.PCA.Image <- function(ImPath, ImPathShade, Output.Dir, Continuum.Removal
 # @param PCsel PCs used to filter out extreme values
 #
 # @return Shade.Update = updated shade mask
-Filter.PCA <- function(ImPath, HDR, ImPathShade, Shade.Update, Spectral, CR, PCA.model, PCsel, TypePCA, nbCPU = 1, MaxRAM = 0.25) {
+filter_PCA <- function(ImPath, HDR, ImPathShade, Shade.Update, Spectral, CR, PCA.model, PCsel, TypePCA, nbCPU = 1, MaxRAM = 0.25) {
 
   # 1- get extreme values falling outside of mean +- 3SD for PCsel first components
   # compute mean and sd of the 5 first components of the sampled data
@@ -228,12 +228,12 @@ Filter.PCA <- function(ImPath, HDR, ImPathShade, Shade.Update, Spectral, CR, PCA
     keepShade <- which(Shade.Chunk == 1)
     Image.Chunk <- Image.Chunk[keepShade, ]
 
-    # these two lines are perfomed in Apply.Continuum.Removal
+    # these two lines are perfomed in apply_continuum_removal
     # # Eliminate water vapor
     # Image.Chunk     = Image.Chunk[,Spectral$Bands2Keep]
     # apply Continuum removal if needed
     if (CR == TRUE) {
-      Image.Chunk <- Apply.Continuum.Removal(Image.Chunk, Spectral, nbCPU = nbCPU)
+      Image.Chunk <- apply_continuum_removal(Image.Chunk, Spectral, nbCPU = nbCPU)
     }
     # remove constant bands if needed
     if (!length(Spectral$BandsNoVar) == 0) {
@@ -309,7 +309,7 @@ Filter.PCA <- function(ImPath, HDR, ImPathShade, Shade.Update, Spectral, CR, PCA
 # @param MaxRAM max RAM when initial image is read (in Gb)
 #
 # @return
-Create.PCA.Image <- function(ImPath, ImPathShade, PCA.Path, PCA.model, Spectral, Nb.PCs, CR, TypePCA, nbCPU = 1, MaxRAM = 0.25) {
+write_PCA_raster <- function(ImPath, ImPathShade, PCA.Path, PCA.model, Spectral, Nb.PCs, CR, TypePCA, nbCPU = 1, MaxRAM = 0.25) {
   ImPathHDR <- Get.HDR.Name(ImPath)
   HDR <- read.ENVI.header(ImPathHDR)
   ShadeHDR <- Get.HDR.Name(ImPathShade)
@@ -372,7 +372,7 @@ Create.PCA.Image <- function(ImPath, ImPathShade, PCA.Path, PCA.model, Spectral,
 
     # apply Continuum removal if needed
     if (CR == TRUE) {
-      Image.Chunk <- Apply.Continuum.Removal(Image.Chunk, Spectral, nbCPU = nbCPU)
+      Image.Chunk <- apply_continuum_removal(Image.Chunk, Spectral, nbCPU = nbCPU)
       ## added June 5, 2019
       if (length(Spectral$BandsNoVar) > 0) {
         Image.Chunk <- Image.Chunk[, -Spectral$BandsNoVar]
@@ -561,7 +561,7 @@ pca <- function(X, type) {
 # @param NbIter number of iterations peformed to average diversity indices
 #
 # @return Pix.Per.Iter number of pixels per iteration
-Define.Pixels.Per.Iter <- function(ImNames, NbIter = NbIter) {
+define_pixels_per_iter <- function(ImNames, NbIter = NbIter) {
   ImPath <- ImNames$Input.Image
   ImPathShade <- ImNames$Mask.list
   # define dimensions of the image
@@ -624,7 +624,7 @@ Define.Pixels.Per.Iter <- function(ImNames, NbIter = NbIter) {
 #'
 #' @return nothing
 #' @export
-Select.Components <- function(Input.Image.File, Output.Dir, PCA.Files, TypePCA = "SPCA", File.Open = FALSE) {
+select_PCA_components <- function(Input.Image.File, Output.Dir, PCA.Files, TypePCA = "SPCA", File.Open = FALSE) {
   message("")
   message("*********************************************************")
   message("Please check following PCA file:")

@@ -22,7 +22,7 @@
 #'
 #' @return ImPathShade = updated shademask file
 #' @export
-Perform.Radiometric.Filtering <- function(Image.Path, Mask.Path, Output.Dir, TypePCA = "SPCA", NDVI.Thresh = 0.5, Blue.Thresh = 500, NIR.Thresh = 1500, Blue = 480, Red = 700, NIR = 835) {
+perform_radiometric_filtering <- function(Image.Path, Mask.Path, Output.Dir, TypePCA = "SPCA", NDVI.Thresh = 0.5, Blue.Thresh = 500, NIR.Thresh = 1500, Blue = 480, Red = 700, NIR = 835) {
   # define full output directory
   Output.Dir.Full <- Define.Output.Dir(Output.Dir, Image.Path, TypePCA)
   # define dimensions of the image
@@ -42,7 +42,7 @@ Perform.Radiometric.Filtering <- function(Image.Path, Mask.Path, Output.Dir, Typ
     print("Update mask based on NDVI, NIR and Blue threshold")
   }
   Shade.Update <- paste(Output.Dir.Full, "ShadeMask_Update", sep = "")
-  Mask.Path <- Create.Mask.Optical(Image.Path, Mask.Path, Shade.Update, NDVI.Thresh, Blue.Thresh, NIR.Thresh, Blue, Red, NIR)
+  Mask.Path <- create_mask_from_threshold(Image.Path, Mask.Path, Shade.Update, NDVI.Thresh, Blue.Thresh, NIR.Thresh, Blue, Red, NIR)
   return(Mask.Path)
 }
 
@@ -60,7 +60,7 @@ Perform.Radiometric.Filtering <- function(Image.Path, Mask.Path, Output.Dir, Typ
 # @param NIR.Thresh NIR threshold applied to produce a mask (select pixels with NIR refl < NIR.Thresh) refl expected between 0 and 10000
 #
 # @return ImPathShade path for the updated shademask produced
-Create.Mask.Optical <- function(ImPath, ImPathShade, ImPathShade.Update, NDVI.Thresh, Blue.Thresh, NIR.Thresh, Blue = 480, Red = 700, NIR = 835) {
+create_mask_from_threshold <- function(ImPath, ImPathShade, ImPathShade.Update, NDVI.Thresh, Blue.Thresh, NIR.Thresh, Blue = 480, Red = 700, NIR = 835) {
   # define wavelength corresponding to the spectral domains Blue, Red and NIR
   Spectral.Bands <- c(Blue, Red, NIR)
   ImPathHDR <- Get.HDR.Name(ImPath)

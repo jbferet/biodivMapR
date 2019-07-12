@@ -19,7 +19,7 @@
 #' @importFrom snow splitRows
 #' @importFrom future plan multiprocess sequential
 #' @importFrom future.apply future_lapply
-Apply.Continuum.Removal <- function(Spectral.Data, Spectral, nbCPU = 1) {
+apply_continuum_removal <- function(Spectral.Data, Spectral, nbCPU = 1) {
   if (!length(Spectral$WaterVapor) == 0) {
     Spectral.Data <- Spectral.Data[, -Spectral$WaterVapor]
   }
@@ -60,7 +60,7 @@ Apply.Continuum.Removal <- function(Spectral.Data, Spectral, nbCPU = 1) {
 ContinuumRemoval <- function(Minit, Spectral.Bands) {
 
   # Filter and prepare data prior to continuum removal
-  CR.data <- Filter.Prior.CR(Minit, Spectral.Bands)
+  CR.data <- filter_prior_CR(Minit, Spectral.Bands)
   Minit <- CR.data$Minit
   nb.Bands <- dim(Minit)[2]
   CR.data$Minit <- c()
@@ -141,7 +141,7 @@ ContinuumRemoval <- function(Minit, Spectral.Bands) {
 #
 # @return updated Minit
 #' @importFrom matrixStats rowSds
-Filter.Prior.CR <- function(Minit, Spectral.Bands) {
+filter_prior_CR <- function(Minit, Spectral.Bands) {
 
   # number of samples to be processed
   nb.Samples <- nrow(Minit)

@@ -51,11 +51,16 @@ Output.Dir        = 'RESULTS'
 # resolution of spatial units for alpha and beta diversity maps (in pixels), relative to original image
 # if Res.Map = 10 for images with 10 m spatial resolution, then spatial units will be 10 pixels x 10m = 100m x 100m surfaces
 # rule of thumb: spatial units between 0.25 and 4 ha usually match with ground data
-# too small Spatial.Res results in low number of pixels per spatial unit, hence limited range of variation of diversity in the image
-Spatial.Res       = 10
+# too small window_size results in low number of pixels per spatial unit, hence limited range of variation of diversity in the image
+window_size       = 10
 
 # PCA FILTERING: 		Set to TRUE if you want second filtering based on PCA outliers to be processed. Slower
 FilterPCA         = TRUE
+
+# type of PCA:
+# PCA: no rescaling of the data
+# SPCA: rescaling of the data
+TypePCA     = 'SPCA'
 
 ################################################################################
 ##      Check if the image format is compatible with codes (ENVI BIL)         ##
@@ -77,39 +82,38 @@ NDVI.Thresh = 0.5
 Blue.Thresh = 500
 NIR.Thresh  = 1500
 print("PERFORM RADIOMETRIC FILTERING")
-ImPathShade         = Perform.Radiometric.Filtering(Input.Image.File,Input.Mask.File,Output.Dir,
+ImPathShade         = perform_radiometric_filtering(Input.Image.File,Input.Mask.File,Output.Dir,
                                                     NDVI.Thresh = NDVI.Thresh, Blue.Thresh = Blue.Thresh,
                                                     NIR.Thresh = NIR.Thresh)
 
 # 2- Compute PCA for a random selection of pixels in the raster
 print("PERFORM PCA ON RASTER")
-PCA.Files           = Perform.PCA.Image(Input.Image.File,ImPathShade,Output.Dir,FilterPCA=TRUE,nbCPU=nbCPU,MaxRAM = MaxRAM)
+PCA.Files           = perform_PCA(Input.Image.File,ImPathShade,Output.Dir,FilterPCA=TRUE,nbCPU=nbCPU,MaxRAM = MaxRAM)
 
 # 3- Select principal components from the PCA raster
-Select.Components(Input.Image.File,Output.Dir,PCA.Files,File.Open = TRUE)
+select_PCA_components(Input.Image.File,Output.Dir,PCA.Files,File.Open = TRUE)
 
 ################################################################################
 ##                      MAP ALPHA AND BETA DIVERSITY                          ##
 ################################################################################
 
 print("MAP SPECTRAL SPECIES")
-Map.Spectral.Species(Input.Image.File,Output.Dir,PCA.Files,nbCPU=nbCPU,MaxRAM=MaxRAM)
+map_spectral_species(Input.Image.File,Output.Dir,PCA.Files,nbCPU=nbCPU,MaxRAM=MaxRAM)
 
 
 print("MAP ALPHA DIVERSITY")
 # Index.Alpha   = c('Shannon','Simpson')
 Index.Alpha   = c('Shannon')
-map_alpha_div(Input.Image.File,Output.Dir,Spatial.Res,nbCPU=nbCPU,MaxRAM=MaxRAM,Index.Alpha = Index.Alpha)
+map_alpha_div(Input.Image.File,Output.Dir,window_size,nbCPU=nbCPU,MaxRAM=MaxRAM,Index.Alpha = Index.Alpha)
 
 print("MAP BETA DIVERSITY")
-map_beta_div(Input.Image.File,Output.Dir,Spatial.Res,nbCPU=nbCPU,MaxRAM=MaxRAM)
+map_beta_div(Input.Image.File,Output.Dir,window_size,nbCPU=nbCPU,MaxRAM=MaxRAM)
 
 ################################################################################
 ##          COMPUTE ALPHA AND BETA DIVERSITY FROM FIELD PLOTS                 ##
 ################################################################################
 
 # location of the spectral species raster needed for validation
-TypePCA     = 'SPCA'
 Dir.Raster  = file.path(Output.Dir,basename(Input.Image.File),TypePCA,'SpectralSpecies')
 Name.Raster = 'SpectralSpecies'
 Path.Raster = file.path(Dir.Raster,Name.Raster)

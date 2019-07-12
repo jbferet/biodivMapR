@@ -22,7 +22,7 @@
 #' @param nbclusters number of clusters defined in k-Means
 #'
 #' @export
-Map.Spectral.Species <- function(Input.Image.File, Output.Dir, PCA.Files, TypePCA = "SPCA", nbclusters = 50, nbCPU = 1, MaxRAM = FALSE) {
+map_spectral_species <- function(Input.Image.File, Output.Dir, PCA.Files, TypePCA = "SPCA", nbclusters = 50, nbCPU = 1, MaxRAM = FALSE) {
 
   # for each image
   Output.Dir2 <- Define.Output.Dir(Output.Dir, Input.Image.File, TypePCA)
@@ -63,10 +63,10 @@ Map.Spectral.Species <- function(Input.Image.File, Output.Dir, PCA.Files, TypePC
     ##    2- PERFORM KMEANS FOR EACH ITERATION & DEFINE SPECTRAL SPECIES    ##
     print("perform k-means clustering for each subset and define centroids")
     # scaling factor subPCA between 0 and 1
-    Kmeans.info <- Init.Kmeans(dataPCA, Pix.Per.Iter, NbIter, nbclusters, nbCPU)
+    Kmeans.info <- init_kmeans(dataPCA, Pix.Per.Iter, NbIter, nbclusters, nbCPU)
     ##              3- ASSIGN SPECTRAL SPECIES TO EACH PIXEL                ##
     print("apply Kmeans to the whole image and determine spectral species")
-    Apply.Kmeans(PCA.Files, PC.Select, ImPathShade, Kmeans.info, Spectral.Species.Path, nbCPU, MaxRAM)
+    apply_kmeans(PCA.Files, PC.Select, ImPathShade, Kmeans.info, Spectral.Species.Path, nbCPU, MaxRAM)
   }
   return()
 }
@@ -83,7 +83,7 @@ Map.Spectral.Species <- function(Input.Image.File, Output.Dir, PCA.Files, TypePC
 #' @importFrom future plan multiprocess sequential
 #' @importFrom future.apply future_lapply
 #' @importFrom stats kmeans
-Init.Kmeans <- function(dataPCA, Pix.Per.Iter, NbIter, nbclusters, nbCPU = 1) {
+init_kmeans <- function(dataPCA, Pix.Per.Iter, NbIter, nbclusters, nbCPU = 1) {
   m0 <- apply(dataPCA, 2, function(x) min(x))
   M0 <- apply(dataPCA, 2, function(x) max(x))
   d0 <- M0 - m0
@@ -115,7 +115,7 @@ Init.Kmeans <- function(dataPCA, Pix.Per.Iter, NbIter, nbclusters, nbCPU = 1) {
 # @param Spectral.Species.Path path for spectral species file to be written
 #
 # @return
-Apply.Kmeans <- function(PCA.Path, PC.Select, ImPathShade, Kmeans.info, Spectral.Species.Path, nbCPU = 1, MaxRAM = FALSE) {
+apply_kmeans <- function(PCA.Path, PC.Select, ImPathShade, Kmeans.info, Spectral.Species.Path, nbCPU = 1, MaxRAM = FALSE) {
   ImPathHDR <- Get.HDR.Name(PCA.Path)
   HDR.PCA <- read.ENVI.header(ImPathHDR)
   PCA.Format <- ENVI.Type2Bytes(HDR.PCA)
@@ -160,7 +160,7 @@ Apply.Kmeans <- function(PCA.Path, PC.Select, ImPathShade, Kmeans.info, Spectral
     Location.RW$lenBin.Shade <- SeqRead.Shade$ReadByte.End[i] - SeqRead.Shade$ReadByte.Start[i] + 1
     Location.RW$Byte.Start.SS <- 1 + (SeqRead.Shade$ReadByte.Start[i] - 1) * nbIter
     Location.RW$lenBin.SS <- nbIter * (SeqRead.Shade$ReadByte.End[i] - SeqRead.Shade$ReadByte.Start[i]) + 1
-    Compute.Spectral.Species(PCA.Path, ImPathShade, Spectral.Species.Path, Location.RW, PC.Select, Kmeans.info, nbCPU)
+    compute_spectral_species(PCA.Path, ImPathShade, Spectral.Species.Path, Location.RW, PC.Select, Kmeans.info, nbCPU)
   }
   return()
 }
@@ -181,7 +181,7 @@ Apply.Kmeans <- function(PCA.Path, PC.Select, ImPathShade, Kmeans.info, Spectral
 #' @importFrom snow splitRows
 #' @importFrom future plan multiprocess sequential
 #' @importFrom future.apply future_lapply
-Compute.Spectral.Species <- function(PCA.Path, ImPathShade, Spectral.Species.Path, Location.RW, PC.Select, Kmeans.info, nbCPU = 1) {
+compute_spectral_species <- function(PCA.Path, ImPathShade, Spectral.Species.Path, Location.RW, PC.Select, Kmeans.info, nbCPU = 1) {
 
   # characteristics of the centroids computed during preprocessing
   nbIter <- length(Kmeans.info$Centroids)
