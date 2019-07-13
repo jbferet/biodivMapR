@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 #  Output.Dir        = 'RESULTS'
 
 ## ----Spatial resolution--------------------------------------------------
-#  Spatial.Res = 10
+#  window_size = 10
 
 ## ----PCA filtering-------------------------------------------------------
 #  FilterPCA = TRUE
@@ -33,30 +33,30 @@ knitr::opts_chunk$set(
 #  Blue.Thresh = 500
 #  NIR.Thresh  = 1500
 #  print("PERFORM RADIOMETRIC FILTERING")
-#  ImPathShade = Perform.Radiometric.Filtering(Input.Image.File, Input.Mask.File, Output.Dir,
+#  ImPathShade = perform_radiometric_filtering(Input.Image.File, Input.Mask.File, Output.Dir,
 #                                              NDVI.Thresh = NDVI.Thresh, Blue.Thresh = Blue.Thresh,
 #                                              NIR.Thresh = NIR.Thresh)
 
 ## ----PCA-----------------------------------------------------------------
 #  print("PERFORM PCA ON RASTER")
-#  PCA.Files  = Perform.PCA.Image(Input.Image.File, ImPathShade, Output.Dir,
+#  PCA.Files  = perform_PCA(Input.Image.File, ImPathShade, Output.Dir,
 #                                 FilterPCA = TRUE, nbCPU = nbCPU, MaxRAM = MaxRAM)
 #  print("Select PCA components for diversity estimations")
-#  Select.Components(Input.Image.File, Output.Dir, PCA.Files, File.Open = TRUE)
+#  select_PCA_components(Input.Image.File, Output.Dir, PCA.Files, File.Open = TRUE)
 
 ## ----alpha and beta diversity maps---------------------------------------
 #  print("MAP SPECTRAL SPECIES")
-#  Map.Spectral.Species(Input.Image.File, Output.Dir, PCA.Files,
+#  map_spectral_species(Input.Image.File, Output.Dir, PCA.Files,
 #                       nbCPU = nbCPU, MaxRAM = MaxRAM)
 #  
 #  print("MAP ALPHA DIVERSITY")
 #  # Index.Alpha   = c('Shannon','Simpson')
 #  Index.Alpha   = c('Shannon')
-#  map_alpha_div(Input.Image.File, Output.Dir, Spatial.Res,
+#  map_alpha_div(Input.Image.File, Output.Dir, window_size,
 #                      nbCPU = nbCPU, MaxRAM = MaxRAM, Index.Alpha = Index.Alpha)
 #  
 #  print("MAP BETA DIVERSITY")
-#  map_beta_div(Input.Image.File, Output.Dir, Spatial.Res,
+#  map_beta_div(Input.Image.File, Output.Dir, window_size,
 #                     nbCPU = nbCPU, MaxRAM = MaxRAM)
 
 ## ----alpha and beta diversity indices from vector layer------------------

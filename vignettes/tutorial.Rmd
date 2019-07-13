@@ -39,8 +39,8 @@ This tutorial aims at describing the processing workflow and giving the associat
 # Processing parameters
 
 ## Input / Output files
-The input images are expected to be in ENVI HDR format, BIL interleaved. To check if the flormat is good use fucntion `Check.Data.Format`.
-If not they should be converted with function `Convert.Raster2BIL`.
+The input images are expected to be in ENVI HDR format, BIL interleaved. To check if the flormat is good use fucntion `check_data`.
+If not they should be converted with function `raster2BIL`.
 
 A mask can also be set to work on a selected part of the input image. The mask is expected to be a raster in the same format as the image (ENVI HDR), with values 0 = masked or 1 = selected. If no mask is to be used set `Input.Mask.File = FALSE`.
 
@@ -62,15 +62,15 @@ Output.Dir        = 'RESULTS'
 
 
 ## Spatial resolution
-The algorithm estimates \alpha and \beta diversity within a window, that is also the output spatial resolution. It is defined in number of pixel s of the input image with parameter `Spatial.Res`, e.g. `Spatial.Res = 10` meaning a window of 10x10 pixels. It will be the spatial resolution of the ouput rasters.
+The algorithm estimates \alpha and \beta diversity within a window, that is also the output spatial resolution. It is defined in number of pixel s of the input image with parameter `window_size`, e.g. `window_size = 10` meaning a window of 10x10 pixels. It will be the spatial resolution of the ouput rasters.
 
 As a rule of thumb, spatial units between 0.25 and 4 ha usually match with ground data.
-A Spatial.Res too small results in low number of pixels per spatial unit, hence limited range of variation of diversity in the image.
+A window_size too small results in low number of pixels per spatial unit, hence limited range of variation of diversity in the image.
 
-In this example, the spatial resolution of the input raster. Setting `Spatial.Res = 10` will result in diversity maps of spatial resolution 100x100m.
+In this example, the spatial resolution of the input raster. Setting `window_size = 10` will result in diversity maps of spatial resolution 100x100m.
 
 ```{r Spatial resolution}
-Spatial.Res = 10
+window_size = 10
 ```
 
 ## PCA filtering
@@ -83,9 +83,9 @@ FilterPCA = TRUE
 ## Computing options
 The use of computing ressources can be controled with the following parameters: 
 
-* `nbCPU` controls the parallelisation of the processing,
-* `MaxRAM` controls the size in GB of the input image chunks processed by each thread,
-* `nbclusters` controls the number of clusters (or centroids) used in kmeans of each thread. The larger the value the longer the computation time.
+* `nbCPU` controls the parallelisation of the processing: how many CPUs will be asssigned for multithreading, 
+* `MaxRAM` controls the size in GB of the input image chunks processed by each thread (this does not correspond to the max amount of RAM allocated),
+* `nbclusters` controls the number of clusters defined by k-means clustering for each repetition. Images showing moderate diversity (temperate forests) may need lower number of clusters (20), whereas highly diverse tropical forest require more (50). The larger the value the longer the computation time. 
 
 ```{r Computing options}
 nbCPU         = 4
@@ -101,46 +101,47 @@ NDVI.Thresh = 0.5
 Blue.Thresh = 500
 NIR.Thresh  = 1500
 print("PERFORM RADIOMETRIC FILTERING")
-ImPathShade = Perform.Radiometric.Filtering(Input.Image.File, Input.Mask.File, Output.Dir,
+ImPathShade = perform_radiometric_filtering(Input.Image.File, Input.Mask.File, Output.Dir,
                                             NDVI.Thresh = NDVI.Thresh, Blue.Thresh = Blue.Thresh,
                                             NIR.Thresh = NIR.Thresh)
 ```
 
 ## PCA
-A pixel-based PCA is run on the input image across the spectral bands to select the most interesting spectral information relative to spectral diversity and remove shaded pixels, spatial noise and sensor artefacts. This PCA band selection left to user judgement, wrinting to a file the bands to keep. The file is automatically created and ready to edit with function `Select.Components`. One band number by line is expected in this file. 
+A pixel-based PCA is run on the input image across the spectral bands to select the most interesting spectral information relative to spectral diversity and remove shaded pixels, spatial noise and sensor artefacts. This PCA band selection left to user judgement, wrinting to a file the bands to keep. The file is automatically created and ready to edit with function `select_PCA_components`. One band number by line is expected in this file. 
 
-For this example PCA bands 1, 2 and 5 should be kept writting the following lines in file `selected_components.txt` opened for edition:
+For this example PCA bands 1, 2 and 5 should be kept if writing the following lines in file `selected_components.txt` opened for edition (do not forget carriage return after last value):
 ```
 1
 2
 5
+
 ```
 
 Here is the code to perform PCA and select PCA bands:
 
 ```{r PCA}
 print("PERFORM PCA ON RASTER")
-PCA.Files  = Perform.PCA.Image(Input.Image.File, ImPathShade, Output.Dir,
+PCA.Files  = perform_PCA(Input.Image.File, ImPathShade, Output.Dir,
                                FilterPCA = TRUE, nbCPU = nbCPU, MaxRAM = MaxRAM)
 print("Select PCA components for diversity estimations")
-Select.Components(Input.Image.File, Output.Dir, PCA.Files, File.Open = TRUE)
+select_PCA_components(Input.Image.File, Output.Dir, PCA.Files, File.Open = TRUE)
 ```
 
 ## $\alpha$ and $\beta$ diversity maps
 
 ```{r alpha and beta diversity maps}
 print("MAP SPECTRAL SPECIES")
-Map.Spectral.Species(Input.Image.File, Output.Dir, PCA.Files,
+map_spectral_species(Input.Image.File, Output.Dir, PCA.Files,
                      nbCPU = nbCPU, MaxRAM = MaxRAM)
 
 print("MAP ALPHA DIVERSITY")
 # Index.Alpha   = c('Shannon','Simpson')
 Index.Alpha   = c('Shannon')
-map_alpha_div(Input.Image.File, Output.Dir, Spatial.Res,
+map_alpha_div(Input.Image.File, Output.Dir, window_size,
                     nbCPU = nbCPU, MaxRAM = MaxRAM, Index.Alpha = Index.Alpha)
 
 print("MAP BETA DIVERSITY")
-map_beta_div(Input.Image.File, Output.Dir, Spatial.Res,
+map_beta_div(Input.Image.File, Output.Dir, window_size,
                    nbCPU = nbCPU, MaxRAM = MaxRAM)
 ```
 

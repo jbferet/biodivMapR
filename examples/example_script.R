@@ -152,3 +152,10 @@ write.table(Results, file = paste(Path.Results,"AlphaDiversity.csv",sep=''), sep
 BC_mean = Biodiv.Indicators$BCdiss
 colnames(BC_mean) = rownames(BC_mean) = Biodiv.Indicators$Name.Plot
 write.table(BC_mean, file = paste(Path.Results,"BrayCurtis.csv",sep=''), sep="\t", dec=".", na=" ", row.names = F, col.names= T,quote=FALSE)
+
+
+####################################################
+# illustrate results
+####################################################
+
+
