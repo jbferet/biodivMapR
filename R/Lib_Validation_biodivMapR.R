@@ -54,7 +54,7 @@ list.shp <- function(x){
 # @param Projection projection to be applied to Initial.File
 # @param Reprojected.File path for the reprojected shapefile
 # @return
-#' @importFrom rgdal readOGR
+#' @importFrom rgdal readOGR writeOGR
 #' @import tools
 Reproject.Vector = function(Initial.File,Projection,Reprojected.File){
 
