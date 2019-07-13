@@ -12,14 +12,14 @@
 
 <meta name="author" content="Jean-Baptiste Féret, Florian de Boissieu" />
 
-<meta name="date" content="2019-07-05" />
+<meta name="date" content="2019-07-13" />
 
 <title>Tutorial for biodivMapR</title>
 
 
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
+<style type="text/css" data-origin="pandoc">
 div.sourceCode { overflow-x: auto; }
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
   margin: 0; padding: 0; vertical-align: baseline; border: none; }
@@ -55,7 +55,29 @@ code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
 code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
 code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+
 </style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
 
 
 
@@ -70,7 +92,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Tutorial for biodivMapR</h1>
 <h4 class="author"><em>Jean-Baptiste Féret, Florian de Boissieu</em></h4>
-<h4 class="date"><em>2019-07-05</em></h4>
+<h4 class="date"><em>2019-07-13</em></h4>
 
 
 
@@ -97,9 +119,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>A mask can also be set to work on a selected part of the input image. The mask is expected to be a raster in the same format as the image (ENVI HDR), with values 0 = masked or 1 = selected. If no mask is to be used set <code>Input.Mask.File = FALSE</code>.</p>
 <p>The output directory defined with <code>Output.Dir</code> will contain all the results. For each image processed, a subdirectory will be automatically created after its name.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Input.Image.File  =<span class="st"> </span><span class="kw">system.file</span>(<span class="st">'extdata'</span>, <span class="st">'RASTER'</span>, <span class="st">'S2A_T33NUD_20180104_Subset'</span>, <span class="dt">package =</span> <span class="st">'biodivMapR'</span>)
-<span class="kw">Check.Data.Format</span>(Input.Image.File)
+<span class="kw">check_data</span>(Input.Image.File)
 
-Input.Image.File  =<span class="st"> </span><span class="kw">Convert.Raster2BIL</span>(<span class="dt">Raster.Path =</span> Input.Image.File,
+Input.Image.File  =<span class="st"> </span><span class="kw">raster2BIL</span>(<span class="dt">Raster.Path =</span> Input.Image.File,
                                        <span class="dt">Sensor =</span> <span class="st">'SENTINEL_2A'</span>,
                                        <span class="dt">Convert.Integer =</span> <span class="ot">TRUE</span>,
                                        <span class="dt">Output.Directory =</span> <span class="st">'~/test'</span>)
@@ -167,11 +189,11 @@ PCA.Files  =<span class="st"> </span><span class="kw">Perform.PCA.Image</span>(I
 <span class="kw">print</span>(<span class="st">&quot;MAP ALPHA DIVERSITY&quot;</span>)
 <span class="co"># Index.Alpha   = c('Shannon','Simpson')</span>
 Index.Alpha   =<span class="st"> </span><span class="kw">c</span>(<span class="st">'Shannon'</span>)
-<span class="kw">Map.Alpha.Diversity</span>(Input.Image.File, Output.Dir, Spatial.Res,
+<span class="kw">map_alpha_div</span>(Input.Image.File, Output.Dir, Spatial.Res,
                     <span class="dt">nbCPU =</span> nbCPU, <span class="dt">MaxRAM =</span> MaxRAM, <span class="dt">Index.Alpha =</span> Index.Alpha)
 
 <span class="kw">print</span>(<span class="st">&quot;MAP BETA DIVERSITY&quot;</span>)
-<span class="kw">Map.Beta.Diversity</span>(Input.Image.File, Output.Dir, Spatial.Res,
+<span class="kw">map_beta_div</span>(Input.Image.File, Output.Dir, Spatial.Res,
                    <span class="dt">nbCPU =</span> nbCPU, <span class="dt">MaxRAM =</span> MaxRAM)</code></pre></div>
 </div>
 </div>
@@ -189,15 +211,15 @@ vect        =<span class="st"> </span><span class="kw">system.file</span>(<span 
 Shannon.All =<span class="st"> </span><span class="kw">list</span>() <span class="co"># ??</span>
 
 <span class="co"># list vector data</span>
-Path.Vector         =<span class="st"> </span><span class="kw">Get.List.Shp</span>(vect)
+Path.Vector         =<span class="st"> </span><span class="kw">list.shp</span>(vect)
 Name.Vector         =<span class="st"> </span>tools<span class="op">::</span><span class="kw">file_path_sans_ext</span>(<span class="kw">basename</span>(Path.Vector))
 
 <span class="co"># read raster data including projection</span>
 RasterStack         =<span class="st"> </span><span class="kw">stack</span>(Path.Raster)
-Projection.Raster   =<span class="st"> </span><span class="kw">Get.Projection</span>(Path.Raster,<span class="st">'raster'</span>)
+Projection.Raster   =<span class="st"> </span><span class="kw">projection.file</span>(Path.Raster,<span class="st">'raster'</span>)
 
 <span class="co"># get alpha and beta diversity indicators corresponding to shapefiles</span>
-Biodiv.Indicators           =<span class="st"> </span><span class="kw">Get.Diversity.From.Plots</span>(<span class="dt">Raster =</span> Path.Raster, <span class="dt">Plots =</span> Path.Vector,<span class="dt">NbClusters =</span> nbclusters)
+Biodiv.Indicators           =<span class="st"> </span><span class="kw">diversity_from_plots</span>(<span class="dt">Raster =</span> Path.Raster, <span class="dt">Plots =</span> Path.Vector,<span class="dt">NbClusters =</span> nbclusters)
 <span class="co"># if no name</span>
 Biodiv.Indicators<span class="op">$</span>Name.Plot =<span class="st"> </span><span class="kw">seq</span>(<span class="dv">1</span>,<span class="kw">length</span>(Biodiv.Indicators<span class="op">$</span>Shannon[[<span class="dv">1</span>]]),<span class="dt">by =</span> <span class="dv">1</span>)
 Shannon.RS                  =<span class="st"> </span><span class="kw">c</span>(Biodiv.Indicators<span class="op">$</span>Shannon)[[<span class="dv">1</span>]]</code></pre></div>

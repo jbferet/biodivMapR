@@ -7,9 +7,9 @@ knitr::opts_chunk$set(
 
 ## ----Input / Output files------------------------------------------------
 #  Input.Image.File  = system.file('extdata', 'RASTER', 'S2A_T33NUD_20180104_Subset', package = 'biodivMapR')
-#  Check.Data.Format(Input.Image.File)
+#  check_data(Input.Image.File)
 #  
-#  Input.Image.File  = Convert.Raster2BIL(Raster.Path = Input.Image.File,
+#  Input.Image.File  = raster2BIL(Raster.Path = Input.Image.File,
 #                                         Sensor = 'SENTINEL_2A',
 #                                         Convert.Integer = TRUE,
 #                                         Output.Directory = '~/test')
@@ -52,11 +52,11 @@ knitr::opts_chunk$set(
 #  print("MAP ALPHA DIVERSITY")
 #  # Index.Alpha   = c('Shannon','Simpson')
 #  Index.Alpha   = c('Shannon')
-#  Map.Alpha.Diversity(Input.Image.File, Output.Dir, Spatial.Res,
+#  map_alpha_div(Input.Image.File, Output.Dir, Spatial.Res,
 #                      nbCPU = nbCPU, MaxRAM = MaxRAM, Index.Alpha = Index.Alpha)
 #  
 #  print("MAP BETA DIVERSITY")
-#  Map.Beta.Diversity(Input.Image.File, Output.Dir, Spatial.Res,
+#  map_beta_div(Input.Image.File, Output.Dir, Spatial.Res,
 #                     nbCPU = nbCPU, MaxRAM = MaxRAM)
 
 ## ----alpha and beta diversity indices from vector layer------------------
@@ -71,15 +71,15 @@ knitr::opts_chunk$set(
 #  Shannon.All = list() # ??
 #  
 #  # list vector data
-#  Path.Vector         = Get.List.Shp(vect)
+#  Path.Vector         = list.shp(vect)
 #  Name.Vector         = tools::file_path_sans_ext(basename(Path.Vector))
 #  
 #  # read raster data including projection
 #  RasterStack         = stack(Path.Raster)
-#  Projection.Raster   = Get.Projection(Path.Raster,'raster')
+#  Projection.Raster   = projection.file(Path.Raster,'raster')
 #  
 #  # get alpha and beta diversity indicators corresponding to shapefiles
-#  Biodiv.Indicators           = Get.Diversity.From.Plots(Raster = Path.Raster, Plots = Path.Vector,NbClusters = nbclusters)
+#  Biodiv.Indicators           = diversity_from_plots(Raster = Path.Raster, Plots = Path.Vector,NbClusters = nbclusters)
 #  # if no name
 #  Biodiv.Indicators$Name.Plot = seq(1,length(Biodiv.Indicators$Shannon[[1]]),by = 1)
 #  Shannon.RS                  = c(Biodiv.Indicators$Shannon)[[1]]
