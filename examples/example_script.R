@@ -31,11 +31,11 @@ library(biodivMapR)
 Input.Image.File  = system.file('extdata', 'RASTER', 'S2A_T33NUD_20180104_Subset', package = 'biodivMapR')
 check_data(Input.Image.File)
 
-# convert the image using Convert.Raster2BIL if not in the proper format
-Input.Image.File  = raster2BIL(Raster.Path = Input.Image.File,
-                                       Sensor = 'SENTINEL_2A',
-                                       Convert.Integer = TRUE,
-                                       Output.Directory = '~/test')
+# # convert the image using Convert.Raster2BIL if not in the proper format
+# Input.Image.File  = raster2BIL(Raster.Path = Input.Image.File,
+#                                        Sensor = 'SENTINEL_2A',
+#                                        Convert.Integer = TRUE,
+#                                        Output.Directory = '~/test')
 
 # full path for the Mask raster corresponding to image to process
 # expected to be in ENVI HDR format, 1 band, integer 8bits
@@ -88,7 +88,7 @@ ImPathShade         = perform_radiometric_filtering(Input.Image.File,Input.Mask.
 
 # 2- Compute PCA for a random selection of pixels in the raster
 print("PERFORM PCA ON RASTER")
-PCA.Files           = perform_PCA(Input.Image.File,ImPathShade,Output.Dir,FilterPCA=TRUE,nbCPU=nbCPU,MaxRAM = MaxRAM)
+PCA.Files           = perform_PCA(Input.Image.File,ImPathShade,Output.Dir,FilterPCA=FilterPCA,nbCPU=nbCPU,MaxRAM = MaxRAM)
 
 # 3- Select principal components from the PCA raster
 select_PCA_components(Input.Image.File,Output.Dir,PCA.Files,File.Open = TRUE)
@@ -157,5 +157,45 @@ write.table(BC_mean, file = paste(Path.Results,"BrayCurtis.csv",sep=''), sep="\t
 ####################################################
 # illustrate results
 ####################################################
+library(labdsv)
+# very uglily assign vegetation type to polygons in shapefiles
+nbSamples = c(6,4,7,7)
+vg        = c('Forest high diversity', 'Forest low diversity', 'Forest medium diversity', 'low vegetation')
+Type_Vegetation = c()
+for (i in 1: length(nbSamples)){
+  for (j in 1:nbSamples[i]){
+    Type_Vegetation = c(Type_Vegetation,vg[i])
+  }
+}
+
+# apply ordination unsing PCoA (same as done for map_beta_div)
+MatBCdist = as.dist(BC_mean, diag = FALSE, upper = FALSE)
+BetaPCO   = pco(MatBCdist, k = 3)
+
+# create data frame including alpha and beta diversity
+library(ggplot2)
+Results     =  data.frame('vgtype'=Type_Vegetation,'pco1'= BetaPCO$points[,1],'pco2'= BetaPCO$points[,2],'pco3' = BetaPCO$points[,3],'shannon'=Shannon.RS)
+
+# plot field data in the PCoA space, with size corresponding to shannon index
+ggplot(Results, aes(x=pco1, y=pco2, color=vgtype,size=shannon)) +
+  geom_point(alpha=0.6) +
+  scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
+filename = file.path(Path.Results,'BetaDiversity_PcoA1_vs_PcoA2.png')
+ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
+       scale = 1, width = NA, height = NA, units = c("in", "cm", "mm"),
+       dpi = 600, limitsize = TRUE)
 
 
+ggplot(Results, aes(x=pco1, y=pco3, color=vgtype,size=shannon)) +
+  geom_point(alpha=0.6)
+filename = file.path(Path.Results,'BetaDiversity_PcoA1_vs_PcoA3.png')
+ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
+       scale = 1, width = NA, height = NA, units = c("in", "cm", "mm"),
+       dpi = 600, limitsize = TRUE)
+
+ggplot(Results, aes(x=pco2, y=pco3, color=vgtype,size=shannon)) +
+  geom_point(alpha=0.6)
+filename = file.path(Path.Results,'BetaDiversity_PcoA2_vs_PcoA3.png')
+ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
+       scale = 1, width = NA, height = NA, units = c("in", "cm", "mm"),
+       dpi = 600, limitsize = TRUE)
