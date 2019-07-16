@@ -4,7 +4,7 @@
 \alias{map_alpha_div}
 \title{maps alpha diversity indicators  based on prior selection of PCs}
 \usage{
-map_alpha_div(Input.Image.File, Output.Dir, Spatial.Unit,
+map_alpha_div(Input.Image.File, Output.Dir, window_size,
   TypePCA = "SPCA", nbclusters = 50, MinSun = 0.25, pcelim = 0.02,
   Index.Alpha = "Shannon", FullRes = TRUE, LowRes = FALSE,
   MapSTD = FALSE, nbCPU = FALSE, MaxRAM = FALSE)
@@ -14,7 +14,7 @@ map_alpha_div(Input.Image.File, Output.Dir, Spatial.Unit,
 
 \item{Output.Dir}{character. Output directory.}
 
-\item{Spatial.Unit}{numeric. Size of spatial units (in pixels) to compute diversity.}
+\item{window_size}{numeric. Size of spatial units (in pixels) to compute diversity.}
 
 \item{TypePCA}{character. Type of PCA (PCA, SPCA, NLPCA...).}
 

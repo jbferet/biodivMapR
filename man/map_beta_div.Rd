@@ -4,17 +4,17 @@
 \alias{map_beta_div}
 \title{maps beta diversity indicator based on spectral species distribution}
 \usage{
-map_beta_div(Input.Image.File, Output.Dir, Spatial.Unit,
-  TypePCA = "SPCA", nbclusters = 50, Nb.Units.Ordin = 2000,
-  MinSun = 0.25, pcelim = 0.02, scaling = "PCO", FullRes = TRUE,
-  LowRes = FALSE, nbCPU = 1, MaxRAM = 0.25)
+map_beta_div(Input.Image.File, Output.Dir, window_size, TypePCA = "SPCA",
+  nbclusters = 50, Nb.Units.Ordin = 2000, MinSun = 0.25,
+  pcelim = 0.02, scaling = "PCO", FullRes = TRUE, LowRes = FALSE,
+  nbCPU = 1, MaxRAM = 0.25)
 }
 \arguments{
 \item{Input.Image.File}{character. Path and name of the image to be processed.}
 
 \item{Output.Dir}{character. Output directory.}
 
-\item{Spatial.Unit}{numeric. Dimensions of the spatial unit.}
+\item{window_size}{numeric. Dimensions of the spatial unit.}
 
 \item{TypePCA}{character. Type of PCA (PCA, SPCA, NLPCA...).}
 
