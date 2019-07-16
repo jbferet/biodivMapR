@@ -187,14 +187,16 @@ ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
 
 
 ggplot(Results, aes(x=pco1, y=pco3, color=vgtype,size=shannon)) +
-  geom_point(alpha=0.6)
+  geom_point(alpha=0.6) +
+  scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
 filename = file.path(Path.Results,'BetaDiversity_PcoA1_vs_PcoA3.png')
 ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
        scale = 1, width = NA, height = NA, units = c("in", "cm", "mm"),
        dpi = 600, limitsize = TRUE)
 
 ggplot(Results, aes(x=pco2, y=pco3, color=vgtype,size=shannon)) +
-  geom_point(alpha=0.6)
+  geom_point(alpha=0.6) +
+  scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
 filename = file.path(Path.Results,'BetaDiversity_PcoA2_vs_PcoA3.png')
 ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
        scale = 1, width = NA, height = NA, units = c("in", "cm", "mm"),
