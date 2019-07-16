@@ -423,12 +423,12 @@ Extract.Samples.From.Image <- function(ImPath, coordPix, MaxRAM = FALSE, Progres
 # @param ImPath path for image
 # @param HDR path for hdr file
 # @param ImPathShade path for shade mask
-# @param NbIter number of iterations
+# @param nb_partitions number of k-means then averaged
 # @param Pix.Per.Iter number of pixels per iteration
 #
 # @return samples from image and updated number of pixels to sampel if necessary
-Get.Random.Subset.From.Image <- function(ImPath, HDR, ImPathShade, NbIter, Pix.Per.Iter) {
-  nbPix2Sample <- NbIter * Pix.Per.Iter
+Get.Random.Subset.From.Image <- function(ImPath, HDR, ImPathShade, nb_partitions, Pix.Per.Iter) {
+  nbPix2Sample <- nb_partitions * Pix.Per.Iter
   # get total number of pixels
   nbpix <- as.double(HDR$lines) * as.double(HDR$samples)
   # 1- Exclude masked pixels from random subset
@@ -452,9 +452,9 @@ Get.Random.Subset.From.Image <- function(ImPath, HDR, ImPathShade, NbIter, Pix.P
   # if number of pixels to sample superior to number of valid pixels, then adjust iterations
   if (NbValidPixels < nbPix2Sample) {
     nbPix2Sample <- NbValidPixels
-    NbIter <- ceiling(NbValidPixels / Pix.Per.Iter)
-    Pix.Per.Iter <- floor(NbValidPixels / NbIter)
-    nbPix2Sample <- NbIter * Pix.Per.Iter
+    nb_partitions <- ceiling(NbValidPixels / Pix.Per.Iter)
+    Pix.Per.Iter <- floor(NbValidPixels / nb_partitions)
+    nbPix2Sample <- nb_partitions * Pix.Per.Iter
   }
   # Select a subset of nbPix2Sample among pixselected
   pixselected <- ValidPixels[1:nbPix2Sample]

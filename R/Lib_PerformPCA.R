@@ -17,13 +17,13 @@
 #' @param TypePCA Type of PCA: "PCA" or "SPCA"
 #' @param FilterPCA boolean. If TRUE 2nd filtering based on PCA
 #' @param Excluded.WL boolean. Water Vapor Absorption domains (in nanometers). Can also be used to exclude spectific domains
-#' @param NbIter numeric. Number of iteration to estimate diversity from the raster.
+#' @param nb_partitions numeric. Number of repetitions to estimate diversity from the raster (averaging repetitions).
 #' @param nbCPU numeric. Number fo CPUs in use.
 #' @param MaxRAM numeric. Maximum size of chunk in GB to limit RAM allocation when reading image file.
 #'
 #' @return list of paths corresponding to resulting PCA files
 #' @export
-perform_PCA  <- function(ImPath, ImPathShade, Output.Dir, Continuum.Removal = TRUE, TypePCA = "SPCA", FilterPCA = FALSE, Excluded.WL = FALSE, NbIter = 20, nbCPU = 1, MaxRAM = 0.25) {
+perform_PCA  <- function(ImPath, ImPathShade, Output.Dir, Continuum.Removal = TRUE, TypePCA = "SPCA", FilterPCA = FALSE, Excluded.WL = FALSE, nb_partitions = 20, nbCPU = 1, MaxRAM = 0.25) {
   # define the path corresponding to image, mask and output directory
   ImNames <- list()
   ImNames$Input.Image <- ImPath
@@ -34,12 +34,12 @@ perform_PCA  <- function(ImPath, ImPathShade, Output.Dir, Continuum.Removal = TR
   # Extract valid data subset and check validity
   print("Extract pixels from the images to perform PCA on a subset")
   # define number of pixels to be extracted from the image for each iteration
-  Pix.Per.Iter <- define_pixels_per_iter(ImNames, NbIter = NbIter)
-  nb.Pix.To.Sample <- NbIter * Pix.Per.Iter
+  Pix.Per.Iter <- define_pixels_per_iter(ImNames, nb_partitions = nb_partitions)
+  nb.Pix.To.Sample <- nb_partitions * Pix.Per.Iter
   ImPathHDR <- Get.HDR.Name(ImPath)
   HDR <- read.ENVI.header(ImPathHDR)
   # extract a random selection of pixels from image
-  Subset <- Get.Random.Subset.From.Image(ImPath, HDR, ImPathShade, NbIter, Pix.Per.Iter)
+  Subset <- Get.Random.Subset.From.Image(ImPath, HDR, ImPathShade, nb_partitions, Pix.Per.Iter)
   # if needed, apply continuum removal
   if (Continuum.Removal == TRUE) {
     Subset$DataSubset <- apply_continuum_removal(Subset$DataSubset, Spectral, nbCPU = nbCPU)
@@ -47,9 +47,9 @@ perform_PCA  <- function(ImPath, ImPathShade, Output.Dir, Continuum.Removal = TR
   # if number of pixels available inferior number initial sample size
   if (Subset$nbPix2Sample < nb.Pix.To.Sample) {
     nb.Pix.To.Sample <- Subset$nbPix2Sample
-    NbIter <- ceiling(nb.Pix.To.Sample / Pix.Per.Iter)
-    Pix.Per.Iter <- floor(nb.Pix.To.Sample / NbIter)
-    nb.Pix.To.Sample <- NbIter * Pix.Per.Iter
+    nb_partitions <- ceiling(nb.Pix.To.Sample / Pix.Per.Iter)
+    Pix.Per.Iter <- floor(nb.Pix.To.Sample / nb_partitions)
+    nb.Pix.To.Sample <- nb_partitions * Pix.Per.Iter
   }
   DataSubset <- Subset$DataSubset
   # clean reflectance data from inf and constant values
@@ -89,7 +89,7 @@ perform_PCA  <- function(ImPath, ImPathShade, Output.Dir, Continuum.Removal = TR
     ImPathShade <- filter_PCA(ImPath, HDR, ImPathShade, Shade.Update, Spectral, Continuum.Removal, PCA.model, PCsel, TypePCA, nbCPU = nbCPU, MaxRAM = MaxRAM)
     ## Compute PCA 2 based on the updated shade mask ##
     # extract a random selection of pixels from image
-    Subset <- Get.Random.Subset.From.Image(ImPath, HDR, ImPathShade, NbIter, Pix.Per.Iter)
+    Subset <- Get.Random.Subset.From.Image(ImPath, HDR, ImPathShade, nb_partitions, Pix.Per.Iter)
     # if needed, apply continuum removal
     if (Continuum.Removal == TRUE) {
       Subset$DataSubset <- apply_continuum_removal(Subset$DataSubset, Spectral, nbCPU = nbCPU)
@@ -97,9 +97,9 @@ perform_PCA  <- function(ImPath, ImPathShade, Output.Dir, Continuum.Removal = TR
     # if number of pixels available inferior number initial sample size
     if (Subset$nbPix2Sample < nb.Pix.To.Sample) {
       nb.Pix.To.Sample <- Subset$nbPix2Sample
-      NbIter <- ceiling(nb.Pix.To.Sample / Pix.Per.Iter)
-      Pix.Per.Iter <- floor(nb.Pix.To.Sample / NbIter)
-      nb.Pix.To.Sample <- NbIter * Pix.Per.Iter
+      nb_partitions <- ceiling(nb.Pix.To.Sample / Pix.Per.Iter)
+      Pix.Per.Iter <- floor(nb.Pix.To.Sample / nb_partitions)
+      nb.Pix.To.Sample <- nb_partitions * Pix.Per.Iter
     }
     DataSubset <- Subset$DataSubset
     # # # assume that 1st data cleaning is enough...
@@ -130,7 +130,7 @@ perform_PCA  <- function(ImPath, ImPathShade, Output.Dir, Continuum.Removal = TR
   write_PCA_raster(ImPath, ImPathShade, PCA.Path, PCA.model, Spectral, Nb.PCs, Continuum.Removal, TypePCA, nbCPU, MaxRAM = MaxRAM)
   # save workspace for this stage
   WS_Save <- paste(Output.Dir2, "PCA_Info.RData", sep = "")
-  save(PCA.model, Pix.Per.Iter, NbIter, ImPathShade, file = WS_Save)
+  save(PCA.model, Pix.Per.Iter, nb_partitions, ImPathShade, file = WS_Save)
   PCA.Files <- PCA.Path
   return(PCA.Files)
 }
@@ -558,10 +558,10 @@ pca <- function(X, type) {
 # defines the number of pixels per iteration based on a trade-off between image size and sample size per iteration
 #
 # @param ImNames Path and name of the images to be processed
-# @param NbIter number of iterations peformed to average diversity indices
+# @param nb_partitions number of iterations peformed to average diversity indices
 #
 # @return Pix.Per.Iter number of pixels per iteration
-define_pixels_per_iter <- function(ImNames, NbIter = NbIter) {
+define_pixels_per_iter <- function(ImNames, nb_partitions = nb_partitions) {
   ImPath <- ImNames$Input.Image
   ImPathShade <- ImNames$Mask.list
   # define dimensions of the image
@@ -593,7 +593,7 @@ define_pixels_per_iter <- function(ImNames, NbIter = NbIter) {
   # trade-off between number of pixels and total pixel size
   # maximum number of pixels to be used
   Max.Pixel.Per.Iter <- 250000
-  Max.Pixel.Per.Iter.Size <- NbIter * (Max.Pixel.Per.Iter * as.double(HDR$bands) * Image.Format$Bytes) / (1024^3)
+  Max.Pixel.Per.Iter.Size <- nb_partitions * (Max.Pixel.Per.Iter * as.double(HDR$bands) * Image.Format$Bytes) / (1024^3)
   # maximum amount of data (Gb) to be used
   Max.Size.Per.Iter <- 0.3
   # amount of data available after first mask
@@ -606,11 +606,11 @@ define_pixels_per_iter <- function(ImNames, NbIter = NbIter) {
       Pix.Per.Iter <- Max.Pixel.Per.Iter
     } else if (ImDataGb < Max.Pixel.Per.Iter.Size) {
       # define number of pixels corresponding to ImDataGb
-      Pix.Per.Iter <- floor(Nb.Pixels.Sunlit / NbIter)
+      Pix.Per.Iter <- floor(Nb.Pixels.Sunlit / nb_partitions)
     }
     # if size too important, adjust number of pixels to match Max.Size.Per.Iter
   } else if (Max.Pixel.Per.Iter.Size >= Max.Size.Per.Iter) {
-    Pix.Per.Iter <- floor((Max.Size.Per.Iter * (1024^3) / (as.double(HDR$bands) * Image.Format$Bytes)) / NbIter)
+    Pix.Per.Iter <- floor((Max.Size.Per.Iter * (1024^3) / (as.double(HDR$bands) * Image.Format$Bytes)) / nb_partitions)
   }
   return(Pix.Per.Iter)
 }

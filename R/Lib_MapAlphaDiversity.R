@@ -292,9 +292,9 @@ convert_PCA_to_SSD <- function(ReadWrite, Spectral.Species.Path, HDR.SS, HDR.SSD
 compute_SSD <- function(Image.Chunk, window_size, nbclusters, MinSun, pcelim, Index.Alpha = "Shannon") {
   nbi <- floor(dim(Image.Chunk)[1] / window_size)
   nbj <- floor(dim(Image.Chunk)[2] / window_size)
-  nbIter <- dim(Image.Chunk)[3]
-  SSDMap <- array(NA, c(nbi, nbj, nbIter * nbclusters))
-  shannonIter <- FisherAlpha <- SimpsonAlpha <- array(NA, dim = c(nbi, nbj, nbIter))
+  nb_partitions <- dim(Image.Chunk)[3]
+  SSDMap <- array(NA, c(nbi, nbj, nb_partitions * nbclusters))
+  shannonIter <- FisherAlpha <- SimpsonAlpha <- array(NA, dim = c(nbi, nbj, nb_partitions))
   PCsun <- matrix(NA, nrow = nbi, ncol = nbj)
 
   # which spectral indices will be computed
@@ -312,14 +312,14 @@ compute_SSD <- function(Image.Chunk, window_size, nbclusters, MinSun, pcelim, In
       lj <- ((jj - 1) * window_size) + 1
       uj <- jj * window_size
       # put all iterations in a 2D matrix shape
-      ijit <- t(matrix(Image.Chunk[li:ui, lj:uj, ], ncol = nbIter))
+      ijit <- t(matrix(Image.Chunk[li:ui, lj:uj, ], ncol = nb_partitions))
       # keep non zero values
-      ijit <- matrix(ijit[, which(!ijit[1, ] == 0)], nrow = nbIter)
+      ijit <- matrix(ijit[, which(!ijit[1, ] == 0)], nrow = nb_partitions)
       nb.Pix.Sunlit <- dim(ijit)[2]
       PCsun[ii, jj] <- nb.Pix.Sunlit / window_size**2
       if (PCsun[ii, jj] > MinSun) {
         # for each iteration
-        for (it in 1:nbIter) {
+        for (it in 1:nb_partitions) {
           lbk <- (it - 1) * nbclusters
           SSD <- as.vector(table(ijit[it, ]))
           ClusterID <- sort(unique(ijit[it, ]))

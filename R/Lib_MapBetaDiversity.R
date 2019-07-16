@@ -39,7 +39,7 @@ map_beta_div <- function(Input.Image.File, Output.Dir, window_size,
   Output.Dir.SS <- Define.Output.SubDir(Output.Dir, Input.Image.File, TypePCA, "SpectralSpecies")
   Output.Dir.BETA <- Define.Output.SubDir(Output.Dir, Input.Image.File, TypePCA, "BETA")
   load(file = WS_Save)
-  Beta <- compute_beta_metrics(Output.Dir.SS, MinSun, Nb.Units.Ordin, NbIter,
+  Beta <- compute_beta_metrics(Output.Dir.SS, MinSun, Nb.Units.Ordin, nb_partitions,
                                 nbclusters, pcelim, scaling = scaling,
                                 nbCPU = nbCPU, MaxRAM = MaxRAM)
   # Create images corresponding to Beta-diversity
@@ -93,7 +93,7 @@ compute_NMDS <- function(MatBCdist) {
 # @param SSD.Path ath for spectral species distribution file
 # @param Sample.Sel Samples selected during ordination
 # @param coordTotSort coordinates of sunlit spatial units
-# @param NbIter number of iterations
+# @param nb_partitions number of k-means then averaged
 # @param nbclusters number of clusters
 # @param pcelim number of CPUs available
 # @param nbCPU number of CPUs available
@@ -102,7 +102,7 @@ compute_NMDS <- function(MatBCdist) {
 #' @importFrom snow splitRows
 #' @importFrom future plan multiprocess sequential
 #' @importFrom future.apply future_lapply
-ordination_to_NN <- function(Beta.Ordination.sel, SSD.Path, Sample.Sel, coordTotSort, NbIter, nbclusters, pcelim, nbCPU = FALSE) {
+ordination_to_NN <- function(Beta.Ordination.sel, SSD.Path, Sample.Sel, coordTotSort, nb_partitions, nbclusters, pcelim, nbCPU = FALSE) {
   nb.Sunlit <- dim(coordTotSort)[1]
   # define number of samples to be sampled each time during paralle processing
   nb.samples.per.sub <- round(1e7 / dim(Sample.Sel)[1])
@@ -117,7 +117,7 @@ ordination_to_NN <- function(Beta.Ordination.sel, SSD.Path, Sample.Sel, coordTot
   OutPut <- future_lapply(id.sub,
     FUN = ordination_parallel, coordTotSort = coordTotSort, SSD.Path = SSD.Path,
     Sample.Sel = Sample.Sel, Beta.Ordination.sel = Beta.Ordination.sel, Nb.Units.Ordin = Nb.Units.Ordin,
-    NbIter = NbIter, nbclusters = nbclusters, pcelim = pcelim, future.scheduling = Schedule.Per.Thread,
+    nb_partitions = nb_partitions, nbclusters = nbclusters, pcelim = pcelim, future.scheduling = Schedule.Per.Thread,
     future.packages = c("vegan", "dissUtils", "R.utils", "tools", "snow", "matlab")
   )
   plan(sequential)
@@ -134,12 +134,12 @@ ordination_to_NN <- function(Beta.Ordination.sel, SSD.Path, Sample.Sel, coordTot
 # @param Sample.Sel
 # @param Beta.Ordination.sel
 # @param Nb.Units.Ordin
-# @param NbIter
+# @param nb_partitions
 # @param nbclusters
 # @param pcelim
 #
 # @return list of mean and SD of alpha diversity metrics
-ordination_parallel <- function(id.sub, coordTotSort, SSD.Path, Sample.Sel, Beta.Ordination.sel, Nb.Units.Ordin, NbIter, nbclusters, pcelim) {
+ordination_parallel <- function(id.sub, coordTotSort, SSD.Path, Sample.Sel, Beta.Ordination.sel, Nb.Units.Ordin, nb_partitions, nbclusters, pcelim) {
 
   # get Spectral species distribution
   coordPix <- coordTotSort[id.sub, ]
@@ -147,7 +147,7 @@ ordination_parallel <- function(id.sub, coordTotSort, SSD.Path, Sample.Sel, Beta
   # compute the mean BC dissimilarity sequentially for each iteration
   MatBCtmp <- matrix(0, nrow = nrow(id.sub), ncol = Nb.Units.Ordin)
   SSDList <- list()
-  for (i in 1:NbIter) {
+  for (i in 1:nb_partitions) {
     lb <- 1 + (i - 1) * nbclusters
     ub <- i * nbclusters
     SSDList[[1]] <- SSD.NN[, lb:ub]
@@ -155,7 +155,7 @@ ordination_parallel <- function(id.sub, coordTotSort, SSD.Path, Sample.Sel, Beta
     MatBCtmp0 <- compute_BCdiss(SSDList, pcelim)
     MatBCtmp <- MatBCtmp + MatBCtmp0
   }
-  MatBCtmp <- MatBCtmp / NbIter
+  MatBCtmp <- MatBCtmp / nb_partitions
   # get the knn closest neighbors from each kernel
   knn <- 3
   OutPut <- compute_NN_from_ordination(MatBCtmp, knn, Beta.Ordination.sel)
@@ -167,7 +167,7 @@ ordination_parallel <- function(id.sub, coordTotSort, SSD.Path, Sample.Sel, Beta
 # @param Output.Dir directory where spectral species are stored
 # @param MinSun minimum proportion of sunlit pixels required to consider plot
 # @param Nb.Units.Ordin maximum number of spatial units to be processed in Ordination
-# @param NbIter number of iterations
+# @param nb_partitions number of iterations
 # @param nbclusters number of clusters defined in k-Means
 # @param scaling
 # @param nbCPU
@@ -176,7 +176,7 @@ ordination_parallel <- function(id.sub, coordTotSort, SSD.Path, Sample.Sel, Beta
 #
 # @return
 #' @importFrom labdsv pco
-compute_beta_metrics <- function(Output.Dir, MinSun, Nb.Units.Ordin, NbIter, nbclusters, pcelim, scaling = "PCO", nbCPU = FALSE, MaxRAM = FALSE) {
+compute_beta_metrics <- function(Output.Dir, MinSun, Nb.Units.Ordin, nb_partitions, nbclusters, pcelim, scaling = "PCO", nbCPU = FALSE, MaxRAM = FALSE) {
   # Define path for images to be used
   SSD.Path <- paste(Output.Dir, "SpectralSpecies_Distribution", sep = "")
   ImPathSunlit <- paste(Output.Dir, "SpectralSpecies_Distribution_Sunlit", sep = "")
@@ -208,7 +208,7 @@ compute_beta_metrics <- function(Output.Dir, MinSun, Nb.Units.Ordin, NbIter, nbc
   MatBC <- matrix(0, ncol = Nb.Units.Ordin, nrow = Nb.Units.Ordin)
   SSDList <- list()
   BC.from.SSD <- list()
-  for (i in 1:NbIter) {
+  for (i in 1:nb_partitions) {
     lb <- 1 + (i - 1) * nbclusters
     ub <- i * nbclusters
     SSDList[[1]] <- Sample.Sel[, lb:ub]
@@ -216,7 +216,7 @@ compute_beta_metrics <- function(Output.Dir, MinSun, Nb.Units.Ordin, NbIter, nbc
     BC.from.SSD <- compute_BCdiss(SSDList, pcelim)
     MatBC <- MatBC + BC.from.SSD
   }
-  MatBC <- MatBC / NbIter
+  MatBC <- MatBC / nb_partitions
 
   # Perform Ordination based on BC dissimilarity matrix
   print("perform Ordination on the BC dissimilarity matrix averaged from all iterations")
@@ -233,7 +233,7 @@ compute_beta_metrics <- function(Output.Dir, MinSun, Nb.Units.Ordin, NbIter, nbc
   # Perform nearest neighbor on spatial units excluded from Ordination
   print("BC dissimilarity between samples selected for Ordination and remaining")
   coordTotSort <- Sunlit.Pixels$coordTotSort
-  Ordination.est <- ordination_to_NN(Beta.Ordination.sel, SSD.Path, Sample.Sel, coordTotSort, NbIter, nbclusters, pcelim, nbCPU = nbCPU)
+  Ordination.est <- ordination_to_NN(Beta.Ordination.sel, SSD.Path, Sample.Sel, coordTotSort, nb_partitions, nbclusters, pcelim, nbCPU = nbCPU)
 
   # Reconstuct spatialized beta diversity map from previous computation
   Sunlit.HDR <- Get.HDR.Name(ImPathSunlit)
@@ -445,7 +445,7 @@ get_sunlit_pixels <- function(ImPathSunlit, MinSun) {
 #   Output.Dir.SS <- Define.Output.SubDir(Output.Dir, Input.Image.File, TypePCA, paste("SpectralSpecies_", nbclusters, sep = ""))
 #   Output.Dir.BETA <- Define.Output.SubDir(Output.Dir, Input.Image.File, TypePCA, paste("BETA_", nbclusters, sep = ""))
 #   load(file = WS_Save)
-#   Beta <- compute_beta_metrics(Output.Dir.SS, MinSun, Nb.Units.Ordin, NbIter, nbclusters, pcelim, scaling = scaling, nbCPU = nbCPU, MaxRAM = MaxRAM)
+#   Beta <- compute_beta_metrics(Output.Dir.SS, MinSun, Nb.Units.Ordin, nb_partitions, nbclusters, pcelim, scaling = scaling, nbCPU = nbCPU, MaxRAM = MaxRAM)
 #   # Create images corresponding to Beta-diversity
 #   print("Write beta diversity maps")
 #   Index <- paste("BetaDiversity_BCdiss_", scaling, sep = "")

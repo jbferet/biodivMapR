@@ -63,7 +63,7 @@ map_spectral_species <- function(Input.Image.File, Output.Dir, PCA.Files, TypePC
     ##    2- PERFORM KMEANS FOR EACH ITERATION & DEFINE SPECTRAL SPECIES    ##
     print("perform k-means clustering for each subset and define centroids")
     # scaling factor subPCA between 0 and 1
-    Kmeans.info <- init_kmeans(dataPCA, Pix.Per.Iter, NbIter, nbclusters, nbCPU)
+    Kmeans.info <- init_kmeans(dataPCA, Pix.Per.Iter, nb_partitions, nbclusters, nbCPU)
     ##              3- ASSIGN SPECTRAL SPECIES TO EACH PIXEL                ##
     print("apply Kmeans to the whole image and determine spectral species")
     apply_kmeans(PCA.Files, PC.Select, ImPathShade, Kmeans.info, Spectral.Species.Path, nbCPU, MaxRAM)
@@ -71,11 +71,11 @@ map_spectral_species <- function(Input.Image.File, Output.Dir, PCA.Files, TypePC
   return()
 }
 
-# computes k-means from NbIter subsets taken from dataPCA
+# computes k-means from nb_partitions subsets taken from dataPCA
 #
 # @param dataPCA initial dataset sampled from PCA image
 # @param Pix.Per.Iter number of pixels per iteration
-# @param NbIter number of iterations
+# @param nb_partitions number of k-means then averaged
 # @param nbCPU
 # @param nbclusters number of clusters used in kmeans
 #
@@ -83,21 +83,21 @@ map_spectral_species <- function(Input.Image.File, Output.Dir, PCA.Files, TypePC
 #' @importFrom future plan multiprocess sequential
 #' @importFrom future.apply future_lapply
 #' @importFrom stats kmeans
-init_kmeans <- function(dataPCA, Pix.Per.Iter, NbIter, nbclusters, nbCPU = 1) {
+init_kmeans <- function(dataPCA, Pix.Per.Iter, nb_partitions, nbclusters, nbCPU = 1) {
   m0 <- apply(dataPCA, 2, function(x) min(x))
   M0 <- apply(dataPCA, 2, function(x) max(x))
   d0 <- M0 - m0
   dataPCA <- Center.Reduce(dataPCA, m0, d0)
   # get the dimensions of the images, and the number of subimages to process
-  dataPCA <- split(as.data.frame(dataPCA), rep(1:NbIter, each = Pix.Per.Iter))
+  dataPCA <- split(as.data.frame(dataPCA), rep(1:nb_partitions, each = Pix.Per.Iter))
   # multiprocess kmeans clustering
   plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
   Schedule.Per.Thread <- ceiling(length(dataPCA) / nbCPU)
   res <- future_lapply(dataPCA, FUN = kmeans, centers = nbclusters, iter.max = 50, nstart = 10,
                        algorithm = c("Hartigan-Wong"), future.scheduling = Schedule.Per.Thread)
   plan(sequential)
-  Centroids <- list(NbIter)
-  for (i in (1:NbIter)) {
+  Centroids <- list(nb_partitions)
+  for (i in (1:nb_partitions)) {
     Centroids[[i]] <- res[[i]]$centers
   }
   my_list <- list("Centroids" = Centroids, "MinVal" = m0, "MaxVal" = M0, "Range" = d0)
@@ -130,10 +130,10 @@ apply_kmeans <- function(PCA.Path, PC.Select, ImPathShade, Kmeans.info, Spectral
   SeqRead.Shade <- Where.To.Read(HDR.Shade, nbPieces)
   # create output file for spectral species assignment
   HDR.SS <- HDR.PCA
-  nbIter <- length(Kmeans.info$Centroids)
-  HDR.SS$bands <- nbIter
+  nb_partitions <- length(Kmeans.info$Centroids)
+  HDR.SS$bands <- nb_partitions
   HDR.SS$`data type` <- 1
-  Iter <- paste('Iter', 1:nbIter, collapse = ", ")
+  Iter <- paste('Iter', 1:nb_partitions, collapse = ", ")
   HDR.SS$`band names` <- Iter
   HDR.SS$wavelength <- NULL
   HDR.SS$fwhm <- NULL
@@ -158,8 +158,8 @@ apply_kmeans <- function(PCA.Path, PC.Select, ImPathShade, Kmeans.info, Spectral
     Location.RW$lenBin.PCA <- SeqRead.PCA$ReadByte.End[i] - SeqRead.PCA$ReadByte.Start[i] + 1
     Location.RW$Byte.Start.Shade <- SeqRead.Shade$ReadByte.Start[i]
     Location.RW$lenBin.Shade <- SeqRead.Shade$ReadByte.End[i] - SeqRead.Shade$ReadByte.Start[i] + 1
-    Location.RW$Byte.Start.SS <- 1 + (SeqRead.Shade$ReadByte.Start[i] - 1) * nbIter
-    Location.RW$lenBin.SS <- nbIter * (SeqRead.Shade$ReadByte.End[i] - SeqRead.Shade$ReadByte.Start[i]) + 1
+    Location.RW$Byte.Start.SS <- 1 + (SeqRead.Shade$ReadByte.Start[i] - 1) * nb_partitions
+    Location.RW$lenBin.SS <- nb_partitions * (SeqRead.Shade$ReadByte.End[i] - SeqRead.Shade$ReadByte.Start[i]) + 1
     compute_spectral_species(PCA.Path, ImPathShade, Spectral.Species.Path, Location.RW, PC.Select, Kmeans.info, nbCPU)
   }
   return()
@@ -184,7 +184,7 @@ apply_kmeans <- function(PCA.Path, PC.Select, ImPathShade, Kmeans.info, Spectral
 compute_spectral_species <- function(PCA.Path, ImPathShade, Spectral.Species.Path, Location.RW, PC.Select, Kmeans.info, nbCPU = 1) {
 
   # characteristics of the centroids computed during preprocessing
-  nbIter <- length(Kmeans.info$Centroids)
+  nb_partitions <- length(Kmeans.info$Centroids)
   nbCentroids <- nrow(Kmeans.info$Centroids[[1]])
   CentroidsArray <- do.call("rbind", Kmeans.info$Centroids)
 
@@ -216,7 +216,7 @@ compute_spectral_species <- function(PCA.Path, ImPathShade, Spectral.Species.Pat
   SS.Format <- ENVI.Type2Bytes(HDR.SS)
 
   # for each pixel in the subset, compute the nearest cluster for each iteration
-  Nearest.Cluster <- matrix(0, nrow = Location.RW$nbLines * HDR.PCA$samples, ncol = nbIter)
+  Nearest.Cluster <- matrix(0, nrow = Location.RW$nbLines * HDR.PCA$samples, ncol = nb_partitions)
   # rdist consumes RAM  --> divide data into pieces if too big and multiprocess
   nbSamples.Per.Rdist <- 25000
   if (length(keepShade) > 0) {
@@ -225,14 +225,14 @@ compute_spectral_species <- function(PCA.Path, ImPathShade, Spectral.Species.Pat
 
     plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
     Schedule.Per.Thread <- ceiling(nbSubsets / nbCPU)
-    res <- future_lapply(PCA.Chunk, FUN = RdistList, CentroidsArray = CentroidsArray, nbClusters = nrow(Kmeans.info$Centroids[[1]]), nbIter = nbIter, future.scheduling = Schedule.Per.Thread)
+    res <- future_lapply(PCA.Chunk, FUN = RdistList, CentroidsArray = CentroidsArray, nbClusters = nrow(Kmeans.info$Centroids[[1]]), nb_partitions = nb_partitions, future.scheduling = Schedule.Per.Thread)
     plan(sequential)
     res <- do.call("rbind", res)
     Nearest.Cluster[keepShade, ] <- res
     rm(res)
     gc()
   }
-  Nearest.Cluster <- array(Nearest.Cluster, c(Location.RW$nbLines, HDR.PCA$samples, nbIter))
+  Nearest.Cluster <- array(Nearest.Cluster, c(Location.RW$nbLines, HDR.PCA$samples, nb_partitions))
   # Write spectral species distribution in the output file
   fidSS <- file(
     description = Spectral.Species.Path, open = "r+b", blocking = TRUE,
@@ -249,22 +249,22 @@ compute_spectral_species <- function(PCA.Path, ImPathShade, Spectral.Species.Pat
   return()
 }
 
-# Compute distance between each pixel of input data and each of the nbClusters x nbIter centroids
+# Compute distance between each pixel of input data and each of the nbClusters x nb_partitions centroids
 #
 # @param InputData
 # @param CentroidsArray
 # @param nbClusters
-# @param nbIter
+# @param nb_partitions
 #
 # @return ResDist
 #' @importFrom fields rdist
-RdistList <- function(InputData, CentroidsArray, nbClusters, nbIter) {
+RdistList <- function(InputData, CentroidsArray, nbClusters, nb_partitions) {
   # number of pixels in input data
   nbPixels <- nrow(InputData)
   # compute distance between each pixel and each centroid
   cluster.dist <- rdist(InputData, CentroidsArray)
   # reshape distance into a matrix: all pixels from iteration 1, then all pixels from it2...
-  cluster.dist <- matrix(aperm(array(cluster.dist, c(nbPixels, nbClusters, nbIter)), c(1, 3, 2)), nrow = nbPixels * nbIter)
+  cluster.dist <- matrix(aperm(array(cluster.dist, c(nbPixels, nbClusters, nb_partitions)), c(1, 3, 2)), nrow = nbPixels * nb_partitions)
   ResDist <- matrix(max.col(-cluster.dist), nrow = nbPixels)
   return(ResDist)
 }
