@@ -6,7 +6,7 @@
 \usage{
 perform_PCA(ImPath, ImPathShade, Output.Dir, Continuum.Removal = TRUE,
   TypePCA = "SPCA", FilterPCA = FALSE, Excluded.WL = FALSE,
-  NbIter = 20, nbCPU = 1, MaxRAM = 0.25)
+  nb_partitions = 20, nbCPU = 1, MaxRAM = 0.25)
 }
 \arguments{
 \item{Output.Dir}{output directory}
@@ -19,7 +19,7 @@ perform_PCA(ImPath, ImPathShade, Output.Dir, Continuum.Removal = TRUE,
 
 \item{Excluded.WL}{boolean. Water Vapor Absorption domains (in nanometers). Can also be used to exclude spectific domains}
 
-\item{NbIter}{numeric. Number of iteration to estimate diversity from the raster.}
+\item{nb_partitions}{numeric. Number of repetitions to estimate diversity from the raster (averaging repetitions).}
 
 \item{nbCPU}{numeric. Number fo CPUs in use.}
 
