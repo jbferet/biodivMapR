@@ -123,7 +123,7 @@ vect        = system.file('extdata', 'VECTOR', package = 'biodivMapR')
 Shannon.All = list()
 
 # list vector data
-Path.Vector         = list.shp(vect)
+Path.Vector         = list_shp(vect)
 Name.Vector         = tools::file_path_sans_ext(basename(Path.Vector))
 
 # read raster data including projection

@@ -118,10 +118,10 @@ raster2BIL <- function(Raster.Path, Sensor = "unknown", Output.Directory = FALSE
       message("reading header template corresponding to the sensor located here:")
       print(HDR.Temp.Path)
       # get raster template corresponding to the sensor
-      HDR.Template <- read.ENVI.header(HDR.Temp.Path)
+      HDR.Template <- read_ENVI_header(HDR.Temp.Path)
       # get info to update hdr file
       # read hdr
-      HDR.input <- read.ENVI.header(Get.HDR.Name(Output.Path))
+      HDR.input <- read_ENVI_header(get_HDR_name(Output.Path))
       if (!is.null(HDR.Template$wavelength)) {
         HDR.input$wavelength <- HDR.Template$wavelength
       }
@@ -137,17 +137,17 @@ raster2BIL <- function(Raster.Path, Sensor = "unknown", Output.Directory = FALSE
       # define visual stretch in the VIS domain
       HDR.input$`default stretch` <- "0 1000 linear"
       # write corresponding hdr file
-      write.ENVI.header(HDR.input, Get.HDR.Name(Output.Path))
+      write_ENVI_header(HDR.input, get_HDR_name(Output.Path))
     } else if (!file.exists(HDR.Temp.Path)) {
       message("Header template corresponding to the sensor expected to be found here")
       print(HDR.Temp.Path)
       message("please provide this header template in order to write info in HDR file")
-      print(Get.HDR.Name(Output.Path))
+      print(get_HDR_name(Output.Path))
       message("or manually add wavelength location in HDR file, if relevant")
     }
   } else if (Sensor == "unknown") {
     message("please make sure that the follozing header file contains information required")
-    print(Get.HDR.Name(Output.Path))
+    print(get_HDR_name(Output.Path))
     message("or manually add wavelength location in HDR file, if relevant")
   }
   return(Output.Path)
@@ -160,10 +160,10 @@ raster2BIL <- function(Raster.Path, Sensor = "unknown", Output.Directory = FALSE
 #'
 #' @export
 check_data <- function(Raster.Path, Mask = FALSE) {
-  HDR.Path <- Get.HDR.Name(Raster.Path)
+  HDR.Path <- get_HDR_name(Raster.Path)
   # check if the hdr file exists
   if (file.exists(HDR.Path)) {
-    HDR <- read.ENVI.header(HDR.Path)
+    HDR <- read_ENVI_header(HDR.Path)
     if (Mask == FALSE & (!HDR$interleave == "bil") & (!HDR$interleave == "BIL")) {
       message("")
       message("*********************************************************")

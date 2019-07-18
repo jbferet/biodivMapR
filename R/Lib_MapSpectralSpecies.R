@@ -25,9 +25,9 @@
 map_spectral_species <- function(Input.Image.File, Output.Dir, PCA.Files, TypePCA = "SPCA", nbclusters = 50, nbCPU = 1, MaxRAM = FALSE) {
 
   # for each image
-  Output.Dir2 <- Define.Output.Dir(Output.Dir, Input.Image.File, TypePCA)
-  Output.Dir.SS <- Define.Output.SubDir(Output.Dir, Input.Image.File, TypePCA, "SpectralSpecies")
-  Output.Dir.PCA <- Define.Output.SubDir(Output.Dir, Input.Image.File, TypePCA, "PCA")
+  Output.Dir2 <- define_output_directory(Output.Dir, Input.Image.File, TypePCA)
+  Output.Dir.SS <- define_output_subdir(Output.Dir, Input.Image.File, TypePCA, "SpectralSpecies")
+  Output.Dir.PCA <- define_output_subdir(Output.Dir, Input.Image.File, TypePCA, "PCA")
   Spectral.Species.Path <- paste(Output.Dir.SS, "SpectralSpecies", sep = "")
   # if no prior diversity map has been produced --> need PCA file
   if (!file.exists(PCA.Files)) {
@@ -87,7 +87,7 @@ init_kmeans <- function(dataPCA, Pix.Per.Iter, nb_partitions, nbclusters, nbCPU 
   m0 <- apply(dataPCA, 2, function(x) min(x))
   M0 <- apply(dataPCA, 2, function(x) max(x))
   d0 <- M0 - m0
-  dataPCA <- Center.Reduce(dataPCA, m0, d0)
+  dataPCA <- center_reduce(dataPCA, m0, d0)
   # get the dimensions of the images, and the number of subimages to process
   dataPCA <- split(as.data.frame(dataPCA), rep(1:nb_partitions, each = Pix.Per.Iter))
   # multiprocess kmeans clustering
@@ -116,18 +116,18 @@ init_kmeans <- function(dataPCA, Pix.Per.Iter, nb_partitions, nbclusters, nbCPU 
 #
 # @return
 apply_kmeans <- function(PCA.Path, PC.Select, ImPathShade, Kmeans.info, Spectral.Species.Path, nbCPU = 1, MaxRAM = FALSE) {
-  ImPathHDR <- Get.HDR.Name(PCA.Path)
-  HDR.PCA <- read.ENVI.header(ImPathHDR)
-  PCA.Format <- ENVI.Type2Bytes(HDR.PCA)
-  HDR.Shade <- Get.HDR.Name(ImPathShade)
-  HDR.Shade <- read.ENVI.header(HDR.Shade)
+  ImPathHDR <- get_HDR_name(PCA.Path)
+  HDR.PCA <- read_ENVI_header(ImPathHDR)
+  PCA.Format <- ENVI_type2bytes(HDR.PCA)
+  HDR.Shade <- get_HDR_name(ImPathShade)
+  HDR.Shade <- read_ENVI_header(HDR.Shade)
   # prepare for sequential processing: SeqRead.Image informs about byte location to read
   if (MaxRAM == FALSE) {
     MaxRAM <- 0.25
   }
-  nbPieces <- Split.Image(HDR.PCA, MaxRAM)
-  SeqRead.PCA <- Where.To.Read(HDR.PCA, nbPieces)
-  SeqRead.Shade <- Where.To.Read(HDR.Shade, nbPieces)
+  nbPieces <- split_image(HDR.PCA, MaxRAM)
+  SeqRead.PCA <- where_to_read(HDR.PCA, nbPieces)
+  SeqRead.Shade <- where_to_read(HDR.Shade, nbPieces)
   # create output file for spectral species assignment
   HDR.SS <- HDR.PCA
   nb_partitions <- length(Kmeans.info$Centroids)
@@ -140,9 +140,9 @@ apply_kmeans <- function(PCA.Path, PC.Select, ImPathShade, Kmeans.info, Spectral
   HDR.SS$resolution <- NULL
   HDR.SS$bandwidth <- NULL
   HDR.SS$purpose <- NULL
-  HDR.SS$`byte order` <- Get.Byte.Order()
+  HDR.SS$`byte order` <- get_byte_order()
   headerFpath <- paste(Spectral.Species.Path, ".hdr", sep = "")
-  write.ENVI.header(HDR.SS, headerFpath)
+  write_ENVI_header(HDR.SS, headerFpath)
   # create Spectral species file
   fidSS <- file(
     description = Spectral.Species.Path, open = "wb", blocking = TRUE,
@@ -189,31 +189,31 @@ compute_spectral_species <- function(PCA.Path, ImPathShade, Spectral.Species.Pat
   CentroidsArray <- do.call("rbind", Kmeans.info$Centroids)
 
   # read shade file and PCA file
-  ShadeHDR <- Get.HDR.Name(ImPathShade)
-  HDR.Shade <- read.ENVI.header(ShadeHDR)
-  Shade.Format <- ENVI.Type2Bytes(HDR.Shade)
+  ShadeHDR <- get_HDR_name(ImPathShade)
+  HDR.Shade <- read_ENVI_header(ShadeHDR)
+  Shade.Format <- ENVI_type2bytes(HDR.Shade)
   ImgFormat <- "Shade"
-  Shade.Chunk <- Read.Image.Subset(ImPathShade, HDR.Shade, Location.RW$Byte.Start.Shade, Location.RW$lenBin.Shade, Location.RW$nbLines, Shade.Format, ImgFormat)
+  Shade.Chunk <- read_image_subset(ImPathShade, HDR.Shade, Location.RW$Byte.Start.Shade, Location.RW$lenBin.Shade, Location.RW$nbLines, Shade.Format, ImgFormat)
 
-  PCA.HDR <- Get.HDR.Name(PCA.Path)
-  HDR.PCA <- read.ENVI.header(PCA.HDR)
-  PCA.Format <- ENVI.Type2Bytes(HDR.PCA)
+  PCA.HDR <- get_HDR_name(PCA.Path)
+  HDR.PCA <- read_ENVI_header(PCA.HDR)
+  PCA.Format <- ENVI_type2bytes(HDR.PCA)
   # read "unfolded" (2D) PCA image
   ImgFormat <- "2D"
-  PCA.Chunk <- Read.Image.Subset(PCA.Path, HDR.PCA, Location.RW$Byte.Start.PCA, Location.RW$lenBin.PCA, Location.RW$nbLines, PCA.Format, ImgFormat)
+  PCA.Chunk <- read_image_subset(PCA.Path, HDR.PCA, Location.RW$Byte.Start.PCA, Location.RW$lenBin.PCA, Location.RW$nbLines, PCA.Format, ImgFormat)
   PCA.Chunk <- PCA.Chunk[, PC.Select]
   if (length(PC.Select) == 1) {
     PCA.Chunk <- matrix(PCA.Chunk, ncol = 1)
   }
-  PCA.Chunk <- Center.Reduce(PCA.Chunk, Kmeans.info$MinVal, Kmeans.info$Range)
+  PCA.Chunk <- center_reduce(PCA.Chunk, Kmeans.info$MinVal, Kmeans.info$Range)
   # eliminate shaded pixels
   keepShade <- which(Shade.Chunk == 1)
   PCA.Chunk <- matrix(PCA.Chunk[keepShade, ], ncol = length(PC.Select))
 
   # Prepare writing of spectral species distribution file
-  SS.HDR <- Get.HDR.Name(Spectral.Species.Path)
-  HDR.SS <- read.ENVI.header(SS.HDR)
-  SS.Format <- ENVI.Type2Bytes(HDR.SS)
+  SS.HDR <- get_HDR_name(Spectral.Species.Path)
+  HDR.SS <- read_ENVI_header(SS.HDR)
+  SS.Format <- ENVI_type2bytes(HDR.SS)
 
   # for each pixel in the subset, compute the nearest cluster for each iteration
   Nearest.Cluster <- matrix(0, nrow = Location.RW$nbLines * HDR.PCA$samples, ncol = nb_partitions)

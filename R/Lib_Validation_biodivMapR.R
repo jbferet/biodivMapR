@@ -6,8 +6,8 @@
 # Jean-Baptiste FERET <jb.feret@irstea.fr>
 # Copyright 2018/07 Jean-Baptiste FERET
 # ==============================================================================
-# This Library contains functions to manipulate & process raster images
-# Mainly applicable to ENVI HDR data wth BIL interleave
+# This Library contains functions to perform validation on products from biodivMapR
+# the main goal is to validate ground data associated with biodiversity metrics
 # ==============================================================================
 
 #' get projection of a raster or a vector
@@ -18,7 +18,7 @@
 #' @importFrom rgdal readOGR
 #' @import tools
 #' @export
-projection.file <- function(file, type = 'raster'){
+get_projection <- function(file, type = 'raster'){
   if (type == 'raster'){
     obj <- raster(file)
   } else if (type == 'vector'){
@@ -35,7 +35,7 @@ projection.file <- function(file, type = 'raster'){
 #' @param x character or list. Directory containing shapefiles
 #' @return list of shapefiles names
 #' @export
-list.shp <- function(x){
+list_shp <- function(x){
   if(typeof(x)=='list'){
     List.Shp = c()
     ii = 0
@@ -56,7 +56,7 @@ list.shp <- function(x){
 # @return
 #' @importFrom rgdal readOGR writeOGR
 #' @import tools
-Reproject.Vector = function(Initial.File,Projection,Reprojected.File){
+reproject_vector = function(Initial.File,Projection,Reprojected.File){
 
   Shp.Path      = dirname(Initial.File)
   Shp.Name      = file_path_sans_ext(basename(Initial.File))
@@ -78,7 +78,7 @@ Reproject.Vector = function(Initial.File,Projection,Reprojected.File){
 # @return ColRow list of coordinates of pixels corresponding to each polygon in shp
 #' @importFrom rgdal readOGR
 #' @import tools
-Extract.Pixels.Coordinates = function(Path.Raster,Path.Vector){
+extract_pixels_coordinates = function(Path.Raster,Path.Vector){
   # read vector file
   Shp.Path    = dirname(Path.Vector)
   Shp.Name    = file_path_sans_ext(basename(Path.Vector))
@@ -99,7 +99,7 @@ Extract.Pixels.Coordinates = function(Path.Raster,Path.Vector){
 # @param Path.Raster path for the raster file. !! BIL expected
 # @param OGR.Vector  OGR for the vector file obtained from readOGR
 # @return ColRow list of coordinates of pixels corresponding to each polygon in shp
-Extract.Pixels.Coordinates.From.OGR = function(Path.Raster,OGR.Vector){
+extract_pixels_coordinates.From.OGR = function(Path.Raster,OGR.Vector){
   # read raster info
   Raster      = raster(Path.Raster, band = 1)
   # for each polygon or point in the shapefile
@@ -118,32 +118,10 @@ Extract.Pixels.Coordinates.From.OGR = function(Path.Raster,OGR.Vector){
   return(ColRow)
 }
 
-# This function reads information directly from a zipfile
-# @param Zip.Path path for the zipped binary image file in .BIL format and
-# @param HDR Header corresponding
-# @return Img.Data vecotr containing all image data
-Read.Image.Zipfile = function(Zip.Path){
-  # get HDR corresponding to zipfile
-  ImPathHDR       = Get.HDR.Name(Zip.Path)
-  HDR             = read.ENVI.header(ImPathHDR)
-  nb.Elements     = HDR$samples * HDR$lines * HDR$bands
-  Image.Format    = ENVI.Type2Bytes(HDR)
-  fid             = unz(description = Zip.Path, filename = zip_list(Zip.Path)$filename, open = "rb", encoding = getOption("encoding"))
-  if (Image.Format$Type=='INT'){
-    Img.Data      = readBin(fid, integer(), n = nb.Elements, size = Image.Format$Bytes, endian = "little")
-  } else if (Image.Format$Type=='FLOAT'){
-    Img.Data      = readBin(fid, numeric(), n = nb.Elements, size = Image.Format$Bytes, endian = "little")
-  }
-  Img.Data        = aperm(array(Img.Data,dim=c(HDR$samples,HDR$bands,HDR$lines)),c(3,1,2))
-  Img.Data         = c(array(Img.Data[,,HDR$bands],dim=c(HDR$lines,HDR$samples,length(HDR$bands))))
-  close(fid)
-  return(Img.Data)
-}
-
 # Computes alpha diversity metrics from distribution
 # @param Distrib distribution of clusters
 # @return Richness, Fisher, Shannon, Simpson
-Get.Alpha.Metrics = function(Distrib){
+get_alpha_metrics = function(Distrib){
   RichnessPlot  = vegan::specnumber(Distrib, MARGIN = 1)        # species richness
   # if (length(Distrib)>1){
   #   fisherPlot    = fisher.alpha(Distrib, MARGIN = 1)      # fisher's alpha
@@ -165,7 +143,7 @@ Get.Alpha.Metrics = function(Distrib){
 #' @export
 diversity_from_plots = function(Raster, Plots,NbClusters = 50,Name.Plot = FALSE){
   # get hdr from raster
-  HDR           = read.ENVI.header(paste(Raster,'.hdr',sep=''))
+  HDR           = read_ENVI_header(paste(Raster,'.hdr',sep=''))
   nbRepetitions = HDR$bands
   # get the number of plots
   nbPlots             = length(Plots)
@@ -191,22 +169,23 @@ diversity_from_plots = function(Raster, Plots,NbClusters = 50,Name.Plot = FALSE)
 
     if (file.exists(paste(file_path_sans_ext(File.Vector),'.shp',sep=''))){
       Plot                = readOGR(Dir.Vector,Name.Vector[[ip]],verbose = FALSE)
-      # check if vector and rasters are in teh same referential
-      Projection.Plot     = projection.file(File.Vector,'vector')
+      # check if vector and rasters are in the same referential
+      Projection.Plot     = get_projection(File.Vector,'vector')
+      Projection.Raster     = get_projection(Raster,'raster')
       # if not, convert vector file
       if (!Projection.Raster==Projection.Plot){
         if (!file.exists(File.Vector.reproject)){
           dir.create(Dir.Vector.reproject, showWarnings = FALSE,recursive = TRUE)
-          Reproject.Vector(File.Vector,Projection.Raster,File.Vector.reproject)
+          reproject_vector(File.Vector,Projection.Raster,File.Vector.reproject)
         }
         Plot              = readOGR(Dir.Vector.reproject,Name.Vector[[ip]],verbose = FALSE)
       }
-    } else if (file.exists(paste(VectorFile,'kml','sep'='.'))){
+    } else if (file.exists(paste(File.Vector,'kml','sep'='.'))){
       print('Please convert vector file to shpfile')
     }
 
     # extract data corresponding to the raster
-    XY          = Extract.Pixels.Coordinates.From.OGR(Raster,Plot)
+    XY          = extract_pixels_coordinates.From.OGR(Raster,Plot)
     # if the plot is included in the raster
     if (length(XY)==1 & length(XY[[1]]$Column)==0){
       if (length(Name.Plot)==nbPlots){
@@ -232,7 +211,7 @@ diversity_from_plots = function(Raster, Plots,NbClusters = 50,Name.Plot = FALSE)
         }
         coordPix    = do.call(rbind,coordPix)
       }
-      ExtractIm   = Extract.Pixels(coordPix,Raster,HDR)
+      ExtractIm   = extract_pixels(coordPix,Raster,HDR)
       # compute alpha diversity for each repetition
       Pixel.Inventory = list()
       Richness.tmp = Shannon.tmp = Fisher.tmp = Simpson.tmp = vector(length = nbRepetitions)
@@ -252,7 +231,7 @@ diversity_from_plots = function(Raster, Plots,NbClusters = 50,Name.Plot = FALSE)
             if (length(which(Pixel.Inventory[[i]]$Var1==0))==1){
               Pixel.Inventory[[i]]   = Pixel.Inventory[[i]][-which(Pixel.Inventory[[i]]$Var1==0),]
             }
-            Alpha = Get.Alpha.Metrics(Pixel.Inventory[[i]]$Freq)
+            Alpha = get_alpha_metrics(Pixel.Inventory[[i]]$Freq)
             # Alpha diversity
             Richness.tmp[i]   = as.numeric(Alpha$Richness)
             Fisher.tmp[i]     = Alpha$fisher
@@ -351,33 +330,4 @@ gdal_polygonizeR = function(x, outshape=NULL, gdalformat = 'ESRI Shapefile',
     return(shp)
   }
   return(NULL)
-}
-
-# create a binary mask file based on a matrix and the corresponding header
-# @param Mask matrix of a binary mask
-# @param HDR header corresponding to an image to be masked
-# @param Path.Mask path for the mask
-# @return
-Create.Shademask=function(Mask,HDR,Path.Mask){
-  ipix        = HDR$lines
-  jpix        = HDR$samples
-  Mask        = array(Mask,c(ipix,jpix,1))
-  Mask        = aperm(Mask,c(2,3,1))
-  fidOUT      = file(description = Path.Mask, open = "wb", blocking = TRUE,
-                     encoding = getOption("encoding"), raw = FALSE)
-  writeBin(c(as.integer(Mask)), fidOUT, size = 1,endian = .Platform$endian, useBytes = FALSE)
-  close(fidOUT)
-  # write updated shademask
-  HDR.Update             = HDR
-  HDR.Update$bands       = 1
-  HDR.Update$`data type` = 1
-  HDR.Update$`band names`= {'Mask'}
-  HDR.Update$wavelength  = NULL
-  HDR.Update$fwhm        = NULL
-  HDR.Update$resolution  = NULL
-  HDR.Update$bandwidth   = NULL
-  HDR.Update$purpose     = NULL
-  HDRFpath = paste(Path.Mask,'.hdr',sep='')
-  write.ENVI.header(HDR.Update, HDRFpath)
-  return()
 }

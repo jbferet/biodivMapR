@@ -34,10 +34,10 @@ map_beta_div <- function(Input.Image.File, Output.Dir, window_size,
                                Nb.Units.Ordin = 2000, MinSun = 0.25,
                                pcelim = 0.02, scaling = "PCO", FullRes = TRUE,
                                LowRes = FALSE, nbCPU = 1, MaxRAM = 0.25) {
-  Output.Dir2 <- Define.Output.Dir(Output.Dir, Input.Image.File, TypePCA)
+  Output.Dir2 <- define_output_directory(Output.Dir, Input.Image.File, TypePCA)
   WS_Save <- paste(Output.Dir2, "PCA_Info.RData", sep = "")
-  Output.Dir.SS <- Define.Output.SubDir(Output.Dir, Input.Image.File, TypePCA, "SpectralSpecies")
-  Output.Dir.BETA <- Define.Output.SubDir(Output.Dir, Input.Image.File, TypePCA, "BETA")
+  Output.Dir.SS <- define_output_subdir(Output.Dir, Input.Image.File, TypePCA, "SpectralSpecies")
+  Output.Dir.BETA <- define_output_subdir(Output.Dir, Input.Image.File, TypePCA, "BETA")
   load(file = WS_Save)
   Beta <- compute_beta_metrics(Output.Dir.SS, MinSun, Nb.Units.Ordin, nb_partitions,
                                 nbclusters, pcelim, scaling = scaling,
@@ -143,7 +143,7 @@ ordination_parallel <- function(id.sub, coordTotSort, SSD.Path, Sample.Sel, Beta
 
   # get Spectral species distribution
   coordPix <- coordTotSort[id.sub, ]
-  SSD.NN <- Extract.Samples.From.Image(SSD.Path, coordPix)
+  SSD.NN <- extract_samples_from_image(SSD.Path, coordPix)
   # compute the mean BC dissimilarity sequentially for each iteration
   MatBCtmp <- matrix(0, nrow = nrow(id.sub), ncol = Nb.Units.Ordin)
   SSDList <- list()
@@ -176,6 +176,7 @@ ordination_parallel <- function(id.sub, coordTotSort, SSD.Path, Sample.Sel, Beta
 #
 # @return
 #' @importFrom labdsv pco
+#' @importFrom stats as.dist
 compute_beta_metrics <- function(Output.Dir, MinSun, Nb.Units.Ordin, nb_partitions, nbclusters, pcelim, scaling = "PCO", nbCPU = FALSE, MaxRAM = FALSE) {
   # Define path for images to be used
   SSD.Path <- paste(Output.Dir, "SpectralSpecies_Distribution", sep = "")
@@ -195,7 +196,7 @@ compute_beta_metrics <- function(Output.Dir, MinSun, Nb.Units.Ordin, nb_partitio
     Kernels.NN <- c()
   }
   # read spectral species distribution file
-  SSD.All <- Extract.Samples.From.Image(SSD.Path, Sunlit.Pixels$coordTotSort)
+  SSD.All <- extract_samples_from_image(SSD.Path, Sunlit.Pixels$coordTotSort)
   # define kernels used for Ordination
   Kernels.Ordination <- RandPermKernels[1:Nb.Units.Ordin]
   Sample.Sel <- SSD.All[Kernels.Ordination, ]
@@ -236,8 +237,8 @@ compute_beta_metrics <- function(Output.Dir, MinSun, Nb.Units.Ordin, nb_partitio
   Ordination.est <- ordination_to_NN(Beta.Ordination.sel, SSD.Path, Sample.Sel, coordTotSort, nb_partitions, nbclusters, pcelim, nbCPU = nbCPU)
 
   # Reconstuct spatialized beta diversity map from previous computation
-  Sunlit.HDR <- Get.HDR.Name(ImPathSunlit)
-  HDR.Sunlit <- read.ENVI.header(Sunlit.HDR)
+  Sunlit.HDR <- get_HDR_name(ImPathSunlit)
+  HDR.Sunlit <- read_ENVI_header(Sunlit.HDR)
   BetaDiversity <- as.matrix(Ordination.est, ncol = 3)
   BetaDiversityRGB <- array(NA, c(as.double(HDR.Sunlit$lines), as.double(HDR.Sunlit$samples), 3))
   BetaTmp <- matrix(NA, nrow = as.double(HDR.Sunlit$lines), ncol = as.double(HDR.Sunlit$samples))
@@ -340,10 +341,10 @@ write_raster_beta <- function(Image, HDR.SSD, ImagePath, window_size, FullRes = 
   }
   PCs <- paste(PCs, collapse = ", ")
   HDR.Beta$`band names` <- PCs
-  Image.Format <- ENVI.Type2Bytes(HDR.Beta)
+  Image.Format <- ENVI_type2bytes(HDR.Beta)
   if (LowRes == TRUE) {
     headerFpath <- paste(ImagePath, ".hdr", sep = "")
-    write.ENVI.header(HDR.Beta, headerFpath)
+    write_ENVI_header(HDR.Beta, headerFpath)
     ImgWrite <- aperm(Image, c(2, 3, 1))
     fidOUT <- file(
       description = ImagePath, open = "wb", blocking = TRUE,
@@ -357,11 +358,11 @@ write_raster_beta <- function(Image, HDR.SSD, ImagePath, window_size, FullRes = 
     HDR.Full <- HDR.Beta
     HDR.Full$samples <- HDR.Beta$samples * window_size
     HDR.Full$lines <- HDR.Beta$lines * window_size
-    HDR.Full <- Revert.Resolution.HDR(HDR.Full, window_size)
+    HDR.Full <- revert_resolution_HDR(HDR.Full, window_size)
     ImagePath.FullRes <- paste(ImagePath, "_Fullres", sep = "")
     headerFpath <- paste(ImagePath.FullRes, ".hdr", sep = "")
-    write.ENVI.header(HDR.Full, headerFpath)
-    Image.Format <- ENVI.Type2Bytes(HDR.Full)
+    write_ENVI_header(HDR.Full, headerFpath)
+    Image.Format <- ENVI_type2bytes(HDR.Full)
     Image.FullRes <- array(NA, c(HDR.Full$lines, HDR.Full$samples, 3))
     for (b in 1:3) {
       for (i in 1:HDR.SSD$lines) {
@@ -393,8 +394,8 @@ write_raster_beta <- function(Image, HDR.SSD, ImagePath, window_size, FullRes = 
 get_sunlit_pixels <- function(ImPathSunlit, MinSun) {
 
   # Filter out spatial units showing poor illumination
-  Sunlit.HDR <- Get.HDR.Name(ImPathSunlit)
-  HDR.Sunlit <- read.ENVI.header(Sunlit.HDR)
+  Sunlit.HDR <- get_HDR_name(ImPathSunlit)
+  HDR.Sunlit <- read_ENVI_header(Sunlit.HDR)
   nbpix <- as.double(HDR.Sunlit$lines) * as.double(HDR.Sunlit$samples)
   fid <- file(
     description = ImPathSunlit, open = "rb", blocking = TRUE,
@@ -440,10 +441,10 @@ get_sunlit_pixels <- function(ImPathSunlit, MinSun) {
 # # --> 4000 will be slow but may show better ability to capture landscape patterns
 # # @return
 # Map.Beta.Diversity.TestnbCluster <- function(Input.Image.File, Output.Dir, window_size, TypePCA = "SPCA", nbclusters = 50, Nb.Units.Ordin = 2000, MinSun = 0.25, pcelim = 0.02, scaling = "PCO", FullRes = TRUE, LowRes = FALSE, nbCPU = FALSE, MaxRAM = FALSE) {
-#   Output.Dir2 <- Define.Output.Dir(Output.Dir, Input.Image.File, TypePCA)
+#   Output.Dir2 <- define_output_directory(Output.Dir, Input.Image.File, TypePCA)
 #   WS_Save <- paste(Output.Dir, "PCA_Info.RData", sep = "")
-#   Output.Dir.SS <- Define.Output.SubDir(Output.Dir, Input.Image.File, TypePCA, paste("SpectralSpecies_", nbclusters, sep = ""))
-#   Output.Dir.BETA <- Define.Output.SubDir(Output.Dir, Input.Image.File, TypePCA, paste("BETA_", nbclusters, sep = ""))
+#   Output.Dir.SS <- define_output_subdir(Output.Dir, Input.Image.File, TypePCA, paste("SpectralSpecies_", nbclusters, sep = ""))
+#   Output.Dir.BETA <- define_output_subdir(Output.Dir, Input.Image.File, TypePCA, paste("BETA_", nbclusters, sep = ""))
 #   load(file = WS_Save)
 #   Beta <- compute_beta_metrics(Output.Dir.SS, MinSun, Nb.Units.Ordin, nb_partitions, nbclusters, pcelim, scaling = scaling, nbCPU = nbCPU, MaxRAM = MaxRAM)
 #   # Create images corresponding to Beta-diversity

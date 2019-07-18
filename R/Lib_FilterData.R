@@ -24,11 +24,11 @@
 #' @export
 perform_radiometric_filtering <- function(Image.Path, Mask.Path, Output.Dir, TypePCA = "SPCA", NDVI.Thresh = 0.5, Blue.Thresh = 500, NIR.Thresh = 1500, Blue = 480, Red = 700, NIR = 835) {
   # define full output directory
-  Output.Dir.Full <- Define.Output.Dir(Output.Dir, Image.Path, TypePCA)
+  Output.Dir.Full <- define_output_directory(Output.Dir, Image.Path, TypePCA)
   # define dimensions of the image
-  ImPathHDR <- Get.HDR.Name(Image.Path)
-  HDR <- read.ENVI.header(ImPathHDR)
-  Image.Format <- ENVI.Type2Bytes(HDR)
+  ImPathHDR <- get_HDR_name(Image.Path)
+  HDR <- read_ENVI_header(ImPathHDR)
+  Image.Format <- ENVI_type2bytes(HDR)
   ipix <- as.double(HDR$lines)
   jpix <- as.double(HDR$samples)
   Nb.Pixels <- ipix * jpix
@@ -63,12 +63,12 @@ perform_radiometric_filtering <- function(Image.Path, Mask.Path, Output.Dir, Typ
 create_mask_from_threshold <- function(ImPath, ImPathShade, ImPathShade.Update, NDVI.Thresh, Blue.Thresh, NIR.Thresh, Blue = 480, Red = 700, NIR = 835) {
   # define wavelength corresponding to the spectral domains Blue, Red and NIR
   Spectral.Bands <- c(Blue, Red, NIR)
-  ImPathHDR <- Get.HDR.Name(ImPath)
-  Header <- read.ENVI.header(ImPathHDR)
+  ImPathHDR <- get_HDR_name(ImPath)
+  Header <- read_ENVI_header(ImPathHDR)
   # get image bands correponding to spectral bands of interest
-  Image.Bands <- Get.Image.Bands(Spectral.Bands, Header$wavelength)
+  Image.Bands <- get_image_bands(Spectral.Bands, Header$wavelength)
   # read band data from image
-  Image.Subset <- Read.Image.Bands(ImPath, Header, Image.Bands$ImBand)
+  Image.Subset <- read_image_bands(ImPath, Header, Image.Bands$ImBand)
   # create mask
   # check if spectral bands required for NDVI exist
   if (Image.Bands$Distance2WL[2] < 25 & Image.Bands$Distance2WL[3] < 25) {
@@ -89,6 +89,6 @@ create_mask_from_threshold <- function(ImPath, ImPathShade, ImPathShade.Update, 
   SelPixels <- which(NDVI > NDVI.Thresh & Image.Subset[, , 1] < Blue.Thresh & Image.Subset[, , 3] > NIR.Thresh)
   Mask[SelPixels] <- 1
   # update initial shade mask
-  ImPathShade <- Update.Shademask(ImPathShade, Header, Mask, ImPathShade.Update)
+  ImPathShade <- update_shademask(ImPathShade, Header, Mask, ImPathShade.Update)
   return(ImPathShade)
 }
