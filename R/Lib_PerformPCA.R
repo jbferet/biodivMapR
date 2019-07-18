@@ -53,7 +53,7 @@ perform_PCA  <- function(ImPath, ImPathShade, Output.Dir, Continuum.Removal = TR
   }
   DataSubset <- Subset$DataSubset
   # clean reflectance data from inf and constant values
-  CleanData <- check_data(DataSubset, Spectral)
+  CleanData <- check_invariant_bands(DataSubset, Spectral)
   DataSubset <- CleanData$DataMatrix
   Spectral <- CleanData$Spectral
 
@@ -105,7 +105,7 @@ perform_PCA  <- function(ImPath, ImPathShade, Output.Dir, Continuum.Removal = TR
     # # # assume that 1st data cleaning is enough...
     ## Uncommented June 5, 2019
     # clean reflectance data from inf and constant values
-    CleanData <- check_data(DataSubset, Spectral)
+    CleanData <- check_invariant_bands(DataSubset, Spectral)
     DataSubset <- CleanData$DataMatrix
     Spectral <- CleanData$Spectral
     print("perform PCA#2 on the subset image")

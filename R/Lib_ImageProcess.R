@@ -68,7 +68,7 @@ change_resolution_HDR <- function(HDR, window_size) {
 # @param Spectral summary of spectral information: which spectral bands selected from initial data
 #
 # @return updated DataMatrix and Spectral
-check_data <- function(DataMatrix, Spectral) {
+check_invariant_bands <- function(DataMatrix, Spectral) {
   # samples with inf value are eliminated
   for (i in 1:ncol(DataMatrix)) {
     elim <- which(DataMatrix[, i] == Inf)
