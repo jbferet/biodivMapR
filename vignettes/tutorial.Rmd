@@ -90,7 +90,7 @@ The use of computing ressources can be controled with the following parameters:
 * `nbclusters` controls the number of clusters defined by k-means clustering for each repetition. Images showing moderate diversity (temperate forests) may need lower number of clusters (20), whereas highly diverse tropical forest require more (50). The larger the value the longer the computation time. 
 
 ```{r Computing options}
-nbCPU         = 4
+nbCPU         = 2
 MaxRAM        = 0.5
 nbclusters    = 50
 ```
