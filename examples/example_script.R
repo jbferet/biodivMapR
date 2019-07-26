@@ -55,7 +55,7 @@ Output.Dir        = 'RESULTS'
 window_size       = 10
 
 # PCA FILTERING: 		Set to TRUE if you want second filtering based on PCA outliers to be processed. Slower
-FilterPCA         = TRUE
+FilterPCA         = FALSE
 
 # type of PCA:
 # PCA: no rescaling of the data
@@ -70,7 +70,7 @@ check_data(Input.Image.File)
 ################################################################################
 ##                    DEFINE PARAMETERS FOR METHOD                            ##
 ################################################################################
-nbCPU         = 4
+nbCPU         = 2
 MaxRAM        = 0.5
 nbclusters    = 50
 
@@ -128,7 +128,7 @@ Name.Vector         = tools::file_path_sans_ext(basename(Path.Vector))
 
 # read raster data including projection
 RasterStack         = stack(Path.Raster)
-Projection.Raster   = projection.file(Path.Raster,'raster')
+Projection.Raster   = get_projection(Path.Raster,'raster')
 
 # get alpha and beta diversity indicators corresponding to shapefiles
 Biodiv.Indicators           = diversity_from_plots(Raster = Path.Raster, Plots = Path.Vector,NbClusters = nbclusters)
@@ -157,7 +157,11 @@ write.table(BC_mean, file = paste(Path.Results,"BrayCurtis.csv",sep=''), sep="\t
 ####################################################
 # illustrate results
 ####################################################
+# apply ordination using PCoA (same as done for map_beta_div)
 library(labdsv)
+MatBCdist = as.dist(BC_mean, diag = FALSE, upper = FALSE)
+BetaPCO   = pco(MatBCdist, k = 3)
+
 # very uglily assign vegetation type to polygons in shapefiles
 nbSamples = c(6,4,7,7)
 vg        = c('Forest high diversity', 'Forest low diversity', 'Forest medium diversity', 'low vegetation')
@@ -167,10 +171,6 @@ for (i in 1: length(nbSamples)){
     Type_Vegetation = c(Type_Vegetation,vg[i])
   }
 }
-
-# apply ordination unsing PCoA (same as done for map_beta_div)
-MatBCdist = as.dist(BC_mean, diag = FALSE, upper = FALSE)
-BetaPCO   = pco(MatBCdist, k = 3)
 
 # create data frame including alpha and beta diversity
 library(ggplot2)

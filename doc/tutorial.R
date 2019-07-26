@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 #  window_size = 10
 
 ## ----PCA filtering-------------------------------------------------------
-#  FilterPCA = TRUE
+#  FilterPCA = FALSE
 
 ## ----Computing options---------------------------------------------------
 #  nbCPU         = 4
@@ -44,11 +44,12 @@ knitr::opts_chunk$set(
 #  print("Select PCA components for diversity estimations")
 #  select_PCA_components(Input.Image.File, Output.Dir, PCA.Files, File.Open = TRUE)
 
-## ----alpha and beta diversity maps---------------------------------------
+## ----Spectral species map------------------------------------------------
 #  print("MAP SPECTRAL SPECIES")
 #  map_spectral_species(Input.Image.File, Output.Dir, PCA.Files,
 #                       nbCPU = nbCPU, MaxRAM = MaxRAM)
-#  
+
+## ----alpha and beta diversity maps---------------------------------------
 #  print("MAP ALPHA DIVERSITY")
 #  # Index.Alpha   = c('Shannon','Simpson')
 #  Index.Alpha   = c('Shannon')
@@ -76,7 +77,7 @@ knitr::opts_chunk$set(
 #  
 #  # read raster data including projection
 #  RasterStack         = stack(Path.Raster)
-#  Projection.Raster   = projection.file(Path.Raster,'raster')
+#  Projection.Raster   = get_projection(Path.Raster,'raster')
 #  
 #  # get alpha and beta diversity indicators corresponding to shapefiles
 #  Biodiv.Indicators           = diversity_from_plots(Raster = Path.Raster, Plots = Path.Vector,NbClusters = nbclusters)
@@ -102,5 +103,54 @@ knitr::opts_chunk$set(
 #  BC_mean = Biodiv.Indicators$BCdiss
 #  colnames(BC_mean) = rownames(BC_mean) = Biodiv.Indicators$Name.Plot
 #  write.table(BC_mean, file = paste(Path.Results,"BrayCurtis.csv",sep=''), sep="\t", dec=".", na=" ", row.names = F, col.names= T,quote=FALSE)
+#  
+
+## ----PCoA on Field Plots-------------------------------------------------
+#  # apply ordination using PCoA (same as done for map_beta_div)
+#  library(labdsv)
+#  MatBCdist = as.dist(BC_mean, diag = FALSE, upper = FALSE)
+#  BetaPCO   = pco(MatBCdist, k = 3)
+#  
+
+## ----plot PCoA & Shannon-------------------------------------------------
+#  # very uglily assign vegetation type to polygons in shapefiles
+#  nbSamples = c(6,4,7,7)
+#  vg        = c('Forest high diversity', 'Forest low diversity', 'Forest medium diversity', 'low vegetation')
+#  Type_Vegetation = c()
+#  for (i in 1: length(nbSamples)){
+#    for (j in 1:nbSamples[i]){
+#      Type_Vegetation = c(Type_Vegetation,vg[i])
+#    }
+#  }
+#  
+#  # create data frame including alpha and beta diversity
+#  library(ggplot2)
+#  Results     =  data.frame('vgtype'=Type_Vegetation,'pco1'= BetaPCO$points[,1],'pco2'= BetaPCO$points[,2],'pco3' = BetaPCO$points[,3],'shannon'=Shannon.RS)
+#  
+#  # plot field data in the PCoA space, with size corresponding to shannon index
+#  ggplot(Results, aes(x=pco1, y=pco2, color=vgtype,size=shannon)) +
+#    geom_point(alpha=0.6) +
+#    scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
+#  filename = file.path(Path.Results,'BetaDiversity_PcoA1_vs_PcoA2.png')
+#  ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
+#         scale = 1, width = NA, height = NA, units = c("in", "cm", "mm"),
+#         dpi = 600, limitsize = TRUE)
+#  
+#  
+#  ggplot(Results, aes(x=pco1, y=pco3, color=vgtype,size=shannon)) +
+#    geom_point(alpha=0.6) +
+#    scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
+#  filename = file.path(Path.Results,'BetaDiversity_PcoA1_vs_PcoA3.png')
+#  ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
+#         scale = 1, width = NA, height = NA, units = c("in", "cm", "mm"),
+#         dpi = 600, limitsize = TRUE)
+#  
+#  ggplot(Results, aes(x=pco2, y=pco3, color=vgtype,size=shannon)) +
+#    geom_point(alpha=0.6) +
+#    scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
+#  filename = file.path(Path.Results,'BetaDiversity_PcoA2_vs_PcoA3.png')
+#  ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
+#         scale = 1, width = NA, height = NA, units = c("in", "cm", "mm"),
+#         dpi = 600, limitsize = TRUE)
 #  
 
