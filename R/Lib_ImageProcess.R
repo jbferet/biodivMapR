@@ -702,25 +702,25 @@ read_image_subset <- function(ImPath, HDR, Byte.Start, lenBin, nbLines, Image_Fo
   }
   if (Image_Format$Type == "INT") {
     if (HDR$`data type` == 1) {
-      Image.Chunk <- readBin(fidIm, integer(), n = lenBin, size = Image_Format$Bytes, signed = FALSE, endian = Image_Format$ByteOrder)
+      Image_Chunk <- readBin(fidIm, integer(), n = lenBin, size = Image_Format$Bytes, signed = FALSE, endian = Image_Format$ByteOrder)
     } else {
-      Image.Chunk <- readBin(fidIm, integer(), n = lenBin, size = Image_Format$Bytes, signed = TRUE, endian = Image_Format$ByteOrder)
+      Image_Chunk <- readBin(fidIm, integer(), n = lenBin, size = Image_Format$Bytes, signed = TRUE, endian = Image_Format$ByteOrder)
     }
   } else if (Image_Format$Type == "FLOAT") {
-    Image.Chunk <- readBin(fidIm, numeric(), n = lenBin, size = Image_Format$Bytes, endian = Image_Format$ByteOrder)
+    Image_Chunk <- readBin(fidIm, numeric(), n = lenBin, size = Image_Format$Bytes, endian = Image_Format$ByteOrder)
   }
 
   if (ImgFormat == "3D" | ImgFormat == "2D") {
-    Image.Chunk <- aperm(array(Image.Chunk, dim = c(HDR$samples, HDR$bands, nbLines)), c(3, 1, 2))
+    Image_Chunk <- aperm(array(Image_Chunk, dim = c(HDR$samples, HDR$bands, nbLines)), c(3, 1, 2))
   }
   if (ImgFormat == "2D") {
-    Image.Chunk <- array(Image.Chunk, c(nbLines * HDR$samples, HDR$bands))
+    Image_Chunk <- array(Image_Chunk, c(nbLines * HDR$samples, HDR$bands))
   }
   if (ImgFormat == "Shade") {
-    Image.Chunk <- matrix(Image.Chunk, nbLines, HDR$samples, byrow = T)
+    Image_Chunk <- matrix(Image_Chunk, nbLines, HDR$samples, byrow = T)
   }
   close(fidIm)
-  return(Image.Chunk)
+  return(Image_Chunk)
 }
 
 #' ENVI functions
