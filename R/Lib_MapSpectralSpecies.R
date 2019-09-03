@@ -49,7 +49,7 @@ map_spectral_species <- function(Input_Image_File, Output_Dir, PCA_Files,ImPathS
     PC_Select_Path <- paste(Output_Dir_PCA, "Selected_Components.txt", sep = "")
     if (file.exists(PC_Select_Path)) {
       PC_Select <- read.table(PC_Select_Path)[[1]]
-      dataPCA <- PCA.model$dataPCA[, PC_Select]
+      dataPCA <- PCA_model$dataPCA[, PC_Select]
       if (length(PC_Select) == 1) {
         dataPCA <- matrix(dataPCA, ncol = 1)
       }
@@ -156,7 +156,7 @@ apply_kmeans <- function(PCA_Path, PC_Select, ImPathShade, Kmeans_info, Spectral
   for (i in 1:nbPieces) {
     print(paste("Spectral Species Piece #", i, "/", nbPieces))
     Location_RW <- list()
-    Location_RW$nbLines <- SeqRead_PCA$Lines.Per.Chunk[i]
+    Location_RW$nbLines <- SeqRead_PCA$Lines_Per_Chunk[i]
     Location_RW$Byte_Start_PCA <- SeqRead_PCA$ReadByte_Start[i]
     Location_RW$lenBin_PCA <- SeqRead_PCA$ReadByte_End[i] - SeqRead_PCA$ReadByte_Start[i] + 1
     Location_RW$Byte_Start_Shade <- SeqRead_Shade$ReadByte_Start[i]

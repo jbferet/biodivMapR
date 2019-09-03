@@ -534,7 +534,7 @@ mean_filter <- function(ImageInit, nbi, nbj, SizeFilt) {
 
 # reads a subset from a binary image
 #
-# @param Byte.Start location of byte where to start reading in the image
+# @param Byte_Start location of byte where to start reading in the image
 # @param nbLines number of lines to read
 # @param lenBin number of elements to read
 # @param ImPath path for the image
@@ -544,7 +544,7 @@ mean_filter <- function(ImageInit, nbi, nbj, SizeFilt) {
 # @param Image_Format type of data (INT/FLOAT)
 #
 # @return data corresponding to the subset in original 3D format
-read_bin_subset <- function(Byte.Start, nbLines, lenBin, ImPath, ImBand, jpix, nbChannels, Image_Format) {
+read_bin_subset <- function(Byte_Start, nbLines, lenBin, ImPath, ImBand, jpix, nbChannels, Image_Format) {
   # number of bands to be kept
   nbSubset <- length(ImBand)
   # open file
@@ -552,9 +552,9 @@ read_bin_subset <- function(Byte.Start, nbLines, lenBin, ImPath, ImBand, jpix, n
     description = ImPath, open = "rb", blocking = TRUE,
     encoding = getOption("encoding"), raw = FALSE
   )
-  if (!Byte.Start == 1) {
+  if (!Byte_Start == 1) {
     # skip the beginning of the file of not wanted
-    seek(fid, where = as.double(Image_Format$Bytes * (Byte.Start - 1)), origin = "start", rw = "read")
+    seek(fid, where = as.double(Image_Format$Bytes * (Byte_Start - 1)), origin = "start", rw = "read")
   }
   if (Image_Format$Type == "INT") {
     linetmp <- readBin(fid, integer(), n = lenBin, size = Image_Format$Bytes, endian = Image_Format$ByteOrder)
@@ -666,10 +666,10 @@ read_image_bands <- function(ImPath, Header, ImBand) {
   Image_Subsets <- list()
   for (i in 1:nbPieces) {
     # number of elements to be read
-    Byte.Start <- SeqRead.Image$ReadByte_Start[i]
-    nbLines <- SeqRead.Image$Lines.Per.Chunk[i]
+    Byte_Start <- SeqRead.Image$ReadByte_Start[i]
+    nbLines <- SeqRead.Image$Lines_Per_Chunk[i]
     lenBin <- SeqRead.Image$ReadByte_End[i] - SeqRead.Image$ReadByte_Start[i] + 1
-    Image_Subsets[[i]] <- read_bin_subset(Byte.Start, nbLines, lenBin, ImPath, ImBand, jpix, nbChannels, Image_Format)
+    Image_Subsets[[i]] <- read_bin_subset(Byte_Start, nbLines, lenBin, ImPath, ImBand, jpix, nbChannels, Image_Format)
   }
   # reshape image with original size and selected bands
   Image.Subset <- build_image_from_list(Image_Subsets, ipix, jpix, nbSubset)
@@ -682,23 +682,23 @@ read_image_bands <- function(ImPath, Header, ImBand) {
 #
 # @param ImPath path for the image
 # @param HDR header information corresponding to the image
-# @param Byte.Start location of byte where to start reading in the image
+# @param Byte_Start location of byte where to start reading in the image
 # @param lenBin number of elements to read
 # @param nbLines number of lines to read
 # @param Image_Format type of data (INT/FLOAT)
 # @param ImgFormat should output be 2D or 3D (original image format)?
 #
 # @return data corresponding to the subset in original 3D format
-read_image_subset <- function(ImPath, HDR, Byte.Start, lenBin, nbLines, Image_Format, ImgFormat) {
+read_image_subset <- function(ImPath, HDR, Byte_Start, lenBin, nbLines, Image_Format, ImgFormat) {
   fidIm <- file(
     description = ImPath, open = "rb", blocking = TRUE,
     encoding = getOption("encoding"), raw = FALSE
   )
 
   # read relevant portion
-  if (!Byte.Start == 1) {
+  if (!Byte_Start == 1) {
     # skip the beginning of the file of not wanted
-    seek(fidIm, where = Image_Format$Bytes * (Byte.Start - 1), origin = "start", rw = "read")
+    seek(fidIm, where = Image_Format$Bytes * (Byte_Start - 1), origin = "start", rw = "read")
   }
   if (Image_Format$Type == "INT") {
     if (HDR$`data type` == 1) {
@@ -854,14 +854,14 @@ where_to_read <- function(HDR, nbPieces) {
   Data.Per.Line <- as.double(HDR$samples) * as.double(HDR$bands)
   lenTot <- as.double(HDR$lines) * Data.Per.Line
   # starting line for each chunk
-  Start.Per.Chunk <- ceiling(seq(1, (HDR$lines + 1), length.out = nbPieces + 1))
+  Start_Per_Chunk <- ceiling(seq(1, (HDR$lines + 1), length.out = nbPieces + 1))
   # elements in input data
-  lb <- 1 + ((Start.Per.Chunk - 1) * Data.Per.Line)
+  lb <- 1 + ((Start_Per_Chunk - 1) * Data.Per.Line)
   ub <- lb - 1
   ReadByte_Start <- lb[1:nbPieces]
   ReadByte_End <- ub[2:(nbPieces + 1)]
-  Lines.Per.Chunk <- diff(Start.Per.Chunk)
-  my_list <- list("ReadByte_Start" = ReadByte_Start, "ReadByte_End" = ReadByte_End, "Lines.Per.Chunk" = Lines.Per.Chunk)
+  Lines_Per_Chunk <- diff(Start_Per_Chunk)
+  my_list <- list("ReadByte_Start" = ReadByte_Start, "ReadByte_End" = ReadByte_End, "Lines_Per_Chunk" = Lines_Per_Chunk)
   return(my_list)
 }
 
@@ -874,15 +874,15 @@ where_to_read_kernel <- function(HDR, nbPieces, SE.Size) {
   Data.Per.Line <- as.double(HDR$samples) * as.double(HDR$bands)
   lenTot <- as.double(HDR$lines) * Data.Per.Line
   # starting line for each chunk
-  Start.Per.Chunk <- ceiling(seq(1, (HDR$lines + 1), length.out = nbPieces + 1))
-  Start.Per.Chunk <- Start.Per.Chunk - Start.Per.Chunk %% SE.Size + 1
+  Start_Per_Chunk <- ceiling(seq(1, (HDR$lines + 1), length.out = nbPieces + 1))
+  Start_Per_Chunk <- Start_Per_Chunk - Start_Per_Chunk %% SE.Size + 1
   # elements in input data
-  lb <- 1 + ((Start.Per.Chunk - 1) * Data.Per.Line)
+  lb <- 1 + ((Start_Per_Chunk - 1) * Data.Per.Line)
   ub <- lb - 1
   ReadByte_Start <- lb[1:nbPieces]
   ReadByte_End <- ub[2:(nbPieces + 1)]
-  Lines.Per.Chunk <- diff(Start.Per.Chunk)
-  my_list <- list("ReadByte_Start" = ReadByte_Start, "ReadByte_End" = ReadByte_End, "Lines.Per.Chunk" = Lines.Per.Chunk)
+  Lines_Per_Chunk <- diff(Start_Per_Chunk)
+  my_list <- list("ReadByte_Start" = ReadByte_Start, "ReadByte_End" = ReadByte_End, "Lines_Per_Chunk" = Lines_Per_Chunk)
   return(my_list)
 }
 
@@ -899,19 +899,19 @@ where_to_write_kernel <- function(HDR_SS, HDR_SSD, nbPieces, SE.Size) {
   Data.Per.Line_SSD <- as.double(HDR_SSD$samples) * as.double(HDR_SSD$bands)
 
   # starting line for each chunk of spectral species
-  Start.Per.Chunk <- ceiling(seq(1, (HDR_SS$lines + 1), length.out = nbPieces + 1))
-  Start.Per.Chunk <- Start.Per.Chunk - Start.Per.Chunk %% SE.Size
-  Start.Per.Chunk.SSD <- (Start.Per.Chunk / SE.Size) + 1
+  Start_Per_Chunk <- ceiling(seq(1, (HDR_SS$lines + 1), length.out = nbPieces + 1))
+  Start_Per_Chunk <- Start_Per_Chunk - Start_Per_Chunk %% SE.Size
+  Start_Per_Chunk.SSD <- (Start_Per_Chunk / SE.Size) + 1
 
   # elements in input data
   Image_Format <- ENVI_type2bytes(HDR_SSD)
-  lb_SSD <- 1 + (((Start.Per.Chunk.SSD - 1) * Data.Per.Line_SSD) * Image_Format$Bytes)
+  lb_SSD <- 1 + (((Start_Per_Chunk.SSD - 1) * Data.Per.Line_SSD) * Image_Format$Bytes)
   ub_SSD <- lb_SSD - 1
   ReadByte_Start.SSD <- lb_SSD[1:nbPieces]
   ReadByte_End.SSD <- ub_SSD[2:(nbPieces + 1)]
-  Lines.Per.Chunk.SSD <- diff(Start.Per.Chunk.SSD)
+  Lines_Per_Chunk.SSD <- diff(Start_Per_Chunk.SSD)
 
-  my_list <- list("ReadByte_Start" = ReadByte_Start.SSD, "ReadByte_End" = ReadByte_End.SSD, "Lines.Per.Chunk" = Lines.Per.Chunk.SSD)
+  my_list <- list("ReadByte_Start" = ReadByte_Start.SSD, "ReadByte_End" = ReadByte_End.SSD, "Lines_Per_Chunk" = Lines_Per_Chunk.SSD)
   return(my_list)
 }
 
