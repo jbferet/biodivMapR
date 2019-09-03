@@ -4,7 +4,7 @@
 \alias{check_data}
 \title{Checks if the data to be processed has the format type expected}
 \usage{
-check_data(DataMatrix, Spectral)
+check_data(Raster.Path, Mask = FALSE)
 }
 \arguments{
 \item{Raster.Path}{full path for the raster to be converted}
