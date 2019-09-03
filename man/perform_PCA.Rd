@@ -4,28 +4,30 @@
 \alias{perform_PCA}
 \title{Performs PCA for all images and create PCA file with either all or a selection of PCs}
 \usage{
-perform_PCA(ImPath, ImPathShade, Output.Dir, Continuum.Removal = TRUE,
-  TypePCA = "SPCA", FilterPCA = FALSE, Excluded.WL = FALSE,
+perform_PCA(ImPath, ImPathShade, Output_Dir, Continuum_Removal = TRUE,
+  TypePCA = "SPCA", FilterPCA = FALSE, Excluded_WL = FALSE,
   nb_partitions = 20, nbCPU = 1, MaxRAM = 0.25)
 }
 \arguments{
-\item{Output.Dir}{output directory}
+\item{ImPath}{Path and name of the image to be processed}
 
-\item{Continuum.Removal}{boolean: should continuum removal be applied?}
+\item{ImPathShade}{correponding shade mask}
+
+\item{Output_Dir}{output directory}
+
+\item{Continuum_Removal}{boolean: should continuum removal be applied?}
 
 \item{TypePCA}{Type of PCA: "PCA" or "SPCA"}
 
 \item{FilterPCA}{boolean. If TRUE 2nd filtering based on PCA}
 
-\item{Excluded.WL}{boolean. Water Vapor Absorption domains (in nanometers). Can also be used to exclude spectific domains}
+\item{Excluded_WL}{boolean. Water Vapor Absorption domains (in nanometers). Can also be used to exclude spectific domains}
 
 \item{nb_partitions}{numeric. Number of repetitions to estimate diversity from the raster (averaging repetitions).}
 
 \item{nbCPU}{numeric. Number fo CPUs in use.}
 
 \item{MaxRAM}{numeric. Maximum size of chunk in GB to limit RAM allocation when reading image file.}
-
-\item{ImNames}{Path and name of the images to be processed}
 }
 \value{
 list of paths corresponding to resulting PCA files

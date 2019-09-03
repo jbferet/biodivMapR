@@ -5,9 +5,9 @@
 \title{maps beta diversity indicator based on spectral species distribution}
 \usage{
 map_beta_div(Input.Image.File, Output.Dir, window_size, TypePCA = "SPCA",
-  nbclusters = 50, Nb.Units.Ordin = 2000, MinSun = 0.25,
-  pcelim = 0.02, scaling = "PCO", FullRes = TRUE, LowRes = FALSE,
-  nbCPU = 1, MaxRAM = 0.25)
+  nb_partitions = 20, nbclusters = 50, Nb_Units_Ordin = 2000,
+  MinSun = 0.25, pcelim = 0.02, scaling = "PCO", FullRes = TRUE,
+  LowRes = FALSE, nbCPU = 1, MaxRAM = 0.25)
 }
 \arguments{
 \item{Input.Image.File}{character. Path and name of the image to be processed.}
@@ -18,9 +18,11 @@ map_beta_div(Input.Image.File, Output.Dir, window_size, TypePCA = "SPCA",
 
 \item{TypePCA}{character. Type of PCA (PCA, SPCA, NLPCA...).}
 
+\item{nb_partitions}{numeric. Number of partitions (repetitions) to be computed then averaged.}
+
 \item{nbclusters}{numeric. Number of clusters defined in k-Means.}
 
-\item{Nb.Units.Ordin}{numeric. Maximum number of spatial units to be processed in NMDS.
+\item{Nb_Units_Ordin}{numeric. Maximum number of spatial units to be processed in NMDS.
 --> 1000 will be fast but may not capture important patterns if large area
 --> 4000 will be slow but may show better ability to capture landscape patterns}
 

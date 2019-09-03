@@ -4,12 +4,16 @@
 \alias{diversity_from_plots}
 \title{gets alpha diversity indicators from plot}
 \usage{
-diversity_from_plots(Raster, Plots, NbClusters = 50, Name.Plot = FALSE)
+diversity_from_plots(Raster, Plots, NbClusters = 50, Name_Plot = FALSE)
 }
 \arguments{
 \item{Raster}{SpectralSpecies file computed from DiverstyMapping method}
 
 \item{Plots}{list of shapefiles included in the raster}
+
+\item{NbClusters}{numeric. Number of clusters defined in k-Means.}
+
+\item{Name_Plot}{character. Name of teh plots defined in the shapefile}
 }
 \value{
 alpha and beta diversity metrics

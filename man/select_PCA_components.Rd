@@ -4,17 +4,19 @@
 \alias{select_PCA_components}
 \title{Check if principal components are properly selected as expected by the method}
 \usage{
-select_PCA_components(Input.Image.File, Output.Dir, PCA.Files,
-  TypePCA = "SPCA", File.Open = FALSE)
+select_PCA_components(Input_Image_File, Output_Dir, PCA_Files,
+  TypePCA = "SPCA", File_Open = FALSE)
 }
 \arguments{
-\item{Input.Image.File}{path for image to be processed}
+\item{Input_Image_File}{path for image to be processed}
 
-\item{Output.Dir}{output directory}
+\item{Output_Dir}{output directory}
 
-\item{PCA.Files}{path of PCA files}
+\item{PCA_Files}{path of PCA files}
 
 \item{TypePCA}{Type of PCA: "PCA" or "SPCA"}
+
+\item{File_Open}{Boolean. automatically opens file if TRUE}
 }
 \value{
 nothing

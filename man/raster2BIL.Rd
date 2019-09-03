@@ -4,25 +4,25 @@
 \alias{raster2BIL}
 \title{converts a raster into BIL format as expected by DivMapping codes}
 \usage{
-raster2BIL(Raster.Path, Sensor = "unknown", Output.Directory = FALSE,
-  Convert.Integer = TRUE, Multiplying.Factor = 1,
-  Multiplying.Factor.Last = 1)
+raster2BIL(Raster_Path, Sensor = "unknown", Output_Dir = FALSE,
+  Convert_Integer = TRUE, Multiplying_Factor = 1,
+  Multiplying_Factor_Last = 1)
 }
 \arguments{
-\item{Raster.Path}{character. Full path for the raster to be converted}
+\item{Raster_Path}{character. Full path for the raster to be converted}
 
 \item{Sensor}{character. Name of the sensor}
 
-\item{Output.Directory}{character. Path to output directory.}
+\item{Output_Dir}{character. Path to output directory.}
 
-\item{Convert.Integer}{boolean. Should data be converted into integer ?}
+\item{Convert_Integer}{boolean. Should data be converted into integer ?}
 
-\item{Multiplying.Factor}{numeric. Multiplying factor (eg convert real reflectance values between 0 and 1 into integer between 0 and 10000).}
+\item{Multiplying_Factor}{numeric. Multiplying factor (eg convert real reflectance values between 0 and 1 into integer between 0 and 10000).}
 
-\item{Multiplying.Factor.Last}{numeric. Multiplying factor for last band.}
+\item{Multiplying_Factor_Last}{numeric. Multiplying factor for last band.}
 }
 \value{
-Output.Path path for the image converted into ENVI BIL format
+Output_Path path for the image converted into ENVI BIL format
 }
 \description{
 converts a raster into BIL format as expected by DivMapping codes

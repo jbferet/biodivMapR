@@ -4,10 +4,10 @@
 \alias{check_data}
 \title{Checks if the data to be processed has the format type expected}
 \usage{
-check_data(Raster.Path, Mask = FALSE)
+check_data(Raster_Path, Mask = FALSE)
 }
 \arguments{
-\item{Raster.Path}{full path for the raster to be converted}
+\item{Raster_Path}{full path for the raster to be converted}
 
 \item{Mask}{is the raster a mask?}
 }

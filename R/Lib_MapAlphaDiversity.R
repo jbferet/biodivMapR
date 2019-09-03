@@ -12,8 +12,8 @@
 
 #' maps alpha diversity indicators  based on prior selection of PCs
 #'
-#' @param Input.Image.File character. Path and name of the image to be processed.
-#' @param Output.Dir character. Output directory.
+#' @param Input_Image_File character. Path and name of the image to be processed.
+#' @param Output_Dir character. Output directory.
 #' @param window_size numeric. Size of spatial units (in pixels) to compute diversity.
 #' @param TypePCA character. Type of PCA (PCA, SPCA, NLPCA...).
 #' @param nbclusters numeric. Number of clusters defined in k-Means.
@@ -21,61 +21,62 @@
 #' @param pcelim numeric. Minimum contribution (in \%) required for a spectral species.
 #' @param FullRes boolean. Full resolution.
 #' @param LowRes boolean. Low resolution.
+#' @param MapSTD boolean. map of standard deviation of the alpha diversity map (over repetitions)
 #' @param nbCPU numeric. Number of CPUs to use in parallel.
 #' @param MaxRAM numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.
-#' @param Index.Alpha character. Either 'Shannon', 'Simpson' or 'Fisher'.
+#' @param Index_Alpha character. Either 'Shannon', 'Simpson' or 'Fisher'.
 #'
 #' @export
-map_alpha_div <- function(Input.Image.File, Output.Dir, window_size,
+map_alpha_div <- function(Input_Image_File, Output_Dir, window_size,
                                 TypePCA = "SPCA", nbclusters = 50,
                                 MinSun = 0.25, pcelim = 0.02,
-                                Index.Alpha = "Shannon", FullRes = TRUE,
+                                Index_Alpha = "Shannon", FullRes = TRUE,
                                 LowRes = FALSE, MapSTD = FALSE,
                                 nbCPU = FALSE, MaxRAM = FALSE) {
-  Output.Dir.SS <- define_output_subdir(Output.Dir, Input.Image.File, TypePCA, "SpectralSpecies")
-  Output.Dir.PCA <- define_output_subdir(Output.Dir, Input.Image.File, TypePCA, "PCA")
-  Spectral.Species.Path <- paste(Output.Dir.SS, "SpectralSpecies", sep = "")
+  Output_Dir_SS <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "SpectralSpecies")
+  Output_Dir_PCA <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "PCA")
+  Spectral_Species_Path <- paste(Output_Dir_SS, "SpectralSpecies", sep = "")
   # 1- COMPUTE ALPHA DIVERSITY
-  ALPHA <- compute_alpha_metrics(Spectral.Species.Path, window_size, nbclusters, MinSun, pcelim, nbCPU = nbCPU, MaxRAM = MaxRAM, Index.Alpha = Index.Alpha)
+  ALPHA <- compute_alpha_metrics(Spectral_Species_Path, window_size, nbclusters, MinSun, pcelim, nbCPU = nbCPU, MaxRAM = MaxRAM, Index_Alpha = Index_Alpha)
   # 2- SAVE ALPHA DIVERSITY MAPS
   print("Write alpha diversity maps")
   # which spectral indices will be computed
   Shannon <- Simpson <- Fisher <- FALSE
-  if (length((grep("Shannon", Index.Alpha))) > 0) Shannon <- TRUE
-  if (length((grep("Simpson", Index.Alpha))) > 0) Simpson <- TRUE
-  if (length((grep("Fisher", Index.Alpha))) > 0) Fisher <- TRUE
+  if (length((grep("Shannon", Index_Alpha))) > 0) Shannon <- TRUE
+  if (length((grep("Simpson", Index_Alpha))) > 0) Simpson <- TRUE
+  if (length((grep("Fisher", Index_Alpha))) > 0) Fisher <- TRUE
 
-  Output.Dir.Alpha <- define_output_subdir(Output.Dir, Input.Image.File, TypePCA, "ALPHA")
+  Output_Dir_Alpha <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "ALPHA")
   if (Shannon == TRUE) {
     Index <- "Shannon"
-    Alpha.Path <- paste(Output.Dir.Alpha, Index, "_", window_size, sep = "")
-    write_raster_alpha(ALPHA$Shannon, ALPHA$HDR, Alpha.Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
+    Alpha_Path <- paste(Output_Dir_Alpha, Index, "_", window_size, sep = "")
+    write_raster_alpha(ALPHA$Shannon, ALPHA$HDR, Alpha_Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
     if (MapSTD == TRUE) {
       Index <- "Shannon_SD"
-      Alpha.Path <- paste(Output.Dir.Alpha, Index, "_", window_size, sep = "")
-      write_raster_alpha(ALPHA$Shannon.SD, ALPHA$HDR, Alpha.Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
+      Alpha_Path <- paste(Output_Dir_Alpha, Index, "_", window_size, sep = "")
+      write_raster_alpha(ALPHA$Shannon.SD, ALPHA$HDR, Alpha_Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
     }
   }
 
   if (Fisher == TRUE) {
     Index <- "Fisher"
-    Alpha.Path <- paste(Output.Dir.Alpha, Index, "_", window_size, sep = "")
-    write_raster_alpha(ALPHA$Fisher, ALPHA$HDR, Alpha.Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
+    Alpha_Path <- paste(Output_Dir_Alpha, Index, "_", window_size, sep = "")
+    write_raster_alpha(ALPHA$Fisher, ALPHA$HDR, Alpha_Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
     if (MapSTD == TRUE) {
       Index <- "Fisher_SD"
-      Alpha.Path <- paste(Output.Dir.Alpha, Index, "_", window_size, sep = "")
-      write_raster_alpha(ALPHA$Fisher.SD, ALPHA$HDR, Alpha.Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
+      Alpha_Path <- paste(Output_Dir_Alpha, Index, "_", window_size, sep = "")
+      write_raster_alpha(ALPHA$Fisher.SD, ALPHA$HDR, Alpha_Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
     }
   }
 
   if (Simpson == TRUE) {
     Index <- "Simpson"
-    Alpha.Path <- paste(Output.Dir.Alpha, Index, "_", window_size, sep = "")
-    write_raster_alpha(ALPHA$Simpson, ALPHA$HDR, Alpha.Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
+    Alpha_Path <- paste(Output_Dir_Alpha, Index, "_", window_size, sep = "")
+    write_raster_alpha(ALPHA$Simpson, ALPHA$HDR, Alpha_Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
     if (MapSTD == TRUE) {
       Index <- "Simpson_SD"
-      Alpha.Path <- paste(Output.Dir.Alpha, Index, "_", window_size, sep = "")
-      write_raster_alpha(ALPHA$Simpson.SD, ALPHA$HDR, Alpha.Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
+      Alpha_Path <- paste(Output_Dir_Alpha, Index, "_", window_size, sep = "")
+      write_raster_alpha(ALPHA$Simpson.SD, ALPHA$HDR, Alpha_Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
     }
   }
   return()
@@ -83,76 +84,77 @@ map_alpha_div <- function(Input.Image.File, Output.Dir, window_size,
 
 # Map alpha diversity metrics based on spectral species
 #
-# @param Spectral.Species.Path path for spectral species file to be written
+# @param Spectral_Species_Path path for spectral species file to be written
 # @param window_size size of spatial units (in pixels) to compute diversity
 # @param nbclusters number of clusters defined in k-Means
 # @param pcelim
 # @param nbCPU
 # @param MaxRAM
-# @param Index.Alpha
+# @param Index_Alpha
 # @param MinSun minimum proportion of sunlit pixels required to consider plot
 #
 # @return list of mean and SD of alpha diversity metrics
 #' @importFrom future plan multiprocess sequential
 #' @importFrom future.apply future_lapply
-compute_alpha_metrics <- function(Spectral.Species.Path, window_size, nbclusters, MinSun, pcelim, nbCPU = FALSE, MaxRAM = FALSE, Index.Alpha = "Shannon") {
+#' @importFrom stats sd
+compute_alpha_metrics <- function(Spectral_Species_Path, window_size, nbclusters, MinSun, pcelim, nbCPU = FALSE, MaxRAM = FALSE, Index_Alpha = "Shannon") {
   ##      read SpectralSpecies file and write distribution per spatial unit   ##
-  SS.HDR <- get_HDR_name(Spectral.Species.Path)
-  HDR.SS <- read_ENVI_header(SS.HDR)
+  SS_HDR <- get_HDR_name(Spectral_Species_Path)
+  HDR_SS <- read_ENVI_header(SS_HDR)
   if (MaxRAM == FALSE) {
     MaxRAM <- 0.25
   }
-  nbPieces.Min <- split_image(HDR.SS, MaxRAM)
+  nbPieces_Min <- split_image(HDR_SS, MaxRAM)
   if (nbCPU == FALSE) {
     nbCPU <- 1
   }
-  if (nbPieces.Min < nbCPU) {
-    nbPieces.Min <- nbCPU
+  if (nbPieces_Min < nbCPU) {
+    nbPieces_Min <- nbCPU
   }
-  SeqRead.SS <- where_to_read_kernel(HDR.SS, nbPieces.Min, window_size)
+  SeqRead.SS <- where_to_read_kernel(HDR_SS, nbPieces_Min, window_size)
 
   ##          prepare SS distribution map and corresponding sunlit map        ##
   # prepare SS distribution map
-  SSD.Path <- paste(Spectral.Species.Path, "_Distribution", sep = "")
-  HDR.SSD <- HDR.SS
+  SSD_Path <- paste(Spectral_Species_Path, "_Distribution", sep = "")
+  HDR_SSD <- HDR_SS
   # define number of bands
-  HDR.SSD$bands <- HDR.SS$bands * nbclusters
+  HDR_SSD$bands <- HDR_SS$bands * nbclusters
   # define image size
-  HDR.SSD$samples <- floor(HDR.SS$samples / window_size)
-  HDR.SSD$lines <- floor(HDR.SS$lines / window_size)
+  HDR_SSD$samples <- floor(HDR_SS$samples / window_size)
+  HDR_SSD$lines <- floor(HDR_SS$lines / window_size)
   # change resolution
-  HDR.SSD <- change_resolution_HDR(HDR.SSD, window_size)
-  HDR.SSD$`band names` <- NULL
+  HDR_SSD <- change_resolution_HDR(HDR_SSD, window_size)
+  HDR_SSD$`band names` <- NULL
   # create SSD file
   fidSSD <- file(
-    description = SSD.Path, open = "wb", blocking = TRUE,
+    description = SSD_Path, open = "wb", blocking = TRUE,
     encoding = getOption("encoding"), raw = FALSE
   )
   close(fidSSD)
-  headerFpath <- paste(SSD.Path, ".hdr", sep = "")
-  write_ENVI_header(HDR.SSD, headerFpath)
-  SeqWrite.SSD <- where_to_write_kernel(HDR.SS, HDR.SSD, nbPieces.Min, window_size)
+  headerFpath <- paste(SSD_Path, ".hdr", sep = "")
+  write_ENVI_header(HDR_SSD, headerFpath)
+  SeqWrite.SSD <- where_to_write_kernel(HDR_SS, HDR_SSD, nbPieces_Min, window_size)
 
   # prepare proportion of sunlit pixels from each spatial unit
-  Sunlit.Path <- paste(SSD.Path, "_Sunlit", sep = "")
-  HDR.Sunlit <- HDR.SSD
+  Sunlit_Path <- paste(SSD_Path, "_Sunlit", sep = "")
+  HDR_Sunlit <- HDR_SSD
   # define number of bands
-  HDR.Sunlit$bands <- 1
+  HDR_Sunlit$bands <- 1
   # define number of bands
-  HDR.Sunlit$`data type` <- 4
+  HDR_Sunlit$`data type` <- 4
   # create SSD Sunlit mask
   fidSunlit <- file(
-    description = Sunlit.Path, open = "wb", blocking = TRUE,
+    description = Sunlit_Path, open = "wb", blocking = TRUE,
     encoding = getOption("encoding"), raw = FALSE
   )
   close(fidSunlit)
-  headerFpath <- paste(Sunlit.Path, ".hdr", sep = "")
-  write_ENVI_header(HDR.Sunlit, headerFpath)
-  SeqWrite.Sunlit <- where_to_write_kernel(HDR.SS, HDR.Sunlit, nbPieces.Min, window_size)
+  headerFpath <- paste(Sunlit_Path, ".hdr", sep = "")
+  write_ENVI_header(HDR_Sunlit, headerFpath)
+  SeqWrite.Sunlit <- where_to_write_kernel(HDR_SS, HDR_Sunlit, nbPieces_Min, window_size)
 
   # for each piece of image
   ReadWrite <- list()
-  for (i in 1:nbPieces.Min) {
+  for (i in 1:nbPieces_Min) {
     ReadWrite[[i]] <- list()
     ReadWrite[[i]]$RW.SS <- ReadWrite[[i]]$RW.SSD <- ReadWrite[[i]]$RW.Sunlit <- list()
     ReadWrite[[i]]$RW.SS$Byte.Start <- SeqRead.SS$ReadByte.Start[i]
@@ -168,41 +170,41 @@ compute_alpha_metrics <- function(Spectral.Species.Path, window_size, nbclusters
     ReadWrite[[i]]$RW.Sunlit$lenBin <- SeqWrite.Sunlit$ReadByte.End[i] - SeqWrite.Sunlit$ReadByte.Start[i] + 1
   }
   ImgFormat <- "3D"
-  SSD.Format <- ENVI_type2bytes(HDR.SSD)
-  SS.Format <- ENVI_type2bytes(HDR.SS)
-  Sunlit.Format <- ENVI_type2bytes(HDR.Sunlit)
+  SSD_Format <- ENVI_type2bytes(HDR_SSD)
+  SS_Format <- ENVI_type2bytes(HDR_SS)
+  Sunlit_Format <- ENVI_type2bytes(HDR_Sunlit)
 
   # multiprocess of spectral species distribution and alpha diversity metrics
   plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
-  Schedule.Per.Thread <- ceiling(nbPieces.Min / nbCPU)
+  Schedule_Per_Thread <- ceiling(nbPieces_Min / nbCPU)
   ALPHA <- future_lapply(ReadWrite,
-    FUN = convert_PCA_to_SSD, Spectral.Species.Path = Spectral.Species.Path,
-    HDR.SS = HDR.SS, HDR.SSD = HDR.SSD, SS.Format = SS.Format, SSD.Format = SSD.Format,
+    FUN = convert_PCA_to_SSD, Spectral_Species_Path = Spectral_Species_Path,
+    HDR_SS = HDR_SS, HDR_SSD = HDR_SSD, SS_Format = SS_Format, SSD_Format = SSD_Format,
     ImgFormat = ImgFormat, window_size = window_size, nbclusters = nbclusters, MinSun = MinSun,
-    pcelim = pcelim, Index.Alpha = Index.Alpha, SSD.Path = SSD.Path, Sunlit.Path = Sunlit.Path,
-    Sunlit.Format = Sunlit.Format, future.scheduling = Schedule.Per.Thread
+    pcelim = pcelim, Index_Alpha = Index_Alpha, SSD_Path = SSD_Path, Sunlit_Path = Sunlit_Path,
+    Sunlit_Format = Sunlit_Format, future.scheduling = Schedule_Per_Thread
   )
   plan(sequential)
   # create ful map from chunks
-  Shannon.Mean.Chunk <- Fisher.Mean.Chunk <- Simpson.Mean.Chunk <- list()
-  Shannon.SD.Chunk <- Fisher.SD.Chunk <- Simpson.SD.Chunk <- list()
+  Shannon_Mean_Chunk <- Fisher_Mean_Chunk <- Simpson_Mean_Chunk <- list()
+  Shannon_SD_Chunk <- Fisher_SD_Chunk <- Simpson_SD_Chunk <- list()
   for (i in 1:length(ALPHA)) {
-    Shannon.Mean.Chunk[[i]] <- ALPHA[[i]]$Shannon
-    Fisher.Mean.Chunk[[i]] <- ALPHA[[i]]$Fisher
-    Simpson.Mean.Chunk[[i]] <- ALPHA[[i]]$Simpson
-    Shannon.SD.Chunk[[i]] <- ALPHA[[i]]$Shannon.SD
-    Fisher.SD.Chunk[[i]] <- ALPHA[[i]]$Fisher.SD
-    Simpson.SD.Chunk[[i]] <- ALPHA[[i]]$Simpson.SD
+    Shannon_Mean_Chunk[[i]] <- ALPHA[[i]]$Shannon
+    Fisher_Mean_Chunk[[i]] <- ALPHA[[i]]$Fisher
+    Simpson_Mean_Chunk[[i]] <- ALPHA[[i]]$Simpson
+    Shannon_SD_Chunk[[i]] <- ALPHA[[i]]$Shannon.SD
+    Fisher_SD_Chunk[[i]] <- ALPHA[[i]]$Fisher.SD
+    Simpson_SD_Chunk[[i]] <- ALPHA[[i]]$Simpson.SD
   }
-  Shannon.Mean <- do.call(rbind, Shannon.Mean.Chunk)
-  Fisher.Mean <- do.call(rbind, Fisher.Mean.Chunk)
-  Simpson.Mean <- do.call(rbind, Simpson.Mean.Chunk)
-  Shannon.SD <- do.call(rbind, Shannon.SD.Chunk)
-  Fisher.SD <- do.call(rbind, Fisher.SD.Chunk)
-  Simpson.SD <- do.call(rbind, Simpson.SD.Chunk)
+  Shannon.Mean <- do.call(rbind, Shannon_Mean_Chunk)
+  Fisher.Mean <- do.call(rbind, Fisher_Mean_Chunk)
+  Simpson.Mean <- do.call(rbind, Simpson_Mean_Chunk)
+  Shannon.SD <- do.call(rbind, Shannon_SD_Chunk)
+  Fisher.SD <- do.call(rbind, Fisher_SD_Chunk)
+  Simpson.SD <- do.call(rbind, Simpson_SD_Chunk)
   my_list <- list(
     "Shannon" = Shannon.Mean, "Fisher" = Fisher.Mean, "Simpson" = Simpson.Mean,
-    "Shannon.SD" = Shannon.SD, "Fisher.SD" = Fisher.SD, "Simpson.SD" = Simpson.SD, "HDR" = HDR.SSD
+    "Shannon.SD" = Shannon.SD, "Fisher.SD" = Fisher.SD, "Simpson.SD" = Simpson.SD, "HDR" = HDR_SSD
   )
   return(my_list)
 }
@@ -210,99 +212,99 @@ compute_alpha_metrics <- function(Spectral.Species.Path, window_size, nbclusters
 # Convert PCA into SSD based on previous clustering
 #
 # @param ReadWrite
-# @param Spectral.Species.Path
-# @param HDR.SS
-# @param HDR.SSD
-# @param SS.Format
-# @param SSD.Format
+# @param Spectral_Species_Path
+# @param HDR_SS
+# @param HDR_SSD
+# @param SS_Format
+# @param SSD_Format
 # @param ImgFormat
 # @param window_size
 # @param nbclusters
 # @param MinSun
 # @param pcelim
-# @param Index.Alpha
-# @param SSD.Path
-# @param Sunlit.Path
-# @param Sunlit.Format
+# @param Index_Alpha
+# @param SSD_Path
+# @param Sunlit_Path
+# @param Sunlit_Format
 #
 # @param
 # @param
 # @return
-convert_PCA_to_SSD <- function(ReadWrite, Spectral.Species.Path, HDR.SS, HDR.SSD,
-                               SS.Format, SSD.Format, ImgFormat, window_size, nbclusters,
-                               MinSun, pcelim, Index.Alpha, SSD.Path, Sunlit.Path, Sunlit.Format) {
-  SS.Chunk <- read_image_subset(
-    Spectral.Species.Path, HDR.SS,
+convert_PCA_to_SSD <- function(ReadWrite, Spectral_Species_Path, HDR_SS, HDR_SSD,
+                               SS_Format, SSD_Format, ImgFormat, window_size, nbclusters,
+                               MinSun, pcelim, Index_Alpha, SSD_Path, Sunlit_Path, Sunlit_Format) {
+  SS_Chunk <- read_image_subset(
+    Spectral_Species_Path, HDR_SS,
     ReadWrite$RW.SS$Byte.Start, ReadWrite$RW.SS$lenBin,
-    ReadWrite$RW.SS$nbLines, SS.Format, ImgFormat
+    ReadWrite$RW.SS$nbLines, SS_Format, ImgFormat
   )
-  SSD.Alpha <- compute_SSD(SS.Chunk, window_size, nbclusters, MinSun, pcelim, Index.Alpha = Index.Alpha)
+  SSD_Alpha <- compute_SSD(SS_Chunk, window_size, nbclusters, MinSun, pcelim, Index_Alpha = Index_Alpha)
   # write spectral Species ditribution file
   fidSSD <- file(
-    description = SSD.Path, open = "r+b", blocking = TRUE,
+    description = SSD_Path, open = "r+b", blocking = TRUE,
     encoding = getOption("encoding"), raw = FALSE
   )
   if (!ReadWrite$RW.SSD$Byte.Start == 1) {
     seek(fidSSD, where = ReadWrite$RW.SSD$Byte.Start - 1, origin = "start", rw = "write")
   }
-  SSD.Chunk <- aperm(array(SSD.Alpha$SSD, c(ReadWrite$RW.SSD$nbLines, HDR.SSD$samples, HDR.SSD$bands)), c(2, 3, 1))
-  writeBin(c(SSD.Chunk), fidSSD, size = SSD.Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
+  SSD_Chunk <- aperm(array(SSD_Alpha$SSD, c(ReadWrite$RW.SSD$nbLines, HDR_SSD$samples, HDR_SSD$bands)), c(2, 3, 1))
+  writeBin(c(SSD_Chunk), fidSSD, size = SSD_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
   close(fidSSD)
 
   # write PCsunlit pixels corresponding to SSD file
   fidSunlit <- file(
-    description = Sunlit.Path, open = "r+b", blocking = TRUE,
+    description = Sunlit_Path, open = "r+b", blocking = TRUE,
     encoding = getOption("encoding"), raw = FALSE
   )
   if (!ReadWrite$RW.Sunlit$Byte.Start == 1) {
     seek(fidSunlit, where = ReadWrite$RW.Sunlit$Byte.Start - 1, origin = "start", rw = "write")
   }
-  Sunlit.Chunk <- t(SSD.Alpha$PCsun)
-  writeBin(c(Sunlit.Chunk), fidSunlit, size = Sunlit.Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
+  Sunlit.Chunk <- t(SSD_Alpha$PCsun)
+  writeBin(c(Sunlit.Chunk), fidSunlit, size = Sunlit_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
   close(fidSunlit)
 
-  rm(SSD.Chunk)
+  rm(SSD_Chunk)
   rm(Sunlit.Chunk)
   gc()
-  Shannon.Mean.Chunk <- apply(SSD.Alpha$Shannon, 1:2, mean)
-  Fisher.Mean.Chunk <- apply(SSD.Alpha$Fisher, 1:2, mean)
-  Simpson.Mean.Chunk <- apply(SSD.Alpha$Simpson, 1:2, mean)
-  Shannon.SD.Chunk <- apply(SSD.Alpha$Shannon, 1:2, sd)
-  Fisher.SD.Chunk <- apply(SSD.Alpha$Fisher, 1:2, sd)
-  Simpson.SD.Chunk <- apply(SSD.Alpha$Simpson, 1:2, sd)
-  rm(SSD.Alpha)
+  Shannon_Mean_Chunk <- apply(SSD_Alpha$Shannon, 1:2, mean)
+  Fisher_Mean_Chunk <- apply(SSD_Alpha$Fisher, 1:2, mean)
+  Simpson_Mean_Chunk <- apply(SSD_Alpha$Simpson, 1:2, mean)
+  Shannon_SD_Chunk <- apply(SSD_Alpha$Shannon, 1:2, sd)
+  Fisher_SD_Chunk <- apply(SSD_Alpha$Fisher, 1:2, sd)
+  Simpson_SD_Chunk <- apply(SSD_Alpha$Simpson, 1:2, sd)
+  rm(SSD_Alpha)
   gc()
   my_list <- list(
-    "Shannon" = Shannon.Mean.Chunk, "Fisher" = Fisher.Mean.Chunk, "Simpson" = Simpson.Mean.Chunk,
-    "Shannon.SD" = Shannon.SD.Chunk, "Fisher.SD" = Fisher.SD.Chunk, "Simpson.SD" = Simpson.SD.Chunk
+    "Shannon" = Shannon_Mean_Chunk, "Fisher" = Fisher_Mean_Chunk, "Simpson" = Simpson_Mean_Chunk,
+    "Shannon.SD" = Shannon_SD_Chunk, "Fisher.SD" = Fisher_SD_Chunk, "Simpson.SD" = Simpson_SD_Chunk
   )
   return(my_list)
 }
 
 # compute spectral species distribution from original spectral species map
 #
-# @param Image.Chunk 3D image chunk of spectral species
+# @param Image_Chunk 3D image chunk of spectral species
 # @param window_size size of spatial units (in pixels) to compute diversity
 # @param nbclusters number of clusters defined in k-Means
 # @param MinSun minimum proportion of sunlit pixels required to consider plot
-# @param Index.Alpha
+# @param Index_Alpha
 # @param pcelim minimum proportion for a spectral species to be included
 #
 # @return list of alpha diversity metrics for each iteration
 #' @importFrom vegan fisher.alpha
-compute_SSD <- function(Image.Chunk, window_size, nbclusters, MinSun, pcelim, Index.Alpha = "Shannon") {
-  nbi <- floor(dim(Image.Chunk)[1] / window_size)
-  nbj <- floor(dim(Image.Chunk)[2] / window_size)
-  nb_partitions <- dim(Image.Chunk)[3]
+compute_SSD <- function(Image_Chunk, window_size, nbclusters, MinSun, pcelim, Index_Alpha = "Shannon") {
+  nbi <- floor(dim(Image_Chunk)[1] / window_size)
+  nbj <- floor(dim(Image_Chunk)[2] / window_size)
+  nb_partitions <- dim(Image_Chunk)[3]
   SSDMap <- array(NA, c(nbi, nbj, nb_partitions * nbclusters))
   shannonIter <- FisherAlpha <- SimpsonAlpha <- array(NA, dim = c(nbi, nbj, nb_partitions))
   PCsun <- matrix(NA, nrow = nbi, ncol = nbj)
 
   # which spectral indices will be computed
   Shannon <- Simpson <- Fisher <- FALSE
-  if (length((grep("Shannon", Index.Alpha))) > 0) Shannon <- TRUE
-  if (length((grep("Simpson", Index.Alpha))) > 0) Simpson <- TRUE
-  if (length((grep("Fisher", Index.Alpha))) > 0) Fisher <- TRUE
+  if (length((grep("Shannon", Index_Alpha))) > 0) Shannon <- TRUE
+  if (length((grep("Simpson", Index_Alpha))) > 0) Simpson <- TRUE
+  if (length((grep("Fisher", Index_Alpha))) > 0) Fisher <- TRUE
 
   # for each kernel in the line
   for (ii in 1:nbi) {
@@ -313,7 +315,7 @@ compute_SSD <- function(Image.Chunk, window_size, nbclusters, MinSun, pcelim, In
       lj <- ((jj - 1) * window_size) + 1
       uj <- jj * window_size
       # put all iterations in a 2D matrix shape
-      ijit <- t(matrix(Image.Chunk[li:ui, lj:uj, ], ncol = nb_partitions))
+      ijit <- t(matrix(Image_Chunk[li:ui, lj:uj, ], ncol = nb_partitions))
       # keep non zero values
       ijit <- matrix(ijit[, which(!ijit[1, ] == 0)], nrow = nb_partitions)
       nb.Pix.Sunlit <- dim(ijit)[2]
@@ -381,7 +383,7 @@ get_Simpson <- function(Distrib) {
 # Writes image of alpha diversity indicator (1 band) and smoothed alpha diversity
 #
 # @param Image 2D matrix of image to be written
-# @param HDR.SSD hdr template derived from SSD to modify
+# @param HDR_SSD hdr template derived from SSD to modify
 # @param ImagePath path of image file to be written
 # @param window_size spatial units use dto compute diversiy (in pixels)
 # @param Index name of the index (eg. Shannon)
@@ -389,157 +391,97 @@ get_Simpson <- function(Distrib) {
 # @param LowRes should low resolution image be written (one value per spatial unit)
 #
 # @return
-write_raster_alpha <- function(Image, HDR.SSD, ImagePath, window_size, Index, FullRes = TRUE, LowRes = FALSE) {
+write_raster_alpha <- function(Image, HDR_SSD, ImagePath, window_size, Index, FullRes = TRUE, LowRes = FALSE) {
 
   # Write image with resolution corresponding to window_size
-  HDR.Alpha <- HDR.SSD
-  HDR.Alpha$bands <- 1
-  HDR.Alpha$`data type` <- 4
-  HDR.Alpha$`band names` <- Index
-  Image.Format <- ENVI_type2bytes(HDR.Alpha)
+  HDR_Alpha <- HDR_SSD
+  HDR_Alpha$bands <- 1
+  HDR_Alpha$`data type` <- 4
+  HDR_Alpha$`band names` <- Index
+  Image_Format <- ENVI_type2bytes(HDR_Alpha)
   if (LowRes == TRUE) {
     headerFpath <- paste(ImagePath, ".hdr", sep = "")
-    write_ENVI_header(HDR.Alpha, headerFpath)
-    ImgWrite <- array(Image, c(HDR.Alpha$lines, HDR.Alpha$samples, 1))
+    write_ENVI_header(HDR_Alpha, headerFpath)
+    ImgWrite <- array(Image, c(HDR_Alpha$lines, HDR_Alpha$samples, 1))
     ImgWrite <- aperm(ImgWrite, c(2, 3, 1))
     fidOUT <- file(
       description = ImagePath, open = "wb", blocking = TRUE,
       encoding = getOption("encoding"), raw = FALSE
     )
-    writeBin(c(ImgWrite), fidOUT, size = Image.Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
+    writeBin(c(ImgWrite), fidOUT, size = Image_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
     close(fidOUT)
   }
   if (FullRes == TRUE) {
     # Write image with Full native resolution
-    HDR.Full <- HDR.Alpha
-    HDR.Full$samples <- HDR.Alpha$samples * window_size
-    HDR.Full$lines <- HDR.Alpha$lines * window_size
-    HDR.Full <- revert_resolution_HDR(HDR.Full, window_size)
-    ImagePath.FullRes <- paste(ImagePath, "_Fullres", sep = "")
-    headerFpath <- paste(ImagePath.FullRes, ".hdr", sep = "")
-    write_ENVI_header(HDR.Full, headerFpath)
-    Image.Format <- ENVI_type2bytes(HDR.Full)
-    Image.FullRes <- matrix(NA, ncol = HDR.Full$samples, nrow = HDR.Full$lines)
-    for (i in 1:HDR.SSD$lines) {
-      for (j in 1:HDR.SSD$samples) {
-        Image.FullRes[((i - 1) * window_size + 1):(i * window_size), ((j - 1) * window_size + 1):(j * window_size)] <- Image[i, j]
+    HDR_Full <- HDR_Alpha
+    HDR_Full$samples <- HDR_Alpha$samples * window_size
+    HDR_Full$lines <- HDR_Alpha$lines * window_size
+    HDR_Full <- revert_resolution_HDR(HDR_Full, window_size)
+    ImagePath_FullRes <- paste(ImagePath, "_Fullres", sep = "")
+    headerFpath <- paste(ImagePath_FullRes, ".hdr", sep = "")
+    write_ENVI_header(HDR_Full, headerFpath)
+    Image_Format <- ENVI_type2bytes(HDR_Full)
+    Image_FullRes <- matrix(NA, ncol = HDR_Full$samples, nrow = HDR_Full$lines)
+    for (i in 1:HDR_SSD$lines) {
+      for (j in 1:HDR_SSD$samples) {
+        Image_FullRes[((i - 1) * window_size + 1):(i * window_size), ((j - 1) * window_size + 1):(j * window_size)] <- Image[i, j]
       }
     }
-    ImgWrite <- array(Image.FullRes, c(HDR.Full$lines, HDR.Full$samples, 1))
+    ImgWrite <- array(Image_FullRes, c(HDR_Full$lines, HDR_Full$samples, 1))
     ImgWrite <- aperm(ImgWrite, c(2, 3, 1))
     fidOUT <- file(
-      description = ImagePath.FullRes, open = "wb", blocking = TRUE,
+      description = ImagePath_FullRes, open = "wb", blocking = TRUE,
       encoding = getOption("encoding"), raw = FALSE
     )
-    writeBin(c(ImgWrite), fidOUT, size = Image.Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
+    writeBin(c(ImgWrite), fidOUT, size = Image_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
     close(fidOUT)
     # zip resulting file
-    ZipFile(ImagePath.FullRes)
+    ZipFile(ImagePath_FullRes)
   }
   # write smoothed map
   SizeFilt <- 1
   nbi <- dim(Image)[1]
   nbj <- dim(Image)[2]
   if (min(c(nbi, nbj)) > (2 * SizeFilt + 1)) {
-    Image.Smooth <- mean_filter(Image, nbi, nbj, SizeFilt)
-    Image.Smooth[which(is.na(Image))] <- NA
+    Image_Smooth <- mean_filter(Image, nbi, nbj, SizeFilt)
+    Image_Smooth[which(is.na(Image))] <- NA
     ImagePath.Smooth <- paste(ImagePath, "_MeanFilter", sep = "")
     headerFpath <- paste(ImagePath.Smooth, ".hdr", sep = "")
-    Image.Format <- ENVI_type2bytes(HDR.Alpha)
+    Image_Format <- ENVI_type2bytes(HDR_Alpha)
     if (LowRes == TRUE) {
-      write_ENVI_header(HDR.Alpha, headerFpath)
-      ImgWrite <- array(Image.Smooth, c(HDR.Alpha$lines, HDR.Alpha$samples, 1))
+      write_ENVI_header(HDR_Alpha, headerFpath)
+      ImgWrite <- array(Image_Smooth, c(HDR_Alpha$lines, HDR_Alpha$samples, 1))
       ImgWrite <- aperm(ImgWrite, c(2, 3, 1))
       fidOUT <- file(
         description = ImagePath.Smooth, open = "wb", blocking = TRUE,
         encoding = getOption("encoding"), raw = FALSE
       )
-      writeBin(c(ImgWrite), fidOUT, size = Image.Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
+      writeBin(c(ImgWrite), fidOUT, size = Image_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
       close(fidOUT)
     }
     if (FullRes == TRUE) {
       # Write image with Full native resolution
-      ImagePath.FullRes <- paste(ImagePath.Smooth, "_Fullres", sep = "")
-      headerFpath <- paste(ImagePath.FullRes, ".hdr", sep = "")
-      write_ENVI_header(HDR.Full, headerFpath)
-      Image.Format <- ENVI_type2bytes(HDR.Full)
-      Image.FullRes <- matrix(NA, ncol = HDR.Full$samples, nrow = HDR.Full$lines)
-      for (i in 1:HDR.SSD$lines) {
-        for (j in 1:HDR.SSD$samples) {
-          Image.FullRes[((i - 1) * window_size + 1):(i * window_size), ((j - 1) * window_size + 1):(j * window_size)] <- Image.Smooth[i, j]
+      ImagePath_FullRes <- paste(ImagePath.Smooth, "_Fullres", sep = "")
+      headerFpath <- paste(ImagePath_FullRes, ".hdr", sep = "")
+      write_ENVI_header(HDR_Full, headerFpath)
+      Image_Format <- ENVI_type2bytes(HDR_Full)
+      Image_FullRes <- matrix(NA, ncol = HDR_Full$samples, nrow = HDR_Full$lines)
+      for (i in 1:HDR_SSD$lines) {
+        for (j in 1:HDR_SSD$samples) {
+          Image_FullRes[((i - 1) * window_size + 1):(i * window_size), ((j - 1) * window_size + 1):(j * window_size)] <- Image_Smooth[i, j]
         }
       }
-      ImgWrite <- array(Image.FullRes, c(HDR.Full$lines, HDR.Full$samples, 1))
+      ImgWrite <- array(Image_FullRes, c(HDR_Full$lines, HDR_Full$samples, 1))
       ImgWrite <- aperm(ImgWrite, c(2, 3, 1))
       fidOUT <- file(
-        description = ImagePath.FullRes, open = "wb", blocking = TRUE,
+        description = ImagePath_FullRes, open = "wb", blocking = TRUE,
         encoding = getOption("encoding"), raw = FALSE
       )
-      writeBin(c(ImgWrite), fidOUT, size = Image.Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
+      writeBin(c(ImgWrite), fidOUT, size = Image_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
       close(fidOUT)
       # zip resulting file
-      ZipFile(ImagePath.FullRes)
+      ZipFile(ImagePath_FullRes)
     }
   }
   return("")
 }
-
-# # maps alpha diversity indicators  based on prior selection of PCs
-# #
-# # @param ImNames Path and name of the images to be processed
-# # @param Output.Dir output directory
-# # @param window_size dimensions of the spatial unit
-# # @param TypePCA Type of PCA (PCA, SPCA, NLPCA...)
-# # @param nbclusters number of clusters defined in k-Means
-# # @param MinSun minimum proportion of sunlit pixels required to consider plot
-# # @param pcelim minimum contribution (in %) required for a spectral species
-# # @param FullRes
-# # @param LowRes
-# # @param nbCPU
-# # @param MaxRAM
-# # @param Index.Alpha 'Shannon', 'Simpson, 'Fisher'
-# #
-# # @return
-# Map.Alpha.Diversity.TestnbCluster <- function(ImNames, Output.Dir, window_size, TypePCA = "SPCA", nbclusters = 50, MinSun = 0.25, pcelim = 0.02, Index.Alpha = "Shannon", FullRes = TRUE, LowRes = FALSE, nbCPU = FALSE, MaxRAM = FALSE) {
-#   Output.Dir.SS <- define_output_subdir(Output.Dir, ImNames$Input.Image, TypePCA, paste("SpectralSpecies_", nbclusters, sep = ""))
-#   Output.Dir.PCA <- define_output_subdir(Output.Dir, ImNames$Input.Image, TypePCA, "PCA")
-#   Spectral.Species.Path <- paste(Output.Dir.SS, "SpectralSpecies", sep = "")
-#   # 1- COMPUTE ALPHA DIVERSITY
-#   ALPHA <- compute_alpha_metrics(Spectral.Species.Path, window_size, nbclusters, MinSun, pcelim, nbCPU = nbCPU, MaxRAM = MaxRAM, Index.Alpha = Index.Alpha)
-#   # 2- SAVE ALPHA DIVERSITY MAPS
-#   print("Write alpha diversity maps")
-#   # which spectral indices will be computed
-#   Shannon <- Simpson <- Fisher <- FALSE
-#   if (length((grep("Shannon", Index.Alpha))) > 0) Shannon <- TRUE
-#   if (length((grep("Simpson", Index.Alpha))) > 0) Simpson <- TRUE
-#   if (length((grep("Fisher", Index.Alpha))) > 0) Fisher <- TRUE
-#
-#   Output.Dir.Alpha <- define_output_subdir(Output.Dir, ImNames$Input.Image, TypePCA, paste("ALPHA_", nbclusters, sep = ""))
-#   if (Shannon == TRUE) {
-#     Index <- "Shannon"
-#     Alpha.Path <- paste(Output.Dir.Alpha, Index, "_", window_size, sep = "")
-#     write_raster_alpha(ALPHA$Shannon, ALPHA$HDR, Alpha.Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
-#     Index <- "Shannon_SD"
-#     Alpha.Path <- paste(Output.Dir.Alpha, Index, "_", window_size, sep = "")
-#     write_raster_alpha(ALPHA$Shannon.SD, ALPHA$HDR, Alpha.Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
-#   }
-#
-#   if (Fisher == TRUE) {
-#     Index <- "Fisher"
-#     Alpha.Path <- paste(Output.Dir.Alpha, Index, "_", window_size, sep = "")
-#     write_raster_alpha(ALPHA$Fisher, ALPHA$HDR, Alpha.Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
-#     Index <- "Fisher_SD"
-#     Alpha.Path <- paste(Output.Dir.Alpha, Index, "_", window_size, sep = "")
-#     write_raster_alpha(ALPHA$Fisher.SD, ALPHA$HDR, Alpha.Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
-#   }
-#
-#   if (Simpson == TRUE) {
-#     Index <- "Simpson"
-#     Alpha.Path <- paste(Output.Dir.Alpha, Index, "_", window_size, sep = "")
-#     write_raster_alpha(ALPHA$Simpson, ALPHA$HDR, Alpha.Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
-#     Index <- "Simpson_SD"
-#     Alpha.Path <- paste(Output.Dir.Alpha, Index, "_", window_size, sep = "")
-#     write_raster_alpha(ALPHA$Simpson.SD, ALPHA$HDR, Alpha.Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
-#   }
-#   return()
-# }

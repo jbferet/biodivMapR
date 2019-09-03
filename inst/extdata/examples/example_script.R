@@ -28,24 +28,28 @@ library(biodivMapR)
 ################################################################################
 # path (absolute or relative) for the image to process
 # expected to be in ENVI HDR format, BIL interleaved
-Input.Image.File  = system.file('extdata', 'RASTER', 'S2A_T33NUD_20180104_Subset', package = 'biodivMapR')
-check_data(Input.Image.File)
+Input_Image_File  = system.file('extdata', 'RASTER', 'S2A_T33NUD_20180104_Subset', package = 'biodivMapR')
+
+################################################################################
+##      Check if the image format is compatible with codes (ENVI BIL)         ##
+################################################################################
+check_data(Input_Image_File)
 
 # # convert the image using Convert.Raster2BIL if not in the proper format
-# Input.Image.File  = raster2BIL(Raster.Path = Input.Image.File,
+# Input_Image_File  = raster2BIL(Raster_Path = Input_Image_File,
 #                                        Sensor = 'SENTINEL_2A',
-#                                        Convert.Integer = TRUE,
-#                                        Output.Directory = '~/test')
+#                                        Convert_Integer = TRUE,
+#                                        Output_Dir = '~/test')
 
 # full path for the Mask raster corresponding to image to process
 # expected to be in ENVI HDR format, 1 band, integer 8bits
 # expected values in the raster: 0 = masked, 1 = selected
 # set to FALSE if no mask available
-Input.Mask.File   = FALSE
+Input_Mask_File   = FALSE
 
 # relative or absolute path for the Directory where results will be stored
 # For each image processed, a subdirectory will be created after its name
-Output.Dir        = 'RESULTS'
+Output_Dir        = 'RESULTS'
 
 # SPATIAL RESOLUTION
 # resolution of spatial units for alpha and beta diversity maps (in pixels), relative to original image
@@ -63,58 +67,56 @@ FilterPCA         = FALSE
 TypePCA     = 'SPCA'
 
 ################################################################################
-##      Check if the image format is compatible with codes (ENVI BIL)         ##
-################################################################################
-check_data(Input.Image.File)
-
-################################################################################
 ##                    DEFINE PARAMETERS FOR METHOD                            ##
 ################################################################################
-nbCPU         = 2
-MaxRAM        = 0.5
-nbclusters    = 50
+nbCPU       = 2
+MaxRAM      = 0.5
+nbclusters  = 50
 
 ################################################################################
 ##                              PROCESS IMAGES                                ##
 ################################################################################
 # 1- Filter data in order to discard non vegetated / shaded / cloudy pixels
-NDVI.Thresh = 0.5
-Blue.Thresh = 500
-NIR.Thresh  = 1500
+NDVI_Thresh = 0.5
+Blue_Thresh = 500
+NIR_Thresh  = 1500
 print("PERFORM RADIOMETRIC FILTERING")
-ImPathShade         = perform_radiometric_filtering(Input.Image.File,Input.Mask.File,Output.Dir,
-                                                    NDVI.Thresh = NDVI.Thresh, Blue.Thresh = Blue.Thresh,
-                                                    NIR.Thresh = NIR.Thresh)
+ImPathShade = perform_radiometric_filtering(Input_Image_File,Input_Mask_File,Output_Dir,
+                                            NDVI_Thresh = NDVI_Thresh, Blue_Thresh = Blue_Thresh,
+                                            NIR_Thresh = NIR_Thresh)
 
 # 2- Compute PCA for a random selection of pixels in the raster
 print("PERFORM PCA ON RASTER")
-PCA.Files           = perform_PCA(Input.Image.File,ImPathShade,Output.Dir,FilterPCA=FilterPCA,nbCPU=nbCPU,MaxRAM = MaxRAM)
+PCA_Output    = perform_PCA(Input_Image_File,ImPathShade,Output_Dir,FilterPCA=FilterPCA,nbCPU=nbCPU,MaxRAM = MaxRAM)
+PCA_Files     = PCA_Output$PCA_Files
+Pix_Per_Partition  = PCA_Output$Pix_Per_Partition
+nb_partitions = PCA_Output$nb_partitions
+ImPathShade   = PCA_Output$ImPathShade
 
 # 3- Select principal components from the PCA raster
-select_PCA_components(Input.Image.File,Output.Dir,PCA.Files,File.Open = TRUE)
+select_PCA_components(Input_Image_File,Output_Dir,PCA_Files,File_Open = TRUE)
 
 ################################################################################
 ##                      MAP ALPHA AND BETA DIVERSITY                          ##
 ################################################################################
 
 print("MAP SPECTRAL SPECIES")
-map_spectral_species(Input.Image.File,Output.Dir,PCA.Files,nbCPU=nbCPU,MaxRAM=MaxRAM)
-
+map_spectral_species(Input_Image_File,Output_Dir,PCA_Files,ImPathShade,Pix_Per_Partition,nb_partitions,nbCPU=nbCPU,MaxRAM=MaxRAM)
 
 print("MAP ALPHA DIVERSITY")
 # Index.Alpha   = c('Shannon','Simpson')
-Index.Alpha   = c('Shannon')
-map_alpha_div(Input.Image.File,Output.Dir,window_size,nbCPU=nbCPU,MaxRAM=MaxRAM,Index.Alpha = Index.Alpha)
+Index_Alpha   = c('Shannon')
+map_alpha_div(Input_Image_File,Output_Dir,window_size,nbCPU=nbCPU,MaxRAM=MaxRAM,Index_Alpha = Index_Alpha)
 
 print("MAP BETA DIVERSITY")
-map_beta_div(Input.Image.File,Output.Dir,window_size,nbCPU=nbCPU,MaxRAM=MaxRAM)
+map_beta_div(Input_Image_File,Output_Dir,window_size,nb_partitions=nb_partitions,nbCPU=nbCPU,MaxRAM=MaxRAM)
 
 ################################################################################
 ##          COMPUTE ALPHA AND BETA DIVERSITY FROM FIELD PLOTS                 ##
 ################################################################################
 
 # location of the spectral species raster needed for validation
-Dir.Raster  = file.path(Output.Dir,basename(Input.Image.File),TypePCA,'SpectralSpecies')
+Dir.Raster  = file.path(Output_Dir,basename(Input_Image_File),TypePCA,'SpectralSpecies')
 Name.Raster = 'SpectralSpecies'
 Path.Raster = file.path(Dir.Raster,Name.Raster)
 
@@ -133,16 +135,16 @@ Projection.Raster   = get_projection(Path.Raster,'raster')
 # get alpha and beta diversity indicators corresponding to shapefiles
 Biodiv.Indicators           = diversity_from_plots(Raster = Path.Raster, Plots = Path.Vector,NbClusters = nbclusters)
 # if no name
-Biodiv.Indicators$Name.Plot = seq(1,length(Biodiv.Indicators$Shannon[[1]]),by = 1)
+Biodiv.Indicators$Name_Plot = seq(1,length(Biodiv.Indicators$Shannon[[1]]),by = 1)
 Shannon.RS                  = c(Biodiv.Indicators$Shannon)[[1]]
 
 ####################################################
 # write RS indicators
 ####################################################
 # write indicators for alpha diversity
-Path.Results = paste(Output.Dir,'/',basename(Input.Image.File),'/',TypePCA,'/VALIDATION/',sep='')
+Path.Results = paste(Output_Dir,'/',basename(Input_Image_File),'/',TypePCA,'/VALIDATION/',sep='')
 dir.create(Path.Results, showWarnings = FALSE,recursive = TRUE)
-write.table(Shannon.RS, file = paste(Path.Results,"ShannonIndex.csv",sep=''), sep="\t", dec=".", na=" ", row.names = Biodiv.Indicators$Name.Plot, col.names= F,quote=FALSE)
+write.table(Shannon.RS, file = paste(Path.Results,"ShannonIndex.csv",sep=''), sep="\t", dec=".", na=" ", row.names = Biodiv.Indicators$Name_Plot, col.names= F,quote=FALSE)
 
 Results         =  data.frame(Name.Vector, Biodiv.Indicators$Richness, Biodiv.Indicators$Fisher, Biodiv.Indicators$Shannon,Biodiv.Indicators$Simpson)
 names(Results)  = c("ID_Plot", "Species_Richness", "Fisher", "Shannon", "Simpson")
@@ -150,7 +152,7 @@ write.table(Results, file = paste(Path.Results,"AlphaDiversity.csv",sep=''), sep
 
 # write indicators for beta diversity
 BC_mean = Biodiv.Indicators$BCdiss
-colnames(BC_mean) = rownames(BC_mean) = Biodiv.Indicators$Name.Plot
+colnames(BC_mean) = rownames(BC_mean) = Biodiv.Indicators$Name_Plot
 write.table(BC_mean, file = paste(Path.Results,"BrayCurtis.csv",sep=''), sep="\t", dec=".", na=" ", row.names = F, col.names= T,quote=FALSE)
 
 

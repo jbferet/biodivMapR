@@ -55,6 +55,7 @@ list_shp <- function(x){
 # @param Reprojected.File path for the reprojected shapefile
 # @return
 #' @importFrom rgdal readOGR writeOGR
+#' @importFrom sp spTransform
 #' @import tools
 reproject_vector = function(Initial.File,Projection,Reprojected.File){
 
@@ -137,11 +138,13 @@ get_alpha_metrics = function(Distrib){
 #' gets alpha diversity indicators from plot
 #' @param Raster SpectralSpecies file computed from DiverstyMapping method
 #' @param Plots list of shapefiles included in the raster
+#' @param NbClusters numeric. Number of clusters defined in k-Means.
+#' @param Name_Plot character. Name of teh plots defined in the shapefile
 #' @return alpha and beta diversity metrics
 #' @importFrom rgdal readOGR
 #' @import tools
 #' @export
-diversity_from_plots = function(Raster, Plots,NbClusters = 50,Name.Plot = FALSE){
+diversity_from_plots = function(Raster, Plots,NbClusters = 50,Name_Plot = FALSE){
   # get hdr from raster
   HDR           = read_ENVI_header(paste(Raster,'.hdr',sep=''))
   nbRepetitions = HDR$bands
@@ -188,8 +191,8 @@ diversity_from_plots = function(Raster, Plots,NbClusters = 50,Name.Plot = FALSE)
     XY          = extract_pixels_coordinates.From.OGR(Raster,Plot)
     # if the plot is included in the raster
     if (length(XY)==1 & length(XY[[1]]$Column)==0){
-      if (length(Name.Plot)==nbPlots){
-        Name.Plot[ip] = NA
+      if (length(Name_Plot)==nbPlots){
+        Name_Plot[ip] = NA
       }
     }
     if (length(XY)>1 | length(XY[[1]]$Column)>0){
@@ -273,14 +276,14 @@ diversity_from_plots = function(Raster, Plots,NbClusters = 50,Name.Plot = FALSE)
   for(i in 1:nbRepetitions){
     BC_mean = BC_mean+BC[[i]]
   }
-  if (length(Name.Plot)>1){
-    elim = which(is.na(Name.Plot))
+  if (length(Name_Plot)>1){
+    elim = which(is.na(Name_Plot))
     if (length(elim)>0){
-      Name.Plot =   Name.Plot[-elim]
+      Name_Plot =   Name_Plot[-elim]
     }
   }
   BC_mean = as.matrix(BC_mean/nbRepetitions)
-  return(list("Richness" = Richness,"Fisher"=Fisher,"Shannon"=Shannon,"Simpson"=Simpson,'BCdiss' = BC_mean,"fisher.All"=Fisher.AllRep,"Shannon.All"=Shannon.AllRep,"Simpson.All"=Simpson.AllRep,'BCdiss.All' = BC,'Name.Plot'=Name.Plot))
+  return(list("Richness" = Richness,"Fisher"=Fisher,"Shannon"=Shannon,"Simpson"=Simpson,'BCdiss' = BC_mean,"fisher.All"=Fisher.AllRep,"Shannon.All"=Shannon.AllRep,"Simpson.All"=Simpson.AllRep,'BCdiss.All' = BC,'Name_Plot'=Name_Plot))
 }
 
 # build a vector file from raster footprint
@@ -294,6 +297,7 @@ diversity_from_plots = function(Raster, Plots,NbClusters = 50,Name.Plot = FALSE)
 # @return NULL
 #' @importFrom rgdal readOGR
 #' @importFrom raster writeRaster
+#' @importFrom methods is
 gdal_polygonizeR = function(x, outshape=NULL, gdalformat = 'ESRI Shapefile',
                             pypath=NULL, readpoly=TRUE, quiet=TRUE) {
 

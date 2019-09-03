@@ -12,158 +12,157 @@
 
 #' converts a raster into BIL format as expected by DivMapping codes
 #'
-#' @param Raster.Path character. Full path for the raster to be converted
+#' @param Raster_Path character. Full path for the raster to be converted
 #' @param Sensor character. Name of the sensor
-#' @param Convert.Integer boolean. Should data be converted into integer ?
-#' @param Multiplying.Factor numeric. Multiplying factor (eg convert real reflectance values between 0 and 1 into integer between 0 and 10000).
-#' @param Output.Directory character. Path to output directory.
-#' @param Multiplying.Factor.Last numeric. Multiplying factor for last band.
+#' @param Convert_Integer boolean. Should data be converted into integer ?
+#' @param Multiplying_Factor numeric. Multiplying factor (eg convert real reflectance values between 0 and 1 into integer between 0 and 10000).
+#' @param Output_Dir character. Path to output directory.
+#' @param Multiplying_Factor_Last numeric. Multiplying factor for last band.
 #'
-#' @return Output.Path path for the image converted into ENVI BIL format
+#' @return Output_Path path for the image converted into ENVI BIL format
 #' @import raster
 #' @import tools
 #' @export
-raster2BIL <- function(Raster.Path, Sensor = "unknown", Output.Directory = FALSE, Convert.Integer = TRUE, Multiplying.Factor = 1, Multiplying.Factor.Last = 1) {
+raster2BIL <- function(Raster_Path, Sensor = "unknown", Output_Dir = FALSE, Convert_Integer = TRUE, Multiplying_Factor = 1, Multiplying_Factor_Last = 1) {
 
   # get directory and file name of original image
-  Input.File <- basename(Raster.Path)
-  Input.Dir <- dirname(Raster.Path)
+  Input_File <- basename(Raster_Path)
+  Input_Dir <- dirname(Raster_Path)
   # define path where data will be stored
-  if (Output.Directory == FALSE) {
-    Output.Path <- paste(Input.Dir, "/Converted_DivMAP/", file_path_sans_ext(Input.File), sep = "")
+  if (Output_Dir == FALSE) {
+    Output_Path <- paste(Input_Dir, "/Converted_DivMAP/", file_path_sans_ext(Input_File), sep = "")
   } else {
-    dir.create(Output.Directory, showWarnings = FALSE, recursive = TRUE)
-    Output.Path <- paste(Output.Directory, "/", file_path_sans_ext(Input.File), sep = "")
+    dir.create(Output_Dir, showWarnings = FALSE, recursive = TRUE)
+    Output_Path <- paste(Output_Dir, "/", file_path_sans_ext(Input_File), sep = "")
   }
   message("The converted file will be written in the following location:")
-  print(Output.Path)
-  Output.Dir <- dirname(Output.Path)
-  dir.create(Output.Dir, showWarnings = FALSE, recursive = TRUE)
+  print(Output_Path)
+  Output_Dir <- dirname(Output_Path)
+  dir.create(Output_Dir, showWarnings = FALSE, recursive = TRUE)
 
   # apply multiplying factors
   message("reading initial file")
-  Output.Img <- Multiplying.Factor * brick(Raster.Path)
-  Last.Band.Name <- Output.Img@data@names[length(Output.Img@data@names)]
-  Output.Img[[Last.Band.Name]] <- Multiplying.Factor.Last * Output.Img[[Last.Band.Name]]
+  Output_Img <- Multiplying_Factor * brick(Raster_Path)
+  Last_Band_Name <- Output_Img@data@names[length(Output_Img@data@names)]
+  Output_Img[[Last_Band_Name]] <- Multiplying_Factor_Last * Output_Img[[Last_Band_Name]]
 
   # convert into integer
-  if (Convert.Integer == TRUE) {
-    Output.Img <- round(Output.Img)
+  if (Convert_Integer == TRUE) {
+    Output_Img <- round(Output_Img)
   }
 
   # write raster
   message("writing converted file")
-  if (Convert.Integer == TRUE) {
-    r <- writeRaster(Output.Img, filename = Output.Path, format = "EHdr", overwrite = TRUE, datatype = "INT2S")
+  if (Convert_Integer == TRUE) {
+    r <- writeRaster(Output_Img, filename = Output_Path, format = "EHdr", overwrite = TRUE, datatype = "INT2S")
   } else {
-    r <- writeRaster(Output.Img, filename = Output.Path, format = "EHdr", overwrite = TRUE)
+    r <- writeRaster(Output_Img, filename = Output_Path, format = "EHdr", overwrite = TRUE)
   }
   hdr(r, format = "ENVI")
 
   # remove unnecessary files
-  File2Remove <- paste(Output.Path, ".aux.xml", sep = "")
-  File2Remove2 <- paste(file_path_sans_ext(Output.Path), ".aux.xml", sep = "")
+  File2Remove <- paste(Output_Path, ".aux.xml", sep = "")
+  File2Remove2 <- paste(file_path_sans_ext(Output_Path), ".aux.xml", sep = "")
   file.remove(File2Remove)
 
-  File2Remove <- paste(Output.Path, ".prj", sep = "")
-  File2Remove2 <- paste(file_path_sans_ext(Output.Path), ".prj", sep = "")
+  File2Remove <- paste(Output_Path, ".prj", sep = "")
+  File2Remove2 <- paste(file_path_sans_ext(Output_Path), ".prj", sep = "")
   if (file.exists(File2Remove)) {
     file.remove(File2Remove)
   } else if (file.exists(File2Remove2)) {
     file.remove(File2Remove2)
   }
 
-  File2Remove <- paste(Output.Path, ".sta", sep = "")
-  File2Remove <- paste(file_path_sans_ext(Output.Path), ".sta", sep = "")
+  File2Remove <- paste(Output_Path, ".sta", sep = "")
+  File2Remove <- paste(file_path_sans_ext(Output_Path), ".sta", sep = "")
   if (file.exists(File2Remove)) {
     file.remove(File2Remove)
   } else if (file.exists(File2Remove2)) {
     file.remove(File2Remove2)
   }
 
-  File2Remove <- paste(Output.Path, ".stx", sep = "")
-  File2Remove2 <- paste(file_path_sans_ext(Output.Path), ".stx", sep = "")
+  File2Remove <- paste(Output_Path, ".stx", sep = "")
+  File2Remove2 <- paste(file_path_sans_ext(Output_Path), ".stx", sep = "")
   if (file.exists(File2Remove)) {
     file.remove(File2Remove)
   } else if (file.exists(File2Remove2)) {
     file.remove(File2Remove2)
   }
 
-  File2Rename <- paste(file_path_sans_ext(Output.Path), ".hdr", sep = "")
-  File2Rename2 <- paste(Output.Path, ".hdr", sep = "")
+  File2Rename <- paste(file_path_sans_ext(Output_Path), ".hdr", sep = "")
+  File2Rename2 <- paste(Output_Path, ".hdr", sep = "")
   if (file.exists(File2Rename)) {
     file.rename(from = File2Rename, to = File2Rename2)
   }
 
   # change dot into underscore
-  Output.Path.US <- file.path(
-    dirname(Output.Path),
-    gsub(basename(Output.Path), pattern = "[.]", replacement = "_")
+  Output_Path_US <- file.path(
+    dirname(Output_Path),
+    gsub(basename(Output_Path), pattern = "[.]", replacement = "_")
   )
-  if (!Output.Path.US == Output.Path) {
-    file.rename(from = Output.Path, to = Output.Path.US)
+  if (!Output_Path_US == Output_Path) {
+    file.rename(from = Output_Path, to = Output_Path_US)
   }
 
-  Output.Path.US.HDR <- paste0(Output.Path.US, ".hdr")
-  if (!Output.Path.US.HDR == paste0(Output.Path, ".hdr")) {
-    file.rename(from = paste0(Output.Path, ".hdr"), to = Output.Path.US.HDR)
+  Output_Path_US_HDR <- paste0(Output_Path_US, ".hdr")
+  if (!Output_Path_US_HDR == paste0(Output_Path, ".hdr")) {
+    file.rename(from = paste0(Output_Path, ".hdr"), to = Output_Path_US_HDR)
     ### UTILITY?? ###
-    file.rename(from = Output.Path.US.HDR, to = Output.Path.US.HDR)
+    file.rename(from = Output_Path_US_HDR, to = Output_Path_US_HDR)
   }
-
 
   if (!Sensor == "unknown") {
-    HDR.Temp.Path <- system.file("extdata", "HDR", paste0(Sensor, ".hdr"), package = "biodivMapR")
-    if (file.exists(HDR.Temp.Path)) {
+    HDR_Temp_Path <- system.file("extdata", "HDR", paste0(Sensor, ".hdr"), package = "biodivMapR")
+    if (file.exists(HDR_Temp_Path)) {
       message("reading header template corresponding to the sensor located here:")
-      print(HDR.Temp.Path)
+      print(HDR_Temp_Path)
       # get raster template corresponding to the sensor
-      HDR.Template <- read_ENVI_header(HDR.Temp.Path)
+      HDR_Template <- read_ENVI_header(HDR_Temp_Path)
       # get info to update hdr file
       # read hdr
-      HDR.input <- read_ENVI_header(get_HDR_name(Output.Path))
-      if (!is.null(HDR.Template$wavelength)) {
-        HDR.input$wavelength <- HDR.Template$wavelength
+      HDR_input <- read_ENVI_header(get_HDR_name(Output_Path))
+      if (!is.null(HDR_Template$wavelength)) {
+        HDR_input$wavelength <- HDR_Template$wavelength
       }
-      if (!is.null(HDR.Template$`sensor type`)) {
-        HDR.input$`sensor type` <- HDR.Template$`sensor type`
+      if (!is.null(HDR_Template$`sensor type`)) {
+        HDR_input$`sensor type` <- HDR_Template$`sensor type`
       }
-      if (!is.null(HDR.Template$`band names`)) {
-        HDR.input$`band names` <- HDR.Template$`band names`
+      if (!is.null(HDR_Template$`band names`)) {
+        HDR_input$`band names` <- HDR_Template$`band names`
       }
-      if (!is.null(HDR.Template$`wavelength units`)) {
-        HDR.input$`wavelength units` <- HDR.Template$`wavelength units`
+      if (!is.null(HDR_Template$`wavelength units`)) {
+        HDR_input$`wavelength units` <- HDR_Template$`wavelength units`
       }
       # define visual stretch in the VIS domain
-      HDR.input$`default stretch` <- "0 1000 linear"
+      HDR_input$`default stretch` <- "0 1000 linear"
       # write corresponding hdr file
-      write_ENVI_header(HDR.input, get_HDR_name(Output.Path))
-    } else if (!file.exists(HDR.Temp.Path)) {
+      write_ENVI_header(HDR_input, get_HDR_name(Output_Path))
+    } else if (!file.exists(HDR_Temp_Path)) {
       message("Header template corresponding to the sensor expected to be found here")
-      print(HDR.Temp.Path)
+      print(HDR_Temp_Path)
       message("please provide this header template in order to write info in HDR file")
-      print(get_HDR_name(Output.Path))
+      print(get_HDR_name(Output_Path))
       message("or manually add wavelength location in HDR file, if relevant")
     }
   } else if (Sensor == "unknown") {
     message("please make sure that the follozing header file contains information required")
-    print(get_HDR_name(Output.Path))
+    print(get_HDR_name(Output_Path))
     message("or manually add wavelength location in HDR file, if relevant")
   }
-  return(Output.Path)
+  return(Output_Path)
 }
 
 #' Checks if the data to be processed has the format type expected
 #'
-#' @param Raster.Path full path for the raster to be converted
+#' @param Raster_Path full path for the raster to be converted
 #' @param Mask is the raster a mask?
 #'
 #' @export
-check_data <- function(Raster.Path, Mask = FALSE) {
-  HDR.Path <- get_HDR_name(Raster.Path)
+check_data <- function(Raster_Path, Mask = FALSE) {
+  HDR_Path <- get_HDR_name(Raster_Path)
   # check if the hdr file exists
-  if (file.exists(HDR.Path)) {
-    HDR <- read_ENVI_header(HDR.Path)
+  if (file.exists(HDR_Path)) {
+    HDR <- read_ENVI_header(HDR_Path)
     if (Mask == FALSE & (!HDR$interleave == "bil") & (!HDR$interleave == "BIL")) {
       message("")
       message("*********************************************************")
@@ -217,7 +216,7 @@ check_data <- function(Raster.Path, Mask = FALSE) {
     message("")
     message("*********************************************************")
     message("The following HDR file was expected, but could not be found:")
-    print(HDR.Path)
+    print(HDR_Path)
     message("The image format may not compatible with the processing chain")
     message("Image format expected:")
     message("ENVI hdr file with band interleaved by line (BIL) file format")

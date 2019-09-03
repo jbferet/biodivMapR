@@ -4,15 +4,22 @@
 \alias{map_spectral_species}
 \title{maps spectral species based on PCA file computed previously}
 \usage{
-map_spectral_species(Input.Image.File, Output.Dir, PCA.Files,
-  TypePCA = "SPCA", nbclusters = 50, nbCPU = 1, MaxRAM = FALSE)
+map_spectral_species(Input_Image_File, Output_Dir, PCA_Files, ImPathShade,
+  Pix_Per_Partition, nb_partitions, TypePCA = "SPCA", nbclusters = 50,
+  nbCPU = 1, MaxRAM = FALSE)
 }
 \arguments{
-\item{Input.Image.File}{Path and name of the image to be processed}
+\item{Input_Image_File}{Path and name of the image to be processed}
 
-\item{Output.Dir}{output directory}
+\item{Output_Dir}{output directory}
 
-\item{PCA.Files}{path for PCA file}
+\item{PCA_Files}{path for PCA file}
+
+\item{ImPathShade}{path for shade file (= mask)}
+
+\item{Pix_Per_Partition}{number of pixels for each partition}
+
+\item{nb_partitions}{number of partition}
 
 \item{TypePCA}{Type of PCA: "PCA" or "SPCA"}
 

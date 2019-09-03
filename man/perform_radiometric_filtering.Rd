@@ -4,26 +4,30 @@
 \alias{perform_radiometric_filtering}
 \title{Performs radiometric filtering based on three criteria: NDVI, NIR reflectance, Blue reflectance}
 \usage{
-perform_radiometric_filtering(Image.Path, Mask.Path, Output.Dir,
-  TypePCA = "SPCA", NDVI.Thresh = 0.5, Blue.Thresh = 500,
-  NIR.Thresh = 1500, Blue = 480, Red = 700, NIR = 835)
+perform_radiometric_filtering(Image_Path, Mask_Path, Output_Dir,
+  TypePCA = "SPCA", NDVI_Thresh = 0.5, Blue_Thresh = 500,
+  NIR_Thresh = 1500, Blue = 480, Red = 700, NIR = 835)
 }
 \arguments{
-\item{Image.Path}{Path of the image to be processed}
+\item{Image_Path}{Path of the image to be processed}
 
-\item{Mask.Path}{Path of the mask corresponding to the image}
+\item{Mask_Path}{Path of the mask corresponding to the image}
 
-\item{Output.Dir}{output directory}
+\item{Output_Dir}{output directory}
 
 \item{TypePCA}{Type of PCA: "PCA" or "SPCA"}
 
-\item{NDVI.Thresh}{NDVI threshold applied to produce a mask (select pixels with NDVI>NDVI.Thresh)}
+\item{NDVI_Thresh}{NDVI threshold applied to produce a mask (select pixels with NDVI>NDVI_Thresh)}
 
-\item{Blue.Thresh}{Blue threshold applied to produce a mask (select pixels with Blue refl < Blue.Thresh --> filter clouds) refl expected between 0 and 10000}
+\item{Blue_Thresh}{Blue threshold applied to produce a mask (select pixels with Blue refl < Blue_Thresh --> filter clouds) refl expected between 0 and 10000}
 
-\item{NIR.Thresh}{NIR threshold applied to produce a mask (select pixels with NIR refl < NIR.Thresh) refl expected between 0 and 10000}
+\item{NIR_Thresh}{NIR threshold applied to produce a mask (select pixels with NIR refl < NIR_Thresh) refl expected between 0 and 10000}
 
-\item{Mask.Path}{}
+\item{Blue}{central wavelength corresponding to the blue spectral band (in nanometers)}
+
+\item{Red}{central wavelength corresponding to the red spectral band (in nanometers)}
+
+\item{NIR}{central wavelength corresponding to the NIR spectral band (in nanometers)}
 }
 \value{
 ImPathShade = updated shademask file

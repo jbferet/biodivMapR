@@ -12,22 +12,22 @@
 
 # rebuild full image from list of subsets
 #
-# @param Image.Subsets subsets of an image. list expected
+# @param Image_Subsets subsets of an image. list expected
 # @param ipix nb of lines for the full image
 # @param jpix nb of columns for the full image
 # @param nbBands nb of bands for the full image & subsets
 #
 # @return image full size in 3 dimensions
-build_image_from_list <- function(Image.Subsets, ipix, jpix, nbBands) {
+build_image_from_list <- function(Image_Subsets, ipix, jpix, nbBands) {
   Image <- array(NA, c(ipix, jpix, nbBands))
-  Line.Begin <- 0
-  Line.End <- 0
-  for (i in 1:length(Image.Subsets)) {
-    Line.Begin <- Line.End + 1
-    Line.End <- Line.End + dim(Image.Subsets[[i]])[1]
-    Image[Line.Begin:Line.End, , ] <- Image.Subsets[[i]]
+  Line_Begin <- 0
+  Line_End <- 0
+  for (i in 1:length(Image_Subsets)) {
+    Line_Begin <- Line_End + 1
+    Line_End <- Line_End + dim(Image_Subsets[[i]])[1]
+    Image[Line_Begin:Line_End, , ] <- Image_Subsets[[i]]
   }
-  rm(Image.Subsets)
+  rm(Image_Subsets)
   gc()
   return(Image)
 }
@@ -68,6 +68,8 @@ change_resolution_HDR <- function(HDR, window_size) {
 # @param Spectral summary of spectral information: which spectral bands selected from initial data
 #
 # @return updated DataMatrix and Spectral
+# ' @importFrom stats sd
+
 check_invariant_bands <- function(DataMatrix, Spectral) {
   # samples with inf value are eliminated
   for (i in 1:ncol(DataMatrix)) {
@@ -132,71 +134,71 @@ ENVI_type2bytes <- function(Header) {
     #   1 = Byte: 8-bit unsigned integer
     nbBytes <- 1
     Type <- "INT"
-    is.Signed <- FALSE
+    is_Signed <- FALSE
   } else if (DataTypeImage == 2) {
     #   2 = Integer: 16-bit signed integer
     nbBytes <- 2
     Type <- "INT"
-    is.Signed <- TRUE
+    is_Signed <- TRUE
   } else if (DataTypeImage == 3) {
     #   3 = Long: 32-bit signed integer
     nbBytes <- 4
     Type <- "INT"
-    is.Signed <- TRUE
+    is_Signed <- TRUE
   } else if (DataTypeImage == 4) {
     #   4 = Floating-point: 32-bit single-precision
     nbBytes <- 4
     Type <- "FLOAT"
-    is.Signed <- TRUE
+    is_Signed <- TRUE
   } else if (DataTypeImage == 5) {
     #   5 = Double-precision: 64-bit double-precision floating-point
     nbBytes <- 8
     Type <- "FLOAT"
-    is.Signed <- TRUE
+    is_Signed <- TRUE
   } else if (DataTypeImage == 12) {
     #   12 = Unsigned integer: 16-bit
     nbBytes <- 2
     Type <- "INT"
-    is.Signed <- FALSE
+    is_Signed <- FALSE
   } else if (DataTypeImage == 13) {
     #   13 = Unsigned long integer: 32-bit
     nbBytes <- 4
     Type <- "INT"
-    is.Signed <- FALSE
+    is_Signed <- FALSE
   } else if (DataTypeImage == 14) {
     #   14 = 64-bit long integer (signed)
     nbBytes <- 8
     Type <- "INT"
-    is.Signed <- TRUE
+    is_Signed <- TRUE
   } else if (DataTypeImage == 15) {
     #   15 = 64-bit unsigned long integer (unsigned)
     nbBytes <- 8
     Type <- "INT"
-    is.Signed <- FALSE
+    is_Signed <- FALSE
   }
   if (Header$`byte order` == 0) {
     ByteOrder <- "little"
   } else if (Header$`byte order` == 1) {
     ByteOrder <- "big"
   }
-  my_list <- list("Bytes" = nbBytes, "Type" = Type, "Signed" = is.Signed, "ByteOrder" = ByteOrder)
+  my_list <- list("Bytes" = nbBytes, "Type" = Type, "Signed" = is_Signed, "ByteOrder" = ByteOrder)
   return(my_list)
 }
 
 # define Water Vapor bands based on spectral smapling of original image
 #
 # @param ImPath path of the image
-# @param Excluded.WL spectral domains corresponding to water vapor absorption
+# @param Excluded_WL spectral domains corresponding to water vapor absorption
 #
 # @return bands corresponding to atmospheric water absorption domain
-exclude_spectral_domains <- function(ImPath, Excluded.WL = FALSE) {
+exclude_spectral_domains <- function(ImPath, Excluded_WL = FALSE) {
   # definition of water vapor absorption
-  if (length(Excluded.WL) == 1) {
-    if (Excluded.WL == FALSE) {
-      Excluded.WL <- c(0, 400)
-      Excluded.WL <- rbind(Excluded.WL, c(895, 1005))
-      Excluded.WL <- rbind(Excluded.WL, c(1180, 1480))
-      Excluded.WL <- rbind(Excluded.WL, c(1780, 2040))
+  if (length(Excluded_WL) == 1) {
+    if (Excluded_WL == FALSE) {
+      Excluded_WL <- c(0, 400)
+      Excluded_WL <- rbind(Excluded_WL, c(895, 1005))
+      Excluded_WL <- rbind(Excluded_WL, c(1180, 1480))
+      Excluded_WL <- rbind(Excluded_WL, c(1780, 2040))
     }
   }
   # get image header data
@@ -207,8 +209,8 @@ exclude_spectral_domains <- function(ImPath, Excluded.WL = FALSE) {
   if ("wavelength" %in% names(HDR)) {
     wl <- HDR$wavelength
     WaterVapor <- c()
-    for (w in 1:nrow(Excluded.WL)) {
-      WaterVapor <- c(WaterVapor, which(wl > Excluded.WL[w, 1] & wl < Excluded.WL[w, 2]))
+    for (w in 1:nrow(Excluded_WL)) {
+      WaterVapor <- c(WaterVapor, which(wl > Excluded_WL[w, 1] & wl < Excluded_WL[w, 2]))
     }
     if (!length(WaterVapor) == 0) {
       wl <- wl[-WaterVapor]
@@ -225,27 +227,27 @@ exclude_spectral_domains <- function(ImPath, Excluded.WL = FALSE) {
 
 # extracts sample points from binary image file
 #
-# @param coordPix.List coordinates of pixels to sample
+# @param coordPix_List coordinates of pixels to sample
 # @param ImPath path for image
 # @param HDR hdr path
 #
-# @return samples from image subset corresponding to coordPix.List
-extract_pixels <- function(coordPix.List, ImPath, HDR) {
-  coordPix.List <- matrix(coordPix.List, ncol = 2)
-  Sample.Sel <- matrix(0, nrow = nrow(coordPix.List), ncol = HDR$bands)
+# @return samples from image subset corresponding to coordPix_List
+extract_pixels <- function(coordPix_List, ImPath, HDR) {
+  coordPix_List <- matrix(coordPix_List, ncol = 2)
+  Sample_Sel <- matrix(0, nrow = nrow(coordPix_List), ncol = HDR$bands)
   # each line of the image is read and the datapoints included in this line are extracted
   # seek file until the first line
-  if (dim(coordPix.List)[1] > 1) {
-    minRow <- min(coordPix.List[, 1])
-    maxRow <- max(coordPix.List[, 1])
-  } else if (dim(coordPix.List)[1] == 1) {
-    minRow <- min(coordPix.List[1])
-    maxRow <- max(coordPix.List[1])
+  if (dim(coordPix_List)[1] > 1) {
+    minRow <- min(coordPix_List[, 1])
+    maxRow <- max(coordPix_List[, 1])
+  } else if (dim(coordPix_List)[1] == 1) {
+    minRow <- min(coordPix_List[1])
+    maxRow <- max(coordPix_List[1])
   }
   nbRows <- maxRow - minRow + 1
-  Pix.Per.Line <- as.double(HDR$samples) * as.double(HDR$bands)
-  Pix.Per.Read <- as.double(nbRows) * as.double(HDR$samples) * as.double(HDR$bands)
-  Image.Format <- ENVI_type2bytes(HDR)
+  Pix_Per_Line <- as.double(HDR$samples) * as.double(HDR$bands)
+  Pix_Per_Read <- as.double(nbRows) * as.double(HDR$samples) * as.double(HDR$bands)
+  Image_Format <- ENVI_type2bytes(HDR)
   # open file and read section of interest
   fid <- file(
     description = ImPath, open = "rb", blocking = TRUE,
@@ -253,26 +255,26 @@ extract_pixels <- function(coordPix.List, ImPath, HDR) {
   )
   if (!minRow == 1) {
     # nb of bits to skip
-    nbSkip <- as.double(minRow - 1) * as.double(HDR$samples) * as.double(HDR$bands) * Image.Format$Bytes
+    nbSkip <- as.double(minRow - 1) * as.double(HDR$samples) * as.double(HDR$bands) * Image_Format$Bytes
     seek(fid, where = nbSkip, origin = "start", rw = "read")
   }
-  if (Image.Format$Type == "INT") {
-    ImgSubset <- readBin(fid, integer(), n = as.double(nbRows) * as.double(HDR$samples) * as.double(HDR$bands), size = Image.Format$Bytes, signed = Image.Format$Signed, endian = Image.Format$ByteOrder)
-  } else if (Image.Format$Type == "FLOAT") {
-    ImgSubset <- readBin(fid, numeric(), n = as.double(nbRows) * as.double(HDR$samples) * as.double(HDR$bands), size = Image.Format$Bytes, signed = Image.Format$Signed, endian = Image.Format$ByteOrder)
+  if (Image_Format$Type == "INT") {
+    ImgSubset <- readBin(fid, integer(), n = as.double(nbRows) * as.double(HDR$samples) * as.double(HDR$bands), size = Image_Format$Bytes, signed = Image_Format$Signed, endian = Image_Format$ByteOrder)
+  } else if (Image_Format$Type == "FLOAT") {
+    ImgSubset <- readBin(fid, numeric(), n = as.double(nbRows) * as.double(HDR$samples) * as.double(HDR$bands), size = Image_Format$Bytes, signed = Image_Format$Signed, endian = Image_Format$ByteOrder)
   }
   close(fid)
   # reshape ImgSubset in a 2D matrix in order to get selected pixels based on index
   ImgSubset <- array(aperm(array(ImgSubset, dim = c(HDR$samples, HDR$bands, nbRows)), c(3, 1, 2)), c(HDR$samples * nbRows, HDR$bands))
   # coordinates of the samples correspond to the whole image: need to convert to fit sample
-  coordPix.List[, 1] <- coordPix.List[, 1] - minRow + 1
+  coordPix_List[, 1] <- coordPix_List[, 1] - minRow + 1
   # Get index of each pixel
-  IndPix <- (coordPix.List[, 2] - 1) * nbRows + coordPix.List[, 1]
+  IndPix <- (coordPix_List[, 2] - 1) * nbRows + coordPix_List[, 1]
   # Get samples from subset
-  Sample.Sel <- ImgSubset[IndPix, ]
+  Sample_Sel <- ImgSubset[IndPix, ]
   rm(ImgSubset)
   gc()
-  return(Sample.Sel)
+  return(Sample_Sel)
 }
 
 # extracts pixels from image based on their coordinates
@@ -291,29 +293,29 @@ extract_samples_from_image <- function(ImPath, coordPix, MaxRAM = FALSE, Already
   # compute the ranking of initial pixel list compared to index ranking
   if (typeof(coordPix) == "double" & dim(coordPix)[2] == 2) {
     if (dim(coordPix)[1] >= 2) {
-      coordPix.tmp <- list()
-      coordPix.tmp$Row <- coordPix[, 1]
-      coordPix.tmp$Column <- coordPix[, 2]
+      coordPix_tmp <- list()
+      coordPix_tmp$Row <- coordPix[, 1]
+      coordPix_tmp$Column <- coordPix[, 2]
     } else if (dim(coordPix)[1] == 1) {
-      coordPix.tmp <- list()
-      coordPix.tmp$Row <- coordPix[1]
-      coordPix.tmp$Column <- coordPix[2]
+      coordPix_tmp <- list()
+      coordPix_tmp$Row <- coordPix[1]
+      coordPix_tmp$Column <- coordPix[2]
     }
   } else if (typeof(coordPix) == "list" & length(grep("Row", names(coordPix))) > 0 & length(grep("Column", names(coordPix))) > 0) {
-    coordPix.tmp <- coordPix
+    coordPix_tmp <- coordPix
   }
   # initial index value of the pixels requested in the image, following original ranking
-  Index.Init <- sub2ind(HDR, coordPix.tmp)
+  Index_Init <- sub2ind(HDR, coordPix_tmp)
   # rank of the initial list of pixels
-  Rank.Index.Init <- sort(Index.Init, index = TRUE)
+  Rank_Index_Init <- sort(Index_Init, index = TRUE)
   # convert
   if (typeof(coordPix) == "list" & length(grep("Row", names(coordPix))) > 0 & length(grep("Column", names(coordPix))) > 0) {
     coordPix <- cbind(coordPix$Row, coordPix$Column)
   }
   # divide data access based on the size of the image (to avoid reading 30 Gb file at once...)
-  Image.Format <- ENVI_type2bytes(HDR)
+  Image_Format <- ENVI_type2bytes(HDR)
   lenTot <- as.double(HDR$lines) * as.double(HDR$samples) * as.double(HDR$bands)
-  ImSizeGb <- (lenTot * Image.Format$Bytes) / (1024^3)
+  ImSizeGb <- (lenTot * Image_Format$Bytes) / (1024^3)
   # maximum image size read at once. If image larger, then reads in multiple pieces
   if (MaxRAM == FALSE) {
     LimitSizeGb <- 0.25
@@ -321,50 +323,50 @@ extract_samples_from_image <- function(ImPath, coordPix, MaxRAM = FALSE, Already
     LimitSizeGb <- MaxRAM
   }
   if (ImSizeGb < LimitSizeGb | Already.Split == TRUE) {
-    Lines.Per.Read <- HDR$lines
+    Lines_Per_Read <- HDR$lines
     nbPieces <- 1
   } else {
     # nb of lines corresponding to LimitSizeGb
-    OneLine <- as.double(HDR$samples) * as.double(HDR$bands) * Image.Format$Bytes
-    Lines.Per.Read <- floor(LimitSizeGb * (1024^3) / OneLine)
+    OneLine <- as.double(HDR$samples) * as.double(HDR$bands) * Image_Format$Bytes
+    Lines_Per_Read <- floor(LimitSizeGb * (1024^3) / OneLine)
     # number of pieces to split the image into
-    nbPieces <- ceiling(HDR$lines / Lines.Per.Read)
+    nbPieces <- ceiling(HDR$lines / Lines_Per_Read)
   }
 
   # here split based on even number of pxiels to sample
   # should be based on image size in order to avoid memory
   # problems if target pixels  unevenly distributed in image
-  coordPix.List <- split_pixel_samples(coordPix, Lines.Per.Read)
-  Sample.Sel <- list()
-  for (i in 1:length(coordPix.List)) {
-    Sample.Sel[[i]] <- extract_pixels(coordPix.List[[i]], ImPath, HDR)
+  coordPix_List <- split_pixel_samples(coordPix, Lines_Per_Read)
+  Sample_Sel <- list()
+  for (i in 1:length(coordPix_List)) {
+    Sample_Sel[[i]] <- extract_pixels(coordPix_List[[i]], ImPath, HDR)
   }
-  Sample.Sel <- do.call("rbind", Sample.Sel)
-  coordPix.List <- do.call("rbind", coordPix.List)
+  Sample_Sel <- do.call("rbind", Sample_Sel)
+  coordPix_List <- do.call("rbind", coordPix_List)
 
   # re-sort samples
-  Sample.Sort <- list()
-  Sample.Sort$Row <- coordPix.List[, 1]
-  Sample.Sort$Column <- coordPix.List[, 2]
-  Coord.Pixels <- sub2ind(HDR, Sample.Sort)
+  Sample_Sort <- list()
+  Sample_Sort$Row <- coordPix_List[, 1]
+  Sample_Sort$Column <- coordPix_List[, 2]
+  Coord_Pixels <- sub2ind(HDR, Sample_Sort)
   # rank of the pixels extracted from the image
-  Rank.Pixels <- sort(Coord.Pixels, index = TRUE)
-  # pixel re-ordering needs to be performed in order to get back to Rank.Index.Init
+  Rank_Pixels <- sort(Coord_Pixels, index = TRUE)
+  # pixel re-ordering needs to be performed in order to get back to Rank_Index_Init
   # first re-order pixels in order to follow increasing index value
-  # Sample.Sort$index   = Coord.Pixels[Rank.Pixels$ix]
-  # Sample.Sort$Row     = Sample.Sort$Row[Rank.Pixels$ix]
-  # Sample.Sort$Column  = Sample.Sort$Column[Rank.Pixels$ix]
+  # Sample_Sort$index   = Coord_Pixels[Rank_Pixels$ix]
+  # Sample_Sort$Row     = Sample_Sort$Row[Rank_Pixels$ix]
+  # Sample_Sort$Column  = Sample_Sort$Column[Rank_Pixels$ix]
   # if bug, check this line
-  # Sample.Sel          = Sample.Sel[Rank.Pixels$ix]
-  Sample.Sel <- Sample.Sel[Rank.Pixels$ix, ]
+  # Sample_Sel          = Sample_Sel[Rank_Pixels$ix]
+  Sample_Sel <- Sample_Sel[Rank_Pixels$ix, ]
 
-  # then apply initial ranking as defined by Rank.Index.Init
-  if (dim(Sample.Sel)[1] > 1) {
-    Sample.Sel[Rank.Index.Init$ix, ] <- Sample.Sel
-  } else if (dim(Sample.Sel)[1] == 1) {
-    Sample.Sel <- Sample.Sel
+  # then apply initial ranking as defined by Rank_Index_Init
+  if (dim(Sample_Sel)[1] > 1) {
+    Sample_Sel[Rank_Index_Init$ix, ] <- Sample_Sel
+  } else if (dim(Sample_Sel)[1] == 1) {
+    Sample_Sel <- Sample_Sel
   }
-  return(Sample.Sel)
+  return(Sample_Sel)
 }
 
 # Perform random sampling on an image including a shade mask
@@ -373,11 +375,12 @@ extract_samples_from_image <- function(ImPath, coordPix, MaxRAM = FALSE, Already
 # @param HDR path for hdr file
 # @param ImPathShade path for shade mask
 # @param nb_partitions number of k-means then averaged
-# @param Pix.Per.Iter number of pixels per iteration
+# @param Pix_Per_Partition number of pixels per iteration
 #
 # @return samples from image and updated number of pixels to sampel if necessary
-get_random_subset_from_image <- function(ImPath, HDR, ImPathShade, nb_partitions, Pix.Per.Iter) {
-  nbPix2Sample <- nb_partitions * Pix.Per.Iter
+#' @importFrom matlab ones
+get_random_subset_from_image <- function(ImPath, HDR, ImPathShade, nb_partitions, Pix_Per_Partition) {
+  nbPix2Sample <- nb_partitions * Pix_Per_Partition
   # get total number of pixels
   nbpix <- as.double(HDR$lines) * as.double(HDR$samples)
   # 1- Exclude masked pixels from random subset
@@ -401,9 +404,9 @@ get_random_subset_from_image <- function(ImPath, HDR, ImPathShade, nb_partitions
   # if number of pixels to sample superior to number of valid pixels, then adjust iterations
   if (NbValidPixels < nbPix2Sample) {
     nbPix2Sample <- NbValidPixels
-    nb_partitions <- ceiling(NbValidPixels / Pix.Per.Iter)
-    Pix.Per.Iter <- floor(NbValidPixels / nb_partitions)
-    nbPix2Sample <- nb_partitions * Pix.Per.Iter
+    nb_partitions <- ceiling(NbValidPixels / Pix_Per_Partition)
+    Pix_Per_Partition <- floor(NbValidPixels / nb_partitions)
+    nbPix2Sample <- nb_partitions * Pix_Per_Partition
   }
   # Select a subset of nbPix2Sample among pixselected
   pixselected <- ValidPixels[1:nbPix2Sample]
@@ -418,10 +421,10 @@ get_random_subset_from_image <- function(ImPath, HDR, ImPathShade, nb_partitions
   coordPix <- cbind(coordi[indxPix], coordj[indxPix])
 
   # 2- Extract samples from image
-  Sample.Sel <- extract_samples_from_image(ImPath, coordPix)
+  Sample_Sel <- extract_samples_from_image(ImPath, coordPix)
   # randomize!
-  Sample.Sel <- Sample.Sel[sample(dim(Sample.Sel)[1]), ]
-  my_list <- list("DataSubset" = Sample.Sel, "nbPix2Sample" = nbPix2Sample)
+  Sample_Sel <- Sample_Sel[sample(dim(Sample_Sel)[1]), ]
+  my_list <- list("DataSubset" = Sample_Sel, "nbPix2Sample" = nbPix2Sample)
   return(my_list)
 }
 
@@ -538,10 +541,10 @@ mean_filter <- function(ImageInit, nbi, nbj, SizeFilt) {
 # @param ImBand bands of interest
 # @param jpix number of columns in the image
 # @param nbChannels total number of channels in the image
-# @param Image.Format type of data (INT/FLOAT)
+# @param Image_Format type of data (INT/FLOAT)
 #
 # @return data corresponding to the subset in original 3D format
-read_bin_subset <- function(Byte.Start, nbLines, lenBin, ImPath, ImBand, jpix, nbChannels, Image.Format) {
+read_bin_subset <- function(Byte.Start, nbLines, lenBin, ImPath, ImBand, jpix, nbChannels, Image_Format) {
   # number of bands to be kept
   nbSubset <- length(ImBand)
   # open file
@@ -551,12 +554,12 @@ read_bin_subset <- function(Byte.Start, nbLines, lenBin, ImPath, ImBand, jpix, n
   )
   if (!Byte.Start == 1) {
     # skip the beginning of the file of not wanted
-    seek(fid, where = as.double(Image.Format$Bytes * (Byte.Start - 1)), origin = "start", rw = "read")
+    seek(fid, where = as.double(Image_Format$Bytes * (Byte.Start - 1)), origin = "start", rw = "read")
   }
-  if (Image.Format$Type == "INT") {
-    linetmp <- readBin(fid, integer(), n = lenBin, size = Image.Format$Bytes, endian = Image.Format$ByteOrder)
-  } else if (Image.Format$Type == "FLOAT") {
-    linetmp <- readBin(fid, numeric(), n = lenBin, size = Image.Format$Bytes, endian = Image.Format$ByteOrder)
+  if (Image_Format$Type == "INT") {
+    linetmp <- readBin(fid, integer(), n = lenBin, size = Image_Format$Bytes, endian = Image_Format$ByteOrder)
+  } else if (Image_Format$Type == "FLOAT") {
+    linetmp <- readBin(fid, numeric(), n = lenBin, size = Image_Format$Bytes, endian = Image_Format$ByteOrder)
   }
   close(fid)
   # reshape data into original image subset
@@ -610,7 +613,7 @@ read_ENVI_header <- function(headerFpath) {
   }
 
   ## split key = value constructs into list with keys as names
-  header <- sapply(header, split.line, "=", USE.NAMES = FALSE)
+  header <- sapply(header, split_line, "=", USE.NAMES = FALSE)
   names(header) <- tolower(names(header))
 
   ## process numeric values
@@ -635,7 +638,7 @@ read_ENVI_header <- function(headerFpath) {
 # @return Image.Subset information corresponding to ImBand
 read_image_bands <- function(ImPath, Header, ImBand) {
   # first get image format
-  Image.Format <- ENVI_type2bytes(Header)
+  Image_Format <- ENVI_type2bytes(Header)
   ipix <- Header$lines
   jpix <- Header$samples
   nbChannels <- Header$bands
@@ -644,7 +647,7 @@ read_image_bands <- function(ImPath, Header, ImBand) {
   # depending on image size, need to read in one or multiple times
   lenTot <- as.double(ipix) * as.double(jpix) * as.double(nbChannels)
   lenSubset <- as.double(ipix) * as.double(jpix) * as.double(nbSubset)
-  ImSizeGb <- (lenTot * Image.Format$Bytes) / (1024^3)
+  ImSizeGb <- (lenTot * Image_Format$Bytes) / (1024^3)
   # maximum image size read at once. If image larger, then reads in multiple pieces
   LimitSizeGb <- 0.25
   if (ImSizeGb < LimitSizeGb) {
@@ -652,7 +655,7 @@ read_image_bands <- function(ImPath, Header, ImBand) {
     nbPieces <- 1
   } else {
     # nb of lines corresponding to LimitSizeGb
-    OneLine <- as.double(jpix) * as.double(nbChannels) * Image.Format$Bytes
+    OneLine <- as.double(jpix) * as.double(nbChannels) * Image_Format$Bytes
     nbLinesPerCPU <- floor(LimitSizeGb * (1024^3) / OneLine)
     # number of pieces to split the image into
     nbPieces <- ceiling(ipix / nbLinesPerCPU)
@@ -660,17 +663,17 @@ read_image_bands <- function(ImPath, Header, ImBand) {
   # Define segments of image to be read
   SeqRead.Image <- where_to_read(Header, nbPieces)
   # Read segments (subsets) of image
-  Image.Subsets <- list()
+  Image_Subsets <- list()
   for (i in 1:nbPieces) {
     # number of elements to be read
-    Byte.Start <- SeqRead.Image$ReadByte.Start[i]
+    Byte.Start <- SeqRead.Image$ReadByte_Start[i]
     nbLines <- SeqRead.Image$Lines.Per.Chunk[i]
-    lenBin <- SeqRead.Image$ReadByte.End[i] - SeqRead.Image$ReadByte.Start[i] + 1
-    Image.Subsets[[i]] <- read_bin_subset(Byte.Start, nbLines, lenBin, ImPath, ImBand, jpix, nbChannels, Image.Format)
+    lenBin <- SeqRead.Image$ReadByte_End[i] - SeqRead.Image$ReadByte_Start[i] + 1
+    Image_Subsets[[i]] <- read_bin_subset(Byte.Start, nbLines, lenBin, ImPath, ImBand, jpix, nbChannels, Image_Format)
   }
   # reshape image with original size and selected bands
-  Image.Subset <- build_image_from_list(Image.Subsets, ipix, jpix, nbSubset)
-  rm(Image.Subsets)
+  Image.Subset <- build_image_from_list(Image_Subsets, ipix, jpix, nbSubset)
+  rm(Image_Subsets)
   gc()
   return(Image.Subset)
 }
@@ -682,11 +685,11 @@ read_image_bands <- function(ImPath, Header, ImBand) {
 # @param Byte.Start location of byte where to start reading in the image
 # @param lenBin number of elements to read
 # @param nbLines number of lines to read
-# @param Image.Format type of data (INT/FLOAT)
+# @param Image_Format type of data (INT/FLOAT)
 # @param ImgFormat should output be 2D or 3D (original image format)?
 #
 # @return data corresponding to the subset in original 3D format
-read_image_subset <- function(ImPath, HDR, Byte.Start, lenBin, nbLines, Image.Format, ImgFormat) {
+read_image_subset <- function(ImPath, HDR, Byte.Start, lenBin, nbLines, Image_Format, ImgFormat) {
   fidIm <- file(
     description = ImPath, open = "rb", blocking = TRUE,
     encoding = getOption("encoding"), raw = FALSE
@@ -695,16 +698,16 @@ read_image_subset <- function(ImPath, HDR, Byte.Start, lenBin, nbLines, Image.Fo
   # read relevant portion
   if (!Byte.Start == 1) {
     # skip the beginning of the file of not wanted
-    seek(fidIm, where = Image.Format$Bytes * (Byte.Start - 1), origin = "start", rw = "read")
+    seek(fidIm, where = Image_Format$Bytes * (Byte.Start - 1), origin = "start", rw = "read")
   }
-  if (Image.Format$Type == "INT") {
+  if (Image_Format$Type == "INT") {
     if (HDR$`data type` == 1) {
-      Image.Chunk <- readBin(fidIm, integer(), n = lenBin, size = Image.Format$Bytes, signed = FALSE, endian = Image.Format$ByteOrder)
+      Image.Chunk <- readBin(fidIm, integer(), n = lenBin, size = Image_Format$Bytes, signed = FALSE, endian = Image_Format$ByteOrder)
     } else {
-      Image.Chunk <- readBin(fidIm, integer(), n = lenBin, size = Image.Format$Bytes, signed = TRUE, endian = Image.Format$ByteOrder)
+      Image.Chunk <- readBin(fidIm, integer(), n = lenBin, size = Image_Format$Bytes, signed = TRUE, endian = Image_Format$ByteOrder)
     }
-  } else if (Image.Format$Type == "FLOAT") {
-    Image.Chunk <- readBin(fidIm, numeric(), n = lenBin, size = Image.Format$Bytes, endian = Image.Format$ByteOrder)
+  } else if (Image_Format$Type == "FLOAT") {
+    Image.Chunk <- readBin(fidIm, numeric(), n = lenBin, size = Image_Format$Bytes, endian = Image_Format$ByteOrder)
   }
 
   if (ImgFormat == "3D" | ImgFormat == "2D") {
@@ -732,7 +735,7 @@ read_image_subset <- function(ImPath, HDR, Byte.Start, lenBin, nbLines, Image.Fo
 #'
 #' @return list.
 #' @export
-split.line <- function(x, separator, trim.blank = TRUE) {
+split_line <- function(x, separator, trim.blank = TRUE) {
   tmp <- regexpr(separator, x)
   key <- substr(x, 1, tmp - 1)
   value <- substr(x, tmp + 1, nchar(x))
@@ -749,17 +752,17 @@ split.line <- function(x, separator, trim.blank = TRUE) {
 # splits a set of pixels to be sampled in an image based on number of lines, not number of samples
 #
 # @param coordPix coordinates of pixels to sample
-# @param Lines.Per.Read max number of lines per read for memory concerns
+# @param Lines_Per_Read max number of lines per read for memory concerns
 #
-# @return coordPix.List list of pixel coordinates
-split_pixel_samples <- function(coordPix, Lines.Per.Read) {
-  # maximum Lines.Per.Read
+# @return coordPix_List list of pixel coordinates
+split_pixel_samples <- function(coordPix, Lines_Per_Read) {
+  # maximum Lines_Per_Read
   if (dim(coordPix)[1] > 1) {
     nb.Lines <- max(coordPix[, 1]) - min(coordPix[, 1]) + 1
   } else if (dim(coordPix)[1] == 1) {
     nb.Lines <- max(coordPix[1]) - min(coordPix[1]) + 1
   }
-  nb.Pieces <- ceiling(nb.Lines / Lines.Per.Read)
+  nb.Pieces <- ceiling(nb.Lines / Lines_Per_Read)
 
   if (dim(coordPix)[1] > 1) {
     Min.Line <- ceiling(seq(min(coordPix[, 1]), max(coordPix[, 1]), length.out = nb.Pieces + 1))
@@ -771,7 +774,7 @@ split_pixel_samples <- function(coordPix, Lines.Per.Read) {
   Min.Line <- Min.Line[-length(Min.Line)]
   Max.Line <- Max.Line[-1]
   Max.Line[length(Max.Line)] <- Max.Line[length(Max.Line)] + 1
-  coordPix.List <- list()
+  coordPix_List <- list()
   ii <- 0
   for (i in 1:length(Min.Line)) {
     if (dim(coordPix)[1] > 1) {
@@ -781,13 +784,13 @@ split_pixel_samples <- function(coordPix, Lines.Per.Read) {
     }
     if (length(selpix) > 1) {
       ii <- ii + 1
-      coordPix.List[[ii]] <- coordPix[selpix, ]
+      coordPix_List[[ii]] <- coordPix[selpix, ]
     } else if (length(selpix) == 1) {
       ii <- ii + 1
-      coordPix.List[[ii]] <- coordPix
+      coordPix_List[[ii]] <- coordPix
     }
   }
-  return(coordPix.List)
+  return(coordPix_List)
 }
 
 # updates an existing shade mask
@@ -855,10 +858,10 @@ where_to_read <- function(HDR, nbPieces) {
   # elements in input data
   lb <- 1 + ((Start.Per.Chunk - 1) * Data.Per.Line)
   ub <- lb - 1
-  ReadByte.Start <- lb[1:nbPieces]
-  ReadByte.End <- ub[2:(nbPieces + 1)]
+  ReadByte_Start <- lb[1:nbPieces]
+  ReadByte_End <- ub[2:(nbPieces + 1)]
   Lines.Per.Chunk <- diff(Start.Per.Chunk)
-  my_list <- list("ReadByte.Start" = ReadByte.Start, "ReadByte.End" = ReadByte.End, "Lines.Per.Chunk" = Lines.Per.Chunk)
+  my_list <- list("ReadByte_Start" = ReadByte_Start, "ReadByte_End" = ReadByte_End, "Lines.Per.Chunk" = Lines.Per.Chunk)
   return(my_list)
 }
 
@@ -876,39 +879,39 @@ where_to_read_kernel <- function(HDR, nbPieces, SE.Size) {
   # elements in input data
   lb <- 1 + ((Start.Per.Chunk - 1) * Data.Per.Line)
   ub <- lb - 1
-  ReadByte.Start <- lb[1:nbPieces]
-  ReadByte.End <- ub[2:(nbPieces + 1)]
+  ReadByte_Start <- lb[1:nbPieces]
+  ReadByte_End <- ub[2:(nbPieces + 1)]
   Lines.Per.Chunk <- diff(Start.Per.Chunk)
-  my_list <- list("ReadByte.Start" = ReadByte.Start, "ReadByte.End" = ReadByte.End, "Lines.Per.Chunk" = Lines.Per.Chunk)
+  my_list <- list("ReadByte_Start" = ReadByte_Start, "ReadByte_End" = ReadByte_End, "Lines.Per.Chunk" = Lines.Per.Chunk)
   return(my_list)
 }
 
 # defines which byte should be written for each part of an image split in nbPieces
 #
-# @param HDR.SS header info for SpectralSpecies file
-# @param HDR.SSD header info for SpectralSpecies_Distribution file
+# @param HDR_SS header info for SpectralSpecies file
+# @param HDR_SSD header info for SpectralSpecies_Distribution file
 # @param nbPieces number of pieces resulting from image split
 # @param SE.Size
 #
 # @return location of the bytes corresponding to beginning and end of each piece, and corresponding number of lines
-where_to_write_kernel <- function(HDR.SS, HDR.SSD, nbPieces, SE.Size) {
-  Data.Per.Line.SS <- as.double(HDR.SS$samples) * as.double(HDR.SS$bands)
-  Data.Per.Line.SSD <- as.double(HDR.SSD$samples) * as.double(HDR.SSD$bands)
+where_to_write_kernel <- function(HDR_SS, HDR_SSD, nbPieces, SE.Size) {
+  Data.Per.Line_SS <- as.double(HDR_SS$samples) * as.double(HDR_SS$bands)
+  Data.Per.Line_SSD <- as.double(HDR_SSD$samples) * as.double(HDR_SSD$bands)
 
   # starting line for each chunk of spectral species
-  Start.Per.Chunk <- ceiling(seq(1, (HDR.SS$lines + 1), length.out = nbPieces + 1))
+  Start.Per.Chunk <- ceiling(seq(1, (HDR_SS$lines + 1), length.out = nbPieces + 1))
   Start.Per.Chunk <- Start.Per.Chunk - Start.Per.Chunk %% SE.Size
   Start.Per.Chunk.SSD <- (Start.Per.Chunk / SE.Size) + 1
 
   # elements in input data
-  Image.Format <- ENVI_type2bytes(HDR.SSD)
-  lb_SSD <- 1 + (((Start.Per.Chunk.SSD - 1) * Data.Per.Line.SSD) * Image.Format$Bytes)
+  Image_Format <- ENVI_type2bytes(HDR_SSD)
+  lb_SSD <- 1 + (((Start.Per.Chunk.SSD - 1) * Data.Per.Line_SSD) * Image_Format$Bytes)
   ub_SSD <- lb_SSD - 1
-  ReadByte.Start.SSD <- lb_SSD[1:nbPieces]
-  ReadByte.End.SSD <- ub_SSD[2:(nbPieces + 1)]
+  ReadByte_Start.SSD <- lb_SSD[1:nbPieces]
+  ReadByte_End.SSD <- ub_SSD[2:(nbPieces + 1)]
   Lines.Per.Chunk.SSD <- diff(Start.Per.Chunk.SSD)
 
-  my_list <- list("ReadByte.Start" = ReadByte.Start.SSD, "ReadByte.End" = ReadByte.End.SSD, "Lines.Per.Chunk" = Lines.Per.Chunk.SSD)
+  my_list <- list("ReadByte_Start" = ReadByte_Start.SSD, "ReadByte_End" = ReadByte_End.SSD, "Lines.Per.Chunk" = Lines.Per.Chunk.SSD)
   return(my_list)
 }
 
@@ -932,12 +935,12 @@ write_ENVI_header <- function(header, headerFpath) {
 
 # convert image coordinates from X-Y to index
 #
-# @param HDR.Raster
+# @param HDR_Raster
 # @param Pixels coordinates corresponding to the raster
 #
 # @return Image.Index
-sub2ind <- function(HDR.Raster, Pixels) {
-  Image.Index <- (Pixels$Column - 1) * HDR.Raster$lines + Pixels$Row
+sub2ind <- function(HDR_Raster, Pixels) {
+  Image.Index <- (Pixels$Column - 1) * HDR_Raster$lines + Pixels$Row
   return(Image.Index)
 }
 
@@ -948,22 +951,22 @@ sub2ind <- function(HDR.Raster, Pixels) {
 #
 # @return nbPieces number of pieces
 split_image <- function(HDR, LimitSizeGb = FALSE) {
-  Image.Format <- ENVI_type2bytes(HDR)
+  Image_Format <- ENVI_type2bytes(HDR)
   lenTot <- as.double(HDR$samples) * as.double(HDR$lines) * as.double(HDR$bands)
-  ImSizeGb <- (lenTot * Image.Format$Bytes) / (1024^3)
+  ImSizeGb <- (lenTot * Image_Format$Bytes) / (1024^3)
   # maximum image size read at once. If image larger, then reads in multiple pieces
   if (LimitSizeGb == FALSE) {
     LimitSizeGb <- 0.25
   }
   if (ImSizeGb < LimitSizeGb) {
-    Lines.Per.Read <- HDR$lines
+    Lines_Per_Read <- HDR$lines
     nbPieces <- 1
   } else {
     # nb of lines corresponding to LimitSizeGb
-    OneLine <- as.double(HDR$samples) * as.double(HDR$bands) * Image.Format$Bytes
-    Lines.Per.Read <- floor(LimitSizeGb * (1024^3) / OneLine)
+    OneLine <- as.double(HDR$samples) * as.double(HDR$bands) * Image_Format$Bytes
+    Lines_Per_Read <- floor(LimitSizeGb * (1024^3) / OneLine)
     # number of pieces to split the image into
-    nbPieces <- ceiling(HDR$lines / Lines.Per.Read)
+    nbPieces <- ceiling(HDR$lines / Lines_Per_Read)
   }
   return(nbPieces)
 }

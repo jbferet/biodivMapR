@@ -4,15 +4,15 @@
 \alias{map_alpha_div}
 \title{maps alpha diversity indicators  based on prior selection of PCs}
 \usage{
-map_alpha_div(Input.Image.File, Output.Dir, window_size,
+map_alpha_div(Input_Image_File, Output_Dir, window_size,
   TypePCA = "SPCA", nbclusters = 50, MinSun = 0.25, pcelim = 0.02,
-  Index.Alpha = "Shannon", FullRes = TRUE, LowRes = FALSE,
+  Index_Alpha = "Shannon", FullRes = TRUE, LowRes = FALSE,
   MapSTD = FALSE, nbCPU = FALSE, MaxRAM = FALSE)
 }
 \arguments{
-\item{Input.Image.File}{character. Path and name of the image to be processed.}
+\item{Input_Image_File}{character. Path and name of the image to be processed.}
 
-\item{Output.Dir}{character. Output directory.}
+\item{Output_Dir}{character. Output directory.}
 
 \item{window_size}{numeric. Size of spatial units (in pixels) to compute diversity.}
 
@@ -24,11 +24,13 @@ map_alpha_div(Input.Image.File, Output.Dir, window_size,
 
 \item{pcelim}{numeric. Minimum contribution (in \%) required for a spectral species.}
 
-\item{Index.Alpha}{character. Either 'Shannon', 'Simpson' or 'Fisher'.}
+\item{Index_Alpha}{character. Either 'Shannon', 'Simpson' or 'Fisher'.}
 
 \item{FullRes}{boolean. Full resolution.}
 
 \item{LowRes}{boolean. Low resolution.}
+
+\item{MapSTD}{boolean. map of standard deviation of the alpha diversity map (over repetitions)}
 
 \item{nbCPU}{numeric. Number of CPUs to use in parallel.}
 

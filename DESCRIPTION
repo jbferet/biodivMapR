@@ -1,14 +1,21 @@
 Package: biodivMapR
 Title: biodivMapR: an R package for α- and β-diversity mapping using remotely-sensed images
 Version: 0.9.0
-Authors@R: c( person("Jean-Baptiste", "Feret", email = "jb.feret@teledetection.fr", role = c("aut", "cre")),
-    person("Florian", "de Boissieu", email = "florian.deboissieu@irstea.fr", role = c("ctb"), comment = "clean code, format as package"))
+Authors@R: c(person(given = "Jean-Baptiste", 
+					family = "Feret", 
+					email = "jb.feret@teledetection.fr", 
+					role = c("aut", "cre"),
+					comment = c(ORCID = "0000-0002-0151-1334")),
+			person(	given = "Florian", 
+					family = "de Boissieu", 
+					email = "florian.deboissieu@irstea.fr", 
+					role = c("ctb"), 
+					comment = "clean code, format as package"))
 Description: this packages allows processing image data based on the method described in the following publication:
     Féret, J.-B., Asner, G.P., 2014. Mapping tropical forest canopy diversity using high-fidelity imaging spectroscopy. Ecol. Appl. 24, 1289–1296. https://doi.org/10.1890/13-1824.1
-    It expects an image file as input, with a specific data format.
-    ENVI HDR image with BIL interleave required
+    It expects an image file as input, with a specific data format. ENVI HDR image with BIL interleave required.
 Encoding: UTF-8
-License: GPL-3
+License: GPL-3 + file LICENSE
 LazyData: true
 Imports: 
     dissUtils,
@@ -19,10 +26,12 @@ Imports:
     labdsv,
     matlab,
     matrixStats,
+    methods,
     raster,
     rgdal,
     R.utils,
     snow,
+    sp,
     stringr,
     tools,
     vegan,
