@@ -208,7 +208,7 @@ check_data <- function(Raster_Path, Mask = FALSE) {
       if ((HDR$`wavelength units` == "nanometers") | (HDR$`wavelength units` == "Nanometers")) {
         message("")
         message("*********************************************************")
-        message("       All information seem OK for image processing      ")
+        message("               Raster format OK for processing           ")
         message("*********************************************************")
         message("")
       }

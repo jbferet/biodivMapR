@@ -7,9 +7,9 @@
 check_data(Raster_Path, Mask = FALSE)
 }
 \arguments{
-\item{Raster_Path}{full path for the raster to be converted}
+\item{Raster_Path}{character. full path for the raster to be converted}
 
-\item{Mask}{is the raster a mask?}
+\item{Mask}{boolean. Set true if the raster is a mask}
 }
 \description{
 Checks if the data to be processed has the format type expected

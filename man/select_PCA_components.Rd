@@ -8,15 +8,15 @@ select_PCA_components(Input_Image_File, Output_Dir, PCA_Files,
   TypePCA = "SPCA", File_Open = FALSE)
 }
 \arguments{
-\item{Input_Image_File}{path for image to be processed}
+\item{Input_Image_File}{character. Path of the image to be processed}
 
-\item{Output_Dir}{output directory}
+\item{Output_Dir}{character. Path for output directory}
 
-\item{PCA_Files}{path of PCA files}
+\item{PCA_Files}{character. Path of the PCA image}
 
-\item{TypePCA}{Type of PCA: "PCA" or "SPCA"}
+\item{TypePCA}{character. Type of PCA: choose either "PCA" or "SPCA"}
 
-\item{File_Open}{Boolean. automatically opens file if TRUE}
+\item{File_Open}{Boolean. Set to TRUE for file to open automatically}
 }
 \value{
 nothing

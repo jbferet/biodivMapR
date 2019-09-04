@@ -11,7 +11,7 @@ raster2BIL(Raster_Path, Sensor = "unknown", Output_Dir = FALSE,
 \arguments{
 \item{Raster_Path}{character. Full path for the raster to be converted}
 
-\item{Sensor}{character. Name of the sensor}
+\item{Sensor}{character. Name of the sensor. a .hdr template for the sensor should be provided in extdata/HDR}
 
 \item{Output_Dir}{character. Path to output directory.}
 

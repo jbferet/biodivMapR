@@ -9,19 +9,19 @@ perform_PCA(ImPath, ImPathShade, Output_Dir, Continuum_Removal = TRUE,
   nb_partitions = 20, nbCPU = 1, MaxRAM = 0.25)
 }
 \arguments{
-\item{ImPath}{Path and name of the image to be processed}
+\item{ImPath}{character. Path of the image to be processed}
 
-\item{ImPathShade}{correponding shade mask}
+\item{ImPathShade}{character. Path of the mask corresponding to the image}
 
-\item{Output_Dir}{output directory}
+\item{Output_Dir}{character. Path for output directory}
 
-\item{Continuum_Removal}{boolean: should continuum removal be applied?}
+\item{Continuum_Removal}{boolean. Set to TRUE if continuum removal should be applied}
 
-\item{TypePCA}{Type of PCA: "PCA" or "SPCA"}
+\item{TypePCA}{character. Type of PCA: choose either "PCA" or "SPCA"}
 
-\item{FilterPCA}{boolean. If TRUE 2nd filtering based on PCA}
+\item{FilterPCA}{boolean. Set to TRUE if 2nd filtering based on PCA is required}
 
-\item{Excluded_WL}{boolean. Water Vapor Absorption domains (in nanometers). Can also be used to exclude spectific domains}
+\item{Excluded_WL}{numeric. Water Vapor Absorption domains (in nanometers, min and max WL). Can also be used to exclude spectific domains. dims = N x 2 (N = number of domains to be eliminated)}
 
 \item{nb_partitions}{numeric. Number of repetitions to estimate diversity from the raster (averaging repetitions).}
 

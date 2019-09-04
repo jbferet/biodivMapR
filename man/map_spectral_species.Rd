@@ -9,19 +9,19 @@ map_spectral_species(Input_Image_File, Output_Dir, PCA_Files, ImPathShade,
   nbCPU = 1, MaxRAM = FALSE)
 }
 \arguments{
-\item{Input_Image_File}{Path and name of the image to be processed}
+\item{Input_Image_File}{character. Path of the image to be processed}
 
-\item{Output_Dir}{output directory}
+\item{Output_Dir}{character. Path for output directory}
 
-\item{PCA_Files}{path for PCA file}
+\item{PCA_Files}{character. Path of the PCA image}
 
-\item{ImPathShade}{path for shade file (= mask)}
+\item{ImPathShade}{character. Path of the mask corresponding to the image}
 
 \item{Pix_Per_Partition}{number of pixels for each partition}
 
 \item{nb_partitions}{number of partition}
 
-\item{TypePCA}{Type of PCA: "PCA" or "SPCA"}
+\item{TypePCA}{character. Type of PCA: choose either "PCA" or "SPCA"}
 
 \item{nbclusters}{number of clusters defined in k-Means}
 

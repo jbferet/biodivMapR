@@ -9,25 +9,25 @@ perform_radiometric_filtering(Image_Path, Mask_Path, Output_Dir,
   NIR_Thresh = 1500, Blue = 480, Red = 700, NIR = 835)
 }
 \arguments{
-\item{Image_Path}{Path of the image to be processed}
+\item{Image_Path}{character. Path of the image to be processed}
 
-\item{Mask_Path}{Path of the mask corresponding to the image}
+\item{Mask_Path}{character. Path of the mask corresponding to the image}
 
-\item{Output_Dir}{output directory}
+\item{Output_Dir}{character. Path for output directory}
 
-\item{TypePCA}{Type of PCA: "PCA" or "SPCA"}
+\item{TypePCA}{character. Type of PCA: choose either "PCA" or "SPCA"}
 
-\item{NDVI_Thresh}{NDVI threshold applied to produce a mask (select pixels with NDVI>NDVI_Thresh)}
+\item{NDVI_Thresh}{numeric. NDVI threshold applied to produce a mask (select pixels with NDVI>NDVI_Thresh)}
 
-\item{Blue_Thresh}{Blue threshold applied to produce a mask (select pixels with Blue refl < Blue_Thresh --> filter clouds) refl expected between 0 and 10000}
+\item{Blue_Thresh}{numeric. Blue threshold applied to produce a mask (select pixels with Blue refl < Blue_Thresh --> filter clouds) refl expected between 0 and 10000}
 
-\item{NIR_Thresh}{NIR threshold applied to produce a mask (select pixels with NIR refl < NIR_Thresh) refl expected between 0 and 10000}
+\item{NIR_Thresh}{numeric. NIR threshold applied to produce a mask (select pixels with NIR refl < NIR_Thresh) refl expected between 0 and 10000}
 
-\item{Blue}{central wavelength corresponding to the blue spectral band (in nanometers)}
+\item{Blue}{numeric. central wavelength corresponding to the blue spectral band (in nanometers)}
 
-\item{Red}{central wavelength corresponding to the red spectral band (in nanometers)}
+\item{Red}{numeric. central wavelength corresponding to the red spectral band (in nanometers)}
 
-\item{NIR}{central wavelength corresponding to the NIR spectral band (in nanometers)}
+\item{NIR}{numeric. central wavelength corresponding to the NIR spectral band (in nanometers)}
 }
 \value{
 ImPathShade = updated shademask file
