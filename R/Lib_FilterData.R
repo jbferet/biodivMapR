@@ -27,7 +27,9 @@
 perform_radiometric_filtering <- function(Image_Path, Mask_Path, Output_Dir, TypePCA = "SPCA", NDVI_Thresh = 0.5, Blue_Thresh = 500, NIR_Thresh = 1500, Blue = 480, Red = 700, NIR = 835) {
   # check if format of raster data is as expected
   check_data(Image_Path)
-  check_data(Mask_Path)
+  if (!Mask_Path==FALSE){
+    check_data(Mask_Path)
+  }
   # define full output directory
   Output_Dir_Full <- define_output_directory(Output_Dir, Image_Path, TypePCA)
   # define dimensions of the image

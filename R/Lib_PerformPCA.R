@@ -27,7 +27,9 @@
 perform_PCA  <- function(ImPath, ImPathShade, Output_Dir, Continuum_Removal = TRUE, TypePCA = "SPCA", FilterPCA = FALSE, Excluded_WL = FALSE, nb_partitions = 20, nbCPU = 1, MaxRAM = 0.25) {
   # check if format of raster data is as expected
   check_data(ImPath)
-  check_data(ImPathShade)
+  if (!ImPathShade==FALSE){
+    check_data(ImPathShade)
+  }
   # define the path corresponding to image, mask and output directory
   ImNames <- list()
   ImNames$Input.Image <- ImPath
