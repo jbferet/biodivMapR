@@ -11,13 +11,13 @@
 
 #' Performs PCA for all images and create PCA file with either all or a selection of PCs
 #'
-#' @param ImPath Path and name of the image to be processed
-#' @param ImPathShade correponding shade mask
-#' @param Output_Dir output directory
-#' @param Continuum_Removal boolean: should continuum removal be applied?
-#' @param TypePCA Type of PCA: "PCA" or "SPCA"
-#' @param FilterPCA boolean. If TRUE 2nd filtering based on PCA
-#' @param Excluded_WL boolean. Water Vapor Absorption domains (in nanometers). Can also be used to exclude spectific domains
+#' @param ImPath character. Path of the image to be processed
+#' @param ImPathShade character. Path of the mask corresponding to the image
+#' @param Output_Dir character. Path for output directory
+#' @param Continuum_Removal boolean. Set to TRUE if continuum removal should be applied
+#' @param TypePCA character. Type of PCA: choose either "PCA" or "SPCA"
+#' @param FilterPCA boolean. Set to TRUE if 2nd filtering based on PCA is required
+#' @param Excluded_WL  numeric. Water Vapor Absorption domains (in nanometers, min and max WL). Can also be used to exclude spectific domains. dims = N x 2 (N = number of domains to be eliminated)
 #' @param nb_partitions numeric. Number of repetitions to estimate diversity from the raster (averaging repetitions).
 #' @param nbCPU numeric. Number fo CPUs in use.
 #' @param MaxRAM numeric. Maximum size of chunk in GB to limit RAM allocation when reading image file.
@@ -482,11 +482,11 @@ define_pixels_per_iter <- function(ImNames, nb_partitions = nb_partitions) {
 
 #' Check if principal components are properly selected as expected by the method
 #'
-#' @param Output_Dir output directory
-#' @param Input_Image_File path for image to be processed
-#' @param PCA_Files path of PCA files
-#' @param TypePCA Type of PCA: "PCA" or "SPCA"
-#' @param File_Open Boolean. automatically opens file if TRUE
+#' @param Input_Image_File character. Path of the image to be processed
+#' @param Output_Dir character. Path for output directory
+#' @param PCA_Files character. Path of the PCA image
+#' @param TypePCA character. Type of PCA: choose either "PCA" or "SPCA"
+#' @param File_Open Boolean. Set to TRUE for file to open automatically
 #'
 #' @return nothing
 #' @importFrom utils file.edit

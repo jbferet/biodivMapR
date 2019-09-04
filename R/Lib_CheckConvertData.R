@@ -13,7 +13,7 @@
 #' converts a raster into BIL format as expected by DivMapping codes
 #'
 #' @param Raster_Path character. Full path for the raster to be converted
-#' @param Sensor character. Name of the sensor
+#' @param Sensor character. Name of the sensor. a .hdr template for the sensor should be provided in extdata/HDR
 #' @param Convert_Integer boolean. Should data be converted into integer ?
 #' @param Multiplying_Factor numeric. Multiplying factor (eg convert real reflectance values between 0 and 1 into integer between 0 and 10000).
 #' @param Output_Dir character. Path to output directory.
@@ -154,9 +154,10 @@ raster2BIL <- function(Raster_Path, Sensor = "unknown", Output_Dir = FALSE, Conv
 
 #' Checks if the data to be processed has the format type expected
 #'
-#' @param Raster_Path full path for the raster to be converted
-#' @param Mask is the raster a mask?
+#' @param Raster_Path character. full path for the raster to be converted
+#' @param Mask boolean. Set true if the raster is a mask
 #'
+#' @return
 #' @export
 check_data <- function(Raster_Path, Mask = FALSE) {
   HDR_Path <- get_HDR_name(Raster_Path)

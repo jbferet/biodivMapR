@@ -11,16 +11,16 @@
 
 #' Performs radiometric filtering based on three criteria: NDVI, NIR reflectance, Blue reflectance
 #'
-#' @param Image_Path Path of the image to be processed
-#' @param Mask_Path Path of the mask corresponding to the image
-#' @param Output_Dir output directory
-#' @param TypePCA Type of PCA: "PCA" or "SPCA"
-#' @param NDVI_Thresh NDVI threshold applied to produce a mask (select pixels with NDVI>NDVI_Thresh)
-#' @param Blue_Thresh Blue threshold applied to produce a mask (select pixels with Blue refl < Blue_Thresh --> filter clouds) refl expected between 0 and 10000
-#' @param NIR_Thresh NIR threshold applied to produce a mask (select pixels with NIR refl < NIR_Thresh) refl expected between 0 and 10000
-#' @param Blue central wavelength corresponding to the blue spectral band (in nanometers)
-#' @param Red central wavelength corresponding to the red spectral band (in nanometers)
-#' @param NIR central wavelength corresponding to the NIR spectral band (in nanometers)
+#' @param Image_Path character. Path of the image to be processed
+#' @param Mask_Path character. Path of the mask corresponding to the image
+#' @param Output_Dir character. Path for output directory
+#' @param TypePCA character. Type of PCA: choose either "PCA" or "SPCA"
+#' @param NDVI_Thresh numeric. NDVI threshold applied to produce a mask (select pixels with NDVI>NDVI_Thresh)
+#' @param Blue_Thresh numeric. Blue threshold applied to produce a mask (select pixels with Blue refl < Blue_Thresh --> filter clouds) refl expected between 0 and 10000
+#' @param NIR_Thresh numeric. NIR threshold applied to produce a mask (select pixels with NIR refl < NIR_Thresh) refl expected between 0 and 10000
+#' @param Blue numeric. central wavelength corresponding to the blue spectral band (in nanometers)
+#' @param Red numeric. central wavelength corresponding to the red spectral band (in nanometers)
+#' @param NIR numeric. central wavelength corresponding to the NIR spectral band (in nanometers)
 #'
 #' @return ImPathShade = updated shademask file
 #' @export

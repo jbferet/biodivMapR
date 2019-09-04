@@ -13,11 +13,11 @@
 
 #' maps spectral species based on PCA file computed previously
 #'
-#' @param Input_Image_File Path and name of the image to be processed
-#' @param Output_Dir output directory
-#' @param TypePCA Type of PCA: "PCA" or "SPCA"
-#' @param PCA_Files path for PCA file
-#' @param ImPathShade path for shade file (= mask)
+#' @param Input_Image_File character. Path of the image to be processed
+#' @param Output_Dir character. Path for output directory
+#' @param TypePCA character. Type of PCA: choose either "PCA" or "SPCA"
+#' @param PCA_Files character. Path of the PCA image
+#' @param ImPathShade character. Path of the mask corresponding to the image
 #' @param Pix_Per_Partition number of pixels for each partition
 #' @param nb_partitions number of partition
 #' @param nbCPU numeric. Number of CPUs to use in parallel.
