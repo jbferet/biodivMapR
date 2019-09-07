@@ -39,37 +39,41 @@ This tutorial aims at describing the processing workflow and giving the associat
 # Processing parameters
 
 ## Input / Output files
-The input images are expected to be in ENVI HDR format, BIL interleaved. To check if the flormat is good use fucntion `check_data`.
-If not they should be converted with function `raster2BIL`.
+The input images are expected to be in ENVI HDR format, BIL interleaved. 
+The functions `perform_radiometric_filtering` and `perform_PCA` start with a procedure checkin if the image format is as expected. if not, the functions will retrun a message explaining the problem and will stop the process.
 
-A mask can also be set to work on a selected part of the input image. The mask is expected to be a raster in the same format as the image (ENVI HDR), with values 0 = masked or 1 = selected. If no mask is to be used set `Input.Mask.File = FALSE`.
+If the format is not ENVI format BIL interleaved, the function `raster2BIL` allows conversion into proper format and returns updated `Input_Image_File`
 
-The output directory defined with `Output.Dir` will contain all the results. For each image processed, a subdirectory will be automatically created after its name.
+Spectral bands should be defined if the image is multi or hyperspectral image. 
+
+A mask can also be set to work on a selected part of the input image. The mask is expected to be a raster in the same format as the image (ENVI HDR), with values 0 = masked or 1 = selected. Only one band is required. If no mask is to be used set `Input_Mask_File = FALSE`.
+
+The output directory defined with `Output_Dir` will contain all the results. For each image processed, a subdirectory will be automatically created after its name.
 
 
 ```{r Input / Output files}
-Input.Image.File  = system.file('extdata', 'RASTER', 'S2A_T33NUD_20180104_Subset', package = 'biodivMapR')
-check_data(Input.Image.File)
+Input_Image_File  = system.file('extdata', 'RASTER', 'S2A_T33NUD_20180104_Subset', package = 'biodivMapR')
 
-Input.Image.File  = raster2BIL(Raster.Path = Input.Image.File,
-                                       Sensor = 'SENTINEL_2A',
-                                       Convert.Integer = TRUE,
-                                       Output.Directory = '~/test')
-Input.Mask.File   = FALSE
+# Input.Image.File  = raster2BIL(Raster.Path = Input.Image.File,
+#                                        Sensor = 'SENTINEL_2A',
+#                                        Convert.Integer = TRUE,
+#                                        Output.Directory = '~/test')
 
-Output.Dir        = 'RESULTS'
+Input_Mask_File   = FALSE
+
+Output_Dir        = 'RESULTS'
 ```
 
 The image provided with the package is a subset of tile T33NUD acquired by Sentinel-2A satellite over Cameroonese rainforest in January 4th, 2018. 
 <img align="bottom" width="100%" height="100%" src="../man/figures/01_RGB_S2A_T33NUD_20180104_Subset.png">
 
 ## Spatial resolution
-The algorithm estimates \alpha and \beta diversity within a window, that is also the output spatial resolution. It is defined in number of pixel s of the input image with parameter `window_size`, e.g. `window_size = 10` meaning a window of 10x10 pixels. It will be the spatial resolution of the ouput rasters.
+The algorithm estimates \alpha and \beta diversity within a window, that is also the output spatial resolution. It is defined in number of pixels of the input image with parameter `window_size`, e.g. `window_size = 10` meaning a window of 10x10 pixels. It will be the spatial resolution of the ouput rasters.
 
 As a rule of thumb, spatial units between 0.25 and 4 ha usually match with ground data.
-A window_size too small results in low number of pixels per spatial unit, hence limited range of variation of diversity in the image.
+if `window_size` is too small, it will result in low number of pixels per spatial unit, hence limited range of variation of diversity in the image.
 
-In this example, the spatial resolution of the input raster. Setting `window_size = 10` will result in diversity maps of spatial resolution 100x100m.
+In this example, the spatial resolution of the input raster is 10m. Setting `window_size = 10` will result in diversity maps of spatial resolution 100m x 100m.
 
 ```{r Spatial resolution}
 window_size = 10
@@ -87,10 +91,10 @@ The use of computing ressources can be controled with the following parameters:
 
 * `nbCPU` controls the parallelisation of the processing: how many CPUs will be asssigned for multithreading, 
 * `MaxRAM` controls the size in GB of the input image chunks processed by each thread (this does not correspond to the max amount of RAM allocated),
-* `nbclusters` controls the number of clusters defined by k-means clustering for each repetition. Images showing moderate diversity (temperate forests) may need lower number of clusters (20), whereas highly diverse tropical forest require more (50). The larger the value the longer the computation time. 
+* `nbclusters` controls the number of clusters defined by k-means clustering for each repetition. Images showing moderate diversity (temperate forests) may need lower number of clusters (20), whereas highly diverse tropical forest require more (50). The larger the value the longer the computation time. Users are invited to experiment with different numbers of clusters in order to identify the snsitivity of divrsity patterns to this parameter.
 
 ```{r Computing options}
-nbCPU         = 4
+nbCPU         = 2
 MaxRAM        = 0.5
 nbclusters    = 50
 ```
@@ -99,13 +103,13 @@ nbclusters    = 50
 ## Mask non vegetated / shaded / cloudy pixels
 
 ```{r Mask non vegetated / shaded / cloudy pixels}
-NDVI.Thresh = 0.5
-Blue.Thresh = 500
-NIR.Thresh  = 1500
+NDVI_Thresh = 0.5
+Blue_Thresh = 500
+NIR_Thresh  = 1500
 print("PERFORM RADIOMETRIC FILTERING")
-ImPathShade = perform_radiometric_filtering(Input.Image.File, Input.Mask.File, Output.Dir,
-                                            NDVI.Thresh = NDVI.Thresh, Blue.Thresh = Blue.Thresh,
-                                            NIR.Thresh = NIR.Thresh)
+Input_Mask_File = perform_radiometric_filtering(Input_Image_File, Input_Mask_File, Output_Dir,
+                                            NDVI_Thresh = NDVI_Thresh, Blue_Thresh = Blue_Thresh,
+                                            NIR_Thresh = NIR_Thresh)
 ```
 
 ## PCA
@@ -121,7 +125,7 @@ This PCA raster file can be displayed using QGIS or any GIS / image processing s
 This PCA band selection left to user judgement, who then writes the band to be kept in a `.txt` file located in the same directory as the PCA raster file. The file is automatically created and ready to edit with function `select_PCA_components`. Each selected band should be identified per line in this file. 
 The main goal of PC selection is to discard PCs showing no relevant information corresponding to vegetation, or including artifacts possibly explained by sensor properties. It is somehow a subjective process, and we are currently working on automatic selection of these components.
 
-For this example, PCA bands 1, 2, 4, 5, 6 and 8 can be kept if writing the following lines in file `selected_components.txt` opened for edition (do not forget carriage return after last value):
+For this example, PCA bands 1, 2, 4, 5, 6 and 8 can be kept if writing the following lines in file `Selected_Components.txt` opened for edition (do not forget carriage return after last value):
 ```
 1
 2
@@ -136,22 +140,35 @@ Here is the code to perform PCA and select PCA bands:
 
 ```{r PCA}
 print("PERFORM PCA ON RASTER")
-PCA.Files  = perform_PCA(Input.Image.File, ImPathShade, Output.Dir,
-                               FilterPCA = TRUE, nbCPU = nbCPU, MaxRAM = MaxRAM)
+PCA_Output        = perform_PCA(Input_Image_File, Input_Mask_File, Output_Dir,
+                               FilterPCA = TRUE, nbCPU = nbCPU,MaxRAM = MaxRAM)
+# path for the PCA raster
+PCA_Files         = PCA_Output$PCA_Files
+# number of pixels used for each partition used for k-means clustering
+Pix_Per_Partition = PCA_Output$Pix_Per_Partition
+# number of partitions used for k-means clustering
+nb_partitions     = PCA_Output$nb_partitions
+# path for the updated mask
+Input_Mask_File   = PCA_Output$MaskPath
+# parameters of the PCA model
+PCA_model         = PCA_Output$PCA_model
+# definition of spectral bands to be excluded from the analysis
+SpectralFilter    = PCA_Output$SpectralFilter
+
 print("Select PCA components for diversity estimations")
-select_PCA_components(Input.Image.File, Output.Dir, PCA.Files, File.Open = TRUE)
+select_PCA_components(Input_Image_File, Output_Dir, PCA_Files, File_Open = TRUE)
 ```
 
 
 ## $\alpha$ and $\beta$ diversity maps
 
-The first step towards  \alpha and \beta diversity mapping corresponds to the computation of a `SpectralSpecies` map, which identifies the centroid a the cluster ('spectral species') assigned to each pixel in the image, after k-means clustering is performed
+The first step towards  \alpha and \beta diversity mapping corresponds to the computation of a `SpectralSpecies` map, which identifies the cluster ('spectral species') assigned to each pixel in the image, after k-means clustering is performed.
 
 
 ```{r Spectral species map}
 print("MAP SPECTRAL SPECIES")
-map_spectral_species(Input.Image.File, Output.Dir, PCA.Files,
-                     nbCPU = nbCPU, MaxRAM = MaxRAM)
+map_spectral_species(Input_Image_File, Output_Dir, PCA_Files,PCA_model, SpectralFilter, Input_Mask_File,
+                     Pix_Per_Partition, nb_partitions, nbCPU=nbCPU, MaxRAM=MaxRAM)
 ```
 
 SpectralSpecies is then stored in a raster file located here:
@@ -164,13 +181,13 @@ The code to compute $\alpha$ and $\beta$ diversity maps from this file is as fol
 ```{r alpha and beta diversity maps}
 print("MAP ALPHA DIVERSITY")
 # Index.Alpha   = c('Shannon','Simpson')
-Index.Alpha   = c('Shannon')
-map_alpha_div(Input.Image.File, Output.Dir, window_size,
-                    nbCPU = nbCPU, MaxRAM = MaxRAM, Index.Alpha = Index.Alpha)
+Index_Alpha   = c('Shannon')
+map_alpha_div(Input_Image_File, Output_Dir, window_size,
+              nbCPU=nbCPU, MaxRAM=MaxRAM, Index_Alpha = Index_Alpha)
 
 print("MAP BETA DIVERSITY")
-map_beta_div(Input.Image.File, Output.Dir, window_size,
-                   nbCPU = nbCPU, MaxRAM = MaxRAM)
+map_beta_div(Input_Image_File, Output_Dir, window_size, nb_partitions=nb_partitions,
+             nbCPU=nbCPU, MaxRAM=MaxRAM)
 ```
 
 $\alpha$ and $\beta$ diversity maps are then stored in raster files located here: 
@@ -200,12 +217,8 @@ vect        = system.file('extdata', 'VECTOR', package = 'biodivMapR')
 Shannon.All = list() # ??
 
 # list vector data
-Path.Vector         = list.shp(vect)
+Path.Vector         = list_shp(vect)
 Name.Vector         = tools::file_path_sans_ext(basename(Path.Vector))
-
-# read raster data including projection
-RasterStack         = stack(Path.Raster)
-Projection.Raster   = get_projection(Path.Raster,'raster')
 
 # get alpha and beta diversity indicators corresponding to shapefiles
 Biodiv.Indicators           = diversity_from_plots(Raster = Path.Raster, Plots = Path.Vector,NbClusters = nbclusters)
@@ -302,5 +315,3 @@ The resulting figures are displayed here:
 <img align="bottom" width="100%" height="100%" src="../man/figures/BetaDiversity_PcoA1_vs_PcoA2.png">
 <img align="bottom" width="100%" height="100%" src="../man/figures/BetaDiversity_PcoA1_vs_PcoA3.png">
 <img align="bottom" width="100%" height="100%" src="../man/figures/BetaDiversity_PcoA2_vs_PcoA3.png">
-
-

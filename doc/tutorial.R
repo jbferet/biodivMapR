@@ -6,16 +6,16 @@ knitr::opts_chunk$set(
 )
 
 ## ----Input / Output files------------------------------------------------
-#  Input.Image.File  = system.file('extdata', 'RASTER', 'S2A_T33NUD_20180104_Subset', package = 'biodivMapR')
-#  check_data(Input.Image.File)
+#  Input_Image_File  = system.file('extdata', 'RASTER', 'S2A_T33NUD_20180104_Subset', package = 'biodivMapR')
 #  
-#  Input.Image.File  = raster2BIL(Raster.Path = Input.Image.File,
-#                                         Sensor = 'SENTINEL_2A',
-#                                         Convert.Integer = TRUE,
-#                                         Output.Directory = '~/test')
-#  Input.Mask.File   = FALSE
+#  # Input.Image.File  = raster2BIL(Raster.Path = Input.Image.File,
+#  #                                        Sensor = 'SENTINEL_2A',
+#  #                                        Convert.Integer = TRUE,
+#  #                                        Output.Directory = '~/test')
 #  
-#  Output.Dir        = 'RESULTS'
+#  Input_Mask_File   = FALSE
+#  
+#  Output_Dir        = 'RESULTS'
 
 ## ----Spatial resolution--------------------------------------------------
 #  window_size = 10
@@ -24,41 +24,54 @@ knitr::opts_chunk$set(
 #  FilterPCA = FALSE
 
 ## ----Computing options---------------------------------------------------
-#  nbCPU         = 4
+#  nbCPU         = 2
 #  MaxRAM        = 0.5
 #  nbclusters    = 50
 
 ## ----Mask non vegetated / shaded / cloudy pixels-------------------------
-#  NDVI.Thresh = 0.5
-#  Blue.Thresh = 500
-#  NIR.Thresh  = 1500
+#  NDVI_Thresh = 0.5
+#  Blue_Thresh = 500
+#  NIR_Thresh  = 1500
 #  print("PERFORM RADIOMETRIC FILTERING")
-#  ImPathShade = perform_radiometric_filtering(Input.Image.File, Input.Mask.File, Output.Dir,
-#                                              NDVI.Thresh = NDVI.Thresh, Blue.Thresh = Blue.Thresh,
-#                                              NIR.Thresh = NIR.Thresh)
+#  Input_Mask_File = perform_radiometric_filtering(Input_Image_File, Input_Mask_File, Output_Dir,
+#                                              NDVI_Thresh = NDVI_Thresh, Blue_Thresh = Blue_Thresh,
+#                                              NIR_Thresh = NIR_Thresh)
 
 ## ----PCA-----------------------------------------------------------------
 #  print("PERFORM PCA ON RASTER")
-#  PCA.Files  = perform_PCA(Input.Image.File, ImPathShade, Output.Dir,
-#                                 FilterPCA = TRUE, nbCPU = nbCPU, MaxRAM = MaxRAM)
+#  PCA_Output        = perform_PCA(Input_Image_File, Input_Mask_File, Output_Dir,
+#                                 FilterPCA = TRUE, nbCPU = nbCPU,MaxRAM = MaxRAM)
+#  # path for the PCA raster
+#  PCA_Files         = PCA_Output$PCA_Files
+#  # number of pixels used for each partition used for k-means clustering
+#  Pix_Per_Partition = PCA_Output$Pix_Per_Partition
+#  # number of partitions used for k-means clustering
+#  nb_partitions     = PCA_Output$nb_partitions
+#  # path for the updated mask
+#  Input_Mask_File   = PCA_Output$MaskPath
+#  # parameters of the PCA model
+#  PCA_model         = PCA_Output$PCA_model
+#  # definition of spectral bands to be excluded from the analysis
+#  SpectralFilter    = PCA_Output$SpectralFilter
+#  
 #  print("Select PCA components for diversity estimations")
-#  select_PCA_components(Input.Image.File, Output.Dir, PCA.Files, File.Open = TRUE)
+#  select_PCA_components(Input_Image_File, Output_Dir, PCA_Files, File_Open = TRUE)
 
 ## ----Spectral species map------------------------------------------------
 #  print("MAP SPECTRAL SPECIES")
-#  map_spectral_species(Input.Image.File, Output.Dir, PCA.Files,
-#                       nbCPU = nbCPU, MaxRAM = MaxRAM)
+#  map_spectral_species(Input_Image_File, Output_Dir, PCA_Files,PCA_model, SpectralFilter, Input_Mask_File,
+#                       Pix_Per_Partition, nb_partitions, nbCPU=nbCPU, MaxRAM=MaxRAM)
 
 ## ----alpha and beta diversity maps---------------------------------------
 #  print("MAP ALPHA DIVERSITY")
 #  # Index.Alpha   = c('Shannon','Simpson')
-#  Index.Alpha   = c('Shannon')
-#  map_alpha_div(Input.Image.File, Output.Dir, window_size,
-#                      nbCPU = nbCPU, MaxRAM = MaxRAM, Index.Alpha = Index.Alpha)
+#  Index_Alpha   = c('Shannon')
+#  map_alpha_div(Input_Image_File, Output_Dir, window_size,
+#                nbCPU=nbCPU, MaxRAM=MaxRAM, Index_Alpha = Index_Alpha)
 #  
 #  print("MAP BETA DIVERSITY")
-#  map_beta_div(Input.Image.File, Output.Dir, window_size,
-#                     nbCPU = nbCPU, MaxRAM = MaxRAM)
+#  map_beta_div(Input_Image_File, Output_Dir, window_size, nb_partitions=nb_partitions,
+#               nbCPU=nbCPU, MaxRAM=MaxRAM)
 
 ## ----alpha and beta diversity indices from vector layer------------------
 #  # location of the spectral species raster needed for validation
@@ -72,12 +85,8 @@ knitr::opts_chunk$set(
 #  Shannon.All = list() # ??
 #  
 #  # list vector data
-#  Path.Vector         = list.shp(vect)
+#  Path.Vector         = list_shp(vect)
 #  Name.Vector         = tools::file_path_sans_ext(basename(Path.Vector))
-#  
-#  # read raster data including projection
-#  RasterStack         = stack(Path.Raster)
-#  Projection.Raster   = get_projection(Path.Raster,'raster')
 #  
 #  # get alpha and beta diversity indicators corresponding to shapefiles
 #  Biodiv.Indicators           = diversity_from_plots(Raster = Path.Raster, Plots = Path.Vector,NbClusters = nbclusters)
