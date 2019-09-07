@@ -136,10 +136,10 @@ get_alpha_metrics = function(Distrib){
 }
 
 #' gets alpha diversity indicators from plot
-#' @param Raster SpectralSpecies file computed from DiverstyMapping method
-#' @param Plots list of shapefiles included in the raster
+#' @param Raster character. path for the SpectralSpecies file computed from DiverstyMapping method
+#' @param Plots list. list of paths corresponding to shapefiles defining polygons in the raster
 #' @param NbClusters numeric. Number of clusters defined in k-Means.
-#' @param Name_Plot character. Name of teh plots defined in the shapefile
+#' @param Name_Plot character. Name of the plots defined in the shapefile
 #' @return alpha and beta diversity metrics
 #' @importFrom rgdal readOGR
 #' @import tools

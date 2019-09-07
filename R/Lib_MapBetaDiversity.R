@@ -12,8 +12,8 @@
 
 #' maps beta diversity indicator based on spectral species distribution
 #'
-#' @param Input.Image.File character. Path and name of the image to be processed.
-#' @param Output.Dir character. Output directory.
+#' @param Input_Image_File character. Path and name of the image to be processed.
+#' @param Output_Dir character. Output directory.
 #' @param window_size numeric. Dimensions of the spatial unit.
 #' @param TypePCA character. Type of PCA (PCA, SPCA, NLPCA...).
 #' @param nb_partitions numeric. Number of partitions (repetitions) to be computed then averaged.
@@ -30,20 +30,20 @@
 #' @param pcelim numeric. Minimum contribution (in \%) required for a spectral species
 #'
 #' @export
-map_beta_div <- function(Input.Image.File, Output.Dir, window_size,
+map_beta_div <- function(Input_Image_File, Output_Dir, window_size,
                                TypePCA = "SPCA", nb_partitions = 20,nbclusters = 50,
                                Nb_Units_Ordin = 2000, MinSun = 0.25,
                                pcelim = 0.02, scaling = "PCO", FullRes = TRUE,
                                LowRes = FALSE, nbCPU = 1, MaxRAM = 0.25) {
-  Output.Dir.SS <- define_output_subdir(Output.Dir, Input.Image.File, TypePCA, "SpectralSpecies")
-  Output.Dir.BETA <- define_output_subdir(Output.Dir, Input.Image.File, TypePCA, "BETA")
-  Beta <- compute_beta_metrics(Output.Dir.SS, MinSun, Nb_Units_Ordin, nb_partitions,
+  Output_Dir_SS <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "SpectralSpecies")
+  Output_Dir_BETA <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "BETA")
+  Beta <- compute_beta_metrics(Output_Dir_SS, MinSun, Nb_Units_Ordin, nb_partitions,
                                 nbclusters, pcelim, scaling = scaling,
                                 nbCPU = nbCPU, MaxRAM = MaxRAM)
   # Create images corresponding to Beta-diversity
   print("Write beta diversity maps")
   Index <- paste("BetaDiversity_BCdiss_", scaling, sep = "")
-  Beta.Path <- paste(Output.Dir.BETA, Index, "_", window_size, sep = "")
+  Beta.Path <- paste(Output_Dir_BETA, Index, "_", window_size, sep = "")
   write_raster_beta(Beta$BetaDiversity, Beta$HDR, Beta.Path, window_size, FullRes = FullRes, LowRes = LowRes)
   return()
 }
@@ -164,7 +164,7 @@ ordination_parallel <- function(id.sub, coordTotSort, SSD_Path, Sample_Sel, Beta
 
 # computes beta diversity
 #
-# @param Output.Dir directory where spectral species are stored
+# @param Output_Dir directory where spectral species are stored
 # @param MinSun minimum proportion of sunlit pixels required to consider plot
 # @param Nb_Units_Ordin maximum number of spatial units to be processed in Ordination
 # @param nb_partitions number of iterations
@@ -177,10 +177,10 @@ ordination_parallel <- function(id.sub, coordTotSort, SSD_Path, Sample_Sel, Beta
 # @return
 #' @importFrom labdsv pco
 #' @importFrom stats as.dist
-compute_beta_metrics <- function(Output.Dir, MinSun, Nb_Units_Ordin, nb_partitions, nbclusters, pcelim, scaling = "PCO", nbCPU = FALSE, MaxRAM = FALSE) {
+compute_beta_metrics <- function(Output_Dir, MinSun, Nb_Units_Ordin, nb_partitions, nbclusters, pcelim, scaling = "PCO", nbCPU = FALSE, MaxRAM = FALSE) {
   # Define path for images to be used
-  SSD_Path <- paste(Output.Dir, "SpectralSpecies_Distribution", sep = "")
-  ImPathSunlit <- paste(Output.Dir, "SpectralSpecies_Distribution_Sunlit", sep = "")
+  SSD_Path <- paste(Output_Dir, "SpectralSpecies_Distribution", sep = "")
+  ImPathSunlit <- paste(Output_Dir, "SpectralSpecies_Distribution_Sunlit", sep = "")
   # Get illuminated pixels based on  SpectralSpecies_Distribution_Sunlit
   Sunlit_Pixels <- get_sunlit_pixels(ImPathSunlit, MinSun)
   Select_Sunlit <- Sunlit_Pixels$Select_Sunlit
@@ -354,15 +354,15 @@ write_raster_beta <- function(Image, HDR_SSD, ImagePath, window_size, FullRes = 
     headerFpath <- paste(ImagePath_FullRes, ".hdr", sep = "")
     write_ENVI_header(HDR_Full, headerFpath)
     Image_Format <- ENVI_type2bytes(HDR_Full)
-    Image.FullRes <- array(NA, c(HDR_Full$lines, HDR_Full$samples, 3))
+    Image_FullRes <- array(NA, c(HDR_Full$lines, HDR_Full$samples, 3))
     for (b in 1:3) {
       for (i in 1:HDR_SSD$lines) {
         for (j in 1:HDR_SSD$samples) {
-          Image.FullRes[((i - 1) * window_size + 1):(i * window_size), ((j - 1) * window_size + 1):(j * window_size), b] <- Image[i, j, b]
+          Image_FullRes[((i - 1) * window_size + 1):(i * window_size), ((j - 1) * window_size + 1):(j * window_size), b] <- Image[i, j, b]
         }
       }
     }
-    ImgWrite <- aperm(Image.FullRes, c(2, 3, 1))
+    ImgWrite <- aperm(Image_FullRes, c(2, 3, 1))
     fidOUT <- file(
       description = ImagePath_FullRes, open = "wb", blocking = TRUE,
       encoding = getOption("encoding"), raw = FALSE

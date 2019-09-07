@@ -156,18 +156,18 @@ compute_alpha_metrics <- function(Spectral_Species_Path, window_size, nbclusters
   ReadWrite <- list()
   for (i in 1:nbPieces_Min) {
     ReadWrite[[i]] <- list()
-    ReadWrite[[i]]$RW.SS <- ReadWrite[[i]]$RW.SSD <- ReadWrite[[i]]$RW.Sunlit <- list()
-    ReadWrite[[i]]$RW.SS$Byte_Start <- SeqRead.SS$ReadByte_Start[i]
-    ReadWrite[[i]]$RW.SS$nbLines <- SeqRead.SS$Lines_Per_Chunk[i]
-    ReadWrite[[i]]$RW.SS$lenBin <- SeqRead.SS$ReadByte_End[i] - SeqRead.SS$ReadByte_Start[i] + 1
+    ReadWrite[[i]]$RW_SS <- ReadWrite[[i]]$RW_SSD <- ReadWrite[[i]]$RW_Sunlit <- list()
+    ReadWrite[[i]]$RW_SS$Byte_Start <- SeqRead.SS$ReadByte_Start[i]
+    ReadWrite[[i]]$RW_SS$nbLines <- SeqRead.SS$Lines_Per_Chunk[i]
+    ReadWrite[[i]]$RW_SS$lenBin <- SeqRead.SS$ReadByte_End[i] - SeqRead.SS$ReadByte_Start[i] + 1
 
-    ReadWrite[[i]]$RW.SSD$Byte_Start <- SeqWrite.SSD$ReadByte_Start[i]
-    ReadWrite[[i]]$RW.SSD$nbLines <- SeqWrite.SSD$Lines_Per_Chunk[i]
-    ReadWrite[[i]]$RW.SSD$lenBin <- SeqWrite.SSD$ReadByte_End[i] - SeqWrite.SSD$ReadByte_Start[i] + 1
+    ReadWrite[[i]]$RW_SSD$Byte_Start <- SeqWrite.SSD$ReadByte_Start[i]
+    ReadWrite[[i]]$RW_SSD$nbLines <- SeqWrite.SSD$Lines_Per_Chunk[i]
+    ReadWrite[[i]]$RW_SSD$lenBin <- SeqWrite.SSD$ReadByte_End[i] - SeqWrite.SSD$ReadByte_Start[i] + 1
 
-    ReadWrite[[i]]$RW.Sunlit$Byte_Start <- SeqWrite.Sunlit$ReadByte_Start[i]
-    ReadWrite[[i]]$RW.Sunlit$nbLines <- SeqWrite.Sunlit$Lines_Per_Chunk[i]
-    ReadWrite[[i]]$RW.Sunlit$lenBin <- SeqWrite.Sunlit$ReadByte_End[i] - SeqWrite.Sunlit$ReadByte_Start[i] + 1
+    ReadWrite[[i]]$RW_Sunlit$Byte_Start <- SeqWrite.Sunlit$ReadByte_Start[i]
+    ReadWrite[[i]]$RW_Sunlit$nbLines <- SeqWrite.Sunlit$Lines_Per_Chunk[i]
+    ReadWrite[[i]]$RW_Sunlit$lenBin <- SeqWrite.Sunlit$ReadByte_End[i] - SeqWrite.Sunlit$ReadByte_Start[i] + 1
   }
   ImgFormat <- "3D"
   SSD_Format <- ENVI_type2bytes(HDR_SSD)
@@ -235,8 +235,8 @@ convert_PCA_to_SSD <- function(ReadWrite, Spectral_Species_Path, HDR_SS, HDR_SSD
                                MinSun, pcelim, Index_Alpha, SSD_Path, Sunlit_Path, Sunlit_Format) {
   SS_Chunk <- read_image_subset(
     Spectral_Species_Path, HDR_SS,
-    ReadWrite$RW.SS$Byte_Start, ReadWrite$RW.SS$lenBin,
-    ReadWrite$RW.SS$nbLines, SS_Format, ImgFormat
+    ReadWrite$RW_SS$Byte_Start, ReadWrite$RW_SS$lenBin,
+    ReadWrite$RW_SS$nbLines, SS_Format, ImgFormat
   )
   SSD_Alpha <- compute_SSD(SS_Chunk, window_size, nbclusters, MinSun, pcelim, Index_Alpha = Index_Alpha)
   # write spectral Species ditribution file
@@ -244,10 +244,10 @@ convert_PCA_to_SSD <- function(ReadWrite, Spectral_Species_Path, HDR_SS, HDR_SSD
     description = SSD_Path, open = "r+b", blocking = TRUE,
     encoding = getOption("encoding"), raw = FALSE
   )
-  if (!ReadWrite$RW.SSD$Byte_Start == 1) {
-    seek(fidSSD, where = ReadWrite$RW.SSD$Byte_Start - 1, origin = "start", rw = "write")
+  if (!ReadWrite$RW_SSD$Byte_Start == 1) {
+    seek(fidSSD, where = ReadWrite$RW_SSD$Byte_Start - 1, origin = "start", rw = "write")
   }
-  SSD_Chunk <- aperm(array(SSD_Alpha$SSD, c(ReadWrite$RW.SSD$nbLines, HDR_SSD$samples, HDR_SSD$bands)), c(2, 3, 1))
+  SSD_Chunk <- aperm(array(SSD_Alpha$SSD, c(ReadWrite$RW_SSD$nbLines, HDR_SSD$samples, HDR_SSD$bands)), c(2, 3, 1))
   writeBin(c(SSD_Chunk), fidSSD, size = SSD_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
   close(fidSSD)
 
@@ -256,8 +256,8 @@ convert_PCA_to_SSD <- function(ReadWrite, Spectral_Species_Path, HDR_SS, HDR_SSD
     description = Sunlit_Path, open = "r+b", blocking = TRUE,
     encoding = getOption("encoding"), raw = FALSE
   )
-  if (!ReadWrite$RW.Sunlit$Byte_Start == 1) {
-    seek(fidSunlit, where = ReadWrite$RW.Sunlit$Byte_Start - 1, origin = "start", rw = "write")
+  if (!ReadWrite$RW_Sunlit$Byte_Start == 1) {
+    seek(fidSunlit, where = ReadWrite$RW_Sunlit$Byte_Start - 1, origin = "start", rw = "write")
   }
   Sunlit.Chunk <- t(SSD_Alpha$PCsun)
   writeBin(c(Sunlit.Chunk), fidSunlit, size = Sunlit_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
@@ -318,8 +318,8 @@ compute_SSD <- function(Image_Chunk, window_size, nbclusters, MinSun, pcelim, In
       ijit <- t(matrix(Image_Chunk[li:ui, lj:uj, ], ncol = nb_partitions))
       # keep non zero values
       ijit <- matrix(ijit[, which(!ijit[1, ] == 0)], nrow = nb_partitions)
-      nb.Pix.Sunlit <- dim(ijit)[2]
-      PCsun[ii, jj] <- nb.Pix.Sunlit / window_size**2
+      nbPix_Sunlit <- dim(ijit)[2]
+      PCsun[ii, jj] <- nbPix_Sunlit / window_size**2
       if (PCsun[ii, jj] > MinSun) {
         # for each iteration
         for (it in 1:nb_partitions) {
@@ -327,7 +327,7 @@ compute_SSD <- function(Image_Chunk, window_size, nbclusters, MinSun, pcelim, In
           SSD <- as.vector(table(ijit[it, ]))
           ClusterID <- sort(unique(ijit[it, ]))
           if (pcelim > 0) {
-            KeepSS <- which(SSD >= pcelim * nb.Pix.Sunlit)
+            KeepSS <- which(SSD >= pcelim * nbPix_Sunlit)
             ClusterID <- ClusterID[KeepSS]
             SSD <- SSD[KeepSS]
           }

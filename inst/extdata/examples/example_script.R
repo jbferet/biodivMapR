@@ -30,16 +30,11 @@ library(biodivMapR)
 # expected to be in ENVI HDR format, BIL interleaved
 Input_Image_File  = system.file('extdata', 'RASTER', 'S2A_T33NUD_20180104_Subset', package = 'biodivMapR')
 
-################################################################################
-##      Check if the image format is compatible with codes (ENVI BIL)         ##
-################################################################################
-check_data(Input_Image_File)
-
 # # convert the image using Convert.Raster2BIL if not in the proper format
 # Input_Image_File  = raster2BIL(Raster_Path = Input_Image_File,
 #                                        Sensor = 'SENTINEL_2A',
 #                                        Convert_Integer = TRUE,
-#                                        Output_Dir = '~/test')
+#                                        Output_Dir = 'BIL_Raster')
 
 # full path for the Mask raster corresponding to image to process
 # expected to be in ENVI HDR format, 1 band, integer 8bits
@@ -81,17 +76,19 @@ NDVI_Thresh = 0.5
 Blue_Thresh = 500
 NIR_Thresh  = 1500
 print("PERFORM RADIOMETRIC FILTERING")
-ImPathShade = perform_radiometric_filtering(Input_Image_File,Input_Mask_File,Output_Dir,
-                                            NDVI_Thresh = NDVI_Thresh, Blue_Thresh = Blue_Thresh,
-                                            NIR_Thresh = NIR_Thresh)
+Input_Mask_File = perform_radiometric_filtering(Input_Image_File,Input_Mask_File,Output_Dir,
+                                                NDVI_Thresh = NDVI_Thresh, Blue_Thresh = Blue_Thresh,
+                                                NIR_Thresh = NIR_Thresh)
 
 # 2- Compute PCA for a random selection of pixels in the raster
 print("PERFORM PCA ON RASTER")
-PCA_Output    = perform_PCA(Input_Image_File,ImPathShade,Output_Dir,FilterPCA=FilterPCA,nbCPU=nbCPU,MaxRAM = MaxRAM)
-PCA_Files     = PCA_Output$PCA_Files
-Pix_Per_Partition  = PCA_Output$Pix_Per_Partition
-nb_partitions = PCA_Output$nb_partitions
-ImPathShade   = PCA_Output$ImPathShade
+PCA_Output        = perform_PCA(Input_Image_File,Input_Mask_File,Output_Dir,FilterPCA=FilterPCA,nbCPU=nbCPU,MaxRAM = MaxRAM)
+PCA_Files         = PCA_Output$PCA_Files
+Pix_Per_Partition = PCA_Output$Pix_Per_Partition
+nb_partitions     = PCA_Output$nb_partitions
+Input_Mask_File   = PCA_Output$MaskPath
+PCA_model         = PCA_Output$PCA_model
+SpectralFilter    = PCA_Output$SpectralFilter
 
 # 3- Select principal components from the PCA raster
 select_PCA_components(Input_Image_File,Output_Dir,PCA_Files,File_Open = TRUE)
@@ -101,7 +98,7 @@ select_PCA_components(Input_Image_File,Output_Dir,PCA_Files,File_Open = TRUE)
 ################################################################################
 
 print("MAP SPECTRAL SPECIES")
-map_spectral_species(Input_Image_File,Output_Dir,PCA_Files,ImPathShade,Pix_Per_Partition,nb_partitions,nbCPU=nbCPU,MaxRAM=MaxRAM)
+map_spectral_species(Input_Image_File,Output_Dir,PCA_Files,PCA_model,SpectralFilter,Input_Mask_File,Pix_Per_Partition,nb_partitions,nbCPU=nbCPU,MaxRAM=MaxRAM)
 
 print("MAP ALPHA DIVERSITY")
 # Index.Alpha   = c('Shannon','Simpson')
@@ -127,10 +124,6 @@ Shannon.All = list()
 # list vector data
 Path.Vector         = list_shp(vect)
 Name.Vector         = tools::file_path_sans_ext(basename(Path.Vector))
-
-# read raster data including projection
-RasterStack         = stack(Path.Raster)
-Projection.Raster   = get_projection(Path.Raster,'raster')
 
 # get alpha and beta diversity indicators corresponding to shapefiles
 Biodiv.Indicators           = diversity_from_plots(Raster = Path.Raster, Plots = Path.Vector,NbClusters = nbclusters)

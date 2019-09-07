@@ -165,7 +165,6 @@ check_data <- function(Raster_Path, Mask = FALSE) {
   if (file.exists(HDR_Path)) {
     HDR <- read_ENVI_header(HDR_Path)
     if (Mask == FALSE & (!HDR$interleave == "bil") & (!HDR$interleave == "BIL")) {
-      message("")
       message("*********************************************************")
       message("The image format may not compatible with the processing chain")
       message("Image format expected:")
@@ -178,43 +177,45 @@ check_data <- function(Raster_Path, Mask = FALSE) {
       message("in order to convert your raster data")
       message("or use appropriate software")
       message("*********************************************************")
-      message("")
       stop()
     } else if (Mask == FALSE & ((HDR$interleave == "bil") | (HDR$interleave == "BIL"))) {
       if (HDR$`wavelength units` == "Unknown") {
-        message("")
         message("*********************************************************")
+        message("IF MULTI / HYPERSPECTRAL DATA: ")
         message("Please make sure the wavelengths are in nanometers")
         message("if not, stop processing and convert wavelengths in nanometers in HDR file")
         message("*********************************************************")
-        message("")
       }
       if ((!HDR$`wavelength units` == "Nanometers") & (!HDR$`wavelength units` == "nanometers")) {
-        message("")
         message("*********************************************************")
+        message("IF MULTI / HYPERSPECTRAL DATA: ")
         message("Please make sure the wavelengths are in nanometers")
         message("if not, stop processing and convert wavelengths in nanometers in HDR file")
         message("*********************************************************")
-        message("")
       }
       if (HDR$`wavelength units` == "micrometers") {
-        message("")
         message("*********************************************************")
         message("Please convert wavelengths in nanometers in HDR file")
         message("*********************************************************")
-        message("")
         stop()
       }
       if ((HDR$`wavelength units` == "nanometers") | (HDR$`wavelength units` == "Nanometers")) {
-        message("")
         message("*********************************************************")
-        message("               Raster format OK for processing           ")
+        message("      	  Format of main raster OK for processing      	  ")
         message("*********************************************************")
-        message("")
-      }
+      } else if (Mask == TRUE & HDR$bands == 1 & ((HDR$interleave == "bil") | (HDR$interleave == "BIL") | (HDR$interleave == "bsq") | (HDR$interleave == "BSQ"))) {
+        message("*********************************************************")
+        message("         Format of mask raster OK for processing         ")
+        message("*********************************************************")
+	  } else if (Mask == TRUE & HDR$bands > 1) {
+        message("*********************************************************")
+        message("       Mask raster should contain only one layer         ")
+        message("    Please produce a binary mask with a unique layer     ")
+        message("*********************************************************")
+		stop()
+	  }
     }
   } else {
-    message("")
     message("*********************************************************")
     message("The following HDR file was expected, but could not be found:")
     print(HDR_Path)
@@ -226,7 +227,6 @@ check_data <- function(Raster_Path, Mask = FALSE) {
     print("raster2BIL")
     message("in order to convert your raster data")
     message("*********************************************************")
-    message("")
     stop()
   }
   return(invisible())

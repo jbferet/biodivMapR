@@ -30,7 +30,7 @@ perform_radiometric_filtering(Image_Path, Mask_Path, Output_Dir,
 \item{NIR}{numeric. central wavelength corresponding to the NIR spectral band (in nanometers)}
 }
 \value{
-ImPathShade = updated shademask file
+MaskPath = updated mask file
 }
 \description{
 Performs radiometric filtering based on three criteria: NDVI, NIR reflectance, Blue reflectance

@@ -4,14 +4,14 @@
 \alias{perform_PCA}
 \title{Performs PCA for all images and create PCA file with either all or a selection of PCs}
 \usage{
-perform_PCA(ImPath, ImPathShade, Output_Dir, Continuum_Removal = TRUE,
+perform_PCA(ImPath, MaskPath, Output_Dir, Continuum_Removal = TRUE,
   TypePCA = "SPCA", FilterPCA = FALSE, Excluded_WL = FALSE,
   nb_partitions = 20, nbCPU = 1, MaxRAM = 0.25)
 }
 \arguments{
 \item{ImPath}{character. Path of the image to be processed}
 
-\item{ImPathShade}{character. Path of the mask corresponding to the image}
+\item{MaskPath}{character. Path of the mask corresponding to the image}
 
 \item{Output_Dir}{character. Path for output directory}
 

@@ -94,42 +94,42 @@ check_invariant_bands <- function(DataMatrix, Spectral) {
 
 # define output directory and create it if necessary
 #
-# @param Output.Dir output directory
+# @param Output_Dir output directory
 # @param ImPath image path
 # @param TypePCA Type of PCA (PCA, SPCA, NLPCA...)
 #
 # @return path of the output directory
-define_output_directory <- function(Output.Dir, ImPath, TypePCA) {
-  Image.Name <- strsplit(basename(ImPath), "\\.")[[1]][1]
-  Output.Dir <- paste(Output.Dir, "/", Image.Name, "/", TypePCA, "/", sep = "")
-  dir.create(Output.Dir, showWarnings = FALSE, recursive = TRUE)
-  return(Output.Dir)
+define_output_directory <- function(Output_Dir, ImPath, TypePCA) {
+  Image_Name <- strsplit(basename(ImPath), "\\.")[[1]][1]
+  Output_Dir <- paste(Output_Dir, "/", Image_Name, "/", TypePCA, "/", sep = "")
+  dir.create(Output_Dir, showWarnings = FALSE, recursive = TRUE)
+  return(Output_Dir)
 }
 
 # define output directory and subdirectory and create it if necessary
 #
-# @param Output.Dir output directory
+# @param Output_Dir output directory
 # @param ImPath image path
 # @param TypePCA Type of PCA (PCA, SPCA, NLPCA...)
 # @param Sub subdirectory
 #
 # @return path of the output directory
-define_output_subdir <- function(Output.Dir, ImPath, TypePCA, Sub) {
-  Image.Name <- strsplit(basename(ImPath), "\\.")[[1]][1]
-  Output.Dir <- paste(Output.Dir, "/", Image.Name, "/", TypePCA, "/", Sub, "/", sep = "")
-  dir.create(Output.Dir, showWarnings = FALSE, recursive = TRUE)
-  return(Output.Dir)
+define_output_subdir <- function(Output_Dir, ImPath, TypePCA, Sub) {
+  Image_Name <- strsplit(basename(ImPath), "\\.")[[1]][1]
+  Output_Dir <- paste(Output_Dir, "/", Image_Name, "/", TypePCA, "/", Sub, "/", sep = "")
+  dir.create(Output_Dir, showWarnings = FALSE, recursive = TRUE)
+  return(Output_Dir)
 }
 
 # get information corresponding to data type defined in ENVI
 #
-# @param Header Path of the hdr file
+# @param HDR header file
 #
 # @return description of data format corresponding to ENVI type
-ENVI_type2bytes <- function(Header) {
+ENVI_type2bytes <- function(HDR) {
 
   # http://www.harrisgeospatial.com/docs/ENVIHeaderFiles.html
-  DataTypeImage <- Header$`data type`
+  DataTypeImage <- HDR$`data type`
   if (DataTypeImage == 1) {
     #   1 = Byte: 8-bit unsigned integer
     nbBytes <- 1
@@ -176,9 +176,9 @@ ENVI_type2bytes <- function(Header) {
     Type <- "INT"
     is_Signed <- FALSE
   }
-  if (Header$`byte order` == 0) {
+  if (HDR$`byte order` == 0) {
     ByteOrder <- "little"
-  } else if (Header$`byte order` == 1) {
+  } else if (HDR$`byte order` == 1) {
     ByteOrder <- "big"
   }
   my_list <- list("Bytes" = nbBytes, "Type" = Type, "Signed" = is_Signed, "ByteOrder" = ByteOrder)
@@ -369,25 +369,25 @@ extract_samples_from_image <- function(ImPath, coordPix, MaxRAM = FALSE, Already
   return(Sample_Sel)
 }
 
-# Perform random sampling on an image including a shade mask
+# Perform random sampling on an image including a mask
 #
 # @param ImPath path for image
 # @param HDR path for hdr file
-# @param ImPathShade path for shade mask
+# @param MaskPath path for mask
 # @param nb_partitions number of k-means then averaged
 # @param Pix_Per_Partition number of pixels per iteration
 #
 # @return samples from image and updated number of pixels to sampel if necessary
 #' @importFrom matlab ones
-get_random_subset_from_image <- function(ImPath, HDR, ImPathShade, nb_partitions, Pix_Per_Partition) {
+get_random_subset_from_image <- function(ImPath, HDR, MaskPath, nb_partitions, Pix_Per_Partition) {
   nbPix2Sample <- nb_partitions * Pix_Per_Partition
   # get total number of pixels
   nbpix <- as.double(HDR$lines) * as.double(HDR$samples)
   # 1- Exclude masked pixels from random subset
   # Read Mask
-  if ((!ImPathShade == "") & (!ImPathShade == FALSE)) {
+  if ((!MaskPath == "") & (!MaskPath == FALSE)) {
     fid <- file(
-      description = ImPathShade, open = "rb", blocking = TRUE,
+      description = MaskPath, open = "rb", blocking = TRUE,
       encoding = getOption("encoding"), raw = FALSE
     )
     ShadeMask <- readBin(fid, integer(), n = nbpix, size = 1)
@@ -468,17 +468,17 @@ get_HDR_name <- function(ImPath) {
 
 # gets rank of spectral bands in an image
 #
-# @param Spectral.Bands wavelength (nm) of the spectral bands to be found
+# @param Spectral_Bands wavelength (nm) of the spectral bands to be found
 # @param wavelength wavelength (nm) of all wavelengths in the image
 #
 # @return rank of all spectral bands of interest in the image and corresponding wavelength
-get_image_bands <- function(Spectral.Bands, wavelength) {
+get_image_bands <- function(Spectral_Bands, wavelength) {
   ImBand <- c()
   Distance2WL <- c()
-  for (band in Spectral.Bands) {
-    Closest.Band <- order(abs(wavelength - band))[1]
-    ImBand <- c(ImBand, Closest.Band)
-    Distance2WL <- c(Distance2WL, abs(wavelength[Closest.Band] - band))
+  for (band in Spectral_Bands) {
+    Closest_Band <- order(abs(wavelength - band))[1]
+    ImBand <- c(ImBand, Closest_Band)
+    Distance2WL <- c(Distance2WL, abs(wavelength[Closest_Band] - band))
   }
   my_list <- list("ImBand" = ImBand, "Distance2WL" = Distance2WL)
   return(my_list)
@@ -487,10 +487,10 @@ get_image_bands <- function(Spectral.Bands, wavelength) {
 # convert image coordinates from index to X-Y
 #
 # @param Raster image raster object
-# @param Image.Index coordinates corresponding to the raster
-ind2sub <- function(Raster, Image.Index) {
-  c <- ((Image.Index - 1) %% Raster@ncols) + 1
-  r <- floor((Image.Index - 1) / Raster@ncols) + 1
+# @param Image_Index coordinates corresponding to the raster
+ind2sub <- function(Raster, Image_Index) {
+  c <- ((Image_Index - 1) %% Raster@ncols) + 1
+  r <- floor((Image_Index - 1) / Raster@ncols) + 1
   my_list <- list("Column" = c, "Row" = r)
   return(my_list)
 }
@@ -499,10 +499,10 @@ ind2sub <- function(Raster, Image.Index) {
 # image coordinates are given as index = (ID.col-1) * total.lines + ID.row
 #
 # @param Raster image raster object
-# @param Image.Index coordinates corresponding to the raster
-ind2sub2 <- function(Raster, Image.Index) {
-  r <- ((Image.Index - 1) %% Raster@nrows) + 1
-  c <- floor((Image.Index - 1) / Raster@nrows) + 1
+# @param Image_Index coordinates corresponding to the raster
+ind2sub2 <- function(Raster, Image_Index) {
+  r <- ((Image_Index - 1) %% Raster@nrows) + 1
+  c <- floor((Image_Index - 1) / Raster@nrows) + 1
   my_list <- list("Column" = c, "Row" = r)
   return(my_list)
 }
@@ -573,25 +573,25 @@ read_bin_subset <- function(Byte_Start, nbLines, lenBin, ImPath, ImBand, jpix, n
 
 # Reads ENVI hdr file
 #
-# @param headerFpath Path of the hdr file
+# @param HDRpath Path of the hdr file
 #
 # @return list of the content of the hdr file
-read_ENVI_header <- function(headerFpath) {
+read_ENVI_header <- function(HDRpath) {
   # header <- paste(header, collapse = "\n")
-  if (!grepl(".hdr$", headerFpath)) {
+  if (!grepl(".hdr$", HDRpath)) {
     stop("File extension should be .hdr")
   }
-  header <- readLines(headerFpath)
+  HDR <- readLines(HDRpath)
   ## check ENVI at beginning of file
-  if (!grepl("ENVI", header[1])) {
+  if (!grepl("ENVI", HDR[1])) {
     stop("Not an ENVI header (ENVI keyword missing)")
   } else {
-    header <- header [-1]
+    HDR <- HDR [-1]
   }
   ## remove curly braces and put multi-line key-value-pairs into one line
-  header <- gsub("\\{([^}]*)\\}", "\\1", header)
-  l <- grep("\\{", header)
-  r <- grep("\\}", header)
+  HDR <- gsub("\\{([^}]*)\\}", "\\1", HDR)
+  l <- grep("\\{", HDR)
+  r <- grep("\\}", HDR)
 
   if (length(l) != length(r)) {
     stop("Error matching curly braces in header (differing numbers).")
@@ -601,47 +601,47 @@ read_ENVI_header <- function(headerFpath) {
     stop("Mismatch of curly braces in header.")
   }
 
-  header[l] <- sub("\\{", "", header[l])
-  header[r] <- sub("\\}", "", header[r])
+  HDR[l] <- sub("\\{", "", HDR[l])
+  HDR[r] <- sub("\\}", "", HDR[r])
 
   for (i in rev(seq_along(l))) {
-    header <- c(
-      header [seq_len(l [i] - 1)],
-      paste(header [l [i]:r [i]], collapse = "\n"),
-      header [-seq_len(r [i])]
+    HDR <- c(
+      HDR [seq_len(l [i] - 1)],
+      paste(HDR [l [i]:r [i]], collapse = "\n"),
+      HDR [-seq_len(r [i])]
     )
   }
 
   ## split key = value constructs into list with keys as names
-  header <- sapply(header, split_line, "=", USE.NAMES = FALSE)
-  names(header) <- tolower(names(header))
+  HDR <- sapply(HDR, split_line, "=", USE.NAMES = FALSE)
+  names(HDR) <- tolower(names(HDR))
 
   ## process numeric values
-  tmp <- names(header) %in% c(
+  tmp <- names(HDR) %in% c(
     "samples", "lines", "bands", "header offset", "data type",
     "byte order", "default bands", "data ignore value",
     "wavelength", "fwhm", "data gain values"
   )
-  header [tmp] <- lapply(header [tmp], function(x) {
+  HDR [tmp] <- lapply(HDR [tmp], function(x) {
     as.numeric(unlist(strsplit(x, ",")))
   })
 
-  return(header)
+  return(HDR)
 }
 
 # read specific image bands from image
 #
 # @param ImPath Path of the image to read
-# @param Header Header for the image
+# @param HDR Header for the image
 # @param ImBand Bands to be read
 #
-# @return Image.Subset information corresponding to ImBand
-read_image_bands <- function(ImPath, Header, ImBand) {
+# @return Image_Subset information corresponding to ImBand
+read_image_bands <- function(ImPath, HDR, ImBand) {
   # first get image format
-  Image_Format <- ENVI_type2bytes(Header)
-  ipix <- Header$lines
-  jpix <- Header$samples
-  nbChannels <- Header$bands
+  Image_Format <- ENVI_type2bytes(HDR)
+  ipix <- HDR$lines
+  jpix <- HDR$samples
+  nbChannels <- HDR$bands
   nbSubset <- length(ImBand)
   # then open and read image
   # depending on image size, need to read in one or multiple times
@@ -661,7 +661,7 @@ read_image_bands <- function(ImPath, Header, ImBand) {
     nbPieces <- ceiling(ipix / nbLinesPerCPU)
   }
   # Define segments of image to be read
-  SeqRead.Image <- where_to_read(Header, nbPieces)
+  SeqRead.Image <- where_to_read(HDR, nbPieces)
   # Read segments (subsets) of image
   Image_Subsets <- list()
   for (i in 1:nbPieces) {
@@ -672,10 +672,10 @@ read_image_bands <- function(ImPath, Header, ImBand) {
     Image_Subsets[[i]] <- read_bin_subset(Byte_Start, nbLines, lenBin, ImPath, ImBand, jpix, nbChannels, Image_Format)
   }
   # reshape image with original size and selected bands
-  Image.Subset <- build_image_from_list(Image_Subsets, ipix, jpix, nbSubset)
+  Image_Subset <- build_image_from_list(Image_Subsets, ipix, jpix, nbSubset)
   rm(Image_Subsets)
   gc()
-  return(Image.Subset)
+  return(Image_Subset)
 }
 
 # reads subset of an image
@@ -793,55 +793,55 @@ split_pixel_samples <- function(coordPix, Lines_Per_Read) {
   return(coordPix_List)
 }
 
-# updates an existing shade mask
+# updates an existing mask
 #
-# @param ImPathShade original shade mask (may not exist)
-# @param Header header correpondingproviding general info about data format
+# @param MaskPath original mask (may not exist)
+# @param HDR header correpondingproviding general info about data format
 # @param Mask data to be used in the mask
-# @param ImPathShade.Update path for teh updated shade mask
+# @param MaskPath_Update path for teh updated mask
 #
-# @return ImPathShade.Update
-update_shademask <- function(ImPathShade, Header, Mask, ImPathShade.Update) {
-  ipix <- Header$lines
-  jpix <- Header$samples
+# @return MaskPath_Update
+update_shademask <- function(MaskPath, HDR, Mask, MaskPath_Update) {
+  ipix <- HDR$lines
+  jpix <- HDR$samples
   nbpix <- as.double(ipix) * as.double(jpix)
-  # if ImPathShade provided
-  if ((!ImPathShade == "") & (!ImPathShade == FALSE)) {
+  # if MaskPath provided
+  if ((!MaskPath == "") & (!MaskPath == FALSE)) {
     # read shade mask
     fid <- file(
-      description = ImPathShade, open = "rb", blocking = TRUE,
+      description = MaskPath, open = "rb", blocking = TRUE,
       encoding = getOption("encoding"), raw = FALSE
     )
     lenBin <- nbpix
-    ShadeMask0 <- readBin(fid, integer(), n = lenBin, size = 1)
+    MaskTmp <- readBin(fid, integer(), n = lenBin, size = 1)
     close(fid)
-    ShadeMask0 <- aperm(array(ShadeMask0, dim = c(jpix, ipix)))
+    MaskTmp <- aperm(array(MaskTmp, dim = c(jpix, ipix)))
     # multiply by Mask
-    Mask <- ShadeMask0 * Mask
+    Mask <- MaskTmp * Mask
   }
   Mask <- array(Mask, c(ipix, jpix, 1))
   Mask <- aperm(Mask, c(2, 3, 1))
   fidOUT <- file(
-    description = ImPathShade.Update, open = "wb", blocking = TRUE,
+    description = MaskPath_Update, open = "wb", blocking = TRUE,
     encoding = getOption("encoding"), raw = FALSE
   )
   writeBin(c(as.integer(Mask)), fidOUT, size = 1, endian = .Platform$endian, useBytes = FALSE)
   close(fidOUT)
   # write updated shademask
-  Header.Update <- Header
-  Header.Update$bands <- 1
-  Header.Update$`data type` <- 1
-  Header.Update$`band names` <- {
+  HDR_Update <- HDR
+  HDR_Update$bands <- 1
+  HDR_Update$`data type` <- 1
+  HDR_Update$`band names` <- {
     "Mask"
   }
-  Header.Update$wavelength <- NULL
-  Header.Update$fwhm <- NULL
-  Header.Update$resolution <- NULL
-  Header.Update$bandwidth <- NULL
-  Header.Update$purpose <- NULL
-  headerFpath <- paste(ImPathShade.Update, ".hdr", sep = "")
-  write_ENVI_header(Header.Update, headerFpath)
-  return(ImPathShade.Update)
+  HDR_Update$wavelength <- NULL
+  HDR_Update$fwhm <- NULL
+  HDR_Update$resolution <- NULL
+  HDR_Update$bandwidth <- NULL
+  HDR_Update$purpose <- NULL
+  HDRpath <- paste(MaskPath_Update, ".hdr", sep = "")
+  write_ENVI_header(HDR_Update, HDRpath)
+  return(MaskPath_Update)
 }
 
 # defines which byte should be read for each part of an image split in nbPieces
@@ -917,20 +917,20 @@ where_to_write_kernel <- function(HDR_SS, HDR_SSD, nbPieces, SE.Size) {
 
 # writes ENVI hdr file
 #
-# @param header content to be written
-# @param headerFpath Path of the hdr file
+# @param HDR content to be written
+# @param HDRpath Path of the hdr file
 #
 # @return
 #' @importFrom stringr str_count
-write_ENVI_header <- function(header, headerFpath) {
-  h <- lapply(header, function(x) {
+write_ENVI_header <- function(HDR, HDRpath) {
+  h <- lapply(HDR, function(x) {
     if (length(x) > 1 || (is.character(x) && str_count(x, "\\w+") > 1)) {
       x <- paste0("{", paste(x, collapse = ","), "}")
     }
     # convert last numerics
     x <- as.character(x)
   })
-  writeLines(c("ENVI", paste(names(header), h, sep = " = ")), con = headerFpath)
+  writeLines(c("ENVI", paste(names(HDR), h, sep = " = ")), con = HDRpath)
 }
 
 # convert image coordinates from X-Y to index
@@ -938,10 +938,10 @@ write_ENVI_header <- function(header, headerFpath) {
 # @param HDR_Raster
 # @param Pixels coordinates corresponding to the raster
 #
-# @return Image.Index
+# @return Image_Index
 sub2ind <- function(HDR_Raster, Pixels) {
-  Image.Index <- (Pixels$Column - 1) * HDR_Raster$lines + Pixels$Row
-  return(Image.Index)
+  Image_Index <- (Pixels$Column - 1) * HDR_Raster$lines + Pixels$Row
+  return(Image_Index)
 }
 
 # defines the number of pieces resulting from image split
