@@ -179,36 +179,37 @@ check_data <- function(Raster_Path, Mask = FALSE) {
       message("*********************************************************")
       stop()
     } else if (Mask == FALSE & ((HDR$interleave == "bil") | (HDR$interleave == "BIL"))) {
-      if (HDR$`wavelength units` == "Unknown") {
-        message("*********************************************************")
-        message("IF MULTI / HYPERSPECTRAL DATA: ")
-        message("Please make sure the wavelengths are in nanometers")
-        message("if not, stop processing and convert wavelengths in nanometers in HDR file")
-        message("*********************************************************")
-      }
-      if ((!HDR$`wavelength units` == "Nanometers") & (!HDR$`wavelength units` == "nanometers")) {
-        message("*********************************************************")
-        message("IF MULTI / HYPERSPECTRAL DATA: ")
-        message("Please make sure the wavelengths are in nanometers")
-        message("if not, stop processing and convert wavelengths in nanometers in HDR file")
-        message("*********************************************************")
-      }
       if (is.null(HDR$`wavelength units`)) {
         message("*********************************************************")
         message("Image to process is not multispectral/hyperspectral image ")
         message("Format is OK, but make sure Continuum_Removal is set to FALSE")
         message("*********************************************************")
-      }
-      if (HDR$`wavelength units` == "micrometers") {
-        message("*********************************************************")
-        message("Please convert wavelengths in nanometers in HDR file")
-        message("*********************************************************")
-        stop()
-      }
-      if ((HDR$`wavelength units` == "nanometers") | (HDR$`wavelength units` == "Nanometers")) {
-        message("*********************************************************")
-        message("      	  Format of main raster OK for processing      	  ")
-        message("*********************************************************")
+      } else {
+        if (HDR$`wavelength units` == "Unknown") {
+          message("*********************************************************")
+          message("IF MULTI / HYPERSPECTRAL DATA: ")
+          message("Please make sure the wavelengths are in nanometers")
+          message("if not, stop processing and convert wavelengths in nanometers in HDR file")
+          message("*********************************************************")
+        }
+        if ((!HDR$`wavelength units` == "Nanometers") & (!HDR$`wavelength units` == "nanometers")) {
+          message("*********************************************************")
+          message("IF MULTI / HYPERSPECTRAL DATA: ")
+          message("Please make sure the wavelengths are in nanometers")
+          message("if not, stop processing and convert wavelengths in nanometers in HDR file")
+          message("*********************************************************")
+        }
+        if (HDR$`wavelength units` == "micrometers") {
+          message("*********************************************************")
+          message("Please convert wavelengths in nanometers in HDR file")
+          message("*********************************************************")
+          stop()
+        }
+        if ((HDR$`wavelength units` == "nanometers") | (HDR$`wavelength units` == "Nanometers")) {
+          message("*********************************************************")
+          message("      	  Format of main raster OK for processing      	  ")
+          message("*********************************************************")
+        }
       }
     } else if (Mask == TRUE & HDR$bands == 1 & ((HDR$interleave == "bil") | (HDR$interleave == "BIL") | (HDR$interleave == "bsq") | (HDR$interleave == "BSQ"))) {
       message("*********************************************************")

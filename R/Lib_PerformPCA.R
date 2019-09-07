@@ -28,7 +28,7 @@ perform_PCA  <- function(ImPath, MaskPath, Output_Dir, Continuum_Removal = TRUE,
   # check if format of raster data is as expected
   check_data(ImPath)
   if (!MaskPath==FALSE){
-    check_data(MaskPath)
+    check_data(MaskPath,Mask = TRUE)
   }
   # define the path corresponding to image, mask and output directory
   ImNames <- list()

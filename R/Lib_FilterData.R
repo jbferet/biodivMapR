@@ -28,7 +28,7 @@ perform_radiometric_filtering <- function(Image_Path, Mask_Path, Output_Dir, Typ
   # check if format of raster data is as expected
   check_data(Image_Path)
   if (!Mask_Path==FALSE){
-    check_data(Mask_Path)
+    check_data(Mask_Path,Mask = TRUE)
   }
   # define full output directory
   Output_Dir_Full <- define_output_directory(Output_Dir, Image_Path, TypePCA)
