@@ -16,6 +16,7 @@
 #' @param Output_Dir character. Path for output directory
 #' @param Continuum_Removal boolean. Set to TRUE if continuum removal should be applied
 #' @param TypePCA character. Type of PCA: choose either "PCA" or "SPCA"
+#' @param NbPCs_To_Keep numeric. number of components to ke saved in the PCA file. default = 30 if set to FALSE (or nb PC if <30)
 #' @param FilterPCA boolean. Set to TRUE if 2nd filtering based on PCA is required
 #' @param Excluded_WL  numeric. Water Vapor Absorption domains (in nanometers, min and max WL). Can also be used to exclude spectific domains. dims = N x 2 (N = number of domains to be eliminated)
 #' @param nb_partitions numeric. Number of repetitions to estimate diversity from the raster (averaging repetitions).
@@ -24,7 +25,8 @@
 #'
 #' @return list of paths corresponding to resulting PCA files
 #' @export
-perform_PCA  <- function(ImPath, MaskPath, Output_Dir, Continuum_Removal = TRUE, TypePCA = "SPCA", FilterPCA = FALSE, Excluded_WL = FALSE, nb_partitions = 20, nbCPU = 1, MaxRAM = 0.25) {
+perform_PCA  <- function(ImPath, MaskPath, Output_Dir, Continuum_Removal=TRUE, TypePCA="SPCA", NbPCs_To_Keep=FALSE,
+                         FilterPCA = FALSE, Excluded_WL = FALSE, nb_partitions = 20, nbCPU = 1, MaxRAM = 0.25) {
   # check if format of raster data is as expected
   check_data(ImPath)
   if (!MaskPath==FALSE){
@@ -124,9 +126,13 @@ perform_PCA  <- function(ImPath, MaskPath, Output_Dir, Continuum_Removal = TRUE,
     }
   }
   # Number of PCs computed and written in the PCA file: 30 if hyperspectral
-  Nb_PCs <- dim(PCA_model$dataPCA)[2]
-  if (Nb_PCs > 30) {
-    Nb_PCs <- 30
+  if (NbPCs_To_Keep==FALSE){
+    Nb_PCs <- dim(PCA_model$dataPCA)[2]
+    if (Nb_PCs > 30) {
+      Nb_PCs <- 30
+    }
+  } else {
+    Nb_PCs = NbPCs_To_Keep
   }
   PCA_model$Nb_PCs <- Nb_PCs
   PCA_model$dataPCA <- NULL

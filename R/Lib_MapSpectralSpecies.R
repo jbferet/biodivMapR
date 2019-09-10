@@ -47,9 +47,9 @@ map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model
     message("")
     stop()
   } else {
-    WS_Save <- paste(Output_Dir_PCA, "PCA_Info.RData", sep = "")
-    load(file = WS_Save)
-    ##            1- Select components used to perform clustering           ##
+    # WS_Save <- paste(Output_Dir_PCA, "PCA_Info.RData", sep = "")
+    # load(file = WS_Save)
+    ##    1- Select components used to perform clustering
     PC_Select_Path <- paste(Output_Dir_PCA, "Selected_Components.txt", sep = "")
     if (file.exists(PC_Select_Path)) {
       PC_Select <- read.table(PC_Select_Path)[[1]]
@@ -79,11 +79,11 @@ map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model
       print("Image processing aborted")
       stop()
     }
-    ##    2- PERFORM KMEANS FOR EACH ITERATION & DEFINE SPECTRAL SPECIES    ##
+    ##    2- PERFORM KMEANS FOR EACH ITERATION & DEFINE SPECTRAL SPECIES
     print("perform k-means clustering for each subset and define centroids")
     # scaling factor subPCA between 0 and 1
     Kmeans_info <- init_kmeans(dataPCA, Pix_Per_Partition, nb_partitions, nbclusters, nbCPU)
-    ##              3- ASSIGN SPECTRAL SPECIES TO EACH PIXEL                ##
+    ##    3- ASSIGN SPECTRAL SPECIES TO EACH PIXEL
     print("apply Kmeans to the whole image and determine spectral species")
     apply_kmeans(PCA_Files, PC_Select, MaskPath, Kmeans_info, Spectral_Species_Path, nbCPU, MaxRAM)
   }
