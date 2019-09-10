@@ -32,10 +32,6 @@
 #' @export
 map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model,SpectralFilter,MaskPath,Pix_Per_Partition,nb_partitions,CR= TRUE,TypePCA = "SPCA", nbclusters = 50, nbCPU = 1, MaxRAM = FALSE) {
 
-  # for each image
-  Output_Dir_SS <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "SpectralSpecies")
-  Output_Dir_PCA <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "PCA")
-  Spectral_Species_Path <- paste(Output_Dir_SS, "SpectralSpecies", sep = "")
   # if no prior diversity map has been produced --> need PCA file
   if (!file.exists(PCA_Files)) {
     message("")
@@ -47,6 +43,10 @@ map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model
     message("")
     stop()
   } else {
+    # define directories
+    Output_Dir_SS <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "SpectralSpecies")
+    Output_Dir_PCA <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "PCA")
+    Spectral_Species_Path <- paste(Output_Dir_SS, "SpectralSpecies", sep = "")
     # WS_Save <- paste(Output_Dir_PCA, "PCA_Info.RData", sep = "")
     # load(file = WS_Save)
     ##    1- Select components used to perform clustering
