@@ -5,8 +5,9 @@
 \title{Performs PCA for all images and create PCA file with either all or a selection of PCs}
 \usage{
 perform_PCA(ImPath, MaskPath, Output_Dir, Continuum_Removal = TRUE,
-  TypePCA = "SPCA", FilterPCA = FALSE, Excluded_WL = FALSE,
-  nb_partitions = 20, nbCPU = 1, MaxRAM = 0.25)
+  TypePCA = "SPCA", NbPCs_To_Keep = FALSE, FilterPCA = FALSE,
+  Excluded_WL = FALSE, nb_partitions = 20, nbCPU = 1,
+  MaxRAM = 0.25)
 }
 \arguments{
 \item{ImPath}{character. Path of the image to be processed}
@@ -18,6 +19,8 @@ perform_PCA(ImPath, MaskPath, Output_Dir, Continuum_Removal = TRUE,
 \item{Continuum_Removal}{boolean. Set to TRUE if continuum removal should be applied}
 
 \item{TypePCA}{character. Type of PCA: choose either "PCA" or "SPCA"}
+
+\item{NbPCs_To_Keep}{numeric. number of components to ke saved in the PCA file. default = 30 if set to FALSE (or nb PC if <30)}
 
 \item{FilterPCA}{boolean. Set to TRUE if 2nd filtering based on PCA is required}
 
