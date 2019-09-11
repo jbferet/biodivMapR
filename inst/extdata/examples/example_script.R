@@ -82,7 +82,7 @@ Input_Mask_File = perform_radiometric_filtering(Input_Image_File,Input_Mask_File
 
 # 2- Compute PCA for a random selection of pixels in the raster
 print("PERFORM PCA ON RASTER")
-PCA_Output        = perform_PCA(Input_Image_File,Input_Mask_File,Output_Dir,FilterPCA=FilterPCA,nbCPU=nbCPU,MaxRAM = MaxRAM)
+PCA_Output        = perform_PCA(Input_Image_File,Input_Mask_File,Output_Dir,TypePCA = TypePCA, FilterPCA=FilterPCA,nbCPU=nbCPU,MaxRAM = MaxRAM,Continuum_Removal = TRUE)
 PCA_Files         = PCA_Output$PCA_Files
 Pix_Per_Partition = PCA_Output$Pix_Per_Partition
 nb_partitions     = PCA_Output$nb_partitions
@@ -91,22 +91,23 @@ PCA_model         = PCA_Output$PCA_model
 SpectralFilter    = PCA_Output$SpectralFilter
 
 # 3- Select principal components from the PCA raster
-select_PCA_components(Input_Image_File,Output_Dir,PCA_Files,File_Open = TRUE)
+# Sel_PC = path of the file where selected components are stored
+Sel_PC = select_PCA_components(Input_Image_File,Output_Dir,PCA_Files,File_Open = TRUE)
 
 ################################################################################
 ##                      MAP ALPHA AND BETA DIVERSITY                          ##
 ################################################################################
 
 print("MAP SPECTRAL SPECIES")
-map_spectral_species(Input_Image_File,Output_Dir,PCA_Files,PCA_model,SpectralFilter,Input_Mask_File,Pix_Per_Partition,nb_partitions,nbCPU=nbCPU,MaxRAM=MaxRAM)
+map_spectral_species(Input_Image_File,Output_Dir,PCA_Files,PCA_model,SpectralFilter,Input_Mask_File,Pix_Per_Partition,nb_partitions,nbCPU=nbCPU,MaxRAM=MaxRAM,nbclusters = nbclusters,TypePCA = TypePCA,CR = TRUE)
 
 print("MAP ALPHA DIVERSITY")
 # Index.Alpha   = c('Shannon','Simpson')
 Index_Alpha   = c('Shannon')
-map_alpha_div(Input_Image_File,Output_Dir,window_size,nbCPU=nbCPU,MaxRAM=MaxRAM,Index_Alpha = Index_Alpha)
+map_alpha_div(Input_Image_File,Output_Dir,window_size,nbCPU=nbCPU,MaxRAM=MaxRAM,Index_Alpha = Index_Alpha,nbclusters = nbclusters)
 
 print("MAP BETA DIVERSITY")
-map_beta_div(Input_Image_File,Output_Dir,window_size,nb_partitions=nb_partitions,nbCPU=nbCPU,MaxRAM=MaxRAM)
+map_beta_div(Input_Image_File,Output_Dir,window_size,nb_partitions=nb_partitions,nbCPU=nbCPU,MaxRAM=MaxRAM,nbclusters = nbclusters)
 
 ################################################################################
 ##          COMPUTE ALPHA AND BETA DIVERSITY FROM FIELD PLOTS                 ##

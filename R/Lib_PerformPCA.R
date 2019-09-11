@@ -528,7 +528,7 @@ select_PCA_components <- function(Input_Image_File, Output_Dir, PCA_Files, TypeP
   message("*********************************************************")
   message("")
   readline(prompt = "")
-  return()
+  return(Sel_PC)
 }
 
 # this function performs rescaling and
