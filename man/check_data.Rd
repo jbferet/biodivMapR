@@ -11,6 +11,9 @@ check_data(Raster_Path, Mask = FALSE)
 
 \item{Mask}{boolean. Set true if the raster is a mask}
 }
+\value{
+nothing
+}
 \description{
 Checks if the data to be processed has the format type expected
 }

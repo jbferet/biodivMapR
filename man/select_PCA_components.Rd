@@ -19,7 +19,7 @@ select_PCA_components(Input_Image_File, Output_Dir, PCA_Files,
 \item{File_Open}{Boolean. Set to TRUE for file to open automatically}
 }
 \value{
-nothing
+Sel_PC
 }
 \description{
 Check if principal components are properly selected as expected by the method

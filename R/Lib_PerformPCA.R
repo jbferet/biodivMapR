@@ -501,7 +501,7 @@ define_pixels_per_iter <- function(ImNames, nb_partitions = nb_partitions) {
 #' @param TypePCA character. Type of PCA: choose either "PCA" or "SPCA"
 #' @param File_Open Boolean. Set to TRUE for file to open automatically
 #'
-#' @return nothing
+#' @return Sel_PC
 #' @importFrom utils file.edit
 #' @export
 select_PCA_components <- function(Input_Image_File, Output_Dir, PCA_Files, TypePCA = "SPCA", File_Open = FALSE) {
@@ -523,7 +523,7 @@ select_PCA_components <- function(Input_Image_File, Output_Dir, PCA_Files, TypeP
     file.create(Sel_PC)
   }
   if (File_Open == TRUE) {
-    file.edit(Sel_PC, title=basename(Sel_PC))
+    file.edit(Sel_PC, title=basename(Sel_PC),editor = "internal")
   }
   message("*********************************************************")
   message("")

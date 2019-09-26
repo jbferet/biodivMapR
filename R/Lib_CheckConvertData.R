@@ -157,7 +157,7 @@ raster2BIL <- function(Raster_Path, Sensor = "unknown", Output_Dir = FALSE, Conv
 #' @param Raster_Path character. full path for the raster to be converted
 #' @param Mask boolean. Set true if the raster is a mask
 #'
-#' @return
+#' @return nothing
 #' @export
 check_data <- function(Raster_Path, Mask = FALSE) {
   HDR_Path <- get_HDR_name(Raster_Path)
