@@ -4,7 +4,7 @@
 # 1 Install
 After installing packages `devtools` and `getPass`, package `biodivMapR` can then be installed with the folloqing command line in R session, where `uname` is your gitlab.irstea.fr username:
 ```
-devtools::install_git('https://gitlab.irstea.fr/jean-baptiste.feret/biodivMapR.git')
+devtools::install_git('https://github.com/jbferet/biodivMapR.git')
 ```
 
 # 2 Tutorial

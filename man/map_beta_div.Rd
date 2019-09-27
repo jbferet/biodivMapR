@@ -40,6 +40,9 @@ map_beta_div(Input_Image_File, Output_Dir, window_size, TypePCA = "SPCA",
 
 \item{MaxRAM}{numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.}
 }
+\value{
+None
+}
 \description{
 maps beta diversity indicator based on spectral species distribution
 }

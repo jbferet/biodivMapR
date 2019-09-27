@@ -29,6 +29,7 @@
 #' @param MaxRAM numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.
 #' @param pcelim numeric. Minimum contribution (in \%) required for a spectral species
 #'
+#' @return None
 #' @export
 map_beta_div <- function(Input_Image_File, Output_Dir, window_size,
                                TypePCA = "SPCA", nb_partitions = 20,nbclusters = 50,
@@ -45,7 +46,7 @@ map_beta_div <- function(Input_Image_File, Output_Dir, window_size,
   Index <- paste("BetaDiversity_BCdiss_", scaling, sep = "")
   Beta.Path <- paste(Output_Dir_BETA, Index, "_", window_size, sep = "")
   write_raster_beta(Beta$BetaDiversity, Beta$HDR, Beta.Path, window_size, FullRes = FullRes, LowRes = LowRes)
-  return()
+  return(invisible())
 }
 
 

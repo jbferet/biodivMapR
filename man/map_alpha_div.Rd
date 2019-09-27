@@ -36,6 +36,9 @@ map_alpha_div(Input_Image_File, Output_Dir, window_size,
 
 \item{MaxRAM}{numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.}
 }
+\value{
+None
+}
 \description{
 maps alpha diversity indicators  based on prior selection of PCs
 }

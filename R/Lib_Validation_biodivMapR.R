@@ -53,7 +53,7 @@ list_shp <- function(x){
 # @param Initial.File path for a shapefile to be reprojected
 # @param Projection projection to be applied to Initial.File
 # @param Reprojected.File path for the reprojected shapefile
-# @return
+# @return None
 #' @importFrom rgdal readOGR writeOGR
 #' @importFrom sp spTransform
 #' @import tools
@@ -70,7 +70,7 @@ reproject_vector = function(Initial.File,Projection,Reprojected.File){
     Vect.reproj = spTransform(Vect.Init, Projection)
     writeOGR(obj = Vect.reproj, dsn = Shp.Path,layer = Shp.Name, driver="ESRI Shapefile",overwrite_layer = TRUE) #also you were missing the driver argument
   }
-  return()
+  return(invisible())
 }
 
 # Extracts pixels coordinates from raster corresponding to an area defined by a vector

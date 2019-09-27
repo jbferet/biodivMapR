@@ -120,16 +120,16 @@ The resulting PCA raster are then stored in a binalry file in the results direct
 
 This PCA raster file can be displayed using QGIS or any GIS / image processing software. Here, the PCs corresponding to our image look like this: 
 
-<img align="bottom" width="100%" height="100%" src="../man/figures/02_PCs_comp.png">
+<img align="bottom" width="100%" height="100%" src="../man/figures/PCs_1234.png">
+<img align="bottom" width="100%" height="100%" src="../man/figures/PCs_5678.png">
 
 This PCA band selection left to user judgement, who then writes the band to be kept in a `.txt` file located in the same directory as the PCA raster file. The file is automatically created and ready to edit with function `select_PCA_components`. Each selected band should be identified per line in this file. 
 The main goal of PC selection is to discard PCs showing no relevant information corresponding to vegetation, or including artifacts possibly explained by sensor properties. It is somehow a subjective process, and we are currently working on automatic selection of these components.
 
-For this example, PCA bands 1, 2, 4, 5, 6 and 8 can be kept if writing the following lines in file `Selected_Components.txt` opened for edition (do not forget carriage return after last value):
+For this example, PCA bands 1, 2, 5, 6 and 8 can be kept if writing the following lines in file `Selected_Components.txt` opened for edition (do not forget carriage return after last value):
 ```
 1
 2
-4
 5
 6
 8
@@ -167,8 +167,9 @@ The first step towards  \alpha and \beta diversity mapping corresponds to the co
 
 ```{r Spectral species map}
 print("MAP SPECTRAL SPECIES")
-map_spectral_species(Input_Image_File, Output_Dir, PCA_Files,PCA_model, SpectralFilter, Input_Mask_File,
-                     Pix_Per_Partition, nb_partitions, nbCPU=nbCPU, MaxRAM=MaxRAM)
+map_spectral_species(Input_Image_File, Output_Dir, PCA_Files, PCA_model, SpectralFilter, Input_Mask_File,
+                     Pix_Per_Partition, nb_partitions, nbCPU=nbCPU, MaxRAM=MaxRAM, 
+                     nbclusters = nbclusters, TypePCA = TypePCA, CR = TRUE)
 ```
 
 SpectralSpecies is then stored in a raster file located here:
@@ -182,12 +183,12 @@ The code to compute $\alpha$ and $\beta$ diversity maps from this file is as fol
 print("MAP ALPHA DIVERSITY")
 # Index.Alpha   = c('Shannon','Simpson')
 Index_Alpha   = c('Shannon')
-map_alpha_div(Input_Image_File, Output_Dir, window_size,
-              nbCPU=nbCPU, MaxRAM=MaxRAM, Index_Alpha = Index_Alpha)
+map_alpha_div(Input_Image_File, Output_Dir, window_size, nbCPU=nbCPU,
+              MaxRAM=MaxRAM, Index_Alpha = Index_Alpha, nbclusters = nbclusters)
 
 print("MAP BETA DIVERSITY")
 map_beta_div(Input_Image_File, Output_Dir, window_size, nb_partitions=nb_partitions,
-             nbCPU=nbCPU, MaxRAM=MaxRAM)
+             nbCPU=nbCPU, MaxRAM=MaxRAM, nbclusters = nbclusters)
 ```
 
 $\alpha$ and $\beta$ diversity maps are then stored in raster files located here: 
@@ -288,7 +289,7 @@ ggplot(Results, aes(x=pco1, y=pco2, color=vgtype,size=shannon)) +
   scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
 filename = file.path(Path.Results,'BetaDiversity_PcoA1_vs_PcoA2.png')
 ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
-       scale = 1, width = NA, height = NA, units = c("in", "cm", "mm"),
+       scale = 1, width = 6, height = 4, units = "in",
        dpi = 600, limitsize = TRUE)
 
 
@@ -297,7 +298,7 @@ ggplot(Results, aes(x=pco1, y=pco3, color=vgtype,size=shannon)) +
   scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
 filename = file.path(Path.Results,'BetaDiversity_PcoA1_vs_PcoA3.png')
 ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
-       scale = 1, width = NA, height = NA, units = c("in", "cm", "mm"),
+       scale = 1, width = 6, height = 4, units = "in",
        dpi = 600, limitsize = TRUE)
 
 ggplot(Results, aes(x=pco2, y=pco3, color=vgtype,size=shannon)) +
@@ -305,7 +306,7 @@ ggplot(Results, aes(x=pco2, y=pco3, color=vgtype,size=shannon)) +
   scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
 filename = file.path(Path.Results,'BetaDiversity_PcoA2_vs_PcoA3.png')
 ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
-       scale = 1, width = NA, height = NA, units = c("in", "cm", "mm"),
+       scale = 1, width = 6, height = 4, units = "in",
        dpi = 600, limitsize = TRUE)
 
 ```

@@ -59,19 +59,20 @@ knitr::opts_chunk$set(
 
 ## ----Spectral species map------------------------------------------------
 #  print("MAP SPECTRAL SPECIES")
-#  map_spectral_species(Input_Image_File, Output_Dir, PCA_Files,PCA_model, SpectralFilter, Input_Mask_File,
-#                       Pix_Per_Partition, nb_partitions, nbCPU=nbCPU, MaxRAM=MaxRAM)
+#  map_spectral_species(Input_Image_File, Output_Dir, PCA_Files, PCA_model, SpectralFilter, Input_Mask_File,
+#                       Pix_Per_Partition, nb_partitions, nbCPU=nbCPU, MaxRAM=MaxRAM,
+#                       nbclusters = nbclusters, TypePCA = TypePCA, CR = TRUE)
 
 ## ----alpha and beta diversity maps---------------------------------------
 #  print("MAP ALPHA DIVERSITY")
 #  # Index.Alpha   = c('Shannon','Simpson')
 #  Index_Alpha   = c('Shannon')
-#  map_alpha_div(Input_Image_File, Output_Dir, window_size,
-#                nbCPU=nbCPU, MaxRAM=MaxRAM, Index_Alpha = Index_Alpha)
+#  map_alpha_div(Input_Image_File, Output_Dir, window_size, nbCPU=nbCPU,
+#                MaxRAM=MaxRAM, Index_Alpha = Index_Alpha, nbclusters = nbclusters)
 #  
 #  print("MAP BETA DIVERSITY")
 #  map_beta_div(Input_Image_File, Output_Dir, window_size, nb_partitions=nb_partitions,
-#               nbCPU=nbCPU, MaxRAM=MaxRAM)
+#               nbCPU=nbCPU, MaxRAM=MaxRAM, nbclusters = nbclusters)
 
 ## ----alpha and beta diversity indices from vector layer------------------
 #  # location of the spectral species raster needed for validation
@@ -142,7 +143,7 @@ knitr::opts_chunk$set(
 #    scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
 #  filename = file.path(Path.Results,'BetaDiversity_PcoA1_vs_PcoA2.png')
 #  ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
-#         scale = 1, width = NA, height = NA, units = c("in", "cm", "mm"),
+#         scale = 1, width = 6, height = 4, units = "in",
 #         dpi = 600, limitsize = TRUE)
 #  
 #  
@@ -151,7 +152,7 @@ knitr::opts_chunk$set(
 #    scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
 #  filename = file.path(Path.Results,'BetaDiversity_PcoA1_vs_PcoA3.png')
 #  ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
-#         scale = 1, width = NA, height = NA, units = c("in", "cm", "mm"),
+#         scale = 1, width = 6, height = 4, units = "in",
 #         dpi = 600, limitsize = TRUE)
 #  
 #  ggplot(Results, aes(x=pco2, y=pco3, color=vgtype,size=shannon)) +
@@ -159,7 +160,7 @@ knitr::opts_chunk$set(
 #    scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
 #  filename = file.path(Path.Results,'BetaDiversity_PcoA2_vs_PcoA3.png')
 #  ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
-#         scale = 1, width = NA, height = NA, units = c("in", "cm", "mm"),
+#         scale = 1, width = 6, height = 4, units = "in",
 #         dpi = 600, limitsize = TRUE)
 #  
 

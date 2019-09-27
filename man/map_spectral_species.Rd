@@ -36,6 +36,9 @@ map_spectral_species(Input_Image_File, Output_Dir, PCA_Files, PCA_model,
 
 \item{MaxRAM}{numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.}
 }
+\value{
+None
+}
 \description{
 maps spectral species based on PCA file computed previously
 }

@@ -28,6 +28,7 @@
 #' @param MaxRAM numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.
 #' @param nbclusters numeric. number of clusters defined in k-Means
 #'
+#' @return None
 #' @importFrom utils read.table
 #' @export
 map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model,SpectralFilter,MaskPath,Pix_Per_Partition,nb_partitions,CR= TRUE,TypePCA = "SPCA", nbclusters = 50, nbCPU = 1, MaxRAM = FALSE) {
@@ -87,7 +88,7 @@ map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model
     print("apply Kmeans to the whole image and determine spectral species")
     apply_kmeans(PCA_Files, PC_Select, MaskPath, Kmeans_info, Spectral_Species_Path, nbCPU, MaxRAM)
   }
-  return()
+  return(invisible())
 }
 
 # computes k-means from nb_partitions subsets taken from dataPCA
@@ -133,7 +134,7 @@ init_kmeans <- function(dataPCA, Pix_Per_Partition, nb_partitions, nbclusters, n
 # @param MaxRAM
 # @param Spectral_Species_Path path for spectral species file to be written
 #
-# @return
+# @return None
 apply_kmeans <- function(PCA_Path, PC_Select, MaskPath, Kmeans_info, Spectral_Species_Path, nbCPU = 1, MaxRAM = FALSE) {
   ImPathHDR <- get_HDR_name(PCA_Path)
   HDR_PCA <- read_ENVI_header(ImPathHDR)
@@ -181,7 +182,7 @@ apply_kmeans <- function(PCA_Path, PC_Select, MaskPath, Kmeans_info, Spectral_Sp
     Location_RW$lenBin_SS <- nb_partitions * (SeqRead_Shade$ReadByte_End[i] - SeqRead_Shade$ReadByte_Start[i]) + 1
     compute_spectral_species(PCA_Path, MaskPath, Spectral_Species_Path, Location_RW, PC_Select, Kmeans_info, nbCPU)
   }
-  return()
+  return(invisible())
 }
 
 # this function reads PCA file and defines the spectral species for each pixel
@@ -196,7 +197,7 @@ apply_kmeans <- function(PCA_Path, PC_Select, MaskPath, Kmeans_info, Spectral_Sp
 # @param nbCPU
 # @param Kmeans_info information about kmeans computed in previous step
 #
-# @return
+# @return None
 #' @importFrom snow splitRows
 #' @importFrom future plan multiprocess sequential
 #' @importFrom future.apply future_lapply
@@ -265,7 +266,7 @@ compute_spectral_species <- function(PCA_Path, MaskPath, Spectral_Species_Path, 
   close(fidSS)
   rm(list = ls())
   gc()
-  return()
+  return(invisible())
 }
 
 # Compute distance between each pixel of input data and each of the nbClusters x nb_partitions centroids

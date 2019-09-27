@@ -302,7 +302,7 @@ filter_PCA <- function(ImPath, HDR, MaskPath, Shade_Update, Spectral, CR, PCA_mo
 # @param nbCPU number of CPUs to process data
 # @param MaxRAM max RAM when initial image is read (in Gb)
 #
-# @return
+# @return None
 write_PCA_raster <- function(ImPath, MaskPath, PCA_Path, PCA_model, Spectral, Nb_PCs, CR, TypePCA, nbCPU = 1, MaxRAM = 0.25) {
   ImPathHDR <- get_HDR_name(ImPath)
   HDR <- read_ENVI_header(ImPathHDR)
@@ -410,7 +410,7 @@ write_PCA_raster <- function(ImPath, MaskPath, PCA_Path, PCA_model, Spectral, Nb
   list <- ls()
   rm(list = list)
   gc()
-  return()
+  return(invisible())
 }
 
 # Function to perform PCA on a matrix

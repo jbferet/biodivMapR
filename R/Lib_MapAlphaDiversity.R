@@ -26,6 +26,7 @@
 #' @param MaxRAM numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.
 #' @param Index_Alpha character. Either 'Shannon', 'Simpson' or 'Fisher'.
 #'
+#' @return None
 #' @export
 map_alpha_div <- function(Input_Image_File, Output_Dir, window_size,
                                 TypePCA = "SPCA", nbclusters = 50,
@@ -79,7 +80,7 @@ map_alpha_div <- function(Input_Image_File, Output_Dir, window_size,
       write_raster_alpha(ALPHA$Simpson.SD, ALPHA$HDR, Alpha_Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
     }
   }
-  return()
+  return(invisible())
 }
 
 # Map alpha diversity metrics based on spectral species

@@ -988,6 +988,7 @@ revert_resolution_HDR <- function(HDR, window_size) {
 # Zips an image file
 #
 # @param ImagePath path for the image
+# @return None
 ZipFile <- function(ImagePath) {
   PathRoot <- getwd()
   ImageDir <- dirname(ImagePath)
@@ -996,5 +997,5 @@ ZipFile <- function(ImagePath) {
   zip::zip(zipfile = paste0(ImageName, ".zip"), files = ImageName)
   file.remove(ImageName)
   setwd(PathRoot)
-  return()
+  return(invisible())
 }

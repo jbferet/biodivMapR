@@ -64,7 +64,7 @@ TypePCA     = 'SPCA'
 ################################################################################
 ##                    DEFINE PARAMETERS FOR METHOD                            ##
 ################################################################################
-nbCPU       = 2
+nbCPU       = 4
 MaxRAM      = 0.5
 nbclusters  = 50
 
@@ -178,7 +178,7 @@ ggplot(Results, aes(x=pco1, y=pco2, color=vgtype,size=shannon)) +
   scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
 filename = file.path(Path.Results,'BetaDiversity_PcoA1_vs_PcoA2.png')
 ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
-       scale = 1, width = NA, height = NA, units = c("in", "cm", "mm"),
+       scale = 1, width = 6, height = 4, units = "in",
        dpi = 600, limitsize = TRUE)
 
 
@@ -187,7 +187,7 @@ ggplot(Results, aes(x=pco1, y=pco3, color=vgtype,size=shannon)) +
   scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
 filename = file.path(Path.Results,'BetaDiversity_PcoA1_vs_PcoA3.png')
 ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
-       scale = 1, width = NA, height = NA, units = c("in", "cm", "mm"),
+       scale = 1, width = 6, height = 4, units = "in",
        dpi = 600, limitsize = TRUE)
 
 ggplot(Results, aes(x=pco2, y=pco3, color=vgtype,size=shannon)) +
@@ -195,5 +195,5 @@ ggplot(Results, aes(x=pco2, y=pco3, color=vgtype,size=shannon)) +
   scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
 filename = file.path(Path.Results,'BetaDiversity_PcoA2_vs_PcoA3.png')
 ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
-       scale = 1, width = NA, height = NA, units = c("in", "cm", "mm"),
+       scale = 1, width = 6, height = 4, units = "in",
        dpi = 600, limitsize = TRUE)
