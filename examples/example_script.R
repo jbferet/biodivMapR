@@ -42,9 +42,9 @@ Input_Image_File  = system.file('extdata', 'RASTER', 'S2A_T33NUD_20180104_Subset
 # set to FALSE if no mask available
 Input_Mask_File   = FALSE
 
-# relative or absolute path for the Directory where results will be stored
+# Output directory: files created by script will be written there.
 # For each image processed, a subdirectory will be created after its name
-Output_Dir        = 'RESULTS'
+Output_Dir        = '~/biodiv' # fill with your own path
 
 # SPATIAL RESOLUTION
 # resolution of spatial units for alpha and beta diversity maps (in pixels), relative to original image
