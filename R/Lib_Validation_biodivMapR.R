@@ -144,7 +144,7 @@ get_alpha_metrics = function(Distrib){
 #' @importFrom rgdal readOGR
 #' @import tools
 #' @export
-diversity_from_plots = function(Raster, Plots,NbClusters = 50,Name_Plot = FALSE){
+diversity_from_plots = function(Raster, Plots, NbClusters = 50, Name_Plot = FALSE){
   # get hdr from raster
   HDR           = read_ENVI_header(paste(Raster,'.hdr',sep=''))
   nbRepetitions = HDR$bands
@@ -176,12 +176,8 @@ diversity_from_plots = function(Raster, Plots,NbClusters = 50,Name_Plot = FALSE)
       Projection.Plot     = get_projection(File.Vector,'vector')
       Projection.Raster     = get_projection(Raster,'raster')
       # if not, convert vector file
-      if (!Projection.Raster==Projection.Plot){
-        if (!file.exists(File.Vector.reproject)){
-          dir.create(Dir.Vector.reproject, showWarnings = FALSE,recursive = TRUE)
-          reproject_vector(File.Vector,Projection.Raster,File.Vector.reproject)
-        }
-        Plot              = readOGR(Dir.Vector.reproject,Name.Vector[[ip]],verbose = FALSE)
+      if (compareCRS(Projection.Raster, Projection.Plot)){
+        stop('Raster and Plots have different projection. Plots should be reprojected to Raster CRS, see help(')
       }
     } else if (file.exists(paste(File.Vector,'kml','sep'='.'))){
       print('Please convert vector file to shpfile')
