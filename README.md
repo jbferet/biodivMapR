@@ -1,6 +1,6 @@
 # biodivMapR: an R package for α- and β-diversity mapping using remotely-sensed images
 
-**[https://jbferet.github.io/biodivMapR](https://jbferet.github.io/biodivMapR/index.hhml)**
+**[https://jbferet.github.io/biodivMapR](https://jbferet.github.io/biodivMapR/index.hml)**
 
 ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg)
 [![Build Status](https://travis-ci.org/jbferet/biodivMapR.png?branch=master)](https://travis-ci.org/jbferet/biodivMapR)
