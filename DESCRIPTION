@@ -40,3 +40,5 @@ RoxygenNote: 6.1.1
 Suggests: knitr,
     rmarkdown
 VignetteBuilder: knitr
+URL: https://github.com/jbferet/biodivMapR
+BugReports: https://github.com/jbferet/biodivMapR/issues
