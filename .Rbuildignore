@@ -3,3 +3,6 @@
 ^examples
 ^doc
 ^TODO.md
+^\.travis\.yml$
+^appveyor\.yml$
+^tic\.R$
