@@ -1,7 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^examples
-^doc
 ^TODO.md
 ^\.travis\.yml$
 ^appveyor\.yml$
