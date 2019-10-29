@@ -1,4 +1,6 @@
-# biodivMapR: an R package for α- and β-diversity mapping using remotely-sensed images <img src="man/figures/logo.png" align="right" alt="" width="120" />
+# __biodivMapR__ <img src="man/figures/logo.png" align="right" alt="" width="200" />
+
+# An R package for α- and β-diversity mapping using remotely-sensed images
 
 [![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg)](https://www.r-project.org/Licenses/GPL-3)
 [![Build Status](https://travis-ci.org/jbferet/biodivMapR.png?branch=master)](https://travis-ci.org/jbferet/biodivMapR)
