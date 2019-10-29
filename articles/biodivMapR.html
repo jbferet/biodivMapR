@@ -110,9 +110,11 @@
 </li>
 <li><p>validate results comparing to field plots measurements</p></li>
 </ul>
-<div id="processing-parameters" class="section level1">
+<p>Below is the typical flow chart of the computation of diversity maps with <strong>biodivMapR</strong> :</p>
+<p><img align="bottom" width="100%" height="100%" src="../man/figures/Figure1_FlowChart_biodivMapR_Process_600DPI.png"></p>
+<div id="define-processing-parameters" class="section level1">
 <h1 class="hasAnchor">
-<a href="#processing-parameters" class="anchor"></a>Processing parameters</h1>
+<a href="#define-processing-parameters" class="anchor"></a>Define processing parameters</h1>
 <div id="input-output-files" class="section level2">
 <h2 class="hasAnchor">
 <a href="#input-output-files" class="anchor"></a>Input / Output files</h2>
@@ -164,9 +166,9 @@
 <a class="sourceLine" id="cb4-3" data-line-number="3">nbclusters    =<span class="st"> </span><span class="dv">50</span></a></code></pre></div>
 </div>
 </div>
-<div id="main-processing-worflow" class="section level1">
+<div id="compute-diversity-maps" class="section level1">
 <h1 class="hasAnchor">
-<a href="#main-processing-worflow" class="anchor"></a>Main processing worflow</h1>
+<a href="#compute-diversity-maps" class="anchor"></a>Compute diversity maps</h1>
 <div id="mask-non-vegetated-shaded-cloudy-pixels" class="section level2">
 <h2 class="hasAnchor">
 <a href="#mask-non-vegetated-shaded-cloudy-pixels" class="anchor"></a>Mask non vegetated / shaded / cloudy pixels</h2>
@@ -240,9 +242,9 @@
 <p><img align="bottom" width="100%" height="100%" src="../man/figures/03_AlphaBeta.png"></p>
 </div>
 </div>
-<div id="alpha-and-beta-diversity-indices-from-vector-layer" class="section level1">
+<div id="compute-diversity-indices-from-a-vector-layer" class="section level1">
 <h1 class="hasAnchor">
-<a href="#alpha-and-beta-diversity-indices-from-vector-layer" class="anchor"></a><span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity indices from vector layer</h1>
+<a href="#compute-diversity-indices-from-a-vector-layer" class="anchor"></a>Compute diversity indices from a vector layer</h1>
 <p>The following code computes <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity from field plots and extracts the corresponding diversity indices from previouly computed <code>SpectralSpecies</code> raster in order to perform validation.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="co"># location of the spectral species raster needed for validation</span></a>
 <a class="sourceLine" id="cb10-2" data-line-number="2">TypePCA     =<span class="st"> 'SPCA'</span></a>
@@ -339,9 +341,9 @@
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#processing-parameters">Processing parameters</a></li>
-      <li><a href="#main-processing-worflow">Main processing worflow</a></li>
-      <li><a href="#alpha-and-beta-diversity-indices-from-vector-layer"><span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity indices from vector layer</a></li>
+<li><a href="#define-processing-parameters">Define processing parameters</a></li>
+      <li><a href="#compute-diversity-maps">Compute diversity maps</a></li>
+      <li><a href="#compute-diversity-indices-from-a-vector-layer">Compute diversity indices from a vector layer</a></li>
       </ul>
 </div>
       </div>
