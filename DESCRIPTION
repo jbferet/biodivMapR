@@ -10,7 +10,7 @@ Authors@R: c(person(given = "Jean-Baptiste",
 					family = "de Boissieu", 
 					email = "florian.deboissieu@irstea.fr", 
 					role = c("aut"), 
-					comment = c(ORCID = "0000-0002-2185-9952"))
+					comment = c(ORCID = "0000-0002-2185-9952", "clean code, format as package, build website")))
 Description: this packages allows processing image data based on the method described in the following publication:
     Féret, J.-B., Asner, G.P., 2014. Mapping tropical forest canopy diversity using high-fidelity imaging spectroscopy. Ecol. Appl. 24, 1289–1296. https://doi.org/10.1890/13-1824.1
     It expects an image file as input, with a specific data format. ENVI HDR image with BIL interleave required.
