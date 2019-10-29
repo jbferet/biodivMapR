@@ -34,9 +34,13 @@ This tutorial aims at describing the processing workflow and giving the associat
     
 * validate results comparing to field plots measurements
 
+Below is the typical flow chart of the computation of diversity maps with __biodivMapR__ :
+
+<img align="bottom" width="100%" height="100%" src="../man/figures/Figure1_FlowChart_biodivMapR_Process_600DPI.png">
 
 
-# Processing parameters
+
+# Define processing parameters
 
 ## Input / Output files
 The input images are expected to be in ENVI HDR format, BIL interleaved. 
@@ -99,7 +103,8 @@ MaxRAM        = 0.5
 nbclusters    = 50
 ```
 
-# Main processing worflow
+# Compute diversity maps
+
 ## Mask non vegetated / shaded / cloudy pixels
 
 ```{r Mask non vegetated / shaded / cloudy pixels}
@@ -203,7 +208,8 @@ Here, processing our example leads to the following $\alpha$ and $\beta$ diversi
 <img align="bottom" width="100%" height="100%" src="../man/figures/03_AlphaBeta.png">
 
 
-# $\alpha$ and $\beta$ diversity indices from vector layer
+# Compute diversity indices from a vector layer
+
 The following code computes $\alpha$ and $\beta$ diversity from field plots and extracts the corresponding diversity indices from previouly computed `SpectralSpecies` raster in order to perform validation.
 
 ```{r alpha and beta diversity indices from vector layer}

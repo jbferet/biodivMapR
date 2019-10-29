@@ -2,7 +2,7 @@
 
 **[https://jbferet.github.io/biodivMapR](https://jbferet.github.io/biodivMapR/index.html)**
 
-![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
+[![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg)](https://www.r-project.org/Licenses/GPL-3)
 [![Build Status](https://travis-ci.org/jbferet/biodivMapR.png?branch=master)](https://travis-ci.org/jbferet/biodivMapR)
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/jbferet/biodivmapr?branch=master&svg=true)](https://ci.appveyor.com/project/jbferet/biodivmapr)
 
