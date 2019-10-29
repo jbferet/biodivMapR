@@ -1,4 +1,4 @@
-# biodivMapR: an R package for α- and β-diversity mapping using remotely-sensed images
+# biodivMapR: an R package for α- and β-diversity mapping using remotely-sensed images <img src="man/figures/logo.png" align="right" alt="" width="120" />
 
 **[https://jbferet.github.io/biodivMapR](https://jbferet.github.io/biodivMapR/index.html)**
 
@@ -6,9 +6,9 @@
 [![Build Status](https://travis-ci.org/jbferet/biodivMapR.png?branch=master)](https://travis-ci.org/jbferet/biodivMapR)
 
 # 1 Install
-After installing packages `devtools` and `getPass`, package `biodivMapR` can then be installed with the folloqing command line in R session, where `uname` is your gitlab.irstea.fr username:
+After installing packages `devtools`, package `biodivMapR` can then be installed with the following command line in R session:
 ```
-devtools::install_git('https://github.com/jbferet/biodivMapR.git')
+devtools::install_github('jbferet/biodivMapR')
 ```
 
 # 2 Tutorial
