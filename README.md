@@ -4,6 +4,8 @@
 
 ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
 [![Build Status](https://travis-ci.org/jbferet/biodivMapR.png?branch=master)](https://travis-ci.org/jbferet/biodivMapR)
+[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/jbferet/biodivmapr?branch=master&svg=true)](https://ci.appveyor.com/project/jbferet/biodivmapr)
+
 
 # 1 Install
 
