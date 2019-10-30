@@ -470,7 +470,7 @@ define_pixels_per_iter <- function(ImNames, nb_partitions = nb_partitions) {
   # adjust the number of pixels per iteration
   # trade-off between number of pixels and total pixel size
   # maximum number of pixels to be used
-  Max_Pixel_Per_Iter <- 250000
+  Max_Pixel_Per_Iter <- 5000000/nb_partitions
   Max_Pixel_Per_Iter_Size <- nb_partitions * (Max_Pixel_Per_Iter * as.double(HDR$bands) * Image_Format$Bytes) / (1024^3)
   # maximum amount of data (Gb) to be used
   Max_Size_Per_Iter <- 0.3
