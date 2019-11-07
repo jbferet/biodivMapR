@@ -10,26 +10,6 @@
 # the main goal is to validate ground data associated with biodiversity metrics
 # ==============================================================================
 
-#' get projection of a raster or a vector
-#' @param file path for a raster or vector (shapefile)
-#' @param type 'raster' or 'vector'
-#' @return projection
-#' @importFrom raster raster shapefile projection
-#' @importFrom rgdal readOGR
-#' @import tools
-#' @export
-get_projection <- function(file, type = 'raster'){
-  if (type == 'raster'){
-    obj <- raster(file)
-  } else if (type == 'vector'){
-    Shp.Path      = dirname(file)
-    Shp.Name      = file_path_sans_ext(basename(file))
-    obj  = readOGR(dsn = Shp.Path,layer = Shp.Name,verbose = FALSE)
-  }
-  projstr <- projection(obj)
-  return(projstr)
-}
-
 #' Get list of shapefiles in a directory
 #'
 #' @param x character or list. Directory containing shapefiles
@@ -141,6 +121,7 @@ get_alpha_metrics = function(Distrib){
 #' @param NbClusters numeric. Number of clusters defined in k-Means.
 #' @param Name_Plot character. Name of the plots defined in the shapefile
 #' @return alpha and beta diversity metrics
+#' @importFrom raster raster projection
 #' @importFrom rgdal readOGR
 #' @import tools
 #' @export
@@ -173,10 +154,8 @@ diversity_from_plots = function(Raster, Plots, NbClusters = 50, Name_Plot = FALS
     if (file.exists(paste(file_path_sans_ext(File.Vector),'.shp',sep=''))){
       Plot                = readOGR(Dir.Vector,Name.Vector[[ip]],verbose = FALSE)
       # check if vector and rasters are in the same referential
-      Projection.Plot     = get_projection(File.Vector,'vector')
-      Projection.Raster     = get_projection(Raster,'raster')
       # if not, convert vector file
-      if (compareCRS(Projection.Raster, Projection.Plot)){
+      if (!compareCRS(raster(Raster), Plot)){
         stop('Raster and Plots have different projection. Plots should be reprojected to Raster CRS, see help(')
       }
     } else if (file.exists(paste(File.Vector,'kml','sep'='.'))){

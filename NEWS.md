@@ -6,6 +6,7 @@
 - moved examples to repository root: example files are not installed with package anymore.
 - removed Plots reprojection from `diversity_from_plots`: 
 now, Plots and Raster must be in the same projection. Changed example Plots projection accordingly.
+- removed `get_projection` (useless)
 
 # biodivMapR v1.0.1 (Release date: 2019-09-27)
 
