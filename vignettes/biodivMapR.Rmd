@@ -56,12 +56,13 @@ The output directory defined with `Output_Dir` will contain all the results. For
 
 
 ```{r Input / Output files}
+library(biodivMapR)
 Input_Image_File  = system.file('extdata', 'RASTER', 'S2A_T33NUD_20180104_Subset', package = 'biodivMapR')
 
-# Input.Image.File  = raster2BIL(Raster.Path = Input.Image.File,
+# Input_Image_File  = raster2BIL(Raster_Path = Input_Image_File,
 #                                        Sensor = 'SENTINEL_2A',
-#                                        Convert.Integer = TRUE,
-#                                        Output.Directory = '~/test')
+#                                        Convert_Integer = TRUE,
+#                                        Output_Dir = '~/test')
 
 Input_Mask_File   = FALSE
 
@@ -90,7 +91,7 @@ Set FilterPCA to `TRUE` if a second filtering based on PCA outliers is required.
 
 ```{r PCA method and filtering}
 TypePCA = 'SPCA'
-FilterPCA = FALSE
+FilterPCA = TRUE
 ```
 
 ## Computing options
@@ -149,7 +150,7 @@ Here is the code to perform PCA and select PCA bands:
 ```{r PCA}
 print("PERFORM PCA ON RASTER")
 PCA_Output        = perform_PCA(Input_Image_File, Input_Mask_File, Output_Dir,
-                               TypePCA = TypePCA, FilterPCA = TRUE, nbCPU = nbCPU,MaxRAM = MaxRAM)
+                               TypePCA = TypePCA, FilterPCA = FilterPCA, nbCPU = nbCPU,MaxRAM = MaxRAM)
 # path for the PCA raster
 PCA_Files         = PCA_Output$PCA_Files
 # number of pixels used for each partition used for k-means clustering
@@ -217,23 +218,23 @@ The following code computes $\alpha$ and $\beta$ diversity from field plots and 
 
 ```{r alpha and beta diversity indices from vector layer}
 # location of the spectral species raster needed for validation
-Dir.Raster  = file.path(Output.Dir,basename(Input.Image.File),TypePCA,'SpectralSpecies')
-Name.Raster = 'SpectralSpecies'
-Path.Raster = file.path(Dir.Raster,Name.Raster)
+Dir_Raster  = file.path(Output_Dir,basename(Input_Image_File),TypePCA,'SpectralSpecies')
+Name_Raster = 'SpectralSpecies'
+Path_Raster = file.path(Dir_Raster,Name_Raster)
 
 # location of the directory where shapefiles used for validation are saved
 vect        = system.file('extdata', 'VECTOR', package = 'biodivMapR')
 Shannon.All = list() # ??
 
 # list vector data
-Path.Vector         = list_shp(vect)
-Name.Vector         = tools::file_path_sans_ext(basename(Path.Vector))
+Path_Vector         = list_shp(vect)
+Name_Vector         = tools::file_path_sans_ext(basename(Path_Vector))
 
 # get alpha and beta diversity indicators corresponding to shapefiles
-Biodiv.Indicators           = diversity_from_plots(Raster = Path.Raster, Plots = Path.Vector,NbClusters = nbclusters)
+Biodiv_Indicators           = diversity_from_plots(Raster = Path_Raster, Plots = Path_Vector,NbClusters = nbclusters)
 # if no name
-Biodiv.Indicators$Name.Plot = seq(1,length(Biodiv.Indicators$Shannon[[1]]),by = 1)
-Shannon.RS                  = c(Biodiv.Indicators$Shannon)[[1]]
+Biodiv_Indicators$Name_Plot = seq(1,length(Biodiv_Indicators$Shannon[[1]]),by = 1)
+Shannon_RS                  = c(Biodiv_Indicators$Shannon)[[1]]
 ```
 
 The tables are then written to tab-seperated files.
@@ -242,20 +243,20 @@ The tables are then written to tab-seperated files.
 # write RS indicators
 ####################################################
 # write indicators for alpha diversity
-Path.Results = file.path(Output.Dir, basename(Input.Image.File), TypePCA, 'VALIDATION')
-dir.create(Path.Results, showWarnings = FALSE, recursive = TRUE)
-ShannonIndexFile <- file.path(Path.Results, "ShannonIndex.tab")
-write.table(Shannon.RS, file = ShannonIndexFile, sep = "\t", dec = ".", na = " ", 
-            row.names = Biodiv.Indicators$Name.Plot, col.names= F, quote=FALSE)
+Path_Results = file.path(Output_Dir, basename(Input_Image_File), TypePCA, 'VALIDATION')
+dir.create(Path_Results, showWarnings = FALSE, recursive = TRUE)
+ShannonIndexFile <- file.path(Path_Results, "ShannonIndex.tab")
+write.table(Shannon_RS, file = ShannonIndexFile, sep = "\t", dec = ".", na = " ", 
+            row.names = Biodiv_Indicators$Name_Plot, col.names= F, quote=FALSE)
 
-Results =  data.frame(Name.Vector, Biodiv.Indicators$Richness, Biodiv.Indicators$Fisher,                                Biodiv.Indicators$Shannon, Biodiv.Indicators$Simpson)
+Results =  data.frame(Name_Vector, Biodiv_Indicators$Richness, Biodiv_Indicators$Fisher,                                Biodiv_Indicators$Shannon, Biodiv_Indicators$Simpson)
 names(Results)  = c("ID_Plot", "Species_Richness", "Fisher", "Shannon", "Simpson")
-write.table(Results, file = paste(Path.Results,"AlphaDiversity.tab",sep=''), sep="\t", dec=".",               na=" ", row.names = F, col.names= T,quote=FALSE)
+write.table(Results, file = file.path(Path_Results,"AlphaDiversity.tab"), sep="\t", dec=".",na=" ", row.names = F, col.names= T,quote=FALSE)
 
 # write indicators for beta diversity
-BC_mean = Biodiv.Indicators$BCdiss
-colnames(BC_mean) = rownames(BC_mean) = Biodiv.Indicators$Name.Plot
-write.table(BC_mean, file = paste(Path.Results,"BrayCurtis.csv",sep=''), sep="\t", dec=".", na=" ", row.names = F, col.names= T,quote=FALSE)
+BC_mean = Biodiv_Indicators$BCdiss
+colnames(BC_mean) = rownames(BC_mean) = Biodiv_Indicators$Name_Plot
+write.table(BC_mean, file = file.path(Path_Results,"BrayCurtis.csv"), sep="\t", dec=".", na=" ", row.names = F, col.names= T,quote=FALSE)
 
 ```
 
@@ -289,13 +290,13 @@ for (i in 1: length(nbSamples)){
 
 # create data frame including alpha and beta diversity
 library(ggplot2)
-Results     =  data.frame('vgtype'=Type_Vegetation,'pco1'= BetaPCO$points[,1],'pco2'= BetaPCO$points[,2],'pco3' = BetaPCO$points[,3],'shannon'=Shannon.RS)
+Results     =  data.frame('vgtype'=Type_Vegetation,'pco1'= BetaPCO$points[,1],'pco2'= BetaPCO$points[,2],'pco3' = BetaPCO$points[,3],'shannon'=Shannon_RS)
 
 # plot field data in the PCoA space, with size corresponding to shannon index
 ggplot(Results, aes(x=pco1, y=pco2, color=vgtype,size=shannon)) +
   geom_point(alpha=0.6) +
   scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
-filename = file.path(Path.Results,'BetaDiversity_PcoA1_vs_PcoA2.png')
+filename = file.path(Path_Results,'BetaDiversity_PcoA1_vs_PcoA2.png')
 ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
        scale = 1, width = 6, height = 4, units = "in",
        dpi = 600, limitsize = TRUE)
@@ -304,7 +305,7 @@ ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
 ggplot(Results, aes(x=pco1, y=pco3, color=vgtype,size=shannon)) +
   geom_point(alpha=0.6) +
   scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
-filename = file.path(Path.Results,'BetaDiversity_PcoA1_vs_PcoA3.png')
+filename = file.path(Path_Results,'BetaDiversity_PcoA1_vs_PcoA3.png')
 ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
        scale = 1, width = 6, height = 4, units = "in",
        dpi = 600, limitsize = TRUE)
@@ -312,7 +313,7 @@ ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
 ggplot(Results, aes(x=pco2, y=pco3, color=vgtype,size=shannon)) +
   geom_point(alpha=0.6) +
   scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
-filename = file.path(Path.Results,'BetaDiversity_PcoA2_vs_PcoA3.png')
+filename = file.path(Path_Results,'BetaDiversity_PcoA2_vs_PcoA3.png')
 ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
        scale = 1, width = 6, height = 4, units = "in",
        dpi = 600, limitsize = TRUE)

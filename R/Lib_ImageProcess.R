@@ -291,15 +291,17 @@ extract_samples_from_image <- function(ImPath, coordPix, MaxRAM = FALSE, Already
   HDR <- read_ENVI_header(ImPathHDR)
 
   # compute the ranking of initial pixel list compared to index ranking
-  if (typeof(coordPix) == "double" & dim(coordPix)[2] == 2) {
-    if (dim(coordPix)[1] >= 2) {
-      coordPix_tmp <- list()
-      coordPix_tmp$Row <- coordPix[, 1]
-      coordPix_tmp$Column <- coordPix[, 2]
-    } else if (dim(coordPix)[1] == 1) {
-      coordPix_tmp <- list()
-      coordPix_tmp$Row <- coordPix[1]
-      coordPix_tmp$Column <- coordPix[2]
+  if (typeof(coordPix) == "double" ){
+    if (dim(coordPix)[2] == 2) {
+      if (dim(coordPix)[1] >= 2) {
+        coordPix_tmp <- list()
+        coordPix_tmp$Row <- coordPix[, 1]
+        coordPix_tmp$Column <- coordPix[, 2]
+      } else if (dim(coordPix)[1] == 1) {
+        coordPix_tmp <- list()
+        coordPix_tmp$Row <- coordPix[1]
+        coordPix_tmp$Column <- coordPix[2]
+      }
     }
   } else if (typeof(coordPix) == "list" & length(grep("Row", names(coordPix))) > 0 & length(grep("Column", names(coordPix))) > 0) {
     coordPix_tmp <- coordPix
