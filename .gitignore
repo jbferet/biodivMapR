@@ -4,3 +4,5 @@ doc
 .Rbuildignore
 .Rhistory
 TODO.md
+docs
+pkgdown/favicon
