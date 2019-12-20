@@ -66,21 +66,22 @@ ContinuumRemoval <- function(Minit, Spectral_Bands) {
   CR_data$Minit <- c()
   Spectral_Bands <- CR_data$Spectral_Bands
   nbSamples <- CR_data$nbSamples
+  nbSamplesUpDate <- length(CR_data$SamplesToKeep)
   # if samples to be considered
   if (nbSamples > 0) {
     # initialization:
     # spectral band corresponding to each element of the data matrix
-    Lambda <- repmat(matrix(Spectral_Bands, nrow = 1), nbSamples, 1)
+    Lambda <- repmat(matrix(Spectral_Bands, nrow = 1), nbSamplesUpDate, 1)
     # prepare matrices used to check evolution of the CR process
     # - elements still not processed through continuum removal: initialization to 1
-    Still.Need.CR <- matrix(1, nrow = nbSamples, ncol = nbBands)
+    Still.Need.CR <- matrix(1, nrow = nbSamplesUpDate, ncol = nbBands)
     # - value of the convex hull: initially set to 0
-    Convex_Hull <- matrix(0, nrow = nbSamples, ncol = nbBands)
+    Convex_Hull <- matrix(0, nrow = nbSamplesUpDate, ncol = nbBands)
     # - reflectance value for latest interception with convex hull:
     # initialization to value of the first reflectance measurement
     Intercept_Hull <- repmat(matrix(Minit[, 1], ncol = 1), 1, nbBands)
     # - spectral band of latest interception
-    Latest.Intercept <- repmat(matrix(Spectral_Bands[1], ncol = 1), nbSamples, nbBands)
+    Latest.Intercept <- repmat(matrix(Spectral_Bands[1], ncol = 1), nbSamplesUpDate, nbBands)
     # number of spectral bands found as intercept
     nb.Intercept <- 0
     # continues until arbitrary stopping criterion:
@@ -88,7 +89,7 @@ ContinuumRemoval <- function(Minit, Spectral_Bands) {
     while (max(Still.Need.CR[, 1:(nbBands - 2)]) == 1 & (nb.Intercept <= (nbBands / 2))) {
       nb.Intercept <- nb.Intercept + 1
       # Mstep give the position of the values to be updated
-      Update_Data <- matrix(1, nrow = nbSamples, ncol = nbBands)
+      Update_Data <- matrix(1, nrow = nbSamplesUpDate, ncol = nbBands)
       Update_Data[, nbBands] <- 0
       # initial step: first column set to 0; following steps: all bands below
       # max of the convex hull are set to 0
@@ -103,7 +104,7 @@ ContinuumRemoval <- function(Minit, Spectral_Bands) {
         Slope[which(is.na(Slope))] <- -9999
       }
       # get max index for each row and convert into linear index
-      Index.Max.Slope <- RowToLinear(max.col(Slope, ties.method = "last"), nbSamples, nbBands)
+      Index.Max.Slope <- RowToLinear(max.col(Slope, ties.method = "last"), nbSamplesUpDate, nbBands)
       # !!!! OPTIM: replace repmat with column operation
       # update coordinates of latest intercept
       Latest.Intercept <- repmat(matrix(Lambda[Index.Max.Slope], ncol = 1), 1, nbBands)
@@ -163,8 +164,9 @@ filter_prior_CR <- function(Minit, Spectral_Bands) {
   if (length(keep) == 1) {
     Minit <- matrix(Minit, nrow = 1)
   }
+  nbSamplesUpDate <- nrow(Minit)
   # add negative values to the last column and update spectral bands
-  Minit <- cbind(Minit, matrix(-9999, ncol = 1, nrow = nbSamples))
+  Minit <- cbind(Minit, matrix(-9999, ncol = 1, nrow = nbSamplesUpDate))
   nbBands <- ncol(Minit)
   Spectral_Bands[nbBands] <- Spectral_Bands[nbBands - 1] + 10
   my_list <- list("Minit" = Minit, "Spectral_Bands" = Spectral_Bands, "nbSamples" = nbSamples, "SamplesToKeep" = keep)

@@ -233,7 +233,7 @@ filter_PCA <- function(ImPath, HDR, MaskPath, Shade_Update, Spectral, CR, PCA_mo
     nbLines <- SeqRead_Shade$Lines_Per_Chunk[i]
     lenBin <- SeqRead_Shade$ReadByte_End[i] - SeqRead_Shade$ReadByte_Start[i] + 1
     ImgFormat <- "Shade"
-    if (!MaskPath == "") {
+    if ((!MaskPath == FALSE) & (!MaskPath == "")) {
       Shade_Chunk <- read_image_subset(MaskPath, HDR_Shade, Byte_Start, lenBin, nbLines, Shade_Format, ImgFormat)
     } else {
       Shade_Chunk <- ones(nbLines * HDR$samples, 1)
@@ -306,8 +306,12 @@ filter_PCA <- function(ImPath, HDR, MaskPath, Shade_Update, Spectral, CR, PCA_mo
 write_PCA_raster <- function(ImPath, MaskPath, PCA_Path, PCA_model, Spectral, Nb_PCs, CR, TypePCA, nbCPU = 1, MaxRAM = 0.25) {
   ImPathHDR <- get_HDR_name(ImPath)
   HDR <- read_ENVI_header(ImPathHDR)
-  ShadeHDR <- get_HDR_name(MaskPath)
-  HDR_Shade <- read_ENVI_header(ShadeHDR)
+  if ((!MaskPath == FALSE) & (!MaskPath == "")) {
+    ShadeHDR <- get_HDR_name(MaskPath)
+    HDR_Shade <- read_ENVI_header(ShadeHDR)
+  } else {
+    HDR_Shade <- FALSE
+  }
   # 1- create hdr and binary files corresponding to PCA file
   HDR_PCA <- HDR
   HDR_PCA$bands <- Nb_PCs
@@ -337,7 +341,17 @@ write_PCA_raster <- function(ImPath, MaskPath, PCA_Path, PCA_model, Spectral, Nb
   # read image file sequentially
   Image_Format <- ENVI_type2bytes(HDR)
   PCA_Format <- ENVI_type2bytes(HDR_PCA)
-  Shade_Format <- ENVI_type2bytes(HDR_Shade)
+
+  if (typeof(HDR_Shade) == 'list') {
+    Shade_Format <- ENVI_type2bytes(HDR_Shade)
+  } else if (typeof(HDR_Shade) == 'logical'){
+    Shade_Format <- FALSE
+  }
+  # if (!HDR_Shade == FALSE) {
+  #   Shade_Format <- ENVI_type2bytes(HDR_Shade)
+  # } else {
+  #   Shade_Format <- FALSE
+  # }
   # prepare for sequential processing: SeqRead_Image informs about byte location to read
   nbPieces <- split_image(HDR, LimitSizeGb = MaxRAM)
   SeqRead_Image <- where_to_read(HDR, nbPieces)
@@ -357,13 +371,16 @@ write_PCA_raster <- function(ImPath, MaskPath, PCA_Path, PCA_model, Spectral, Nb
     Byte_Start <- SeqRead_Shade$ReadByte_Start[i]
     nbLines <- SeqRead_Shade$Lines_Per_Chunk[i]
     lenBin <- SeqRead_Shade$ReadByte_End[i] - SeqRead_Shade$ReadByte_Start[i] + 1
-    ImgFormat <- "Shade"
-    Shade_Chunk <- read_image_subset(MaskPath, HDR_Shade, Byte_Start, lenBin, nbLines, Shade_Format, ImgFormat)
 
-    elimShade <- which(Shade_Chunk == 0)
-    keepShade <- which(Shade_Chunk == 1)
-    Image_Chunk <- Image_Chunk[keepShade, ]
-
+    if (typeof(HDR_Shade) == 'list') {
+      ImgFormat <- "Shade"
+      Shade_Chunk <- read_image_subset(MaskPath, HDR_Shade, Byte_Start, lenBin, nbLines, Shade_Format, ImgFormat)
+      elimShade <- which(Shade_Chunk == 0)
+      keepShade <- which(Shade_Chunk == 1)
+      Image_Chunk <- Image_Chunk[keepShade, ]
+    } else {
+      keepShade <- matrix(1,ncol = 1,nrow = nrow(Image_Chunk))
+    }
     # apply Continuum removal if needed
     if (CR == TRUE) {
       Image_Chunk <- apply_continuum_removal(Image_Chunk, Spectral, nbCPU = nbCPU)
