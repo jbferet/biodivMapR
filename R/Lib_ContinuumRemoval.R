@@ -86,37 +86,54 @@ ContinuumRemoval <- function(Minit, Spectral_Bands) {
     nb.Intercept <- 0
     # continues until arbitrary stopping criterion:
     # stops when reach last spectral band (all values before last = 0)
-    while (max(Still.Need.CR[, 1:(nbBands - 2)]) == 1 & (nb.Intercept <= (nbBands / 2))) {
+    # while (max(Still.Need.CR[, 1:(nbBands - 2)]) == 1 & (nb.Intercept <= (nbBands / 2))) {
+    while (max(Still.Need.CR[, 1:(nbBands - 2)]) == 1) {
       nb.Intercept <- nb.Intercept + 1
+      # identify samples still needing continuum removal
+      Sel <- which(Still.Need.CR[,(nbBands-2)]==1)
+      # update variables to process samples needing CR only
+      nbSamplesUpDate_tmp <- length(Sel)
+      Lambda_tmp <- matrix(Lambda[Sel,],nrow = nbSamplesUpDate_tmp)
+      Minit_tmp <- matrix(Minit[Sel,],nrow = nbSamplesUpDate_tmp)
+      Latest.Intercept_tmp <- matrix(Latest.Intercept[Sel,],nrow = nbSamplesUpDate_tmp)
+      Still.Need.CR_tmp <-matrix(Still.Need.CR[Sel,],nrow = nbSamplesUpDate_tmp)
+      Convex_Hull_tmp <-matrix(Convex_Hull[Sel,],nrow = nbSamplesUpDate_tmp)
+      Intercept_Hull_tmp <-matrix(Intercept_Hull[Sel,],nrow = nbSamplesUpDate_tmp)
       # Mstep give the position of the values to be updated
-      Update_Data <- matrix(1, nrow = nbSamplesUpDate, ncol = nbBands)
+      Update_Data <- matrix(1, nrow = nbSamplesUpDate_tmp, ncol = nbBands)
       Update_Data[, nbBands] <- 0
       # initial step: first column set to 0; following steps: all bands below
       # max of the convex hull are set to 0
-      Update_Data[which((Lambda - Latest.Intercept) < 0)] <- 0
+      Update_Data[which((Lambda_tmp - Latest.Intercept_tmp) < 0)] <- 0
       # compute slope for each coordinate
-      Slope <- (Minit - Intercept_Hull) / (Lambda - Latest.Intercept) * Still.Need.CR
+      Slope <- (Minit_tmp - Intercept_Hull_tmp) / (Lambda_tmp - Latest.Intercept_tmp) * Still.Need.CR_tmp
       # set current spectral band and previous bands to -9999
-      if (!length(which(Still.Need.CR == 0)) == 0) {
-        Slope[which(Still.Need.CR == 0)] <- -9999
+      if (!length(which(Still.Need.CR_tmp == 0)) == 0) {
+        Slope[which(Still.Need.CR_tmp == 0)] <- -9999
       }
       if (!length(which(is.na(Slope))) == 0) {
         Slope[which(is.na(Slope))] <- -9999
       }
       # get max index for each row and convert into linear index
-      Index.Max.Slope <- RowToLinear(max.col(Slope, ties.method = "last"), nbSamplesUpDate, nbBands)
+      Index.Max.Slope <- RowToLinear(max.col(Slope, ties.method = "last"), nbSamplesUpDate_tmp, nbBands)
       # !!!! OPTIM: replace repmat with column operation
       # update coordinates of latest intercept
-      Latest.Intercept <- repmat(matrix(Lambda[Index.Max.Slope], ncol = 1), 1, nbBands)
+      Latest.Intercept_tmp <- repmat(matrix(Lambda_tmp[Index.Max.Slope], ncol = 1), 1, nbBands)
       # update latest intercept
-      Intercept_Hull <- repmat(matrix(Minit[Index.Max.Slope], ncol = 1), 1, nbBands)
+      Intercept_Hull_tmp <- repmat(matrix(Minit_tmp[Index.Max.Slope], ncol = 1), 1, nbBands)
       # values corresponding to the domain between the two continuum maxima
-      Update_Data[which((Lambda - Latest.Intercept) >= 0 | Latest.Intercept == Spectral_Bands[nbBands])] <- 0
+      Update_Data[which((Lambda_tmp - Latest.Intercept_tmp) >= 0 | Latest.Intercept_tmp == Spectral_Bands[nbBands])] <- 0
       # values to eliminate for the next analysis: all spectral bands before latest intercept
-      Still.Need.CR[which((Lambda - Latest.Intercept) < 0)] <- 0
+      Still.Need.CR_tmp[which((Lambda_tmp - Latest.Intercept_tmp) < 0)] <- 0
       # the max slope is known, as well as the coordinates of the beginning and ending
       # a matrix now has to be built
-      Convex_Hull <- Convex_Hull + Update_Data * (Intercept_Hull + sweep((Lambda - Latest.Intercept), 1, Slope[Index.Max.Slope], "*"))
+      Convex_Hull_tmp <- Convex_Hull_tmp + Update_Data * (Intercept_Hull_tmp + sweep((Lambda_tmp - Latest.Intercept_tmp), 1, Slope[Index.Max.Slope], "*"))
+      # update variables
+      Convex_Hull[Sel,] <- Convex_Hull_tmp
+      Still.Need.CR[Sel,] <- Still.Need.CR_tmp
+      Lambda[Sel,] <- Lambda_tmp
+      Latest.Intercept[Sel,] <- Latest.Intercept_tmp
+      Intercept_Hull[Sel,] <- Intercept_Hull_tmp
     }
     CR_Results0 <- Minit[, 2:(nbBands - 2)] / Convex_Hull[, 2:(nbBands - 2)]
     CR_Results <- matrix(0, ncol = (nbBands - 3), nrow = nbSamples)
