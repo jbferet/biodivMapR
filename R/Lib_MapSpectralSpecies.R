@@ -64,7 +64,7 @@ map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model
       }
       print("Apply PCA to subset prior to k-Means")
       # remove constant bands if needed
-      if (!length(Spectral$BandsNoVar) == 0) {
+      if (!length(SpectralFilter$BandsNoVar) == 0) {
         Subset$DataSubset <- Subset$DataSubset[, -SpectralFilter$BandsNoVar]
       }
       if (TypePCA == "PCA" | TypePCA == "SPCA") {
