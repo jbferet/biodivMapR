@@ -17,7 +17,7 @@
 #' @param TypePCA character. Type of PCA: choose either "PCA" or "SPCA"
 #' @param NDVI_Thresh numeric. NDVI threshold applied to produce a mask (select pixels with NDVI>NDVI_Thresh)
 #' @param Blue_Thresh numeric. Blue threshold applied to produce a mask (select pixels with Blue refl < Blue_Thresh --> filter clouds) refl expected between 0 and 10000
-#' @param NIR_Thresh numeric. NIR threshold applied to produce a mask (select pixels with NIR refl < NIR_Thresh) refl expected between 0 and 10000
+#' @param NIR_Thresh numeric. NIR threshold applied to produce a mask (select pixels with NIR refl > NIR_Thresh) refl expected between 0 and 10000
 #' @param Blue numeric. central wavelength corresponding to the blue spectral band (in nanometers)
 #' @param Red numeric. central wavelength corresponding to the red spectral band (in nanometers)
 #' @param NIR numeric. central wavelength corresponding to the NIR spectral band (in nanometers)
