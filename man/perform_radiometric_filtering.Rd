@@ -21,7 +21,7 @@ perform_radiometric_filtering(Image_Path, Mask_Path, Output_Dir,
 
 \item{Blue_Thresh}{numeric. Blue threshold applied to produce a mask (select pixels with Blue refl < Blue_Thresh --> filter clouds) refl expected between 0 and 10000}
 
-\item{NIR_Thresh}{numeric. NIR threshold applied to produce a mask (select pixels with NIR refl < NIR_Thresh) refl expected between 0 and 10000}
+\item{NIR_Thresh}{numeric. NIR threshold applied to produce a mask (select pixels with NIR refl > NIR_Thresh) refl expected between 0 and 10000}
 
 \item{Blue}{numeric. central wavelength corresponding to the blue spectral band (in nanometers)}
 
