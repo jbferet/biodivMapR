@@ -111,6 +111,20 @@ init_kmeans <- function(dataPCA, Pix_Per_Partition, nb_partitions, nbclusters, n
   m0 <- apply(dataPCA, 2, function(x) min(x))
   M0 <- apply(dataPCA, 2, function(x) max(x))
   d0 <- M0 - m0
+  if (length(which(is.na(m0)))>0 | length(which(is.na(M0)))>0 | length(which(is.infinite(m0)))>0 | length(which(is.infinite(M0)))>0){
+    message("")
+    message("*********************************************************")
+    message("WARNING: the processing resulted in NA or infinite values")
+    message("       This may be due to noisy spectral domains         ")
+    message("     This may be due to noisy spectral domains or        ")
+    message(" individual pixels showing Inf or Na values in input data")
+    message("               Please check input data                   ")
+    message("                                                         ")
+    message("                     process aborted                     ")
+    message("*********************************************************")
+    message("")
+    stop()
+  }
   dataPCA <- center_reduce(dataPCA, m0, d0)
   # get the dimensions of the images, and the number of subimages to process
   dataPCA <- split(as.data.frame(dataPCA), rep(1:nb_partitions, each = Pix_Per_Partition))
