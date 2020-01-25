@@ -23,7 +23,7 @@
 #' @param Input_Mask_File character. Path of the mask corresponding to the image
 #' @param Pix_Per_Partition numeric. number of pixels for each partition
 #' @param nb_partitions numeric. number of partition
-#' @param CR boolean. Set to TRUE if continuum removal should be applied
+#' @param Continuum_Removal boolean. Set to TRUE if continuum removal should be applied
 #' @param nbCPU numeric. Number of CPUs to use in parallel.
 #' @param MaxRAM numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.
 #' @param nbclusters numeric. number of clusters defined in k-Means
@@ -31,7 +31,7 @@
 #' @return None
 #' @importFrom utils read.table
 #' @export
-map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model,SpectralFilter,Input_Mask_File,Pix_Per_Partition,nb_partitions,CR= TRUE,TypePCA = "SPCA", nbclusters = 50, nbCPU = 1, MaxRAM = FALSE) {
+map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model,SpectralFilter,Input_Mask_File,Pix_Per_Partition,nb_partitions,Continuum_Removal= TRUE,TypePCA = "SPCA", nbclusters = 50, nbCPU = 1, MaxRAM = FALSE) {
 
   # if no prior diversity map has been produced --> need PCA file
   if (!file.exists(PCA_Files)) {
@@ -58,8 +58,9 @@ map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model
       ImPathHDR <- get_HDR_name(Input_Image_File)
       HDR <- read_ENVI_header(ImPathHDR)
       Subset <- get_random_subset_from_image(Input_Image_File, HDR, Input_Mask_File, nb_partitions, Pix_Per_Partition)
+      SubsetInit <- Subset
       # if needed, apply continuum removal
-      if (CR == TRUE) {
+      if (Continuum_Removal == TRUE) {
         Subset$DataSubset <- apply_continuum_removal(Subset$DataSubset, SpectralFilter, nbCPU = nbCPU)
       }
       print("Apply PCA to subset prior to k-Means")
@@ -88,9 +89,35 @@ map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model
     print("perform k-means clustering for each subset and define centroids")
     # scaling factor subPCA between 0 and 1
     Kmeans_info <- init_kmeans(dataPCA, Pix_Per_Partition, nb_partitions, nbclusters, nbCPU)
-    ##    3- ASSIGN SPECTRAL SPECIES TO EACH PIXEL
-    print("apply Kmeans to the whole image and determine spectral species")
-    apply_kmeans(PCA_Files, PC_Select, Input_Mask_File, Kmeans_info, Spectral_Species_Path, nbCPU, MaxRAM)
+    if (Kmeans_info$Error==FALSE){
+      ##    3- ASSIGN SPECTRAL SPECIES TO EACH PIXEL
+      print("apply Kmeans to the whole image and determine spectral species")
+      apply_kmeans(PCA_Files, PC_Select, Input_Mask_File, Kmeans_info, Spectral_Species_Path, nbCPU, MaxRAM)
+    } else {
+      ##    produce error report
+      # create directory where error should be stored
+      Output_Dir_Error <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "ErrorReport")
+      # identify which samples cause problems
+      LocError <- unique(c(which(!is.finite(Kmeans_info$MinVal)),which(!is.finite(Kmeans_info$MaxVal))))
+      ValError <- which(!is.finite(dataPCA[,LocError[1]]))
+      # Get the original data corresponding to the first sample
+      DataError <- SubsetInit$DataSubset[ValError,]
+      DataErrorCR <- Subset$DataSubset[ValError,]
+      CoordinatesError <- SubsetInit$coordPix[ValError,]
+      # save these in a RData file
+      FileError <- file.path(Output_Dir_Error,'ErrorPixels.RData')
+      ErrorReport <- list('CoordinatesError' = CoordinatesError,'DataError' = DataError,'DataError_afterCR' = DataErrorCR)
+      save(ErrorReport, file = FileError)
+      message("")
+      message("*********************************************************")
+      message("       An error report directory has been produced.      ")
+      message("Please check information about data causing errors here: ")
+      print(FileError)
+      message("               The process will now stop                 ")
+      message("*********************************************************")
+      message("")
+      stop()
+    }
   }
   return(invisible())
 }
@@ -122,27 +149,29 @@ init_kmeans <- function(dataPCA, Pix_Per_Partition, nb_partitions, nbclusters, n
     message("                                                         ")
     message("   if nothing wrong identified with input data, please   ")
     message("   submit a bug report, reproduce the bug with reduced   ")
-    message("     dataset and contact teh authors of the package      ")
+    message("     dataset and contact the authors of the package      ")
     message("                   process aborted                       ")
     message("*********************************************************")
     message("")
-    stop()
+    my_list <- list("Centroids" = NULL, "MinVal" = m0, "MaxVal" = M0, "Range" = d0, "Error" = TRUE)
+    return(my_list)
+  } else {
+    dataPCA <- center_reduce(dataPCA, m0, d0)
+    # get the dimensions of the images, and the number of subimages to process
+    dataPCA <- split(as.data.frame(dataPCA), rep(1:nb_partitions, each = Pix_Per_Partition))
+    # multiprocess kmeans clustering
+    plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
+    Schedule_Per_Thread <- ceiling(length(dataPCA) / nbCPU)
+    res <- future_lapply(dataPCA, FUN = kmeans, centers = nbclusters, iter.max = 50, nstart = 10,
+                         algorithm = c("Hartigan-Wong"), future.scheduling = Schedule_Per_Thread)
+    plan(sequential)
+    Centroids <- list(nb_partitions)
+    for (i in (1:nb_partitions)) {
+      Centroids[[i]] <- res[[i]]$centers
+    }
+    my_list <- list("Centroids" = Centroids, "MinVal" = m0, "MaxVal" = M0, "Range" = d0)
+    return(my_list)
   }
-  dataPCA <- center_reduce(dataPCA, m0, d0)
-  # get the dimensions of the images, and the number of subimages to process
-  dataPCA <- split(as.data.frame(dataPCA), rep(1:nb_partitions, each = Pix_Per_Partition))
-  # multiprocess kmeans clustering
-  plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
-  Schedule_Per_Thread <- ceiling(length(dataPCA) / nbCPU)
-  res <- future_lapply(dataPCA, FUN = kmeans, centers = nbclusters, iter.max = 50, nstart = 10,
-                       algorithm = c("Hartigan-Wong"), future.scheduling = Schedule_Per_Thread)
-  plan(sequential)
-  Centroids <- list(nb_partitions)
-  for (i in (1:nb_partitions)) {
-    Centroids[[i]] <- res[[i]]$centers
-  }
-  my_list <- list("Centroids" = Centroids, "MinVal" = m0, "MaxVal" = M0, "Range" = d0)
-  return(my_list)
 }
 
 # Applies Kmeans clustering to PCA image

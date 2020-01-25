@@ -5,8 +5,9 @@
 \title{maps spectral species based on PCA file computed previously}
 \usage{
 map_spectral_species(Input_Image_File, Output_Dir, PCA_Files, PCA_model,
-  SpectralFilter, MaskPath, Pix_Per_Partition, nb_partitions, CR = TRUE,
-  TypePCA = "SPCA", nbclusters = 50, nbCPU = 1, MaxRAM = FALSE)
+  SpectralFilter, Input_Mask_File, Pix_Per_Partition, nb_partitions,
+  Continuum_Removal = TRUE, TypePCA = "SPCA", nbclusters = 50,
+  nbCPU = 1, MaxRAM = FALSE)
 }
 \arguments{
 \item{Input_Image_File}{character. Path of the image to be processed}
@@ -20,13 +21,13 @@ map_spectral_species(Input_Image_File, Output_Dir, PCA_Files, PCA_model,
 \item{SpectralFilter}{list. information about spectral band location
 (central wavelength), bands to keep...}
 
-\item{MaskPath}{character. Path of the mask corresponding to the image}
+\item{Input_Mask_File}{character. Path of the mask corresponding to the image}
 
 \item{Pix_Per_Partition}{numeric. number of pixels for each partition}
 
 \item{nb_partitions}{numeric. number of partition}
 
-\item{CR}{boolean. Set to TRUE if continuum removal should be applied}
+\item{Continuum_Removal}{boolean. Set to TRUE if continuum removal should be applied}
 
 \item{TypePCA}{character. Type of PCA: choose either "PCA" or "SPCA"}
 

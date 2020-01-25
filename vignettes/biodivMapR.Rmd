@@ -150,7 +150,7 @@ Here is the code to perform PCA and select PCA bands:
 ```{r PCA}
 print("PERFORM PCA ON RASTER")
 PCA_Output        = perform_PCA(Input_Image_File, Input_Mask_File, Output_Dir,
-                               TypePCA = TypePCA, FilterPCA = FilterPCA, nbCPU = nbCPU,MaxRAM = MaxRAM)
+                               TypePCA = TypePCA, FilterPCA = FilterPCA, nbCPU = nbCPU,MaxRAM = MaxRAM, Continuum_Removal = TRUE)
 # path for the PCA raster
 PCA_Files         = PCA_Output$PCA_Files
 # number of pixels used for each partition used for k-means clustering
@@ -178,7 +178,7 @@ The first step towards  \alpha and \beta diversity mapping corresponds to the co
 print("MAP SPECTRAL SPECIES")
 map_spectral_species(Input_Image_File, Output_Dir, PCA_Files, PCA_model, SpectralFilter, Input_Mask_File,
                      Pix_Per_Partition, nb_partitions, nbCPU=nbCPU, MaxRAM=MaxRAM, 
-                     nbclusters = nbclusters, TypePCA = TypePCA, CR = TRUE)
+                     nbclusters = nbclusters, TypePCA = TypePCA, Continuum_Removal = TRUE)
 ```
 
 SpectralSpecies is then stored in a raster file located here:
