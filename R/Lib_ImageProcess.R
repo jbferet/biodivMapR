@@ -379,7 +379,7 @@ extract_samples_from_image <- function(ImPath, coordPix, MaxRAM = FALSE, Already
 # @param nb_partitions number of k-means then averaged
 # @param Pix_Per_Partition number of pixels per iteration
 #
-# @return samples from image and updated number of pixels to sampel if necessary
+# @return samples from image, coordinates of these samples and updated number of pixels to sample
 #' @importFrom matlab ones
 get_random_subset_from_image <- function(ImPath, HDR, MaskPath, nb_partitions, Pix_Per_Partition) {
   nbPix2Sample <- nb_partitions * Pix_Per_Partition
@@ -426,7 +426,8 @@ get_random_subset_from_image <- function(ImPath, HDR, MaskPath, nb_partitions, P
   Sample_Sel <- extract_samples_from_image(ImPath, coordPix)
   # randomize!
   Sample_Sel <- Sample_Sel[sample(dim(Sample_Sel)[1]), ]
-  my_list <- list("DataSubset" = Sample_Sel, "nbPix2Sample" = nbPix2Sample)
+  coordPix <- coordPix[sample(dim(Sample_Sel)[1]), ]
+  my_list <- list("DataSubset" = Sample_Sel, "nbPix2Sample" = nbPix2Sample,"coordPix"=coordPix)
   return(my_list)
 }
 
