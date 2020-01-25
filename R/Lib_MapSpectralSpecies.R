@@ -20,7 +20,7 @@
 #' @param PCA_model list. Parameters for teh PCA model to be applied on original image
 #' @param SpectralFilter list. information about spectral band location
 #' (central wavelength), bands to keep...
-#' @param MaskPath character. Path of the mask corresponding to the image
+#' @param Input_Mask_File character. Path of the mask corresponding to the image
 #' @param Pix_Per_Partition numeric. number of pixels for each partition
 #' @param nb_partitions numeric. number of partition
 #' @param CR boolean. Set to TRUE if continuum removal should be applied
@@ -31,7 +31,7 @@
 #' @return None
 #' @importFrom utils read.table
 #' @export
-map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model,SpectralFilter,MaskPath,Pix_Per_Partition,nb_partitions,CR= TRUE,TypePCA = "SPCA", nbclusters = 50, nbCPU = 1, MaxRAM = FALSE) {
+map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model,SpectralFilter,Input_Mask_File,Pix_Per_Partition,nb_partitions,CR= TRUE,TypePCA = "SPCA", nbclusters = 50, nbCPU = 1, MaxRAM = FALSE) {
 
   # if no prior diversity map has been produced --> need PCA file
   if (!file.exists(PCA_Files)) {
@@ -57,7 +57,7 @@ map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model
       # sample data from image and perform PCA
       ImPathHDR <- get_HDR_name(Input_Image_File)
       HDR <- read_ENVI_header(ImPathHDR)
-      Subset <- get_random_subset_from_image(Input_Image_File, HDR, MaskPath, nb_partitions, Pix_Per_Partition)
+      Subset <- get_random_subset_from_image(Input_Image_File, HDR, Input_Mask_File, nb_partitions, Pix_Per_Partition)
       # if needed, apply continuum removal
       if (CR == TRUE) {
         Subset$DataSubset <- apply_continuum_removal(Subset$DataSubset, SpectralFilter, nbCPU = nbCPU)
@@ -90,7 +90,7 @@ map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model
     Kmeans_info <- init_kmeans(dataPCA, Pix_Per_Partition, nb_partitions, nbclusters, nbCPU)
     ##    3- ASSIGN SPECTRAL SPECIES TO EACH PIXEL
     print("apply Kmeans to the whole image and determine spectral species")
-    apply_kmeans(PCA_Files, PC_Select, MaskPath, Kmeans_info, Spectral_Species_Path, nbCPU, MaxRAM)
+    apply_kmeans(PCA_Files, PC_Select, Input_Mask_File, Kmeans_info, Spectral_Species_Path, nbCPU, MaxRAM)
   }
   return(invisible())
 }
@@ -149,18 +149,18 @@ init_kmeans <- function(dataPCA, Pix_Per_Partition, nb_partitions, nbclusters, n
 #
 # @param PCA_Path path for the PCA image
 # @param PC_Select PCs selected from PCA
-# @param MaskPath Path for the mask
+# @param Input_Mask_File Path for the mask
 # @param Kmeans_info information about kmeans computed in previous step
 # @param nbCPU
 # @param MaxRAM
 # @param Spectral_Species_Path path for spectral species file to be written
 #
 # @return None
-apply_kmeans <- function(PCA_Path, PC_Select, MaskPath, Kmeans_info, Spectral_Species_Path, nbCPU = 1, MaxRAM = FALSE) {
+apply_kmeans <- function(PCA_Path, PC_Select, Input_Mask_File, Kmeans_info, Spectral_Species_Path, nbCPU = 1, MaxRAM = FALSE) {
   ImPathHDR <- get_HDR_name(PCA_Path)
   HDR_PCA <- read_ENVI_header(ImPathHDR)
   PCA_Format <- ENVI_type2bytes(HDR_PCA)
-  HDR_Shade <- get_HDR_name(MaskPath)
+  HDR_Shade <- get_HDR_name(Input_Mask_File)
   HDR_Shade <- read_ENVI_header(HDR_Shade)
   # prepare for sequential processing: SeqRead_Image informs about byte location to read
   if (MaxRAM == FALSE) {
@@ -201,7 +201,7 @@ apply_kmeans <- function(PCA_Path, PC_Select, MaskPath, Kmeans_info, Spectral_Sp
     Location_RW$lenBin_Shade <- SeqRead_Shade$ReadByte_End[i] - SeqRead_Shade$ReadByte_Start[i] + 1
     Location_RW$Byte_Start_SS <- 1 + (SeqRead_Shade$ReadByte_Start[i] - 1) * nb_partitions
     Location_RW$lenBin_SS <- nb_partitions * (SeqRead_Shade$ReadByte_End[i] - SeqRead_Shade$ReadByte_Start[i]) + 1
-    compute_spectral_species(PCA_Path, MaskPath, Spectral_Species_Path, Location_RW, PC_Select, Kmeans_info, nbCPU)
+    compute_spectral_species(PCA_Path, Input_Mask_File, Spectral_Species_Path, Location_RW, PC_Select, Kmeans_info, nbCPU)
   }
   return(invisible())
 }
@@ -211,7 +211,7 @@ apply_kmeans <- function(PCA_Path, PC_Select, MaskPath, Kmeans_info, Spectral_Sp
 # applies kmeans --> closest cluster corresponds to the "spectral species"
 #
 # @param PCA_Path path for the PCA image
-# @param MaskPath Path for the mask
+# @param Input_Mask_File Path for the mask
 # @param Spectral_Species_Path path for spectral species file to be written
 # @param Location_RW where to read/write information in binary file
 # @param PC_Select PCs selected from PCA
@@ -222,7 +222,7 @@ apply_kmeans <- function(PCA_Path, PC_Select, MaskPath, Kmeans_info, Spectral_Sp
 #' @importFrom snow splitRows
 #' @importFrom future plan multiprocess sequential
 #' @importFrom future.apply future_lapply
-compute_spectral_species <- function(PCA_Path, MaskPath, Spectral_Species_Path, Location_RW, PC_Select, Kmeans_info, nbCPU = 1) {
+compute_spectral_species <- function(PCA_Path, Input_Mask_File, Spectral_Species_Path, Location_RW, PC_Select, Kmeans_info, nbCPU = 1) {
 
   # characteristics of the centroids computed during preprocessing
   nb_partitions <- length(Kmeans_info$Centroids)
@@ -230,11 +230,11 @@ compute_spectral_species <- function(PCA_Path, MaskPath, Spectral_Species_Path, 
   CentroidsArray <- do.call("rbind", Kmeans_info$Centroids)
 
   # read shade file and PCA file
-  ShadeHDR <- get_HDR_name(MaskPath)
+  ShadeHDR <- get_HDR_name(Input_Mask_File)
   HDR_Shade <- read_ENVI_header(ShadeHDR)
   Shade.Format <- ENVI_type2bytes(HDR_Shade)
   ImgFormat <- "Shade"
-  Shade_Chunk <- read_image_subset(MaskPath, HDR_Shade, Location_RW$Byte_Start_Shade, Location_RW$lenBin_Shade, Location_RW$nbLines, Shade.Format, ImgFormat)
+  Shade_Chunk <- read_image_subset(Input_Mask_File, HDR_Shade, Location_RW$Byte_Start_Shade, Location_RW$lenBin_Shade, Location_RW$nbLines, Shade.Format, ImgFormat)
 
   PCA_HDR <- get_HDR_name(PCA_Path)
   HDR_PCA <- read_ENVI_header(PCA_HDR)
