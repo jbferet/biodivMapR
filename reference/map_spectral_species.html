@@ -129,8 +129,9 @@
     </div>
 
     <pre class="usage"><span class='fu'>map_spectral_species</span>(<span class='no'>Input_Image_File</span>, <span class='no'>Output_Dir</span>, <span class='no'>PCA_Files</span>, <span class='no'>PCA_model</span>,
-  <span class='no'>SpectralFilter</span>, <span class='no'>MaskPath</span>, <span class='no'>Pix_Per_Partition</span>, <span class='no'>nb_partitions</span>, <span class='kw'>CR</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>TypePCA</span> <span class='kw'>=</span> <span class='st'>"SPCA"</span>, <span class='kw'>nbclusters</span> <span class='kw'>=</span> <span class='fl'>50</span>, <span class='kw'>nbCPU</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>MaxRAM</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+  <span class='no'>SpectralFilter</span>, <span class='no'>Input_Mask_File</span>, <span class='no'>Pix_Per_Partition</span>, <span class='no'>nb_partitions</span>,
+  <span class='kw'>Continuum_Removal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>TypePCA</span> <span class='kw'>=</span> <span class='st'>"SPCA"</span>, <span class='kw'>nbclusters</span> <span class='kw'>=</span> <span class='fl'>50</span>,
+  <span class='kw'>nbCPU</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>MaxRAM</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -157,7 +158,7 @@
 (central wavelength), bands to keep...</p></td>
     </tr>
     <tr>
-      <th>MaskPath</th>
+      <th>Input_Mask_File</th>
       <td><p>character. Path of the mask corresponding to the image</p></td>
     </tr>
     <tr>
@@ -169,7 +170,7 @@
       <td><p>numeric. number of partition</p></td>
     </tr>
     <tr>
-      <th>CR</th>
+      <th>Continuum_Removal</th>
       <td><p>boolean. Set to TRUE if continuum removal should be applied</p></td>
     </tr>
     <tr>
