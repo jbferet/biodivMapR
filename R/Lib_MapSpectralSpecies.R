@@ -106,7 +106,7 @@ map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model
       CoordinatesError <- SubsetInit$coordPix[ValError,]
       # save these in a RData file
       FileError <- file.path(Output_Dir_Error,'ErrorPixels.RData')
-      ErrorReport <- list('CoordinatesError' = CoordinatesError,'DataError' = DataError,'DataError_afterCR' = DataErrorCR)
+      ErrorReport <- list('CoordinatesError' = CoordinatesError,'DataError' = DataError,'DataError_afterCR' = DataErrorCR, 'SpectralFilter'=SpectralFilter)
       save(ErrorReport, file = FileError)
       message("")
       message("*********************************************************")
