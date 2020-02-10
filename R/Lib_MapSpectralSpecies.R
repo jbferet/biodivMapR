@@ -169,7 +169,7 @@ init_kmeans <- function(dataPCA, Pix_Per_Partition, nb_partitions, nbclusters, n
     for (i in (1:nb_partitions)) {
       Centroids[[i]] <- res[[i]]$centers
     }
-    my_list <- list("Centroids" = Centroids, "MinVal" = m0, "MaxVal" = M0, "Range" = d0)
+    my_list <- list("Centroids" = Centroids, "MinVal" = m0, "MaxVal" = M0, "Range" = d0, "Error" = FALSE)
     return(my_list)
   }
 }
