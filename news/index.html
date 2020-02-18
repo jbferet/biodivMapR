@@ -76,7 +76,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -122,16 +122,40 @@
       <small>Source: <a href='https://github.com/jbferet/biodivMapR/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="biodivmapr-v1-0-2" class="section level1">
+    <div id="biodivmapr-v1-1-0" class="section level1">
 <h1 class="page-header">
-<a href="#biodivmapr-v1-0-2" class="anchor"></a>biodivMapR v1.0.2</h1>
+<a href="#biodivmapr-v1-1-0" class="anchor"></a>biodivMapR v1.1.0</h1>
 <div id="fixes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#fixes" class="anchor"></a>Fixes</h2>
+<ul>
+<li>fixed bug in Lib_MapSpectralSpecies: remove constant bands from Subset$DataSubset if needed</li>
+<li>fix bug when continuum removal applied on pixels with constant values which were not filtered in previous stages</li>
+</ul>
 </div>
 <div id="changes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#changes" class="anchor"></a>Changes</h2>
+<ul>
+<li>Updated continuum removal</li>
+<li>Named Continuum_Removal instead of CR</li>
+<li>corrected documetation for perform_radiometric_filtering</li>
+<li>Added an error report when spectral information is not conform with expectations (due to too high noise level for example, usually leading to NaN or Inf values after PCA)</li>
+<li>Changed name for some variables in internal functions for consistency</li>
+<li>will add documentation on how to analyze error reports</li>
+</ul>
+</div>
+</div>
+    <div id="biodivmapr-v1-0-2" class="section level1">
+<h1 class="page-header">
+<a href="#biodivmapr-v1-0-2" class="anchor"></a>biodivMapR v1.0.2</h1>
+<div id="fixes-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#fixes-1" class="anchor"></a>Fixes</h2>
+</div>
+<div id="changes-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-1" class="anchor"></a>Changes</h2>
 <ul>
 <li>moved examples to repository root: example files are not installed with package anymore.</li>
 <li>removed Plots reprojection from <code>diversity_from_plots</code>: now, Plots and Raster must be in the same projection. Changed example Plots projection accordingly.</li>
@@ -160,6 +184,7 @@
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#biodivmapr-v1-1-0">1.1.0</a></li>
         <li><a href="#biodivmapr-v1-0-2">1.0.2</a></li>
         <li><a href="#biodivmapr-v1-0-1-release-date-2019-09-27">1.0.1</a></li>
         <li><a href="#biodivmapr-v1-0-0-release-date-2019-09-26">1.0.0</a></li>
