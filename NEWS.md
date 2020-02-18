@@ -1,3 +1,17 @@
+# biodivMapR v1.1.0
+
+## Fixes
+- fixed bug in Lib_MapSpectralSpecies: remove constant bands from Subset$DataSubset if needed
+- fix bug when continuum removal applied on pixels with constant values which were not filtered in previous stages
+
+## Changes
+- Updated continuum removal
+- Named Continuum_Removal instead of CR
+- corrected documetation for perform_radiometric_filtering
+- Added an error report when spectral information is not conform with expectations (due to too high noise level for example, usually leading to NaN or Inf values after PCA)
+- Changed name for some variables in internal functions for consistency
+- will add documentation on how to analyze error reports
+
 # biodivMapR v1.0.2
 
 ## Fixes
