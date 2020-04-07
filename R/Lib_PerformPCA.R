@@ -51,6 +51,10 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
   # if needed, apply continuum removal
   if (Continuum_Removal == TRUE) {
     Subset$DataSubset <- apply_continuum_removal(Subset$DataSubset, SpectralFilter, nbCPU = nbCPU)
+  } else {
+    if (!length(SpectralFilter$WaterVapor) == 0) {
+      Subset$DataSubset <- Subset$DataSubset[, -SpectralFilter$WaterVapor]
+    }
   }
   # if number of pixels available inferior number initial sample size
   if (Subset$nbPix2Sample < nb_Pix_To_Sample) {
@@ -100,6 +104,10 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
     # if needed, apply continuum removal
     if (Continuum_Removal == TRUE) {
       Subset$DataSubset <- apply_continuum_removal(Subset$DataSubset, SpectralFilter, nbCPU = nbCPU)
+    } else {
+      if (!length(SpectralFilter$WaterVapor) == 0) {
+        Subset$DataSubset <- Subset$DataSubset[, -SpectralFilter$WaterVapor]
+      }
     }
     # if number of pixels available inferior number initial sample size
     if (Subset$nbPix2Sample < nb_Pix_To_Sample) {
@@ -246,6 +254,10 @@ filter_PCA <- function(Input_Image_File, HDR, Input_Mask_File, Shade_Update, Spe
     # apply Continuum removal if needed
     if (CR == TRUE) {
       Image_Chunk <- apply_continuum_removal(Image_Chunk, Spectral, nbCPU = nbCPU)
+    } else {
+      if (!length(Spectral$WaterVapor) == 0) {
+        Image_Chunk <- Image_Chunk[, -Spectral$WaterVapor]
+      }
     }
     # remove constant bands if needed
     if (!length(Spectral$BandsNoVar) == 0) {
