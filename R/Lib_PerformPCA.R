@@ -232,10 +232,10 @@ filter_PCA <- function(Input_Image_File, HDR, Input_Mask_File, Shade_Update, Spe
     print(paste("PCA Piece #", i, "/", nbPieces))
     # read image and mask data
     Byte_Start <- SeqRead_Image$ReadByte_Start[i]
-    nbLines <- SeqRead_Image$Lines_Per_Chunk[i]
+    nbLinesIMG <- SeqRead_Image$Lines_Per_Chunk[i]
     lenBin <- SeqRead_Image$ReadByte_End[i] - SeqRead_Image$ReadByte_Start[i] + 1
     ImgFormat <- "2D"
-    Image_Chunk <- read_image_subset(Input_Image_File, HDR, Byte_Start, lenBin, nbLines, Image_Format, ImgFormat)
+    Image_Chunk <- read_image_subset(Input_Image_File, HDR, Byte_Start, lenBin, nbLinesIMG, Image_Format, ImgFormat)
 
     Byte_Start <- SeqRead_Shade$ReadByte_Start[i]
     nbLines <- SeqRead_Shade$Lines_Per_Chunk[i]
@@ -269,7 +269,7 @@ filter_PCA <- function(Input_Image_File, HDR, Input_Mask_File, Shade_Update, Spe
     }
 
     # get PCA of the group of line and rearrange the data to write it correctly in the output file
-    linetmp <- matrix(NA, ncol = ncol(Image_Chunk), nrow = (HDR$samples * HDR$lines))
+    linetmp <- matrix(NA, ncol = ncol(Image_Chunk), nrow = (HDR$samples * nbLinesIMG))
     if (length(keepShade) > 0) {
       linetmp[keepShade, ] <- Image_Chunk
     }
@@ -298,6 +298,7 @@ filter_PCA <- function(Input_Image_File, HDR, Input_Mask_File, Shade_Update, Spe
     writeBin(c(as.integer(Shade_Chunk)), fidOUT, size = 1, endian = .Platform$endian, useBytes = FALSE)
     close(fidOUT)
   }
+  gc()
   return(Shade_Update)
 }
 
