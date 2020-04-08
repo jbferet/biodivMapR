@@ -97,5 +97,8 @@ create_mask_from_threshold <- function(ImPath, MaskPath, MaskPath.Update, NDVI_T
   Mask[SelPixels] <- 1
   # update initial shade mask
   MaskPath <- update_shademask(MaskPath, Header, Mask, MaskPath.Update)
+  list2Remove <- ls()
+  rm(list=list2Remove[-which(list2Remove=='MaskPath')])
+  gc()
   return(MaskPath)
 }

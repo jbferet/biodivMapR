@@ -193,13 +193,19 @@ ENVI_type2bytes <- function(HDR) {
 # @return bands corresponding to atmospheric water absorption domain
 exclude_spectral_domains <- function(ImPath, Excluded_WL = FALSE) {
   # definition of water vapor absorption
-  if (length(Excluded_WL) == 1) {
+  if (is.null(Excluded_WL)){
+    Excluded_WL <- c(0, 0)
+  } else if (length(Excluded_WL) == 1) {
     if (Excluded_WL == FALSE) {
       Excluded_WL <- c(0, 400)
       Excluded_WL <- rbind(Excluded_WL, c(895, 1005))
       Excluded_WL <- rbind(Excluded_WL, c(1180, 1480))
       Excluded_WL <- rbind(Excluded_WL, c(1780, 2040))
     }
+  }
+  # in case a unique specrtal domain is provided as excluded domain
+  if (length(Excluded_WL)==2){
+    Excluded_WL = matrix(Excluded_WL,ncol = 2)
   }
   # get image header data
   ImPathHDR <- get_HDR_name(ImPath)
