@@ -61,10 +61,10 @@ The output directory defined with `Output_Dir` will contain all the results. For
 library(biodivMapR)
 Input_Image_File  = system.file('extdata', 'RASTER', 'S2A_T33NUD_20180104_Subset', package = 'biodivMapR')
 
+# please visit this webpage if you need to convert your raster image file using raster2BIL
+# https://jbferet.github.io/biodivMapR/articles/biodivMapR_1.html
 # Input_Image_File  = raster2BIL(Raster_Path = Input_Image_File,
-#                                        Sensor = 'SENTINEL_2A',
-#                                        Convert_Integer = TRUE,
-#                                        Output_Dir = '~/test')
+#                                        Sensor = 'SENTINEL_2A')
 
 Input_Mask_File   = FALSE
 
@@ -115,6 +115,7 @@ nbclusters    = 50
 
 ```{r Mask non vegetated / shaded / cloudy pixels}
 NDVI_Thresh = 0.5
+# these values are relevant only if reflectance is coded as integer values between 0 and 10000. 
 Blue_Thresh = 500
 NIR_Thresh  = 1500
 print("PERFORM RADIOMETRIC FILTERING")
