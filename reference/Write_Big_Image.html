@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>maps beta diversity indicator based on spectral species distribution — map_beta_div • biodivMapR</title>
+<title>write an image which size is &gt; 2**31-1 — Write_Big_Image • biodivMapR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="maps beta diversity indicator based on spectral species distribution — map_beta_div" />
-<meta property="og:description" content="maps beta diversity indicator based on spectral species distribution" />
+<meta property="og:title" content="write an image which size is &gt; 2**31-1 — Write_Big_Image" />
+<meta property="og:description" content="write an image which size is &amp;gt; 2**31-1" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -134,80 +134,35 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>maps beta diversity indicator based on spectral species distribution</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jbferet/biodivMapR/blob/master/R/Lib_MapBetaDiversity.R'><code>R/Lib_MapBetaDiversity.R</code></a></small>
-    <div class="hidden name"><code>map_beta_div.Rd</code></div>
+    <h1>write an image which size is &gt; 2**31-1</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jbferet/biodivMapR/blob/master/R/Lib_ImageProcess.R'><code>R/Lib_ImageProcess.R</code></a></small>
+    <div class="hidden name"><code>Write_Big_Image.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>maps beta diversity indicator based on spectral species distribution</p>
+    <p>write an image which size is &gt; 2**31-1</p>
     </div>
 
-    <pre class="usage"><span class='fu'>map_beta_div</span>(<span class='no'>Input_Image_File</span>, <span class='no'>Output_Dir</span>, <span class='no'>window_size</span>, <span class='kw'>TypePCA</span> <span class='kw'>=</span> <span class='st'>"SPCA"</span>,
-  <span class='kw'>nb_partitions</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>nbclusters</span> <span class='kw'>=</span> <span class='fl'>50</span>, <span class='kw'>Nb_Units_Ordin</span> <span class='kw'>=</span> <span class='fl'>2000</span>,
-  <span class='kw'>MinSun</span> <span class='kw'>=</span> <span class='fl'>0.25</span>, <span class='kw'>pcelim</span> <span class='kw'>=</span> <span class='fl'>0.02</span>, <span class='kw'>scaling</span> <span class='kw'>=</span> <span class='st'>"PCO"</span>, <span class='kw'>FullRes</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>LowRes</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>nbCPU</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>MaxRAM</span> <span class='kw'>=</span> <span class='fl'>0.25</span>)</pre>
+    <pre class="usage"><span class='fu'>Write_Big_Image</span>(<span class='no'>ImgWrite</span>, <span class='no'>ImagePath</span>, <span class='no'>HDR</span>, <span class='no'>Image_Format</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>Input_Image_File</th>
-      <td><p>character. Path and name of the image to be processed.</p></td>
+      <th>ImgWrite</th>
+      <td><p>numeric. Image as array</p></td>
     </tr>
     <tr>
-      <th>Output_Dir</th>
-      <td><p>character. Output directory.</p></td>
+      <th>ImagePath</th>
+      <td><p>character. Path where the image should be written</p></td>
     </tr>
     <tr>
-      <th>window_size</th>
-      <td><p>numeric. Dimensions of the spatial unit.</p></td>
+      <th>HDR</th>
+      <td><p>list. Image header</p></td>
     </tr>
     <tr>
-      <th>TypePCA</th>
-      <td><p>character. Type of PCA (PCA, SPCA, NLPCA...).</p></td>
-    </tr>
-    <tr>
-      <th>nb_partitions</th>
-      <td><p>numeric. Number of partitions (repetitions) to be computed then averaged.</p></td>
-    </tr>
-    <tr>
-      <th>nbclusters</th>
-      <td><p>numeric. Number of clusters defined in k-Means.</p></td>
-    </tr>
-    <tr>
-      <th>Nb_Units_Ordin</th>
-      <td><p>numeric. Maximum number of spatial units to be processed in NMDS.
---&gt; 1000 will be fast but may not capture important patterns if large area
---&gt; 4000 will be slow but may show better ability to capture landscape patterns</p></td>
-    </tr>
-    <tr>
-      <th>MinSun</th>
-      <td><p>numeric. Minimum proportion of sunlit pixels required to consider plot.</p></td>
-    </tr>
-    <tr>
-      <th>pcelim</th>
-      <td><p>numeric. Minimum contribution (in %) required for a spectral species</p></td>
-    </tr>
-    <tr>
-      <th>scaling</th>
-      <td><p>character. "PCO" or "NMDS".</p></td>
-    </tr>
-    <tr>
-      <th>FullRes</th>
-      <td><p>boolean.</p></td>
-    </tr>
-    <tr>
-      <th>LowRes</th>
-      <td><p>boolean.</p></td>
-    </tr>
-    <tr>
-      <th>nbCPU</th>
-      <td><p>numeric. Number of CPUs to use in parallel.</p></td>
-    </tr>
-    <tr>
-      <th>MaxRAM</th>
-      <td><p>numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.</p></td>
+      <th>Image_Format</th>
+      <td><p>list. description of data format corresponding to ENVI type</p></td>
     </tr>
     </table>
 

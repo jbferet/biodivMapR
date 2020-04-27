@@ -1,7 +1,8 @@
 pandoc: '2.2'
-pkgdown: 1.5.0
+pkgdown: 1.5.1
 pkgdown_sha: ~
 articles:
   biodivMapR: biodivMapR.html
-last_built: 2020-04-08T15:47Z
+  biodivMapR_1: biodivMapR_1.html
+last_built: 2020-04-27T14:16Z
 
