@@ -119,11 +119,26 @@
 </h1>
 <p><code>raster2BIL</code> can be run as follows:</p>
 <div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">biodivMapR</span>)
+<span class="co"># define input variables for raster2BIL:</span>
+<span class="co"># full path or relative path for the raster file to convert</span>
+<span class="no">Path_Raster_File</span> <span class="kw">&lt;-</span> <span class="st">'Where/is/your/raster/file/?'</span>
+<span class="co"># you also need to define a template for the .hdr file corresponding to your sensor. </span>
+<span class="co"># locate the install directory for biodivMapR</span>
+<span class="co"># system.file(package = "biodivMapR")`</span>
+<span class="co"># and write a file with description corresponding to your image (in terms of spectral bands, band name, etc)</span>
+<span class="no">Name_Template_HDR</span> <span class="kw">&lt;-</span> <span class="st">'Name_of_hdr_template'</span>
+<span class="co"># you may want to convert reflectance from [0-1] real32 values to [0-10000] integer16</span>
+<span class="co"># see explanation below</span>
+<span class="no">Convert_Integer</span> <span class="kw">&lt;-</span> <span class="fl">TRUE</span>
+<span class="no">Multiplying_Factor</span> <span class="kw">&lt;-</span> <span class="fl">10000</span>
+<span class="no">Multiplying_Factor_Last</span> <span class="kw">&lt;-</span> <span class="fl">1.0</span>
 
 <span class="no">Input_Image_File</span>  <span class="kw">=</span> <span class="fu"><a href="../reference/raster2BIL.html">raster2BIL</a></span>(<span class="kw">Raster_Path</span> <span class="kw">=</span> <span class="no">Path_Raster_File</span>,
-                                       <span class="kw">Sensor</span> <span class="kw">=</span> <span class="no">Path_Template_HDR</span>,
-                                       <span class="kw">Convert_Integer</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-                                       <span class="kw">Output_Dir</span> <span class="kw">=</span> <span class="no">Path_Output_Directory</span>)</pre></body></html></div>
+                               <span class="kw">Sensor</span> <span class="kw">=</span> <span class="no">Name_Template_HDR</span>,
+                               <span class="kw">Output_Dir</span> <span class="kw">=</span> <span class="no">Path_Output_Directory</span>,
+                               <span class="kw">Convert_Integer</span> <span class="kw">=</span> <span class="no">Convert_Integer</span>,
+                               <span class="kw">Multiplying_Factor</span> <span class="kw">=</span> <span class="no">Multiplying_Factor</span>,
+                               <span class="kw">Multiplying_Factor_Last</span><span class="kw">=</span><span class="no">Multiplying_Factor_Last</span>)</pre></body></html></div>
 <div id="input-variables" class="section level2">
 <h2 class="hasAnchor">
 <a href="#input-variables" class="anchor"></a>Input variables</h2>
@@ -134,13 +149,13 @@
 <li>
 <code>Sensor</code>: a string containing the name of the sensor, which should actually be linked to a template for the corresponding header file.</li>
 <li>
+<code>Output_Dir</code> [optional]: a string defining the path for the output directory where converted file will be stored.</li>
+<li>
 <code>Convert_Integer</code> [optional]: a boolean stating if the raster data should be converted into integer</li>
 <li>
 <code>Multiplying_Factor</code> [optional]: a multiplying factor for the raster data. This is useful when converting real reflectance values between 0 and 1 into integer between 0 and 10000. Set <code>Multiplying_Factor =10000</code> in this case.</li>
 <li>
-<code>Output_Dir</code> [optional]: a string defining the path for the output directory where converted file will be stored.</li>
-<li>
-<code>Multiplying_Factor_Last</code> [optional]: a multiplying factor for last band. This option is useful if working with dry vegetation acquired with Sentinel-2 images, in order to artifically increase the reflectance of the B12 band (SWIR 2, centered at 2200 nm), so that SWIR 1 band remains below the convex hull defined during Continuum removal.</li>
+<code>Multiplying_Factor_Last</code> [optional]: a multiplying factor for last band. This option is useful only if working with dry vegetation acquired with Sentinel-2 images, in order to artifically increase the reflectance of the B12 band (SWIR 2, centered at 2200 nm), so that SWIR 1 band remains below the convex hull defined during Continuum removal. <strong>You do not need to use this option most of the time, unless you want to enhance teh sensitivity to different types of dry vegetation</strong>.</li>
 </ul>
 <p>Please note that i) the coordinate system and minimal metadata (spatial resolution, geographic information…) are expected to be provided in the original image or image + header defined in <code>Raster_Path</code> if user want them to be included in the final image products.</p>
 <ol start="2" style="list-style-type: lower-roman">
@@ -152,6 +167,7 @@
 <h2 class="hasAnchor">
 <a href="#output-variable" class="anchor"></a>output variable</h2>
 <p><code>raster2BIL</code> returns a string containing the full path for the raster once converted.</p>
+<p>You can directly use this output variable as input for the next steps of the process.</p>
 </div>
 </div>
   </div>

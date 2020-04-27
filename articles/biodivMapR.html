@@ -139,10 +139,10 @@
 <div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">biodivMapR</span>)
 <span class="no">Input_Image_File</span>  <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata'</span>, <span class="st">'RASTER'</span>, <span class="st">'S2A_T33NUD_20180104_Subset'</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">'biodivMapR'</span>)
 
+<span class="co"># please visit this webpage if you need to convert your raster image file using raster2BIL</span>
+<span class="co"># https://jbferet.github.io/biodivMapR/articles/biodivMapR_1.html</span>
 <span class="co"># Input_Image_File  = raster2BIL(Raster_Path = Input_Image_File,</span>
-<span class="co">#                                        Sensor = 'SENTINEL_2A',</span>
-<span class="co">#                                        Convert_Integer = TRUE,</span>
-<span class="co">#                                        Output_Dir = '~/test')</span>
+<span class="co">#                                        Sensor = 'SENTINEL_2A')</span>
 
 <span class="no">Input_Mask_File</span>   <span class="kw">=</span> <span class="fl">FALSE</span>
 
@@ -188,6 +188,7 @@
 <h2 class="hasAnchor">
 <a href="#mask-non-vegetated-shaded-cloudy-pixels" class="anchor"></a>Mask non vegetated / shaded / cloudy pixels</h2>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">NDVI_Thresh</span> <span class="kw">=</span> <span class="fl">0.5</span>
+<span class="co"># these values are relevant only if reflectance is coded as integer values between 0 and 10000. </span>
 <span class="no">Blue_Thresh</span> <span class="kw">=</span> <span class="fl">500</span>
 <span class="no">NIR_Thresh</span>  <span class="kw">=</span> <span class="fl">1500</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="st">"PERFORM RADIOMETRIC FILTERING"</span>)
