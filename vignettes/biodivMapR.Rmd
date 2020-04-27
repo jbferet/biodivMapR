@@ -48,9 +48,11 @@ The functions `perform_radiometric_filtering` and `perform_PCA` start with a pro
 
 If the format is not ENVI format BIL interleaved, the function `raster2BIL` allows conversion into proper format and returns updated `Input_Image_File`
 
+[__Please read the dedicated explanation if you need to convert your image file, and keep in mind that you may need to adjust existing template `.hdr` files if you want to run `biodivMapR` on images different from 'standard' BOA Sentinel-2 data with 10 spectral bands (including B02, B03, B04, B05, B06, B07, B08, B08A, B11 and B12).__](https://jbferet.github.io/biodivMapR/articles/biodivMapR_1.html "Converting a raster file to the proper file format")
+
 Spectral bands should be defined if the image is multi or hyperspectral image. 
 
-A mask can also be set to work on a selected part of the input image. The mask is expected to be a raster in the same format as the image (ENVI HDR), with values 0 = masked or 1 = selected. Only one band is required. If no mask is to be used set `Input_Mask_File = FALSE`.
+A mask can also be set to work on a selected part of the input image. The mask is expected to be a raster in the same format as the image ([__ENVI file format__](https://www.harrisgeospatial.com/docs/ENVIHeaderFiles.html "HDR description") with corresponding '.hdr' file), with values 0 = masked or 1 = selected. Only one band is required. If no mask is to be used set `Input_Mask_File = FALSE`.
 
 The output directory defined with `Output_Dir` will contain all the results. For each image processed, a subdirectory will be automatically created after its name.
 

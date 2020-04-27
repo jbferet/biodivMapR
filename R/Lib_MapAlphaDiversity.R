@@ -401,16 +401,11 @@ write_raster_alpha <- function(Image, HDR_SSD, ImagePath, window_size, Index, Fu
   HDR_Alpha$`band names` <- Index
   Image_Format <- ENVI_type2bytes(HDR_Alpha)
   if (LowRes == TRUE) {
+    # write header
     headerFpath <- paste(ImagePath, ".hdr", sep = "")
     write_ENVI_header(HDR_Alpha, headerFpath)
-    ImgWrite <- array(Image, c(HDR_Alpha$lines, HDR_Alpha$samples, 1))
-    ImgWrite <- aperm(ImgWrite, c(2, 3, 1))
-    fidOUT <- file(
-      description = ImagePath, open = "wb", blocking = TRUE,
-      encoding = getOption("encoding"), raw = FALSE
-    )
-    writeBin(c(ImgWrite), fidOUT, size = Image_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
-    close(fidOUT)
+    # write image and make sure size does not matter ...
+    Write_Big_Image(Image,ImagePath,HDR_Alpha,Image_Format)
   }
   if (FullRes == TRUE) {
     # Write image with Full native resolution
@@ -428,14 +423,8 @@ write_raster_alpha <- function(Image, HDR_SSD, ImagePath, window_size, Index, Fu
         Image_FullRes[((i - 1) * window_size + 1):(i * window_size), ((j - 1) * window_size + 1):(j * window_size)] <- Image[i, j]
       }
     }
-    ImgWrite <- array(Image_FullRes, c(HDR_Full$lines, HDR_Full$samples, 1))
-    ImgWrite <- aperm(ImgWrite, c(2, 3, 1))
-    fidOUT <- file(
-      description = ImagePath_FullRes, open = "wb", blocking = TRUE,
-      encoding = getOption("encoding"), raw = FALSE
-    )
-    writeBin(c(ImgWrite), fidOUT, size = Image_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
-    close(fidOUT)
+    # write image and make sure size does not matter ...
+    Write_Big_Image(Image_FullRes,ImagePath_FullRes,HDR_Full,Image_Format)
     # zip resulting file
     ZipFile(ImagePath_FullRes)
   }
@@ -451,14 +440,9 @@ write_raster_alpha <- function(Image, HDR_SSD, ImagePath, window_size, Index, Fu
     Image_Format <- ENVI_type2bytes(HDR_Alpha)
     if (LowRes == TRUE) {
       write_ENVI_header(HDR_Alpha, headerFpath)
-      ImgWrite <- array(Image_Smooth, c(HDR_Alpha$lines, HDR_Alpha$samples, 1))
-      ImgWrite <- aperm(ImgWrite, c(2, 3, 1))
-      fidOUT <- file(
-        description = ImagePath.Smooth, open = "wb", blocking = TRUE,
-        encoding = getOption("encoding"), raw = FALSE
-      )
-      writeBin(c(ImgWrite), fidOUT, size = Image_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
-      close(fidOUT)
+      # write image and make sure size does not matter ...
+      Write_Big_Image(Image_Smooth,ImagePath.Smooth,HDR_Alpha,Image_Format)
+      # close(fidOUT)
     }
     if (FullRes == TRUE) {
       # Write image with Full native resolution
@@ -472,14 +456,8 @@ write_raster_alpha <- function(Image, HDR_SSD, ImagePath, window_size, Index, Fu
           Image_FullRes[((i - 1) * window_size + 1):(i * window_size), ((j - 1) * window_size + 1):(j * window_size)] <- Image_Smooth[i, j]
         }
       }
-      ImgWrite <- array(Image_FullRes, c(HDR_Full$lines, HDR_Full$samples, 1))
-      ImgWrite <- aperm(ImgWrite, c(2, 3, 1))
-      fidOUT <- file(
-        description = ImagePath_FullRes, open = "wb", blocking = TRUE,
-        encoding = getOption("encoding"), raw = FALSE
-      )
-      writeBin(c(ImgWrite), fidOUT, size = Image_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
-      close(fidOUT)
+      # write image and make sure size does not matter ...
+      Write_Big_Image(Image_FullRes,ImagePath_FullRes,HDR_Full,Image_Format)
       # zip resulting file
       ZipFile(ImagePath_FullRes)
     }
