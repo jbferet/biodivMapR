@@ -6,7 +6,7 @@ output:
   html_vignette:
     number_sections: true
 vignette: >
-  %\VignetteIndexEntry{Tutorial}
+  %\VignetteIndexEntry{Tutorial_raster2BIL}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
