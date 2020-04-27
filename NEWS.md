@@ -1,3 +1,13 @@
+# biodivMapR v1.2.0
+
+## Fixes
+- fixed bug raised when processing data over large number of pixels (image products >2^31 bits)
+- fixed bug by adding elimination of bands disturbed by water vapor even when ContinuumRemoval set to FALSE
+
+## Changes
+- Changed name of default directory when saving image after calling raster2BIL
+- added documentation for raster data conversion using raster2BIL
+
 # biodivMapR v1.1.0
 
 ## Fixes

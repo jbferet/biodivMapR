@@ -870,7 +870,7 @@ where_to_read <- function(HDR, nbPieces) {
   ReadByte_Start <- lb[1:nbPieces]
   ReadByte_End <- ub[2:(nbPieces + 1)]
   Lines_Per_Chunk <- diff(Start_Per_Chunk)
-  my_list <- list("ReadByte_Start" = ReadByte_Start, "ReadByte_End" = ReadByte_End, "Lines_Per_Chunk" = Lines_Per_Chunk)
+  my_list <- list("ReadByte_Start" = ReadByte_Start, "ReadByte_End" = ReadByte_End, "Lines_Per_Chunk" = Lines_Per_Chunk,'Line_Start'=Start_Per_Chunk)
   return(my_list)
 }
 
@@ -940,6 +940,57 @@ write_ENVI_header <- function(HDR, HDRpath) {
     x <- as.character(x)
   })
   writeLines(c("ENVI", paste(names(HDR), h, sep = " = ")), con = HDRpath)
+}
+
+#' write an image which size is > 2**31-1
+#'
+#' @param ImgWrite numeric. Image as array
+#' @param ImagePath character. Path where the image should be written
+#' @param HDR list. Image header
+#' @param Image_Format list. description of data format corresponding to ENVI type
+#'
+#' @return None
+#' @export
+
+Write_Big_Image <- function(ImgWrite,ImagePath,HDR,Image_Format){
+  nbPieces <- split_image(HDR, LimitSizeGb = 1.8)
+  SeqRead_Image <- where_to_read(HDR, nbPieces)
+  fidOUT <- file(
+    description = ImagePath, open = "wb", blocking = TRUE,
+    encoding = getOption("encoding"), raw = FALSE
+  )
+  close(fidOUT)
+  # for each piece of image
+  for (i in 1:nbPieces) {
+    print(paste("Writing Image, piece #", i, "/", nbPieces))
+    # read image and mask data
+    Byte_Start <- SeqRead_Image$ReadByte_Start[i]
+    Line_Start <- SeqRead_Image$Line_Start[i]
+    nbLines <- SeqRead_Image$Lines_Per_Chunk[i]
+    lenBin <- SeqRead_Image$ReadByte_End[i] - SeqRead_Image$ReadByte_Start[i] + 1
+    # files to write in
+    fidOUT <- file(
+      description = ImagePath, open = "r+b", blocking = TRUE,
+      encoding = getOption("encoding"), raw = FALSE
+    )
+    if (!SeqRead_Image$ReadByte_Start[i] == 1) {
+      nbSkip <- (SeqRead_Image$ReadByte_Start[i] - 1) * Image_Format$Bytes
+      seek(fidOUT, where = nbSkip, origin = "start", rw = "write")
+    }
+    if (is.na(dim(ImgWrite)[3])){
+      ImgChunk <- array(ImgWrite[Line_Start:(nbLines+Line_Start-1),], c(nbLines, HDR$samples, HDR$bands))
+    } else {
+      ImgChunk <- array(ImgWrite[Line_Start:(nbLines+Line_Start-1),,], c(nbLines, HDR$samples, HDR$bands))
+    }
+    ImgChunk <- aperm(ImgChunk, c(2, 3, 1))
+    # writeBin(as.numeric(c(PCA_Chunk)), fidOUT, size = PCA_Format$Bytes,endian = .Platform$endian)
+    writeBin(c(ImgChunk), fidOUT, size = Image_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
+    close(fidOUT)
+  }
+  rm(ImgWrite)
+  rm(ImgChunk)
+  gc()
+  return("")
 }
 
 # convert image coordinates from X-Y to index

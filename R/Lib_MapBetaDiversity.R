@@ -49,7 +49,6 @@ map_beta_div <- function(Input_Image_File, Output_Dir, window_size,
   return(invisible())
 }
 
-
 # computes NMDS
 #
 # @param MatBCdist BC dissimilarity matrix
@@ -337,13 +336,15 @@ write_raster_beta <- function(Image, HDR_SSD, ImagePath, window_size, FullRes = 
   if (LowRes == TRUE) {
     headerFpath <- paste(ImagePath, ".hdr", sep = "")
     write_ENVI_header(HDR_Beta, headerFpath)
-    ImgWrite <- aperm(Image, c(2, 3, 1))
-    fidOUT <- file(
-      description = ImagePath, open = "wb", blocking = TRUE,
-      encoding = getOption("encoding"), raw = FALSE
-    )
-    writeBin(c(ImgWrite), fidOUT, size = Image_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
-    close(fidOUT)
+    # write image and make sure size does not matter ...
+    Write_Big_Image(Image,ImagePath,HDR_Beta,Image_Format)
+    # ImgWrite <- aperm(Image, c(2, 3, 1))
+    # fidOUT <- file(
+    #   description = ImagePath, open = "wb", blocking = TRUE,
+    #   encoding = getOption("encoding"), raw = FALSE
+    # )
+    # writeBin(c(ImgWrite), fidOUT, size = Image_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
+    # close(fidOUT)
   }
   if (FullRes == TRUE) {
     # Write image with Full native resolution
@@ -363,13 +364,15 @@ write_raster_beta <- function(Image, HDR_SSD, ImagePath, window_size, FullRes = 
         }
       }
     }
-    ImgWrite <- aperm(Image_FullRes, c(2, 3, 1))
-    fidOUT <- file(
-      description = ImagePath_FullRes, open = "wb", blocking = TRUE,
-      encoding = getOption("encoding"), raw = FALSE
-    )
-    writeBin(c(ImgWrite), fidOUT, size = Image_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
-    close(fidOUT)
+    # write image and make sure size does not matter ...
+    Write_Big_Image(Image_FullRes,ImagePath_FullRes,HDR_Full,Image_Format)
+    # ImgWrite <- aperm(Image_FullRes, c(2, 3, 1))
+    # fidOUT <- file(
+    #   description = ImagePath_FullRes, open = "wb", blocking = TRUE,
+    #   encoding = getOption("encoding"), raw = FALSE
+    # )
+    # writeBin(c(ImgWrite), fidOUT, size = Image_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
+    # close(fidOUT)
     # zip resulting file
     ZipFile(ImagePath_FullRes)
   }

@@ -145,7 +145,7 @@ raster2BIL <- function(Raster_Path, Sensor = "unknown", Output_Dir = FALSE, Conv
       message("or manually add wavelength location in HDR file, if relevant")
     }
   } else if (Sensor == "unknown") {
-    message("please make sure that the follozing header file contains information required")
+    message("please make sure that the following header file contains information required")
     print(get_HDR_name(Output_Path))
     message("or manually add wavelength location in HDR file, if relevant")
   }
