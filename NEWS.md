@@ -1,3 +1,8 @@
+# biodivMapR v1.2.1
+
+## Changes
+- added option to convert the mask file into proper format with raster2BIL
+
 # biodivMapR v1.2.0
 
 ## Fixes

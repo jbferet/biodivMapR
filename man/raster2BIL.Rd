@@ -2,11 +2,17 @@
 % Please edit documentation in R/Lib_CheckConvertData.R
 \name{raster2BIL}
 \alias{raster2BIL}
-\title{converts a raster into BIL format as expected by DivMapping codes}
+\title{converts a raster into BIL format as expected by biodivMapR codes}
 \usage{
-raster2BIL(Raster_Path, Sensor = "unknown", Output_Dir = FALSE,
-  Convert_Integer = TRUE, Multiplying_Factor = 1,
-  Multiplying_Factor_Last = 1)
+raster2BIL(
+  Raster_Path,
+  Sensor = "unknown",
+  Output_Dir = FALSE,
+  Convert_Integer = TRUE,
+  Multiplying_Factor = 1,
+  Multiplying_Factor_Last = 1,
+  Mask = FALSE
+)
 }
 \arguments{
 \item{Raster_Path}{character. Full path for the raster to be converted}
@@ -20,10 +26,12 @@ raster2BIL(Raster_Path, Sensor = "unknown", Output_Dir = FALSE,
 \item{Multiplying_Factor}{numeric. Multiplying factor (eg convert real reflectance values between 0 and 1 into integer between 0 and 10000).}
 
 \item{Multiplying_Factor_Last}{numeric. Multiplying factor for last band.}
+
+\item{Mask}{boolean is the file a mask file with 0s and 1s only?}
 }
 \value{
 Output_Path path for the image converted into ENVI BIL format
 }
 \description{
-converts a raster into BIL format as expected by DivMapping codes
+converts a raster into BIL format as expected by biodivMapR codes
 }

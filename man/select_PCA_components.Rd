@@ -4,8 +4,13 @@
 \alias{select_PCA_components}
 \title{Check if principal components are properly selected as expected by the method}
 \usage{
-select_PCA_components(Input_Image_File, Output_Dir, PCA_Files,
-  TypePCA = "SPCA", File_Open = FALSE)
+select_PCA_components(
+  Input_Image_File,
+  Output_Dir,
+  PCA_Files,
+  TypePCA = "SPCA",
+  File_Open = FALSE
+)
 }
 \arguments{
 \item{Input_Image_File}{character. Path of the image to be processed}
