@@ -55,12 +55,13 @@ Input_Image_File  = raster2BIL(Raster_Path = Path_Raster_File,
                                Output_Dir = Path_Output_Directory,
                                Convert_Integer = Convert_Integer,
                                Multiplying_Factor = Multiplying_Factor,
-                               Multiplying_Factor_Last=Multiplying_Factor_Last)
+                               Multiplying_Factor_Last=Multiplying_Factor_Last,
+                               Mask = FALSE)
 ```
 
 ## Input variables
 
-The following information is expected as input information:  
+The following information is accepted as input information:  
 
 * `Raster_Path`: a string containing the full path for the raster to be converted.
 * `Sensor`: a string containing the name of the sensor, which should actually be linked to a template for the corresponding header file. 
@@ -68,6 +69,8 @@ The following information is expected as input information:
 * `Convert_Integer` [optional]: a boolean stating if the raster data should be converted into integer
 * `Multiplying_Factor` [optional]:  a multiplying factor for the raster data. This is useful when converting real reflectance values between 0 and 1 into integer between 0 and 10000. Set `Multiplying_Factor =10000` in this case.
 * `Multiplying_Factor_Last` [optional]: a multiplying factor for last band. This option is useful only if working with dry vegetation acquired with Sentinel-2 images, in order to artifically increase the reflectance of the B12 band (SWIR 2, centered at 2200 nm), so that SWIR 1 band remains below the convex hull defined during Continuum removal. __You do not need to use this option most of the time, unless you want to enhance teh sensitivity to different types of dry vegetation__.
+* `Mask` [optional]: a boolean stating if the raster data corresponds to a mask (TRUE) or not (FALSE). If it is a mask, masked pixels should have a value of `0`, and pixels to keep for the analysis should have a value of `1`. raster2BIL converts image information into unsigned 8 bits integer.
+
 
 Please note that 
 i) the coordinate system and minimal metadata (spatial resolution, geographic information...) are expected to be provided in the original image or image + header defined in `Raster_Path` if user want them to be included in the final image products.
@@ -75,7 +78,7 @@ i) the coordinate system and minimal metadata (spatial resolution, geographic in
 ii) `Sensor` should refer to the name of a `.hdr` file stored in the installation directory of `biodivMapR`
 Please type `system.file(package = "biodivMapR")` in order to get the location of the install directory and create a proper `.hdr` file to be stored in `extdata/HDR/`, containing proper spectral bands __defined in nanometers__ if using optical data and using `perform_radiometric_filtering` and/or `Continuum_Removal = TRUE` in your process. Make sure that the __spectral bands in the binary file are stored with wavelengths following ascending order__. 
 
-iii) `Convert_Integer=TRUE` saves 50% space if original image is stored in real values (32bits per value). However, user need to make sure hat their original data are compatible with conversion: if reflectance values are stored as  real value between 0 and 1, the final image file will be unusable, unless proper multiplying factor is applied to the full image data (for example `Multiplying_Factor =10000`). Sentinel-2 reflectance data downloaded from ESA hub are stored as integer (16 bits) values between 0 and 10 000 instead of real (32 bits) values between 0 and 1, so integer conversion is unnecessary.
+iii) `Convert_Integer=TRUE` saves 50% space if original image is stored in real values (32 bits per value). However, user need to make sure hat their original data are compatible with conversion: if reflectance values are stored as  real value between 0 and 1, the final image file will be unusable, unless proper multiplying factor is applied to the full image data (for example `Multiplying_Factor =10000`). Sentinel-2 reflectance data downloaded from ESA hub are stored as integer (16 bits) values between 0 and 10 000 instead of real (32 bits) values between 0 and 1, so integer conversion is unnecessary.
 
 ## output variable
 

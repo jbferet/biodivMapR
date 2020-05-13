@@ -4,10 +4,21 @@
 \alias{map_alpha_div}
 \title{maps alpha diversity indicators  based on prior selection of PCs}
 \usage{
-map_alpha_div(Input_Image_File, Output_Dir, window_size,
-  TypePCA = "SPCA", nbclusters = 50, MinSun = 0.25, pcelim = 0.02,
-  Index_Alpha = "Shannon", FullRes = TRUE, LowRes = FALSE,
-  MapSTD = FALSE, nbCPU = FALSE, MaxRAM = FALSE)
+map_alpha_div(
+  Input_Image_File,
+  Output_Dir,
+  window_size,
+  TypePCA = "SPCA",
+  nbclusters = 50,
+  MinSun = 0.25,
+  pcelim = 0.02,
+  Index_Alpha = "Shannon",
+  FullRes = TRUE,
+  LowRes = FALSE,
+  MapSTD = FALSE,
+  nbCPU = FALSE,
+  MaxRAM = FALSE
+)
 }
 \arguments{
 \item{Input_Image_File}{character. Path and name of the image to be processed.}

@@ -10,7 +10,7 @@
 # if not, can convert the raster into BIL format expected for diversity mapping
 # ==============================================================================
 
-#' converts a raster into BIL format as expected by DivMapping codes
+#' converts a raster into BIL format as expected by biodivMapR codes
 #'
 #' @param Raster_Path character. Full path for the raster to be converted
 #' @param Sensor character. Name of the sensor. a .hdr template for the sensor should be provided in extdata/HDR
@@ -18,12 +18,14 @@
 #' @param Multiplying_Factor numeric. Multiplying factor (eg convert real reflectance values between 0 and 1 into integer between 0 and 10000).
 #' @param Output_Dir character. Path to output directory.
 #' @param Multiplying_Factor_Last numeric. Multiplying factor for last band.
+#' @param Mask boolean is the file a mask file with 0s and 1s only?
 #'
 #' @return Output_Path path for the image converted into ENVI BIL format
 #' @import raster
 #' @import tools
 #' @export
-raster2BIL <- function(Raster_Path, Sensor = "unknown", Output_Dir = FALSE, Convert_Integer = TRUE, Multiplying_Factor = 1, Multiplying_Factor_Last = 1) {
+raster2BIL <- function(Raster_Path, Sensor = "unknown", Output_Dir = FALSE, Convert_Integer = TRUE,
+                       Multiplying_Factor = 1, Multiplying_Factor_Last = 1, Mask = FALSE) {
 
   # get directory and file name of original image
   Input_File <- basename(Raster_Path)
@@ -46,15 +48,17 @@ raster2BIL <- function(Raster_Path, Sensor = "unknown", Output_Dir = FALSE, Conv
   Last_Band_Name <- Output_Img@data@names[length(Output_Img@data@names)]
   Output_Img[[Last_Band_Name]] <- Multiplying_Factor_Last * Output_Img[[Last_Band_Name]]
 
-  # convert into integer
-  if (Convert_Integer == TRUE) {
+  # convert into integer if requested or if is Mask
+  if (Convert_Integer == TRUE | Mask == TRUE) {
     Output_Img <- round(Output_Img)
   }
 
   # write raster
   message("writing converted file")
-  if (Convert_Integer == TRUE) {
+  if (Convert_Integer == TRUE & Mask == FALSE) {
     r <- writeRaster(Output_Img, filename = Output_Path, format = "EHdr", overwrite = TRUE, datatype = "INT2S")
+  } else if (Convert_Integer == TRUE & Mask == TRUE) {
+    r <- writeRaster(Output_Img, filename = Output_Path, format = "EHdr", overwrite = TRUE, datatype = "INT1U")
   } else {
     r <- writeRaster(Output_Img, filename = Output_Path, format = "EHdr", overwrite = TRUE)
   }

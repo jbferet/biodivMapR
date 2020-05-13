@@ -4,9 +4,18 @@
 \alias{perform_radiometric_filtering}
 \title{Performs radiometric filtering based on three criteria: NDVI, NIR reflectance, Blue reflectance}
 \usage{
-perform_radiometric_filtering(Image_Path, Mask_Path, Output_Dir,
-  TypePCA = "SPCA", NDVI_Thresh = 0.5, Blue_Thresh = 500,
-  NIR_Thresh = 1500, Blue = 480, Red = 700, NIR = 835)
+perform_radiometric_filtering(
+  Image_Path,
+  Mask_Path,
+  Output_Dir,
+  TypePCA = "SPCA",
+  NDVI_Thresh = 0.5,
+  Blue_Thresh = 500,
+  NIR_Thresh = 1500,
+  Blue = 480,
+  Red = 700,
+  NIR = 835
+)
 }
 \arguments{
 \item{Image_Path}{character. Path of the image to be processed}
