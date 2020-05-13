@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
       </span>
     </div>
 
@@ -143,10 +143,22 @@
     <p>maps beta diversity indicator based on spectral species distribution</p>
     </div>
 
-    <pre class="usage"><span class='fu'>map_beta_div</span>(<span class='no'>Input_Image_File</span>, <span class='no'>Output_Dir</span>, <span class='no'>window_size</span>, <span class='kw'>TypePCA</span> <span class='kw'>=</span> <span class='st'>"SPCA"</span>,
-  <span class='kw'>nb_partitions</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>nbclusters</span> <span class='kw'>=</span> <span class='fl'>50</span>, <span class='kw'>Nb_Units_Ordin</span> <span class='kw'>=</span> <span class='fl'>2000</span>,
-  <span class='kw'>MinSun</span> <span class='kw'>=</span> <span class='fl'>0.25</span>, <span class='kw'>pcelim</span> <span class='kw'>=</span> <span class='fl'>0.02</span>, <span class='kw'>scaling</span> <span class='kw'>=</span> <span class='st'>"PCO"</span>, <span class='kw'>FullRes</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>LowRes</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>nbCPU</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>MaxRAM</span> <span class='kw'>=</span> <span class='fl'>0.25</span>)</pre>
+    <pre class="usage"><span class='fu'>map_beta_div</span>(
+  <span class='no'>Input_Image_File</span>,
+  <span class='no'>Output_Dir</span>,
+  <span class='no'>window_size</span>,
+  <span class='kw'>TypePCA</span> <span class='kw'>=</span> <span class='st'>"SPCA"</span>,
+  <span class='kw'>nb_partitions</span> <span class='kw'>=</span> <span class='fl'>20</span>,
+  <span class='kw'>nbclusters</span> <span class='kw'>=</span> <span class='fl'>50</span>,
+  <span class='kw'>Nb_Units_Ordin</span> <span class='kw'>=</span> <span class='fl'>2000</span>,
+  <span class='kw'>MinSun</span> <span class='kw'>=</span> <span class='fl'>0.25</span>,
+  <span class='kw'>pcelim</span> <span class='kw'>=</span> <span class='fl'>0.02</span>,
+  <span class='kw'>scaling</span> <span class='kw'>=</span> <span class='st'>"PCO"</span>,
+  <span class='kw'>FullRes</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>LowRes</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>nbCPU</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>MaxRAM</span> <span class='kw'>=</span> <span class='fl'>0.25</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>converts a raster into BIL format as expected by DivMapping codes — raster2BIL • biodivMapR</title>
+<title>converts a raster into BIL format as expected by biodivMapR codes — raster2BIL • biodivMapR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="converts a raster into BIL format as expected by DivMapping codes — raster2BIL" />
-<meta property="og:description" content="converts a raster into BIL format as expected by DivMapping codes" />
+<meta property="og:title" content="converts a raster into BIL format as expected by biodivMapR codes — raster2BIL" />
+<meta property="og:description" content="converts a raster into BIL format as expected by biodivMapR codes" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
       </span>
     </div>
 
@@ -134,18 +134,24 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>converts a raster into BIL format as expected by DivMapping codes</h1>
+    <h1>converts a raster into BIL format as expected by biodivMapR codes</h1>
     <small class="dont-index">Source: <a href='https://github.com/jbferet/biodivMapR/blob/master/R/Lib_CheckConvertData.R'><code>R/Lib_CheckConvertData.R</code></a></small>
     <div class="hidden name"><code>raster2BIL.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>converts a raster into BIL format as expected by DivMapping codes</p>
+    <p>converts a raster into BIL format as expected by biodivMapR codes</p>
     </div>
 
-    <pre class="usage"><span class='fu'>raster2BIL</span>(<span class='no'>Raster_Path</span>, <span class='kw'>Sensor</span> <span class='kw'>=</span> <span class='st'>"unknown"</span>, <span class='kw'>Output_Dir</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>Convert_Integer</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>Multiplying_Factor</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>Multiplying_Factor_Last</span> <span class='kw'>=</span> <span class='fl'>1</span>)</pre>
+    <pre class="usage"><span class='fu'>raster2BIL</span>(
+  <span class='no'>Raster_Path</span>,
+  <span class='kw'>Sensor</span> <span class='kw'>=</span> <span class='st'>"unknown"</span>,
+  <span class='kw'>Output_Dir</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>Convert_Integer</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>Multiplying_Factor</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>Multiplying_Factor_Last</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>Mask</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -173,6 +179,10 @@
     <tr>
       <th>Multiplying_Factor_Last</th>
       <td><p>numeric. Multiplying factor for last band.</p></td>
+    </tr>
+    <tr>
+      <th>Mask</th>
+      <td><p>boolean is the file a mask file with 0s and 1s only?</p></td>
     </tr>
     </table>
 

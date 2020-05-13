@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
       </span>
     </div>
 
@@ -143,10 +143,21 @@
     <p>maps spectral species based on PCA file computed previously</p>
     </div>
 
-    <pre class="usage"><span class='fu'>map_spectral_species</span>(<span class='no'>Input_Image_File</span>, <span class='no'>Output_Dir</span>, <span class='no'>PCA_Files</span>, <span class='no'>PCA_model</span>,
-  <span class='no'>SpectralFilter</span>, <span class='no'>Input_Mask_File</span>, <span class='no'>Pix_Per_Partition</span>, <span class='no'>nb_partitions</span>,
-  <span class='kw'>Continuum_Removal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>TypePCA</span> <span class='kw'>=</span> <span class='st'>"SPCA"</span>, <span class='kw'>nbclusters</span> <span class='kw'>=</span> <span class='fl'>50</span>,
-  <span class='kw'>nbCPU</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>MaxRAM</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>map_spectral_species</span>(
+  <span class='no'>Input_Image_File</span>,
+  <span class='no'>Output_Dir</span>,
+  <span class='no'>PCA_Files</span>,
+  <span class='no'>PCA_model</span>,
+  <span class='no'>SpectralFilter</span>,
+  <span class='no'>Input_Mask_File</span>,
+  <span class='no'>Pix_Per_Partition</span>,
+  <span class='no'>nb_partitions</span>,
+  <span class='kw'>Continuum_Removal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>TypePCA</span> <span class='kw'>=</span> <span class='st'>"SPCA"</span>,
+  <span class='kw'>nbclusters</span> <span class='kw'>=</span> <span class='fl'>50</span>,
+  <span class='kw'>nbCPU</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>MaxRAM</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

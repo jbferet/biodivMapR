@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
       </span>
     </div>
 
@@ -95,7 +95,7 @@
       <h1 data-toc-skip>Converting a raster file to the proper file format</h1>
                         <h4 class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
             
-            <h4 class="date">2020-04-27</h4>
+            <h4 class="date">2020-05-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR_1.Rmd"><code>vignettes/biodivMapR_1.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_1.Rmd</code></div>
@@ -138,11 +138,12 @@
                                <span class="kw">Output_Dir</span> <span class="kw">=</span> <span class="no">Path_Output_Directory</span>,
                                <span class="kw">Convert_Integer</span> <span class="kw">=</span> <span class="no">Convert_Integer</span>,
                                <span class="kw">Multiplying_Factor</span> <span class="kw">=</span> <span class="no">Multiplying_Factor</span>,
-                               <span class="kw">Multiplying_Factor_Last</span><span class="kw">=</span><span class="no">Multiplying_Factor_Last</span>)</pre></body></html></div>
+                               <span class="kw">Multiplying_Factor_Last</span><span class="kw">=</span><span class="no">Multiplying_Factor_Last</span>,
+                               <span class="kw">Mask</span> <span class="kw">=</span> <span class="fl">FALSE</span>)</pre></body></html></div>
 <div id="input-variables" class="section level2">
 <h2 class="hasAnchor">
 <a href="#input-variables" class="anchor"></a>Input variables</h2>
-<p>The following information is expected as input information:</p>
+<p>The following information is accepted as input information:</p>
 <ul>
 <li>
 <code>Raster_Path</code>: a string containing the full path for the raster to be converted.</li>
@@ -156,11 +157,13 @@
 <code>Multiplying_Factor</code> [optional]: a multiplying factor for the raster data. This is useful when converting real reflectance values between 0 and 1 into integer between 0 and 10000. Set <code>Multiplying_Factor =10000</code> in this case.</li>
 <li>
 <code>Multiplying_Factor_Last</code> [optional]: a multiplying factor for last band. This option is useful only if working with dry vegetation acquired with Sentinel-2 images, in order to artifically increase the reflectance of the B12 band (SWIR 2, centered at 2200 nm), so that SWIR 1 band remains below the convex hull defined during Continuum removal. <strong>You do not need to use this option most of the time, unless you want to enhance teh sensitivity to different types of dry vegetation</strong>.</li>
+<li>
+<code>Mask</code> [optional]: a boolean stating if the raster data corresponds to a mask (TRUE) or not (FALSE). If it is a mask, masked pixels should have a value of <code>0</code>, and pixels to keep for the analysis should have a value of <code>1</code>. raster2BIL converts image information into unsigned 8 bits integer.</li>
 </ul>
 <p>Please note that i) the coordinate system and minimal metadata (spatial resolution, geographic information…) are expected to be provided in the original image or image + header defined in <code>Raster_Path</code> if user want them to be included in the final image products.</p>
 <ol start="2" style="list-style-type: lower-roman">
 <li><p><code>Sensor</code> should refer to the name of a <code>.hdr</code> file stored in the installation directory of <code>biodivMapR</code> Please type <code><a href="https://rdrr.io/r/base/system.file.html">system.file(package = "biodivMapR")</a></code> in order to get the location of the install directory and create a proper <code>.hdr</code> file to be stored in <code>extdata/HDR/</code>, containing proper spectral bands <strong>defined in nanometers</strong> if using optical data and using <code>perform_radiometric_filtering</code> and/or <code>Continuum_Removal = TRUE</code> in your process. Make sure that the <strong>spectral bands in the binary file are stored with wavelengths following ascending order</strong>.</p></li>
-<li><p><code>Convert_Integer=TRUE</code> saves 50% space if original image is stored in real values (32bits per value). However, user need to make sure hat their original data are compatible with conversion: if reflectance values are stored as real value between 0 and 1, the final image file will be unusable, unless proper multiplying factor is applied to the full image data (for example <code>Multiplying_Factor =10000</code>). Sentinel-2 reflectance data downloaded from ESA hub are stored as integer (16 bits) values between 0 and 10 000 instead of real (32 bits) values between 0 and 1, so integer conversion is unnecessary.</p></li>
+<li><p><code>Convert_Integer=TRUE</code> saves 50% space if original image is stored in real values (32 bits per value). However, user need to make sure hat their original data are compatible with conversion: if reflectance values are stored as real value between 0 and 1, the final image file will be unusable, unless proper multiplying factor is applied to the full image data (for example <code>Multiplying_Factor =10000</code>). Sentinel-2 reflectance data downloaded from ESA hub are stored as integer (16 bits) values between 0 and 10 000 instead of real (32 bits) values between 0 and 1, so integer conversion is unnecessary.</p></li>
 </ol>
 </div>
 <div id="output-variable" class="section level2">

@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
       </span>
     </div>
 
@@ -143,9 +143,18 @@
     <p>Performs radiometric filtering based on three criteria: NDVI, NIR reflectance, Blue reflectance</p>
     </div>
 
-    <pre class="usage"><span class='fu'>perform_radiometric_filtering</span>(<span class='no'>Image_Path</span>, <span class='no'>Mask_Path</span>, <span class='no'>Output_Dir</span>,
-  <span class='kw'>TypePCA</span> <span class='kw'>=</span> <span class='st'>"SPCA"</span>, <span class='kw'>NDVI_Thresh</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>Blue_Thresh</span> <span class='kw'>=</span> <span class='fl'>500</span>,
-  <span class='kw'>NIR_Thresh</span> <span class='kw'>=</span> <span class='fl'>1500</span>, <span class='kw'>Blue</span> <span class='kw'>=</span> <span class='fl'>480</span>, <span class='kw'>Red</span> <span class='kw'>=</span> <span class='fl'>700</span>, <span class='kw'>NIR</span> <span class='kw'>=</span> <span class='fl'>835</span>)</pre>
+    <pre class="usage"><span class='fu'>perform_radiometric_filtering</span>(
+  <span class='no'>Image_Path</span>,
+  <span class='no'>Mask_Path</span>,
+  <span class='no'>Output_Dir</span>,
+  <span class='kw'>TypePCA</span> <span class='kw'>=</span> <span class='st'>"SPCA"</span>,
+  <span class='kw'>NDVI_Thresh</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
+  <span class='kw'>Blue_Thresh</span> <span class='kw'>=</span> <span class='fl'>500</span>,
+  <span class='kw'>NIR_Thresh</span> <span class='kw'>=</span> <span class='fl'>1500</span>,
+  <span class='kw'>Blue</span> <span class='kw'>=</span> <span class='fl'>480</span>,
+  <span class='kw'>Red</span> <span class='kw'>=</span> <span class='fl'>700</span>,
+  <span class='kw'>NIR</span> <span class='kw'>=</span> <span class='fl'>835</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

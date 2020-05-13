@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
       </span>
     </div>
 
@@ -143,10 +143,19 @@
     <p>Performs PCA for all images and create PCA file with either all or a selection of PCs</p>
     </div>
 
-    <pre class="usage"><span class='fu'>perform_PCA</span>(<span class='no'>Input_Image_File</span>, <span class='no'>Input_Mask_File</span>, <span class='no'>Output_Dir</span>,
-  <span class='kw'>Continuum_Removal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>TypePCA</span> <span class='kw'>=</span> <span class='st'>"SPCA"</span>, <span class='kw'>NbPCs_To_Keep</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>FilterPCA</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>Excluded_WL</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>nb_partitions</span> <span class='kw'>=</span> <span class='fl'>20</span>,
-  <span class='kw'>nbCPU</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>MaxRAM</span> <span class='kw'>=</span> <span class='fl'>0.25</span>)</pre>
+    <pre class="usage"><span class='fu'>perform_PCA</span>(
+  <span class='no'>Input_Image_File</span>,
+  <span class='no'>Input_Mask_File</span>,
+  <span class='no'>Output_Dir</span>,
+  <span class='kw'>Continuum_Removal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>TypePCA</span> <span class='kw'>=</span> <span class='st'>"SPCA"</span>,
+  <span class='kw'>NbPCs_To_Keep</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>FilterPCA</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>Excluded_WL</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>nb_partitions</span> <span class='kw'>=</span> <span class='fl'>20</span>,
+  <span class='kw'>nbCPU</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>MaxRAM</span> <span class='kw'>=</span> <span class='fl'>0.25</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
