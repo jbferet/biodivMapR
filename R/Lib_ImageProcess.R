@@ -386,11 +386,86 @@ extract_samples_from_image <- function(ImPath, coordPix, MaxRAM = FALSE, Already
 # @param Pix_Per_Partition number of pixels per iteration
 #
 # @return samples from image, coordinates of these samples and updated number of pixels to sample
+# #' @importFrom matlab ones
+# get_random_subset_from_image <- function(ImPath, HDR, MaskPath, nb_partitions, Pix_Per_Partition) {
+#   nbPix2Sample <- nb_partitions * Pix_Per_Partition
+#   # get total number of pixels
+#   nbpix <- as.double(HDR$lines) * as.double(HDR$samples)
+#   # 1- Exclude masked pixels from random subset
+#   # Read Mask
+#   if ((!MaskPath == "") & (!MaskPath == FALSE)) {
+#     fid <- file(
+#       description = MaskPath, open = "rb", blocking = TRUE,
+#       encoding = getOption("encoding"), raw = FALSE
+#     )
+#     ShadeMask <- readBin(fid, integer(), n = nbpix, size = 1)
+#     close(fid)
+#     ShadeMask <- aperm(array(ShadeMask, dim = c(HDR$samples, HDR$lines)))
+#   } else {
+#     ShadeMask <- array(ones(HDR$lines * HDR$samples, 1), dim = c(HDR$lines, HDR$samples))
+#   }
+#   # get a list of samples among unmasked pixels
+#   IndexInit <- (matrix(1:nbpix, ncol = HDR$samples))
+#   ValidPixels <- sample(which(ShadeMask == 1 | ShadeMask == 255))
+#   NbValidPixels <- length(ValidPixels)
+#   # Check if number of valid pixels is compatible with number of pixels to be extracted
+#   # if number of pixels to sample superior to number of valid pixels, then adjust iterations
+#   if (NbValidPixels < nbPix2Sample) {
+#     nbPix2Sample <- NbValidPixels
+#     nb_partitions <- ceiling(NbValidPixels / Pix_Per_Partition)
+#     Pix_Per_Partition <- floor(NbValidPixels / nb_partitions)
+#     nbPix2Sample <- nb_partitions * Pix_Per_Partition
+#   }
+#   # Select a subset of nbPix2Sample among pixselected
+#   pixselected <- ValidPixels[1:nbPix2Sample]
+#
+#   # define location of pixselected in binary file (avoid multiple reads) and optimize access to disk
+#   # the file is a BIL file, which means that for each line in the image,
+#   # we first need to define if datapoints are on the line, then read one point after the other
+#   coordi <- ((pixselected - 1) %% HDR$lines) + 1
+#   coordj <- floor((pixselected - 1) / HDR$lines) + 1
+#   # sort based on line and col
+#   indxPix <- order(coordi, coordj, na.last = FALSE)
+#   coordPix <- cbind(coordi[indxPix], coordj[indxPix])
+#
+#   # 2- Extract samples from image
+#   Sample_Sel <- extract_samples_from_image(ImPath, coordPix)
+#   # randomize!
+#   Sample_Sel <- Sample_Sel[sample(dim(Sample_Sel)[1]), ]
+#   coordPix <- coordPix[sample(dim(Sample_Sel)[1]), ]
+#   my_list <- list("DataSubset" = Sample_Sel, "nbPix2Sample" = nbPix2Sample,"coordPix"=coordPix)
+#   return(my_list)
+# }
+
+#' @return list, see Details
+#' @details
+#' The returned list contains:
+#' - DataSubset: matrix of NxP of N samples and P bands
+#' - nbPix2Sample: integer giving the number of pixels sampled (only central pixel of kernel)
+#' - coordPix: a data.table with columns Row and Column of pixel in the image corresponding to each row of DataSubset,
+#'   and Kind (Kernel index) if kernel is not NULL
 #' @importFrom matlab ones
-get_random_subset_from_image <- function(ImPath, HDR, MaskPath, nb_partitions, Pix_Per_Partition) {
+get_random_subset_from_image <- function(ImPath, HDR, MaskPath, nb_partitions, Pix_Per_Partition, kernel=NULL) {
+  # TODO: remove HDR from input args and read it directly
+  # ImPath = '/home/boissieu/Data/HS/Guyane/2016/Paracou/hypip_wd_guyane_20160919_paracou_DZ/session01/L1c/VNIR_1600_SN0014/atmx2/DZ_FL01_20160919_181033_VNIR_1600_SN0014_PS01_IMG001_atm_slice_001_x2.hyspex'
+
+  r = brick(ImPath)
+  # mask = r[[1]]
+  # values(mask) = as.integer(values(mask)>100)
+  # mask = drop(as.array(mask))
+  # nb_partitions=1
+  # Pix_Per_Partition = 1000
+  # kernel = matrix(0, 3, 3)
+  # kernel[c(5, 6, 8)]=c(1, -1/2, -1/2)
+
+
   nbPix2Sample <- nb_partitions * Pix_Per_Partition
+
   # get total number of pixels
-  nbpix <- as.double(HDR$lines) * as.double(HDR$samples)
+  rdim = dim(r)
+  nlines = rdim[1]
+  nsamples = rdim[2]
+  nbpix <- ncell(r)
   # 1- Exclude masked pixels from random subset
   # Read Mask
   if ((!MaskPath == "") & (!MaskPath == FALSE)) {
@@ -398,15 +473,22 @@ get_random_subset_from_image <- function(ImPath, HDR, MaskPath, nb_partitions, P
       description = MaskPath, open = "rb", blocking = TRUE,
       encoding = getOption("encoding"), raw = FALSE
     )
-    ShadeMask <- readBin(fid, integer(), n = nbpix, size = 1)
+    mask <- readBin(fid, integer(), n = nbpix, size = 1)
     close(fid)
-    ShadeMask <- aperm(array(ShadeMask, dim = c(HDR$samples, HDR$lines)))
+    mask <- (array(mask, dim = c(HDR$samples, HDR$lines)))
   } else {
-    ShadeMask <- array(ones(HDR$lines * HDR$samples, 1), dim = c(HDR$lines, HDR$samples))
+    mask <- array(1, dim = c(HDR$lines, HDR$samples))
   }
+
+  if(is.matrix(kernel)){
+    # erode mask with kernel, to keep valid central pixels and neighbours
+    mask = matlab::padarray(mask, c(1,1), padval=0, direction='both')
+    mask = erode(mask, (kernel!=0)*1)
+    mask = mask[2:(nrow(mask)-1), 2:(ncol(mask)-1)]
+  }
+
   # get a list of samples among unmasked pixels
-  IndexInit <- (matrix(1:nbpix, ncol = HDR$samples))
-  ValidPixels <- sample(which(ShadeMask == 1 | ShadeMask == 255))
+  ValidPixels <- sample(which(mask > 0))
   NbValidPixels <- length(ValidPixels)
   # Check if number of valid pixels is compatible with number of pixels to be extracted
   # if number of pixels to sample superior to number of valid pixels, then adjust iterations
@@ -422,20 +504,43 @@ get_random_subset_from_image <- function(ImPath, HDR, MaskPath, nb_partitions, P
   # define location of pixselected in binary file (avoid multiple reads) and optimize access to disk
   # the file is a BIL file, which means that for each line in the image,
   # we first need to define if datapoints are on the line, then read one point after the other
-  coordi <- ((pixselected - 1) %% HDR$lines) + 1
-  coordj <- floor((pixselected - 1) / HDR$lines) + 1
+
+  Row <- ((pixselected - 1) %% nlines) + 1 # row
+  Column <- floor((pixselected - 1) / nlines) + 1 # column
+  if(is.matrix(kernel)){
+    coordPixK = list()
+    mesh=matlab::meshgrid(-(ncol(kernel)%/%2):(ncol(kernel)%/%2), -(nrow(kernel)%/%2):(nrow(kernel)%/%2))
+    for(p in which(kernel!=0)){
+      coordPixK[[p]] = data.table(Row = Row+mesh$y[p], Column = Column+mesh$x[p])
+    }
+    coordPix = rbindlist(coordPixK, idcol='Kind')
+  }else{
+    coordPix = data.table(Row = Row, Column = Column)
+  }
   # sort based on line and col
-  indxPix <- order(coordi, coordj, na.last = FALSE)
-  coordPix <- cbind(coordi[indxPix], coordj[indxPix])
+  # indxPix <- order(coordi, coordj, na.last = FALSE)
+  # coordPix <- cbind(coordi[indxPix], coordj[indxPix])
+  setorder(coordPix, Column, Row)
+  # make unique
+  ucoordPix <- unique(coordPix[,.(Row,Column)])
+  ucoordPix[['sampleIndex']] = 1:nrow(ucoordPix)
 
   # 2- Extract samples from image
-  Sample_Sel <- extract_samples_from_image(ImPath, coordPix)
-  # randomize!
-  Sample_Sel <- Sample_Sel[sample(dim(Sample_Sel)[1]), ]
-  coordPix <- coordPix[sample(dim(Sample_Sel)[1]), ]
-  my_list <- list("DataSubset" = Sample_Sel, "nbPix2Sample" = nbPix2Sample,"coordPix"=coordPix)
+  # TODO: if coordPix can be a data.frame it would be easier
+  Sample_Sel <- biodivMapR:::extract_samples_from_image(ImPath, ucoordPix)
+  samplePixIndex = merge(coordPix, ucoordPix, by=c('Row', 'Column'))
+  # randomize! It should already be random from the sample operation on mask valid pixels
+  Sample_Sel <- Sample_Sel[samplePixIndex$sampleIndex, ]
+  samplePixIndex[['sampleIndex']]=NULL
+  ### FLORIAN: REMOVED RANDOMIZATION AS IT SEEMED USELESS
+  # Sample_Sel <- Sample_Sel[sample(dim(Sample_Sel)[1]), ]
+  # coordPix <- coordPix[sample(dim(Sample_Sel)[1]), ]
+  # TODO: check how returned coordPix is used, as it is now a data.frame
+  # TODO: add different output for kernel
+  my_list <- list("DataSubset" = Sample_Sel, "nbPix2Sample" = nbPix2Sample,"coordPix"=samplePixIndex)
   return(my_list)
 }
+
 
 # does the system work with little endians or big endians?
 #
