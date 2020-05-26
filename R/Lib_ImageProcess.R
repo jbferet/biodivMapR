@@ -508,7 +508,9 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.25){
 # - coordPix: a data.table with columns Row and Column of pixel in the image corresponding to each row of DataSubset,
 #   and Kind (Kernel index) if kernel is not NULL
 #' @importFrom matlab ones
-#' @import raster mmand data.table
+#' @import raster
+#' @importFrom mmand erode
+#' @importFrom data.table data.table rbindlist
 get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Per_Partition, kernel=NULL) {
   # ImPath = '/home/boissieu/Data/HS/Guyane/2016/Paracou/hypip_wd_guyane_20160919_paracou_DZ/session01/L1c/VNIR_1600_SN0014/atmx2/DZ_FL01_20160919_181033_VNIR_1600_SN0014_PS01_IMG001_atm_slice_001_x2.hyspex'
 
@@ -583,7 +585,7 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Pe
     }
     coordPix = rbindlist(coordPixK, idcol='Kind')
   }else{
-    coordPix = data.frame(row = Row, col = Column)
+    coordPix = data.table(row = Row, col = Column)
   }
   # sort based on .bil dim order, i.e. band.x.y or band.col.row
   # TODO: sorting may not be necessary anymore, neither unique coordinates
