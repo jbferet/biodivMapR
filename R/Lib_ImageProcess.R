@@ -378,6 +378,65 @@ extract_samples_from_image <- function(ImPath, coordPix, MaxRAM = FALSE, Already
   return(Sample_Sel)
 }
 
+# Extract bands of sparse pixels in big image data cube.
+#
+# Extract bands of sparse pixels in big image data cube, typically hyperspectral data cube.
+# @param ImPath character. Path to the image cube
+# @param rowcol matrix or data.frame with two columns: row, col.
+# If columns are not named, 1st=row, 2nd=col.
+# @param MaxRAM numeric. Maximum memory use at block reading.
+# It constrains the maximum number rows of a block
+#
+# @return matrix. Rows are corresponding to the samples, columns are the bands.
+#' @import stars
+extract.big_raster <- function(ImPath, rowcol, MaxRAM=.25){
+  # ImPath = hs_file
+  # rowcol = arcd
+  # rowcol = as.data.table(rowcol)
+  # MaxRAM = .25
+
+  if(!data.table::is.data.table(rowcol)){
+    rowcol <- data.table::as.data.table(rowcol)
+  }
+
+  if(!all(c('row', 'col') %in% colnames(rowcol))){
+    warning('Columns row,col not found in rowcol argument. The two first columns are considered as row, col respectively.')
+    colnames(rowcol)[1:2]= c('row', 'col')
+  }
+
+
+  r = brick(ImPath)
+  # nbytes = as.numeric(substring(dataType(r), 4, 4))
+  # stars converts automatically values to numeric
+  nbytes = 8
+  ImgSizeGb = prod(dim(r))*nbytes/2^30
+  LineSizeGb = prod(dim(r)[2:3])*nbytes/2^30
+  LinesBlock = floor(MaxRAM/LineSizeGb)
+  rowcol$rowInBlock = ((rowcol$row-1) %% LinesBlock)+1  # row in block number
+  rowcol$block=floor((rowcol$row-1)/LinesBlock)+1  # block number
+  rowcol$sampleIndex = 1:nrow(rowcol)  # sample index to reorder result
+
+  sampleList = lapply(unique(rowcol$block), function(iblock){
+    rc = rowcol[block==iblock]
+    rr = range(rc$row)
+    nYSize = diff(rr)+1
+    nXSize = max(rc$col)
+    # stars data cube dimension order is x*y*band
+    ipix_stars = (rc$rowInBlock-min(rc$rowInBlock))*nXSize+rc$col
+    values = read_stars(ImPath, RasterIO =list(nXSize=nXSize, nYOff=rr[1], nYSize=nYSize))[[1]]
+    values = matrix(values, nrow=nYSize*nXSize)
+    res = cbind(rc$sampleIndex, values[ipix_stars, ])
+    rm('values')
+    gc()
+    return(res)
+  })
+
+  samples = do.call(rbind, sampleList)
+  samples = samples[order(samples[,1]),2:ncol(samples)]
+
+  return(samples)
+}
+
 
 # Perform random sampling on an image including a mask
 #
@@ -439,65 +498,6 @@ extract_samples_from_image <- function(ImPath, coordPix, MaxRAM = FALSE, Already
 #   return(my_list)
 # }
 
-# Extract bands of sparse pixels in big image data cube.
-#
-# Extract bands of sparse pixels in big image data cube, typically hyperspectral data cube.
-# @param ImPath character. Path to the image cube
-# @param rowcol matrix or data.frame with two columns: row, col.
-# If columns are not named, 1st=row, 2nd=col.
-# @param MaxRAM numeric. Maximum memory use at block reading.
-# It constrains the maximum number rows of a block
-#
-# @return matrix. Rows are corresponding to the samples, columns are the bands.
-
-#' @import stars
-extract.big_raster <- function(ImPath, rowcol, MaxRAM=.25){
-  # ImPath = hs_file
-  # rowcol = arcd
-  # rowcol = as.data.table(rowcol)
-  # MaxRAM = .25
-
-  if(!data.table::is.data.table(rowcol)){
-    rowcol <- data.table::as.data.table(rowcol)
-  }
-
-  if(!all(c('row', 'col') %in% colnames(rowcol))){
-    warning('Columns row,col not found in rowcol argument. The two first columns are considered as row, col respectively.')
-    colnames(rowcol)[1:2]= c('row', 'col')
-  }
-
-
-  r = brick(ImPath)
-  # nbytes = as.numeric(substring(dataType(r), 4, 4))
-  # stars converts automatically values to numeric
-  nbytes = 8
-  ImgSizeGb = prod(dim(r))*nbytes/2^30
-  LineSizeGb = prod(dim(r)[2:3])*nbytes/2^30
-  LinesBlock = floor(MaxRAM/LineSizeGb)
-  rowcol$rowInBlock = ((rowcol$row-1) %% LinesBlock)+1  # row in block number
-  rowcol$block=floor((rowcol$row-1)/LinesBlock)+1  # block number
-  rowcol$sampleIndex = 1:nrow(rowcol)  # sample index to reorder result
-
-  sampleList = lapply(unique(rowcol$block), function(iblock){
-    rc = rowcol[block==iblock]
-    rr = range(rc$row)
-    nYSize = diff(rr)+1
-    nXSize = max(rc$col)
-    # stars data cube dimension order is x*y*band
-    ipix_stars = (rc$rowInBlock-min(rc$rowInBlock))*nXSize+rc$col
-    values = read_stars(ImPath, RasterIO =list(nXSize=nXSize, nYOff=rr[1], nYSize=nYSize))[[1]]
-    values = matrix(values, nrow=nYSize*nXSize)
-    res = cbind(rc$sampleIndex, values[ipix_stars, ])
-    rm('values')
-    gc()
-    return(res)
-  })
-
-  samples = do.call(rbind, sampleList)
-  samples = samples[order(samples[,1]),2:ncol(samples)]
-
-  return(samples)
-}
 
 
 # @return list, see Details
