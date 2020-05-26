@@ -459,7 +459,75 @@ pca <- function(X, type) {
     modPCA <- prcomp(X, scale = FALSE)
     sig <- rep(1, p)
   }
+  # TODO: remove my_list and keep modPCA to use predict...
   my_list <- list("dataPCA" = modPCA$x, "mu" = modPCA$center, "scale" = sig, "eiV" = modPCA$rotation, "eig" = modPCA$sdev)
+  return(my_list)
+}
+
+noise <- function(X, coordPix=NULL){
+  if(is.null(coordPix)){
+    if(ndims(X)!=3)
+      stop('X is expected to be a 3D array: y,x,band for row,col,depth.')
+    Xdim = dim(X)
+    # Shift x/y difference
+    Y = ((X[2:Xdim[1],2:Xdim[2],]-X[1:(Xdim[1]-1),2:Xdim[2],]) +
+               (X[2:Xdim[1],2:Xdim[2],]-X[2:Xdim[1],1:(Xdim[2]-1),]))/2
+  }else{
+    if(!all(c('Kind', 'id') %in% colnames(coordPix)))
+      stop("Columns 'Kind' and 'id' are missing in coordPix.")
+    kernel = matrix(0, 3, 3)
+    kernel[c(5, 6, 8)]=c(1, -1/2, -1/2)
+
+    if(!identical(order(coordPix$id), 1:nrow(coordPix)))
+      stop("coordPix is not ordered along column 'id'. Order coordPix as well as X before trying again.")
+
+    Y=0
+    for(ik in which(kernel!=0)){
+      Y = Y + X[coordPix$Kind==ik,]*kernel[ik]
+    }
+  }
+  return(Y)
+}
+
+mnf <- function(X, coordPix=NULL, retx=TRUE, type="PCA"){
+  if(any(is.na(X))){
+    stop('Pixels with NAs found in X. Remove NA pixels before trying again.')
+  }
+
+  nz <- noise(X, coordPix)
+  if(is.null(coordPix)){
+    nband = dim(X)[3]
+    X = matrix(X, ncol = nband)
+    nz = matrix(nz, ncol=nband)
+  }
+
+  Xc = scale(X, center = T, scale = F)
+
+  if(type=='PCA'){
+    pca_noise <- prcomp(nz, center = F, scale. = F, retx = F)
+    Xrot = predict(pca_noise, Xc) %*% diag(pca_noise$sdev^-1)
+    pca_snr = prcomp(Xrot, center = F, scale. = F, retx = F)
+
+    modMNF = pca_snr
+    modMNF$center=colMeans(X)
+    modMNF$rotation = pca_noise$rotation %*% diag(pca_noise$sdev^-1) %*% pca_snr$rotation
+  }else{
+    covNoise = cov(nz)
+    covXc = cov(Xc)
+    eig_pairs = tofsims:::EigenDecompose(covXc, covNoise, 1, nrow(covNoise))
+    vord = order(as.numeric(eig_pairs$eigval), decreasing = T)
+    eig_pairs$eigval = as.numeric(eig_pairs$eigval)[vord]
+    eig_pairs$eigvec = eig_pairs$eigvec[, vord]
+    modMNF = list(rotation=eig_pairs$eigvec,
+                  sdev=sqrt(eig_pairs$eigval),
+                  center=colMeans(X),
+                  scale=FALSE)
+  }
+  if(retx==T)
+    modMNF$x= array(Xc %*% modMNF$rotation, dim = dim(X))
+
+  # TODO: remove my_list and keep modMNF to use predict...
+  my_list <- list("dataPCA" = modMNF$x, "mu" = modMNF$center, "scale" = rep(1, ncol(modMNF$x)), "eiV" = modMNF$rotation, "eig" = modMNF$sdev)
   return(my_list)
 }
 

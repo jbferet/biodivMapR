@@ -505,12 +505,12 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.25){
 # The returned list contains:
 # - DataSubset: matrix of NxP of N samples and P bands
 # - nbPix2Sample: integer giving the number of pixels sampled (only central pixel of kernel)
-# - coordPix: a data.table with columns Row and Column of pixel in the image corresponding to each row of DataSubset,
-#   and Kind (Kernel index) if kernel is not NULL
+# - coordPix: a data.table with columns 'row', 'col' of pixel in the image corresponding to each row of DataSubset, and if kernel is not NULL
+# Kind (Kernel index) and 'id' the sample ID to be used with the kernel
 #' @importFrom matlab ones
 #' @import raster
 #' @importFrom mmand erode
-#' @importFrom data.table data.table rbindlist
+#' @importFrom data.table data.table rbindlist setorder
 get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Per_Partition, kernel=NULL) {
   # ImPath = '/home/boissieu/Data/HS/Guyane/2016/Paracou/hypip_wd_guyane_20160919_paracou_DZ/session01/L1c/VNIR_1600_SN0014/atmx2/DZ_FL01_20160919_181033_VNIR_1600_SN0014_PS01_IMG001_atm_slice_001_x2.hyspex'
 
@@ -581,15 +581,17 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Pe
     coordPixK = list()
     mesh=matlab::meshgrid(-(ncol(kernel)%/%2):(ncol(kernel)%/%2), -(nrow(kernel)%/%2):(nrow(kernel)%/%2))
     for(p in which(kernel!=0)){
-      coordPixK[[p]] = data.table(row = Row+mesh$y[p], col = Column+mesh$x[p])
+      coordPixK[[p]] = data.table(row = Row+mesh$y[p], col = Column+mesh$x[p], id=1:length(Row))
     }
     coordPix = rbindlist(coordPixK, idcol='Kind')
+    # Order along coordPix$id for further use in noise, mnf
+    setorder(coordPix, 'id')
   }else{
-    coordPix = data.table(row = Row, col = Column)
+    coordPix = data.table(row = Row, col = Column, id = 1:length(Row))
   }
   # sort based on .bil dim order, i.e. band.x.y or band.col.row
   # TODO: sorting may not be necessary anymore, neither unique coordinates
-  setorder(coordPix, col, row)
+  # setorder(coordPix, col, row)
 
   # make unique
   ucoordPix <- unique(coordPix[,c('row','col')])
@@ -599,10 +601,21 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Pe
   # TODO: if coordPix can be a data.frame it would be easier
   # Sample_Sel <- biodivMapR:::extract_samples_from_image(ImPath, ucoordPix)
   Sample_Sel <- extract.big_raster(ImPath, ucoordPix[,1:2])
-  samplePixIndex = merge(coordPix, ucoordPix, by=c('row', 'col'))
+  samplePixIndex = merge(coordPix, ucoordPix, by=c('row', 'col'), sort = FALSE)
   # randomize! It should already be random from the sample operation on mask valid pixels
   Sample_Sel <- Sample_Sel[samplePixIndex$sampleIndex, ]
   samplePixIndex[['sampleIndex']]=NULL
+
+  # remove NA pixels
+  if(any(is.na(Sample_Sel))){
+    print('Removing pixels with NA values.')
+    X=na.omit(Sample_Sel)
+    rmpix = unique(samplePixIndex$id[attr(X, "na.action")])
+    Sample_Sel = Sample_Sel[!(samplePixIndex$id %in% rmpix),]
+    samplePixIndex = samplePixIndex[!(samplePixIndex$id %in% rmpix)]
+    nbPix2Sample = length(unique(samplePixIndex$id))
+  }
+
   ### FLORIAN: REMOVED RANDOMIZATION AS IT SEEMED USELESS
   # Sample_Sel <- Sample_Sel[sample(dim(Sample_Sel)[1]), ]
   # coordPix <- coordPix[sample(dim(Sample_Sel)[1]), ]
