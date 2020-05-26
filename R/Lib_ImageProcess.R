@@ -388,7 +388,6 @@ extract_samples_from_image <- function(ImPath, coordPix, MaxRAM = FALSE, Already
 # It constrains the maximum number rows of a block
 #
 # @return matrix. Rows are corresponding to the samples, columns are the bands.
-#' @import data.table
 #' @import stars
 extract.big_raster <- function(ImPath, rowcol, MaxRAM=.25){
   # ImPath = hs_file
@@ -396,8 +395,8 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.25){
   # rowcol = as.data.table(rowcol)
   # MaxRAM = .25
 
-  if(!is.data.table(rowcol)){
-    rowcol <- as.data.table(rowcol)
+  if(!is.data.frame(rowcol)){
+    rowcol <- as.data.frame(rowcol)
   }
 
   if(!all(c('row', 'col') %in% colnames(rowcol))){
@@ -418,7 +417,7 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.25){
   rowcol$sampleIndex = 1:nrow(rowcol)  # sample index to reorder result
 
   sampleList = lapply(unique(rowcol$block), function(iblock){
-    rc = rowcol[block==iblock]
+    rc = rowcol[rowcol$block==iblock]
     rr = range(rc$row)
     nYSize = diff(rr)+1
     nXSize = max(rc$col)
@@ -584,14 +583,14 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Pe
     }
     coordPix = rbindlist(coordPixK, idcol='Kind')
   }else{
-    coordPix = data.table(row = Row, col = Column)
+    coordPix = data.frame(row = Row, col = Column)
   }
   # sort based on .bil dim order, i.e. band.x.y or band.col.row
   # TODO: sorting may not be necessary anymore, neither unique coordinates
   setorder(coordPix, col, row)
 
   # make unique
-  ucoordPix <- unique(coordPix[,.(row,col)])
+  ucoordPix <- unique(coordPix[,c('row','col')])
   ucoordPix[['sampleIndex']] = 1:nrow(ucoordPix)
 
   # 2- Extract samples from image
