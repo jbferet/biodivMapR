@@ -4,6 +4,7 @@
 # ==============================================================================
 # PROGRAMMERS:
 # Jean-Baptiste FERET <jb.feret@irstea.fr>
+# Florian de Boissieu <fdeboiss@gmail.com>
 # Copyright 2018/07 Jean-Baptiste FERET
 # ==============================================================================
 # This Library contains functions to manipulate & process raster images
@@ -377,6 +378,7 @@ extract_samples_from_image <- function(ImPath, coordPix, MaxRAM = FALSE, Already
   return(Sample_Sel)
 }
 
+
 # Perform random sampling on an image including a mask
 #
 # @param ImPath path for image
@@ -437,16 +439,77 @@ extract_samples_from_image <- function(ImPath, coordPix, MaxRAM = FALSE, Already
 #   return(my_list)
 # }
 
-#' @return list, see Details
-#' @details
-#' The returned list contains:
-#' - DataSubset: matrix of NxP of N samples and P bands
-#' - nbPix2Sample: integer giving the number of pixels sampled (only central pixel of kernel)
-#' - coordPix: a data.table with columns Row and Column of pixel in the image corresponding to each row of DataSubset,
-#'   and Kind (Kernel index) if kernel is not NULL
+# Extract bands of sparse pixels in big image data cube.
+#
+# Extract bands of sparse pixels in big image data cube, typically hyperspectral data cube.
+# @param ImPath character. Path to the image cube
+# @param rowcol matrix or data.frame with two columns: row, col.
+# If columns are not named, 1st=row, 2nd=col.
+# @param MaxRAM numeric. Maximum memory use at block reading.
+# It constrains the maximum number rows of a block
+#
+# @return matrix. Rows are corresponding to the samples, columns are the bands.
+
+#' @import stars
+extract.big_raster <- function(ImPath, rowcol, MaxRAM=.25){
+  # ImPath = hs_file
+  # rowcol = arcd
+  # rowcol = as.data.table(rowcol)
+  # MaxRAM = .25
+
+  if(!data.table::is.data.table(rowcol)){
+    rowcol <- data.table::as.data.table(rowcol)
+  }
+
+  if(!all(c('row', 'col') %in% colnames(rowcol))){
+    warning('Columns row,col not found in rowcol argument. The two first columns are considered as row, col respectively.')
+    colnames(rowcol)[1:2]= c('row', 'col')
+  }
+
+
+  r = brick(ImPath)
+  # nbytes = as.numeric(substring(dataType(r), 4, 4))
+  # stars converts automatically values to numeric
+  nbytes = 8
+  ImgSizeGb = prod(dim(r))*nbytes/2^30
+  LineSizeGb = prod(dim(r)[2:3])*nbytes/2^30
+  LinesBlock = floor(MaxRAM/LineSizeGb)
+  rowcol$rowInBlock = ((rowcol$row-1) %% LinesBlock)+1  # row in block number
+  rowcol$block=floor((rowcol$row-1)/LinesBlock)+1  # block number
+  rowcol$sampleIndex = 1:nrow(rowcol)  # sample index to reorder result
+
+  sampleList = lapply(unique(rowcol$block), function(iblock){
+    rc = rowcol[block==iblock]
+    rr = range(rc$row)
+    nYSize = diff(rr)+1
+    nXSize = max(rc$col)
+    # stars data cube dimension order is x*y*band
+    ipix_stars = (rc$rowInBlock-min(rc$rowInBlock))*nXSize+rc$col
+    values = read_stars(ImPath, RasterIO =list(nXSize=nXSize, nYOff=rr[1], nYSize=nYSize))[[1]]
+    values = matrix(values, nrow=nYSize*nXSize)
+    res = cbind(rc$sampleIndex, values[ipix_stars, ])
+    rm('values')
+    gc()
+    return(res)
+  })
+
+  samples = do.call(rbind, sampleList)
+  samples = samples[order(samples[,1]),2:ncol(samples)]
+
+  return(samples)
+}
+
+
+# @return list, see Details
+# @details
+# The returned list contains:
+# - DataSubset: matrix of NxP of N samples and P bands
+# - nbPix2Sample: integer giving the number of pixels sampled (only central pixel of kernel)
+# - coordPix: a data.table with columns Row and Column of pixel in the image corresponding to each row of DataSubset,
+#   and Kind (Kernel index) if kernel is not NULL
 #' @importFrom matlab ones
-get_random_subset_from_image <- function(ImPath, HDR, MaskPath, nb_partitions, Pix_Per_Partition, kernel=NULL) {
-  # TODO: remove HDR from input args and read it directly
+#' @import raster mmand data.table
+get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Per_Partition, kernel=NULL) {
   # ImPath = '/home/boissieu/Data/HS/Guyane/2016/Paracou/hypip_wd_guyane_20160919_paracou_DZ/session01/L1c/VNIR_1600_SN0014/atmx2/DZ_FL01_20160919_181033_VNIR_1600_SN0014_PS01_IMG001_atm_slice_001_x2.hyspex'
 
   r = brick(ImPath)
@@ -469,15 +532,19 @@ get_random_subset_from_image <- function(ImPath, HDR, MaskPath, nb_partitions, P
   # 1- Exclude masked pixels from random subset
   # Read Mask
   if ((!MaskPath == "") & (!MaskPath == FALSE)) {
-    fid <- file(
-      description = MaskPath, open = "rb", blocking = TRUE,
-      encoding = getOption("encoding"), raw = FALSE
-    )
-    mask <- readBin(fid, integer(), n = nbpix, size = 1)
-    close(fid)
-    mask <- (array(mask, dim = c(HDR$samples, HDR$lines)))
+    mask <- as.matrix(raster(MaskPath))
+    if(any(dim(mask)[1:2] != dim(r)[1:2])){
+      stop('Mask and Image rasters do not have the same XY diemnsions.')
+    }
+    # fid <- file(
+    #   description = MaskPath, open = "rb", blocking = TRUE,
+    #   encoding = getOption("encoding"), raw = FALSE
+    # )
+    # mask <- readBin(fid, integer(), n = nbpix, size = 1)
+    # close(fid)
+    # mask <- aperm(array(mask, dim = c(nsamples, nlines)))
   } else {
-    mask <- array(1, dim = c(HDR$lines, HDR$samples))
+    mask <- array(1, dim = c(nlines, nsamples))
   }
 
   if(is.matrix(kernel)){
@@ -488,7 +555,7 @@ get_random_subset_from_image <- function(ImPath, HDR, MaskPath, nb_partitions, P
   }
 
   # get a list of samples among unmasked pixels
-  ValidPixels <- sample(which(mask > 0))
+  ValidPixels <- which(mask > 0)
   NbValidPixels <- length(ValidPixels)
   # Check if number of valid pixels is compatible with number of pixels to be extracted
   # if number of pixels to sample superior to number of valid pixels, then adjust iterations
@@ -498,8 +565,9 @@ get_random_subset_from_image <- function(ImPath, HDR, MaskPath, nb_partitions, P
     Pix_Per_Partition <- floor(NbValidPixels / nb_partitions)
     nbPix2Sample <- nb_partitions * Pix_Per_Partition
   }
-  # Select a subset of nbPix2Sample among pixselected
-  pixselected <- ValidPixels[1:nbPix2Sample]
+
+  # Select a random subset of nbPix2Sample
+  pixselected <- sample(ValidPixels, nbPix2Sample)
 
   # define location of pixselected in binary file (avoid multiple reads) and optimize access to disk
   # the file is a BIL file, which means that for each line in the image,
@@ -511,24 +579,25 @@ get_random_subset_from_image <- function(ImPath, HDR, MaskPath, nb_partitions, P
     coordPixK = list()
     mesh=matlab::meshgrid(-(ncol(kernel)%/%2):(ncol(kernel)%/%2), -(nrow(kernel)%/%2):(nrow(kernel)%/%2))
     for(p in which(kernel!=0)){
-      coordPixK[[p]] = data.table(Row = Row+mesh$y[p], Column = Column+mesh$x[p])
+      coordPixK[[p]] = data.table(row = Row+mesh$y[p], col = Column+mesh$x[p])
     }
     coordPix = rbindlist(coordPixK, idcol='Kind')
   }else{
-    coordPix = data.table(Row = Row, Column = Column)
+    coordPix = data.table(row = Row, col = Column)
   }
-  # sort based on line and col
-  # indxPix <- order(coordi, coordj, na.last = FALSE)
-  # coordPix <- cbind(coordi[indxPix], coordj[indxPix])
-  setorder(coordPix, Column, Row)
+  # sort based on .bil dim order, i.e. band.x.y or band.col.row
+  # TODO: sorting may not be necessary anymore, neither unique coordinates
+  setorder(coordPix, col, row)
+
   # make unique
-  ucoordPix <- unique(coordPix[,.(Row,Column)])
+  ucoordPix <- unique(coordPix[,.(row,col)])
   ucoordPix[['sampleIndex']] = 1:nrow(ucoordPix)
 
   # 2- Extract samples from image
   # TODO: if coordPix can be a data.frame it would be easier
-  Sample_Sel <- biodivMapR:::extract_samples_from_image(ImPath, ucoordPix)
-  samplePixIndex = merge(coordPix, ucoordPix, by=c('Row', 'Column'))
+  # Sample_Sel <- biodivMapR:::extract_samples_from_image(ImPath, ucoordPix)
+  Sample_Sel <- extract.big_raster(ImPath, ucoordPix[,1:2])
+  samplePixIndex = merge(coordPix, ucoordPix, by=c('row', 'col'))
   # randomize! It should already be random from the sample operation on mask valid pixels
   Sample_Sel <- Sample_Sel[samplePixIndex$sampleIndex, ]
   samplePixIndex[['sampleIndex']]=NULL
@@ -536,7 +605,6 @@ get_random_subset_from_image <- function(ImPath, HDR, MaskPath, nb_partitions, P
   # Sample_Sel <- Sample_Sel[sample(dim(Sample_Sel)[1]), ]
   # coordPix <- coordPix[sample(dim(Sample_Sel)[1]), ]
   # TODO: check how returned coordPix is used, as it is now a data.frame
-  # TODO: add different output for kernel
   my_list <- list("DataSubset" = Sample_Sel, "nbPix2Sample" = nbPix2Sample,"coordPix"=samplePixIndex)
   return(my_list)
 }
