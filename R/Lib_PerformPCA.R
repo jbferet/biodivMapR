@@ -16,7 +16,7 @@
 #' @param Output_Dir character. Path for output directory
 #' @param Continuum_Removal boolean. Set to TRUE if continuum removal should be applied
 #' @param TypePCA character. Type of PCA: choose either "PCA" or "SPCA"
-#' @param NbPCs_To_Keep numeric. number of components to ke saved in the PCA file. default = 30 if set to FALSE (or nb PC if <30)
+#' @param NbPCs_To_Keep numeric. number of components to ke saved in the PCA file. default = 30 (or nb PC if <30)
 #' @param FilterPCA boolean. Set to TRUE if 2nd filtering based on PCA is required
 #' @param Excluded_WL  numeric. Water Vapor Absorption domains (in nanometers, min and max WL). Can also be used to exclude spectific domains. dims = N x 2 (N = number of domains to be eliminated)
 #' @param nb_partitions numeric. Number of repetitions to estimate diversity from the raster (averaging repetitions).
@@ -25,7 +25,7 @@
 #'
 #' @return list of paths corresponding to resulting PCA files
 #' @export
-perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuum_Removal=TRUE, TypePCA="SPCA", NbPCs_To_Keep=FALSE,
+perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuum_Removal=TRUE, TypePCA="SPCA", NbPCs_To_Keep=30,
                          FilterPCA = FALSE, Excluded_WL = FALSE, nb_partitions = 20, nbCPU = 1, MaxRAM = 0.25) {
   # check if format of raster data is as expected
   check_data(Input_Image_File)
@@ -65,7 +65,7 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
   }
   DataSubset <- Subset$DataSubset
   # clean reflectance data from inf and constant values
-  CleanData <- check_invariant_bands(DataSubset, SpectralFilter)
+  CleanData <- rm_invariant_bands(DataSubset, SpectralFilter)
   DataSubset <- CleanData$DataMatrix
   SpectralFilter <- CleanData$Spectral
 
@@ -79,6 +79,8 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
   #   tic()
   #   PCA_model <- nlpca(DataSubset)
   #   toc()
+  }else if(TypePCA == "MNF"){
+    PCA_model <- mnf(DataSubset, Subset$coordPix)
   }
 
   # if PCA based filtering:
@@ -119,8 +121,8 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
     DataSubset <- Subset$DataSubset
     # # # assume that 1st data cleaning is enough...
     ## Uncommented June 5, 2019
-    # clean reflectance data from inf and constant values
-    CleanData <- check_invariant_bands(DataSubset, SpectralFilter)
+    # clean reflectance data from constant bands
+    CleanData <- rm_invariant_bands(DataSubset, SpectralFilter)
     DataSubset <- CleanData$DataMatrix
     SpectralFilter <- CleanData$Spectral
     print("perform PCA#2 on the subset image")
@@ -134,14 +136,11 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
     }
   }
   # Number of PCs computed and written in the PCA file: 30 if hyperspectral
-  if (NbPCs_To_Keep==FALSE){
-    Nb_PCs <- dim(PCA_model$dataPCA)[2]
-    if (Nb_PCs > 30) {
-      Nb_PCs <- 30
-    }
-  } else {
-    Nb_PCs = NbPCs_To_Keep
-  }
+
+  Nb_PCs <- dim(PCA_model$dataPCA)[2]
+  if (Nb_PCs > NbPCs_To_Keep)
+    Nb_PCs <- NbPCs_To_Keep
+
   PCA_model$Nb_PCs <- Nb_PCs
   PCA_model$dataPCA <- NULL
   # CREATE PCA FILE CONTAINING ONLY SELECTED PCs
@@ -515,9 +514,9 @@ mnf <- function(X, coordPix=NULL, retx=TRUE, type="PCA"){
     covNoise = cov(nz)
     covXc = cov(Xc)
     eig_pairs = tofsims:::EigenDecompose(covXc, covNoise, 1, nrow(covNoise))
-    vord = order(as.numeric(eig_pairs$eigval), decreasing = T)
-    eig_pairs$eigval = as.numeric(eig_pairs$eigval)[vord]
-    eig_pairs$eigvec = eig_pairs$eigvec[, vord]
+    vord = order(Re(eig_pairs$eigval), decreasing = T)
+    eig_pairs$eigval = Re(eig_pairs$eigval)[vord]
+    eig_pairs$eigvec = Re(eig_pairs$eigvec[, vord])
     modMNF = list(rotation=eig_pairs$eigvec,
                   sdev=sqrt(eig_pairs$eigval),
                   center=colMeans(X),
