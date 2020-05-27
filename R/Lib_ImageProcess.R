@@ -1234,7 +1234,7 @@ ZipFile <- function(ImagePath) {
   ImageDir <- dirname(ImagePath)
   ImageName <- basename(ImagePath)
   setwd(ImageDir)
-  zip::zip(zipfile = paste0(ImageName, ".zip"), files = ImageName)
+  zip::zipr(zipfile = paste0(ImageName, ".zip"), files = ImageName)
   file.remove(ImageName)
   setwd(PathRoot)
   return(invisible())
