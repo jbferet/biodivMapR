@@ -69,7 +69,7 @@ map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model
         Subset$DataSubset <- Subset$DataSubset[, -SpectralFilter$BandsNoVar]
       }
       if (TypePCA == "PCA" | TypePCA == "SPCA") {
-        dataPCA <- t(t(PCA_model$eiV[, 1:PCA_model$Nb_PCs]) %*% t(center_reduce(Subset$DataSubset, PCA_model$mu, PCA_model$scale)))
+        dataPCA <- scale(Subset$DataSubset, PCA_model$center, PCA_model$scale) %*% PCA_model$rotation[, 1:PCA_model$Nb_PCs]
       }
       dataPCA <- dataPCA[, PC_Select]
       if (length(PC_Select) == 1) {

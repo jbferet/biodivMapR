@@ -93,10 +93,10 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
     # In order to exclude these pixels, we compute mean and SD for the 3 first
     # components and exclude all pixels showing values ouside "mean+-3SD" range
     print("perform 2nd filtering: Exclude extreme PCA values")
-    if (dim(PCA_model$dataPCA)[2] > 5) {
+    if (dim(PCA_model$x)[2] > 5) {
       PCsel <- 1:5
     } else {
-      PCsel <- 1:dim(PCA_model$dataPCA)[2]
+      PCsel <- 1:dim(PCA_model$x)[2]
     }
     Shade_Update <- paste(Output_Dir_Full, "ShadeMask_Update_PCA", sep = "")
     Input_Mask_File <- filter_PCA(Input_Image_File, HDR, Input_Mask_File, Shade_Update, SpectralFilter, Continuum_Removal, PCA_model, PCsel, TypePCA, nbCPU = nbCPU, MaxRAM = MaxRAM)
@@ -137,12 +137,12 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
   }
   # Number of PCs computed and written in the PCA file: 30 if hyperspectral
 
-  Nb_PCs <- dim(PCA_model$dataPCA)[2]
+  Nb_PCs <- dim(PCA_model$x)[2]
   if (Nb_PCs > NbPCs_To_Keep)
     Nb_PCs <- NbPCs_To_Keep
 
   PCA_model$Nb_PCs <- Nb_PCs
-  PCA_model$dataPCA <- NULL
+  PCA_model$x <- NULL
   # CREATE PCA FILE CONTAINING ONLY SELECTED PCs
   print("Apply PCA model to the whole image")
   Output_Dir_PCA <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "PCA")
@@ -176,8 +176,8 @@ filter_PCA <- function(Input_Image_File, HDR, Input_Mask_File, Shade_Update, Spe
 
   # 1- get extreme values falling outside of mean +- 3SD for PCsel first components
   # compute mean and sd of the 5 first components of the sampled data
-  MeanSub <- colMeans(PCA_model$dataPCA)
-  SDSub <- apply(PCA_model$dataPCA, 2, sd)
+  MeanSub <- colMeans(PCA_model$x)
+  SDSub <- apply(PCA_model$x, 2, sd)
   MinPC <- MeanSub - 3.0 * SDSub
   MaxPC <- MeanSub + 3.0 * SDSub
 
@@ -264,7 +264,7 @@ filter_PCA <- function(Input_Image_File, HDR, Input_Mask_File, Shade_Update, Spe
     }
     # Apply PCA
     if (TypePCA == "PCA" | TypePCA == "SPCA") {
-      Image_Chunk <- t(t(PCA_model$eiV[, PCsel]) %*% t(center_reduce(Image_Chunk, PCA_model$mu, PCA_model$scale)))
+      Image_Chunk <- scale(Image_Chunk, PCA_model$center, PCA_model$scale) %*% PCA_model$rotation[, PCsel]
     }
 
     # get PCA of the group of line and rearrange the data to write it correctly in the output file
@@ -411,7 +411,7 @@ write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_mo
 
     # Apply PCA
     if (TypePCA == "PCA" | TypePCA == "SPCA") {
-      Image_Chunk <- t(t(PCA_model$eiV[, 1:Nb_PCs]) %*% t(center_reduce(Image_Chunk, PCA_model$mu, PCA_model$scale)))
+      Image_Chunk <- scale(Image_Chunk, PCA_model$center, PCA_model$scale) %*% PCA_model$rotation[, 1:Nb_PCs]
     }
 
     # get PCA of the group of line and rearrange the data to write it correctly in the output file
@@ -453,14 +453,10 @@ pca <- function(X, type) {
   p <- ncol(X)
   if (type == "SPCA") {
     modPCA <- prcomp(X, scale = TRUE)
-    sig <- modPCA$scale
   } else if (type == "PCA") {
     modPCA <- prcomp(X, scale = FALSE)
-    sig <- rep(1, p)
   }
-  # TODO: remove my_list and keep modPCA to use predict...
-  my_list <- list("dataPCA" = modPCA$x, "mu" = modPCA$center, "scale" = sig, "eiV" = modPCA$rotation, "eig" = modPCA$sdev)
-  return(my_list)
+  return(modPCA)
 }
 
 noise <- function(X, coordPix=NULL){
@@ -525,9 +521,7 @@ mnf <- function(X, coordPix=NULL, retx=TRUE, type="PCA"){
   if(retx==T)
     modMNF$x= array(Xc %*% modMNF$rotation, dim = dim(X))
 
-  # TODO: remove my_list and keep modMNF to use predict...
-  my_list <- list("dataPCA" = modMNF$x, "mu" = modMNF$center, "scale" = rep(1, ncol(modMNF$x)), "eiV" = modMNF$rotation, "eig" = modMNF$sdev)
-  return(my_list)
+  return(modMNF)
 }
 
 # defines the number of pixels per iteration based on a trade-off between image size and sample size per iteration
