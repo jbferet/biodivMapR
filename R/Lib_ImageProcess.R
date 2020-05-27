@@ -61,25 +61,16 @@ change_resolution_HDR <- function(HDR, window_size) {
   return(HDR)
 }
 
-# clean data matrix from inf values and identifies if some values
-# (columns) are constant. variables showing constant value
-# need to be eliminated before PCA
+# remove constant bands
 #
 # @param DataMatrix each variable is a column
 # @param Spectral summary of spectral information: which spectral bands selected from initial data
 #
 # @return updated DataMatrix and Spectral
 # ' @importFrom stats sd
-
-check_invariant_bands <- function(DataMatrix, Spectral) {
-  # samples with inf value are eliminated
-  for (i in 1:ncol(DataMatrix)) {
-    elim <- which(DataMatrix[, i] == Inf)
-    if (length(elim) > 0) {
-      DataMatrix <- DataMatrix[-elim, ]
-    }
-  }
-  # bands showing null std are eliminated
+#' @importFrom matrixStats rowAnys
+rm_invariant_bands <- function(DataMatrix, Spectral) {
+  # bands showing null std are removed
   stdsub <- apply(DataMatrix, 2, sd)
   BandsNoVar <- which(stdsub == 0)
   # BandsNoVar  = which(stdsub<=0.002)
@@ -511,6 +502,7 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.25){
 #' @import raster
 #' @importFrom mmand erode
 #' @importFrom data.table data.table rbindlist setorder
+#' @importFrom matrixStats rowAnys
 get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Per_Partition, kernel=NULL) {
   # ImPath = '/home/boissieu/Data/HS/Guyane/2016/Paracou/hypip_wd_guyane_20160919_paracou_DZ/session01/L1c/VNIR_1600_SN0014/atmx2/DZ_FL01_20160919_181033_VNIR_1600_SN0014_PS01_IMG001_atm_slice_001_x2.hyspex'
 
@@ -606,11 +598,11 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Pe
   Sample_Sel <- Sample_Sel[samplePixIndex$sampleIndex, ]
   samplePixIndex[['sampleIndex']]=NULL
 
-  # remove NA pixels
-  if(any(is.na(Sample_Sel))){
+  # remove NA and Inf pixels
+  if(any(is.na(Sample_Sel) | is.infinite(Sample_Sel))){
     print('Removing pixels with NA values.')
-    X=na.omit(Sample_Sel)
-    rmpix = unique(samplePixIndex$id[attr(X, "na.action")])
+    rmrows <- !rowAnys(is.na(Sample_Sel) | is.infinite(Sample_Sel))
+    rmpix <- unique(samplePixIndex$id[rmrows])
     Sample_Sel = Sample_Sel[!(samplePixIndex$id %in% rmpix),]
     samplePixIndex = samplePixIndex[!(samplePixIndex$id %in% rmpix)]
     nbPix2Sample = length(unique(samplePixIndex$id))
