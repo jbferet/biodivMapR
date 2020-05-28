@@ -99,13 +99,13 @@ Sel_PC = select_PCA_components(Input_Image_File,Output_Dir,PCA_Files,File_Open =
 ################################################################################
 
 print("MAP SPECTRAL SPECIES")
-map_spectral_species(Input_Image_File,Output_Dir,PCA_Files,PCA_model,SpectralFilter,Input_Mask_File,Pix_Per_Partition,nb_partitions,nbCPU=nbCPU,MaxRAM=MaxRAM,nbclusters = nbclusters,TypePCA = TypePCA,CR = TRUE)
+map_spectral_species(Input_Image_File,Output_Dir,PCA_Files,PCA_model,SpectralFilter,Input_Mask_File,Pix_Per_Partition,nb_partitions,nbCPU=nbCPU,MaxRAM=MaxRAM,nbclusters = nbclusters,TypePCA = TypePCA,Continuum_Removal = TRUE)
 
 print("MAP ALPHA DIVERSITY")
 # Index.Alpha   = c('Shannon','Simpson')
 Index_Alpha   = c('Shannon')
 map_alpha_div(Input_Image_File,Output_Dir,window_size,nbCPU=nbCPU,MaxRAM=MaxRAM,Index_Alpha = Index_Alpha,nbclusters = nbclusters)
-
+nb_partitions=20
 print("MAP BETA DIVERSITY")
 map_beta_div(Input_Image_File,Output_Dir,window_size,nb_partitions=nb_partitions,nbCPU=nbCPU,MaxRAM=MaxRAM,nbclusters = nbclusters)
 

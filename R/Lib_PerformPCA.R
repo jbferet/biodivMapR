@@ -479,7 +479,7 @@ noise <- function(X, coordPix=NULL){
   return(Y)
 }
 
-#' @import tofsims
+# #' @import tofsims
 mnf <- function(X, coordPix=NULL, retx=TRUE, type="PCA"){
   if(any(is.na(X))){
     stop('Pixels with NAs found in X. Remove NA pixels before trying again.')
@@ -494,7 +494,7 @@ mnf <- function(X, coordPix=NULL, retx=TRUE, type="PCA"){
 
   Xc = scale(X, center = T, scale = F)
 
-  if(type=='PCA'){
+  # if(type=='PCA'){
     pca_noise <- prcomp(nz, center = F, scale. = F, retx = F)
     Xrot = predict(pca_noise, Xc) %*% diag(pca_noise$sdev^-1)
     pca_snr = prcomp(Xrot, center = F, scale. = F, retx = F)
@@ -502,18 +502,18 @@ mnf <- function(X, coordPix=NULL, retx=TRUE, type="PCA"){
     modMNF = pca_snr
     modMNF$center=colMeans(X)
     modMNF$rotation = pca_noise$rotation %*% diag(pca_noise$sdev^-1) %*% pca_snr$rotation
-  }else{
-    covNoise = cov(nz)
-    covXc = cov(Xc)
-    eig_pairs = tofsims:::EigenDecompose(covXc, covNoise, 1, nrow(covNoise))
-    vord = order(Re(eig_pairs$eigval), decreasing = T)
-    eig_pairs$eigval = Re(eig_pairs$eigval)[vord]
-    eig_pairs$eigvec = Re(eig_pairs$eigvec[, vord])
-    modMNF = list(rotation=eig_pairs$eigvec,
-                  sdev=sqrt(eig_pairs$eigval),
-                  center=colMeans(X),
-                  scale=FALSE)
-  }
+  # }else{
+  #   covNoise = cov(nz)
+  #   covXc = cov(Xc)
+  #   eig_pairs = tofsims:::EigenDecompose(covXc, covNoise, 1, nrow(covNoise))
+  #   vord = order(Re(eig_pairs$eigval), decreasing = T)
+  #   eig_pairs$eigval = Re(eig_pairs$eigval)[vord]
+  #   eig_pairs$eigvec = Re(eig_pairs$eigvec[, vord])
+  #   modMNF = list(rotation=eig_pairs$eigvec,
+  #                 sdev=sqrt(eig_pairs$eigval),
+  #                 center=colMeans(X),
+  #                 scale=FALSE)
+  # }
   if(retx==T)
     modMNF$x= array(Xc %*% modMNF$rotation, dim = dim(X))
 
