@@ -175,7 +175,7 @@ ordination_parallel <- function(id.sub, coordTotSort, SSD_Path, Sample_Sel, Beta
 # @param pcelim min proprtion for a spectral species in a spatial unit to be considerd
 #
 # @return
-#' @importFrom labdsv pco
+# #' @importFrom labdsv pco
 #' @importFrom stats as.dist
 compute_beta_metrics <- function(Output_Dir, MinSun, Nb_Units_Ordin, nb_partitions, nbclusters, pcelim, scaling = "PCO", nbCPU = FALSE, MaxRAM = FALSE) {
   # Define path for images to be used

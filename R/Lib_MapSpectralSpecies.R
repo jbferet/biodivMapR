@@ -57,7 +57,7 @@ map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model
       # sample data from image and perform PCA
       ImPathHDR <- get_HDR_name(Input_Image_File)
       HDR <- read_ENVI_header(ImPathHDR)
-      Subset <- get_random_subset_from_image(Input_Image_File, HDR, Input_Mask_File, nb_partitions, Pix_Per_Partition)
+      Subset <- get_random_subset_from_image(Input_Image_File, Input_Mask_File, nb_partitions, Pix_Per_Partition)
       SubsetInit <- Subset
       # if needed, apply continuum removal
       if (Continuum_Removal == TRUE) {

@@ -47,7 +47,7 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
   ImPathHDR <- get_HDR_name(Input_Image_File)
   HDR <- read_ENVI_header(ImPathHDR)
   # extract a random selection of pixels from image
-  Subset <- get_random_subset_from_image(Input_Image_File, HDR, Input_Mask_File, nb_partitions, Pix_Per_Partition)
+  Subset <- get_random_subset_from_image(Input_Image_File, Input_Mask_File, nb_partitions, Pix_Per_Partition)
   # if needed, apply continuum removal
   if (Continuum_Removal == TRUE) {
     Subset$DataSubset <- apply_continuum_removal(Subset$DataSubset, SpectralFilter, nbCPU = nbCPU)
@@ -102,7 +102,7 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
     Input_Mask_File <- filter_PCA(Input_Image_File, HDR, Input_Mask_File, Shade_Update, SpectralFilter, Continuum_Removal, PCA_model, PCsel, TypePCA, nbCPU = nbCPU, MaxRAM = MaxRAM)
     ## Compute PCA 2 based on the updated shade mask ##
     # extract a random selection of pixels from image
-    Subset <- get_random_subset_from_image(Input_Image_File, HDR, Input_Mask_File, nb_partitions, Pix_Per_Partition)
+    Subset <- get_random_subset_from_image(Input_Image_File, Input_Mask_File, nb_partitions, Pix_Per_Partition)
     # if needed, apply continuum removal
     if (Continuum_Removal == TRUE) {
       Subset$DataSubset <- apply_continuum_removal(Subset$DataSubset, SpectralFilter, nbCPU = nbCPU)
@@ -309,7 +309,7 @@ filter_PCA <- function(Input_Image_File, HDR, Input_Mask_File, Shade_Update, Spe
 # @param PCA_model PCA model description
 # @param Spectral spectral information to be used in the image
 # @param Nb_PCs number of components kept in the resulting PCA raster
-# @param CR Shoudl continuum removal be performed?
+# @param CR boolean. If TRUE continuum removal is performed.
 # @param TypePCA PCA, SPCA, NLPCA
 # @param nbCPU number of CPUs to process data
 # @param MaxRAM max RAM when initial image is read (in Gb)
@@ -318,7 +318,7 @@ filter_PCA <- function(Input_Image_File, HDR, Input_Mask_File, Shade_Update, Spe
 write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_model, Spectral, Nb_PCs, CR, TypePCA, nbCPU = 1, MaxRAM = 0.25) {
   ImPathHDR <- get_HDR_name(Input_Image_File)
   HDR <- read_ENVI_header(ImPathHDR)
-  if ((!Input_Mask_File == FALSE) & (!Input_Mask_File == "")) {
+  if (is.character(Input_Mask_File) && (Input_Mask_File != "")) {
     ShadeHDR <- get_HDR_name(Input_Mask_File)
     HDR_Shade <- read_ENVI_header(ShadeHDR)
   } else {
@@ -328,12 +328,7 @@ write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_mo
   HDR_PCA <- HDR
   HDR_PCA$bands <- Nb_PCs
   HDR_PCA$`data type` <- 4
-  PCs <- list()
-  for (i in 1:Nb_PCs) {
-    PCs <- c(PCs, paste("PC", i))
-  }
-  PCs <- paste(PCs, collapse = ", ")
-  HDR_PCA$`band names` <- PCs
+  HDR_PCA$`band names` <- paste('PC', 1:Nb_PCs, collapse = ", ")
   HDR_PCA$wavelength <- NULL
   HDR_PCA$fwhm <- NULL
   HDR_PCA$resolution <- NULL
@@ -394,7 +389,7 @@ write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_mo
       keepShade <- matrix(1,ncol = 1,nrow = nrow(Image_Chunk))
     }
     # apply Continuum removal if needed
-    if (CR == TRUE) {
+    if (CR) {
       Image_Chunk <- apply_continuum_removal(Image_Chunk, Spectral, nbCPU = nbCPU)
       ## added June 5, 2019
       if (length(Spectral$BandsNoVar) > 0) {
@@ -484,6 +479,7 @@ noise <- function(X, coordPix=NULL){
   return(Y)
 }
 
+#' @import tofsims
 mnf <- function(X, coordPix=NULL, retx=TRUE, type="PCA"){
   if(any(is.na(X))){
     stop('Pixels with NAs found in X. Remove NA pixels before trying again.')
@@ -543,7 +539,7 @@ define_pixels_per_iter <- function(ImNames, nb_partitions = nb_partitions) {
   lenTot <- nbPixels * as.double(HDR$bands)
   ImSizeGb <- (lenTot * Image_Format$Bytes) / (1024^3)
   # if shade mask, update number of pixels
-  if ((!Input_Mask_File == FALSE) & (!Input_Mask_File == "")) {
+  if (is.character(Input_Mask_File) && (Input_Mask_File != "")) {
     # read shade mask
     fid <- file(
       description = Input_Mask_File, open = "rb", blocking = TRUE,

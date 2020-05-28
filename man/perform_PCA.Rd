@@ -10,7 +10,7 @@ perform_PCA(
   Output_Dir,
   Continuum_Removal = TRUE,
   TypePCA = "SPCA",
-  NbPCs_To_Keep = FALSE,
+  NbPCs_To_Keep = 30,
   FilterPCA = FALSE,
   Excluded_WL = FALSE,
   nb_partitions = 20,
@@ -29,7 +29,7 @@ perform_PCA(
 
 \item{TypePCA}{character. Type of PCA: choose either "PCA" or "SPCA"}
 
-\item{NbPCs_To_Keep}{numeric. number of components to ke saved in the PCA file. default = 30 if set to FALSE (or nb PC if <30)}
+\item{NbPCs_To_Keep}{numeric. number of components to ke saved in the PCA file. default = 30 (or nb PC if <30)}
 
 \item{FilterPCA}{boolean. Set to TRUE if 2nd filtering based on PCA is required}
 

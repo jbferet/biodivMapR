@@ -706,7 +706,11 @@ ind2sub2 <- function(Raster, Image_Index) {
 # @return rank of all spectral bands of interest in the image and corresponding wavelength
 #' @importFrom matlab padarray
 mean_filter <- function(ImageInit, nbi, nbj, SizeFilt) {
-  E <- padarray(ImageInit, c(SizeFilt, SizeFilt), "symmetric", "both")
+  # matlab::padarray leads to an error on Ubuntu 18.04 R 3.4.4
+  # Error: not-yet-implemented method for ==(<size_t>, <numeric>).
+  # ->>  Ask the package authors to implement the missing feature.
+  # E <- padarray(ImageInit, c(SizeFilt, SizeFilt), "symmetric", "both")
+  E <- matlab:::symmetricPad(ImageInit, c(SizeFilt, SizeFilt), "both")
   ImageSmooth <- matrix(0, nrow = nbi, ncol = nbj)
   Mat2D <- MatSun <- matrix(0, nrow = ((2 * SizeFilt) + 1)^2, ncol = nbj)
   spl <- split(1:nbj, 1:((2 * SizeFilt) + 1))
@@ -714,7 +718,7 @@ mean_filter <- function(ImageInit, nbi, nbj, SizeFilt) {
   for (i in (SizeFilt + 1):(nbi + SizeFilt)) {
     for (j in 1:((2 * SizeFilt) + 1)) {
       # create a 2D matrix
-      Mat2D[, spl[[j]]] <- matrix(E[(i - SizeFilt):(i + SizeFilt), (spl[[j]][1]):(tail(spl[[j]], n = 1) + 2 * SizeFilt)], nrow = ((2 * SizeFilt) + 1)^2)
+      Mat2D[, spl[[j]]] <- matrix(E[(i - SizeFilt):(i + SizeFilt), (spl[[j]][1]):(utils::tail(spl[[j]], n = 1) + 2 * SizeFilt)], nrow = ((2 * SizeFilt) + 1)^2)
     }
     ImageSmooth[(i - SizeFilt), ] <- colMeans(Mat2D, na.rm = TRUE)
   }
@@ -1230,12 +1234,8 @@ revert_resolution_HDR <- function(HDR, window_size) {
 # @param ImagePath path for the image
 # @return None
 ZipFile <- function(ImagePath) {
-  PathRoot <- getwd()
-  ImageDir <- dirname(ImagePath)
-  ImageName <- basename(ImagePath)
-  setwd(ImageDir)
-  zip::zipr(zipfile = paste0(ImageName, ".zip"), files = ImageName)
-  file.remove(ImageName)
-  setwd(PathRoot)
+  ImagePath <- normalizePath(ImagePath)
+  zip::zipr(zipfile = paste0(ImagePath, ".zip"), files = ImagePath)
+  file.remove(ImagePath)
   return(invisible())
 }
