@@ -47,7 +47,13 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
   ImPathHDR <- get_HDR_name(Input_Image_File)
   HDR <- read_ENVI_header(ImPathHDR)
   # extract a random selection of pixels from image
-  Subset <- get_random_subset_from_image(Input_Image_File, Input_Mask_File, nb_partitions, Pix_Per_Partition)
+  if (TypePCA=='MNF'){
+    kernel = matrix(0, 3, 3)
+    kernel[c(5, 6, 8)]=c(1, -1/2, -1/2)
+    Subset <- get_random_subset_from_image(Input_Image_File, Input_Mask_File, nb_partitions, Pix_Per_Partition, kernel)
+  } else {
+    Subset <- get_random_subset_from_image(Input_Image_File, Input_Mask_File, nb_partitions, Pix_Per_Partition)
+  }
   # if needed, apply continuum removal
   if (Continuum_Removal == TRUE) {
     Subset$DataSubset <- apply_continuum_removal(Subset$DataSubset, SpectralFilter, nbCPU = nbCPU)
@@ -79,7 +85,7 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
   #   tic()
   #   PCA_model <- nlpca(DataSubset)
   #   toc()
-  }else if(TypePCA == "MNF"){
+  }else if(TypePCA=="MNF"){
     PCA_model <- mnf(DataSubset, Subset$coordPix)
   }
 
@@ -454,6 +460,8 @@ pca <- function(X, type) {
   return(modPCA)
 }
 
+# If coordPix is not NULL, X and coordPix are exepected to have the same order,
+# i.e. coordPix[1, ] corresponds to X[1, ], coordPix[2, ] corresponds to X[2, ], ...
 noise <- function(X, coordPix=NULL){
   if(is.null(coordPix)){
     if(ndims(X)!=3)
@@ -479,32 +487,55 @@ noise <- function(X, coordPix=NULL){
   return(Y)
 }
 
-# #' @import tofsims
-mnf <- function(X, coordPix=NULL, retx=TRUE, type="PCA"){
+# used in noise
+# kernel = matrix(0, 3, 3)
+# kernel[c(5, 6, 8)]=c(1, -1/2, -1/2)
+coordPix_kernel <- function(X, kernel){
+  mesh = matlab::meshgrid(1:nrow(X), 1:ncol(X))
+  Row <- as.numeric(mesh$y) # row
+  Column <- as.numeric(mesh$x) # column
+
+  coordPixK = list()
+  mesh=matlab::meshgrid(-(ncol(kernel)%/%2):(ncol(kernel)%/%2), -(nrow(kernel)%/%2):(nrow(kernel)%/%2))
+  for(p in which(kernel!=0)){
+    coordPixK[[p]] = data.table(row = Row+mesh$y[p], col = Column+mesh$x[p], id=1:length(Row))
+  }
+  coordPix = rbindlist(coordPixK, idcol='Kind')
+  # Order along coordPix$id for further use in noise, mnf
+  setorder(coordPix, 'id')
+  return(coordPix)
+}
+
+# Function to perform PCA on a matrix
+#
+# @param X matrix to apply MNF on
+# @param coordPix dataframe to compute noise, cf get_random_subset_from_image
+# TODO: faire 2 fonctions: mnf et mnf.subset, de même pour noise, noise.subset
+mnf <- function(X, coordPix=NULL, retx=TRUE){
   if(any(is.na(X))){
     stop('Pixels with NAs found in X. Remove NA pixels before trying again.')
   }
 
+  if(length(dim(X))>3)
+    stop('X has more than 3 dimensions.')
+
   nz <- noise(X, coordPix)
-  if(is.null(coordPix)){
-    nband = dim(X)[3]
-    X = matrix(X, ncol = nband)
-    nz = matrix(nz, ncol=nband)
+  Xdim = dim(X)
+
+  if(is.null(coordPix) && length(dim(X))>2){
+    X = matrix(X[1:(Xdim[1]-1), 1:(Xdim[2]-1),], nrow = Xdim[1]*Xdim[2])
+    nz = matrix(nz, nrow = Xdim[1]*Xdim[2])
   }
 
   Xc = scale(X, center = T, scale = F)
 
-  # if(type=='PCA'){
-    pca_noise <- prcomp(nz, center = F, scale. = F, retx = F)
-    Xrot = predict(pca_noise, Xc) %*% diag(pca_noise$sdev^-1)
-    pca_snr = prcomp(Xrot, center = F, scale. = F, retx = F)
-
-    modMNF = pca_snr
-    modMNF$center=colMeans(X)
-    modMNF$rotation = pca_noise$rotation %*% diag(pca_noise$sdev^-1) %*% pca_snr$rotation
-  # }else{
-  #   covNoise = cov(nz)
-  #   covXc = cov(Xc)
+  covNoise = cov(nz)
+  covXc = cov(Xc)
+  eig = eigen(solve(covNoise)%*%covXc)
+  colnames(eig$vectors) = paste0('PC', 1:ncol(eig$vectors))
+  modMNF = list(sdev = sqrt(eig$values), rotation = eig$vectors,
+                center = colMeans(X), scale = FALSE)
+  attr(modMNF, 'class') <- 'prcomp'
   #   eig_pairs = tofsims:::EigenDecompose(covXc, covNoise, 1, nrow(covNoise))
   #   vord = order(Re(eig_pairs$eigval), decreasing = T)
   #   eig_pairs$eigval = Re(eig_pairs$eigval)[vord]
@@ -513,9 +544,8 @@ mnf <- function(X, coordPix=NULL, retx=TRUE, type="PCA"){
   #                 sdev=sqrt(eig_pairs$eigval),
   #                 center=colMeans(X),
   #                 scale=FALSE)
-  # }
   if(retx==T)
-    modMNF$x= array(Xc %*% modMNF$rotation, dim = dim(X))
+    modMNF$x= array(Xc %*% modMNF$rotation, dim = Xdim)
 
   return(modMNF)
 }

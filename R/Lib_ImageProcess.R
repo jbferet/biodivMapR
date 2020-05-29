@@ -503,7 +503,7 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.25){
 #' @importFrom mmand erode
 #' @importFrom data.table data.table rbindlist setorder
 #' @importFrom matrixStats rowAnys
-get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Per_Partition, kernel=NULL) {
+get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Per_Partition, kernel=NULL, seed=10) {
   # ImPath = '/home/boissieu/Data/HS/Guyane/2016/Paracou/hypip_wd_guyane_20160919_paracou_DZ/session01/L1c/VNIR_1600_SN0014/atmx2/DZ_FL01_20160919_181033_VNIR_1600_SN0014_PS01_IMG001_atm_slice_001_x2.hyspex'
 
   r = brick(ImPath)
@@ -561,6 +561,7 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Pe
   }
 
   # Select a random subset of nbPix2Sample
+  set.seed(seed)
   pixselected <- sample(ValidPixels, nbPix2Sample)
 
   # define location of pixselected in binary file (avoid multiple reads) and optimize access to disk
@@ -706,11 +707,7 @@ ind2sub2 <- function(Raster, Image_Index) {
 # @return rank of all spectral bands of interest in the image and corresponding wavelength
 #' @importFrom matlab padarray
 mean_filter <- function(ImageInit, nbi, nbj, SizeFilt) {
-  # matlab::padarray leads to an error on Ubuntu 18.04 R 3.4.4
-  # Error: not-yet-implemented method for ==(<size_t>, <numeric>).
-  # ->>  Ask the package authors to implement the missing feature.
-  # E <- padarray(ImageInit, c(SizeFilt, SizeFilt), "symmetric", "both")
-  E <- matlab:::symmetricPad(ImageInit, c(SizeFilt, SizeFilt), "both")
+  E <- padarray(ImageInit, c(SizeFilt, SizeFilt), "symmetric", "both")
   ImageSmooth <- matrix(0, nrow = nbi, ncol = nbj)
   Mat2D <- MatSun <- matrix(0, nrow = ((2 * SizeFilt) + 1)^2, ncol = nbj)
   spl <- split(1:nbj, 1:((2 * SizeFilt) + 1))
