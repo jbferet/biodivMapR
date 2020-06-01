@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
       </span>
     </div>
 
@@ -95,7 +95,7 @@
       <h1 data-toc-skip>Converting a raster file to the proper file format</h1>
                         <h4 class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
             
-            <h4 class="date">2020-05-13</h4>
+            <h4 class="date">2020-06-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR_1.Rmd"><code>vignettes/biodivMapR_1.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_1.Rmd</code></div>
@@ -104,12 +104,15 @@
 
     
     
-<p><strong>biodivMapR</strong> expects a specific raster file format as input file, as the package includes dedicated readers and writers.</p>
+<p style="color:red">
+<strong>if you are running version 1.3.0 or more recent version of <strong>biodivMapR</strong> this tutorial is not needed</strong>
+</p>
+<p><strong>biodivMapR</strong> was expecting a specific raster file format as input file before version 1.3.0.</p>
 <ul>
-<li>Raster files are expected to be raw flat-binary files. They should not contain any header, which are stored in a separate .hdr file. Hence format such as TIFF are not accepted.</li>
+<li>Raster files were expected to be raw flat-binary files. They should not contain any header, which are stored in a separate .hdr file. Hence format such as TIFF are not accepted.</li>
 <li>This binary file should be written following a <a href="https://www.harrisgeospatial.com/docs/enviimagefiles.html" title="BIL definition">Band-interleaved-by-line storage format</a>.</li>
 <li>This file should have either <code>.bil</code> file extension, or no file extension.</li>
-<li>The header file should be named the same as the binary image file, but with <code>.hdr</code> file extension, and should be located in teh same directory.</li>
+<li>The header file should be named the same as the binary image file, but with <code>.hdr</code> file extension, and should be located in the same directory.</li>
 <li>the header file should be an ASCII file and follow the <a href="https://www.harrisgeospatial.com/docs/ENVIHeaderFiles.html" title="HDR description"><strong>ENVI file format</strong></a>.</li>
 </ul>
 <p>A function is dedicated to conversion of a raster file into appropriate image format, named <code>raster2BIL</code>. This function is relatively straightforward to run, but users should make sure prerequisites are met before running the function.</p>

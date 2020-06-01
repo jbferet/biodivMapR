@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Checks if the data to be processed has the format type expected — check_data • biodivMapR</title>
+<title>write an image resulting from "window processing" at native spatial resolution
+(assuming square windows &amp; origin at top left corner) — Write_Image_NativeRes • biodivMapR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +47,10 @@
 
 
 
-<meta property="og:title" content="Checks if the data to be processed has the format type expected — check_data" />
-<meta property="og:description" content="Checks if the data to be processed has the format type expected" />
+<meta property="og:title" content="write an image resulting from "window processing" at native spatial resolution
+(assuming square windows &amp; origin at top left corner) — Write_Image_NativeRes" />
+<meta property="og:description" content="write an image resulting from &quot;window processing&quot; at native spatial resolution
+(assuming square windows &amp;amp; origin at top left corner)" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -134,27 +137,37 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Checks if the data to be processed has the format type expected</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jbferet/biodivMapR/blob/master/R/Lib_CheckConvertData.R'><code>R/Lib_CheckConvertData.R</code></a></small>
-    <div class="hidden name"><code>check_data.Rd</code></div>
+    <h1>write an image resulting from "window processing" at native spatial resolution
+(assuming square windows &amp; origin at top left corner)</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jbferet/biodivMapR/blob/master/R/Lib_ImageProcess.R'><code>R/Lib_ImageProcess.R</code></a></small>
+    <div class="hidden name"><code>Write_Image_NativeRes.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Checks if the data to be processed has the format type expected</p>
+    <p>write an image resulting from "window processing" at native spatial resolution
+(assuming square windows &amp; origin at top left corner)</p>
     </div>
 
-    <pre class="usage"><span class='fu'>check_data</span>(<span class='no'>Raster_Path</span>, <span class='kw'>Mask</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>Write_Image_NativeRes</span>(<span class='no'>Image</span>, <span class='no'>ImagePath</span>, <span class='no'>HDR</span>, <span class='no'>window_size</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>Raster_Path</th>
-      <td><p>character. full path for the raster to be converted</p></td>
+      <th>Image</th>
+      <td><p>numeric. Image corresponding to a 2D matrix or 3D array</p></td>
     </tr>
     <tr>
-      <th>Mask</th>
-      <td><p>boolean. Set true if the raster is a mask</p></td>
+      <th>ImagePath</th>
+      <td><p>character. Path where the image should be written</p></td>
+    </tr>
+    <tr>
+      <th>HDR</th>
+      <td><p>list. Image header</p></td>
+    </tr>
+    <tr>
+      <th>window_size</th>
+      <td><p>numeric. window size used to generate Image</p></td>
     </tr>
     </table>
 
