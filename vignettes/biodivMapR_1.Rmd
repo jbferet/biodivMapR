@@ -19,13 +19,14 @@ knitr::opts_chunk$set(
 )
 ```
 
+<p style="color:red">**if you are running version 1.3.0 or more recent version of __biodivMapR__ this tutorial is not needed**   </p>
 
-__biodivMapR__ expects a specific raster file format as input file, as the package includes dedicated readers and writers. 
+__biodivMapR__ was expecting a specific raster file format as input file before version 1.3.0. 
 
-* Raster files are expected to be raw flat-binary files. They should not contain any header, which are stored in a separate .hdr file. Hence format such as TIFF are not accepted. 
+* Raster files were expected to be raw flat-binary files. They should not contain any header, which are stored in a separate .hdr file. Hence format such as TIFF are not accepted. 
 * This binary file should be written following a [Band-interleaved-by-line storage format](https://www.harrisgeospatial.com/docs/enviimagefiles.html "BIL definition").
 * This file should have either `.bil` file extension, or no file extension.
-* The header file should be named the same as the binary image file, but with `.hdr` file extension, and should be located in teh same directory. 
+* The header file should be named the same as the binary image file, but with `.hdr` file extension, and should be located in the same directory. 
 * the header file should be an ASCII file and follow the [__ENVI file format__](https://www.harrisgeospatial.com/docs/ENVIHeaderFiles.html "HDR description").
 
 A function is dedicated to conversion of a raster file into appropriate image format, named `raster2BIL`. This function is relatively straightforward to run, but users should make sure prerequisites are met before running the function.

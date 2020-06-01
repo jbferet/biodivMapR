@@ -1,3 +1,11 @@
+# biodivMapR v1.3.0
+
+## Changes
+- integrated stars package in order to read any file format, including TIFF format
+- developed a generic function to write rasters
+- prepared for MNF
+- changed default red band for the computation of NDVI: closest band to 690 nm is now selected instead of closest band to 700 nm
+
 # biodivMapR v1.2.1
 
 ## Changes
