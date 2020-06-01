@@ -10,7 +10,7 @@ perform_PCA(
   Output_Dir,
   Continuum_Removal = TRUE,
   TypePCA = "SPCA",
-  NbPCs_To_Keep = FALSE,
+  NbPCs_To_Keep = 30,
   FilterPCA = FALSE,
   Excluded_WL = FALSE,
   nb_partitions = 20,

@@ -4,6 +4,7 @@
 # ==============================================================================
 # PROGRAMMERS:
 # Jean-Baptiste FERET <jb.feret@irstea.fr>
+# Florian de Boissieu <fdeboiss@gmail.com>
 # Copyright 2018/07 Jean-Baptiste FERET
 # ==============================================================================
 # This library contains functions to filter raster based on radiometric criteria
@@ -24,7 +25,9 @@
 #'
 #' @return MaskPath = updated mask file
 #' @export
-perform_radiometric_filtering <- function(Image_Path, Mask_Path, Output_Dir, TypePCA = "SPCA", NDVI_Thresh = 0.5, Blue_Thresh = 500, NIR_Thresh = 1500, Blue = 480, Red = 700, NIR = 835) {
+perform_radiometric_filtering <- function(Image_Path, Mask_Path, Output_Dir, TypePCA = "SPCA",
+                                          NDVI_Thresh = 0.5, Blue_Thresh = 500, NIR_Thresh = 1500,
+                                          Blue = 480, Red = 700, NIR = 835) {
   # check if format of raster data is as expected
   check_data(Image_Path)
   if (!Mask_Path==FALSE){
@@ -32,24 +35,16 @@ perform_radiometric_filtering <- function(Image_Path, Mask_Path, Output_Dir, Typ
   }
   # define full output directory
   Output_Dir_Full <- define_output_directory(Output_Dir, Image_Path, TypePCA)
-  # define dimensions of the image
-  ImPathHDR <- get_HDR_name(Image_Path)
-  HDR <- read_ENVI_header(ImPathHDR)
-  Image_Format <- ENVI_type2bytes(HDR)
-  ipix <- as.double(HDR$lines)
-  jpix <- as.double(HDR$samples)
-  nbPixels <- ipix * jpix
-  lenTot <- nbPixels * as.double(HDR$bands)
-  ImSizeGb <- (lenTot * Image_Format$Bytes) / (1024^3)
-
   # Create / Update shade mask if optical data
   if (Mask_Path == FALSE | Mask_Path == "") {
     print("Create mask based on NDVI, NIR and Blue threshold")
   } else {
     print("Update mask based on NDVI, NIR and Blue threshold")
   }
-  Shade.Update <- paste(Output_Dir_Full, "ShadeMask_Update", sep = "")
-  Mask_Path <- create_mask_from_threshold(Image_Path, Mask_Path, Shade.Update, NDVI_Thresh, Blue_Thresh, NIR_Thresh, Blue, Red, NIR)
+  Shade_Update <- paste(Output_Dir_Full, "ShadeMask_Update", sep = "")
+  Mask_Path <- create_mask_from_threshold(ImPath = Image_Path, MaskPath = Mask_Path, MaskPath_Update = Shade_Update,
+                                          NDVI_Thresh = NDVI_Thresh, Blue_Thresh = Blue_Thresh, NIR_Thresh = NIR_Thresh,
+                                          Blue = Blue, Red = Red, NIR = NIR)
   return(Mask_Path)
 }
 
@@ -59,44 +54,57 @@ perform_radiometric_filtering <- function(Image_Path, Mask_Path, Output_Dir, Typ
 # NIR (min) threshold eliminates shadows
 # ! only valid if Optical data!!
 #
-# @param ImPath full path of a raster file
-# @param MaskPath full path of the raster mask corresponding to the raster file
-# @param MaskPath.Update wavelength (nm) of the spectral bands to be found
-# @param NDVI_Thresh NDVI threshold applied to produce a mask (select pixels with NDVI>NDVI_Thresh)
-# @param Blue_Thresh Blue threshold applied to produce a mask (select pixels with Blue refl < Blue_Thresh --> filter clouds) refl expected between 0 and 10000
-# @param NIR_Thresh NIR threshold applied to produce a mask (select pixels with NIR refl < NIR_Thresh) refl expected between 0 and 10000
+#' @param ImPath character. Full path of a raster file
+#' @param MaskPath character. Full path of the mask to be used with the raster file
+#' @param MaskPath_Update character. Full path of the updated mask to be used with the raster file
+#' @param NDVI_Thresh numeric. NDVI threshold applied to produce a mask (select pixels with NDVI>NDVI_Thresh)
+#' @param Blue_Thresh numeric. Blue threshold applied to produce a mask (select pixels with Blue refl < Blue_Thresh --> filter clouds) refl expected between 0 and 10000
+#' @param NIR_Thresh numeric. NIR threshold applied to produce a mask (select pixels with NIR refl < NIR_Thresh) refl expected between 0 and 10000
+#' @param Blue numeric. spectral band corresponding to the blue channel (in nanometers)
+#' @param Red numeric. spectral band corresponding to the red channel (in nanometers)
+#' @param NIR numeric. spectral band corresponding to the NIR channel (in nanometers)
 #
 # @return MaskPath path for the updated shademask produced
-create_mask_from_threshold <- function(ImPath, MaskPath, MaskPath.Update, NDVI_Thresh, Blue_Thresh, NIR_Thresh, Blue = 480, Red = 700, NIR = 835) {
+create_mask_from_threshold <- function(ImPath, MaskPath, MaskPath_Update, NDVI_Thresh, Blue_Thresh, NIR_Thresh,
+                                       Blue = 480, Red = 690, NIR = 835) {
   # define wavelength corresponding to the spectral domains Blue, Red and NIR
   Spectral_Bands <- c(Blue, Red, NIR)
   ImPathHDR <- get_HDR_name(ImPath)
-  Header <- read_ENVI_header(ImPathHDR)
+  HDR <- read_ENVI_header(ImPathHDR)
+  # distance between expected bands defining red, blue and NIR info and available band from sensor
+  Dist2Band <- 25
+  # in case micrometers
+  if (max(HDR$wavelength)<100 | HDR$`wavelength units` == "micrometers"){
+    Spectral_Bands <- 0.001*Spectral_Bands
+    Dist2Band <- 0.001*Dist2Band
+  }
   # get image bands correponding to spectral bands of interest
-  Image_Bands <- get_image_bands(Spectral_Bands, Header$wavelength)
+  Image_Bands <- get_image_bands(Spectral_Bands, HDR$wavelength)
   # read band data from image
-  Image_Subset <- read_image_bands(ImPath, Header, Image_Bands$ImBand)
+  Image_Subset <- read_image_bands(ImPath = ImPath, HDR = HDR,
+                                   ImBand = Image_Bands$ImBand)
   # create mask
   # check if spectral bands required for NDVI exist
-  if (Image_Bands$Distance2WL[2] < 25 & Image_Bands$Distance2WL[3] < 25) {
+
+  if (Image_Bands$Distance2WL[2] < Dist2Band & Image_Bands$Distance2WL[3] < Dist2Band) {
     NDVI <- ((Image_Subset[, , 3]) - (Image_Subset[, , 2])) / ((Image_Subset[, , 3]) + (Image_Subset[, , 2]))
   } else {
-    NDVI <- matrix(1, nrow = Header$lines, ncol = Header$samples)
+    NDVI <- matrix(1, nrow = HDR$lines, ncol = HDR$samples)
     message("Could not find the spectral bands required to compute NDVI")
   }
-  if (Image_Bands$Distance2WL[1] > 25) {
+  if (Image_Bands$Distance2WL[1] > Dist2Band) {
     Image_Subset[, , 1] <- Blue_Thresh + 0 * Image_Subset[, , 1]
     message("Could not find a spectral band in the blue domain: will not perform filtering based on blue reflectance")
   }
-  if (Image_Bands$Distance2WL[3] > 50) {
+  if (Image_Bands$Distance2WL[3] > 2*Dist2Band) {
     Image_Subset[, , 3] <- NIR_Thresh + 0 * Image_Subset[, , 3]
     message("Could not find a spectral band in the NIR domain: will not perform filtering based on NIR reflectance")
   }
-  Mask <- matrix(0, nrow = Header$lines, ncol = Header$samples)
+  Mask <- matrix(0, nrow = HDR$lines, ncol = HDR$samples)
   SelPixels <- which(NDVI > NDVI_Thresh & Image_Subset[, , 1] < Blue_Thresh & Image_Subset[, , 3] > NIR_Thresh)
   Mask[SelPixels] <- 1
   # update initial shade mask
-  MaskPath <- update_shademask(MaskPath, Header, Mask, MaskPath.Update)
+  MaskPath <- update_shademask(MaskPath, HDR, Mask, MaskPath_Update)
   list2Remove <- ls()
   rm(list=list2Remove[-which(list2Remove=='MaskPath')])
   gc()

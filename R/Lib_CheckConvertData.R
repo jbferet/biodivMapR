@@ -4,6 +4,7 @@
 # ==============================================================================
 # PROGRAMMERS:
 # Jean-Baptiste FERET <jb.feret@irstea.fr>
+# Florian de Boissieu <fdeboiss@gmail.com>
 # Copyright 2018/07 Jean-Baptiste FERET
 # ==============================================================================
 # This library checks if a raster in format expected for diversity mapping
@@ -168,25 +169,13 @@ check_data <- function(Raster_Path, Mask = FALSE) {
   # check if the hdr file exists
   if (file.exists(HDR_Path)) {
     HDR <- read_ENVI_header(HDR_Path)
-    if (Mask == FALSE & (!HDR$interleave == "bil") & (!HDR$interleave == "BIL")) {
-      message("*********************************************************")
-      message("The image format may not compatible with the processing chain")
-      message("Image format expected:")
-      message("ENVI hdr file with band interleaved by line (BIL) file format")
-      message("")
-      message("Current Image format")
-      print(HDR$interleave)
-      message("Please run the function named ")
-      print("raster2BIL")
-      message("in order to convert your raster data")
-      message("or use appropriate software")
-      message("*********************************************************")
-      stop()
-    } else if (Mask == FALSE & ((HDR$interleave == "bil") | (HDR$interleave == "BIL"))) {
-      if (is.null(HDR$`wavelength units`)) {
+    if (Mask == FALSE ) {
+      if (is.null(HDR$wavelength)) {
         message("*********************************************************")
-        message("Image to process is not multispectral/hyperspectral image ")
-        message("Format is OK, but make sure Continuum_Removal is set to FALSE")
+        message("No wavelength is associated to the image in the .hdr file")
+        message("Please add wavelengths to the .hdr file")
+        message("if you are processing multi or hyperspectral optical data")
+        message(" Otherwise, make sure Continuum_Removal is set to FALSE  ")
         message("*********************************************************")
       } else {
         if (HDR$`wavelength units` == "Unknown") {
@@ -196,33 +185,21 @@ check_data <- function(Raster_Path, Mask = FALSE) {
           message("if not, stop processing and convert wavelengths in nanometers in HDR file")
           message("*********************************************************")
         }
-        if ((!HDR$`wavelength units` == "Nanometers") & (!HDR$`wavelength units` == "nanometers")) {
+        if ((!HDR$`wavelength units` == "Nanometers") & (!HDR$`wavelength units` == "nanometers") &
+            (!HDR$`wavelength units` == "Micrometers") & (!HDR$`wavelength units` == "micrometers")) {
           message("*********************************************************")
           message("IF MULTI / HYPERSPECTRAL DATA: ")
-          message("Please make sure the wavelengths are in nanometers")
-          message("if not, stop processing and convert wavelengths in nanometers in HDR file")
-          message("*********************************************************")
-        }
-        if (HDR$`wavelength units` == "micrometers") {
-          message("*********************************************************")
-          message("Please convert wavelengths in nanometers in HDR file")
-          message("*********************************************************")
-          stop()
-        }
-        if ((HDR$`wavelength units` == "nanometers") | (HDR$`wavelength units` == "Nanometers")) {
-          message("*********************************************************")
-          message("      	  Format of main raster OK for processing      	  ")
+          message("Please make sure the wavelengths are in nanometers or micrometers")
+          message("if not, stop processing and convert wavelengths in nanometers")
+          message("or micrometers in HDR file")
           message("*********************************************************")
         }
       }
-    } else if (Mask == TRUE & HDR$bands == 1 & ((HDR$interleave == "bil") | (HDR$interleave == "BIL") | (HDR$interleave == "bsq") | (HDR$interleave == "BSQ"))) {
-      message("*********************************************************")
-      message("         Format of mask raster OK for processing         ")
-      message("*********************************************************")
 	  } else if (Mask == TRUE & HDR$bands > 1) {
       message("*********************************************************")
       message("       Mask raster should contain only one layer         ")
       message("    Please produce a binary mask with a unique layer     ")
+      message("             and value = 1 for pixels to keep            ")
       message("*********************************************************")
   		stop()
 	  }
@@ -230,13 +207,6 @@ check_data <- function(Raster_Path, Mask = FALSE) {
     message("*********************************************************")
     message("The following HDR file was expected, but could not be found:")
     print(HDR_Path)
-    message("The image format may not compatible with the processing chain")
-    message("Image format expected:")
-    message("ENVI hdr file with band interleaved by line (BIL) file format")
-    message("")
-    message("Please run the function named ")
-    print("raster2BIL")
-    message("in order to convert your raster data")
     message("*********************************************************")
     stop()
   }

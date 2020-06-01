@@ -48,36 +48,43 @@ map_alpha_div <- function(Input_Image_File, Output_Dir, window_size,
   if (length((grep("Fisher", Index_Alpha))) > 0) Fisher <- TRUE
 
   Output_Dir_Alpha <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "ALPHA")
+  HDR <- ALPHA$HDR
   if (Shannon == TRUE) {
     Index <- "Shannon"
+    HDR$`band names` <- Index
     Alpha_Path <- paste(Output_Dir_Alpha, Index, "_", window_size, sep = "")
-    write_raster_alpha(ALPHA$Shannon, ALPHA$HDR, Alpha_Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
+    write_raster(ALPHA$Shannon, HDR, Alpha_Path, window_size, FullRes = FullRes, LowRes = LowRes, SmoothImage = TRUE)
     if (MapSTD == TRUE) {
       Index <- "Shannon_SD"
+      HDR$`band names` <- Index
       Alpha_Path <- paste(Output_Dir_Alpha, Index, "_", window_size, sep = "")
-      write_raster_alpha(ALPHA$Shannon.SD, ALPHA$HDR, Alpha_Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
+      write_raster(ALPHA$Shannon.SD, HDR, Alpha_Path, window_size, FullRes = FullRes, LowRes = LowRes, SmoothImage = TRUE)
     }
   }
 
   if (Fisher == TRUE) {
     Index <- "Fisher"
+    HDR$`band names` <- Index
     Alpha_Path <- paste(Output_Dir_Alpha, Index, "_", window_size, sep = "")
-    write_raster_alpha(ALPHA$Fisher, ALPHA$HDR, Alpha_Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
+    write_raster(ALPHA$Fisher, HDR, Alpha_Path, window_size, FullRes = FullRes, LowRes = LowRes, SmoothImage = TRUE)
     if (MapSTD == TRUE) {
       Index <- "Fisher_SD"
+      HDR$`band names` <- Index
       Alpha_Path <- paste(Output_Dir_Alpha, Index, "_", window_size, sep = "")
-      write_raster_alpha(ALPHA$Fisher.SD, ALPHA$HDR, Alpha_Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
+      write_raster(ALPHA$Fisher.SD, HDR, Alpha_Path, window_size, FullRes = FullRes, LowRes = LowRes, SmoothImage = TRUE)
     }
   }
 
   if (Simpson == TRUE) {
     Index <- "Simpson"
+    HDR$`band names` <- Index
     Alpha_Path <- paste(Output_Dir_Alpha, Index, "_", window_size, sep = "")
-    write_raster_alpha(ALPHA$Simpson, ALPHA$HDR, Alpha_Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
+    write_raster(ALPHA$Simpson, HDR, Alpha_Path, window_size, FullRes = FullRes, LowRes = LowRes, SmoothImage = TRUE)
     if (MapSTD == TRUE) {
       Index <- "Simpson_SD"
+      HDR$`band names` <- Index
       Alpha_Path <- paste(Output_Dir_Alpha, Index, "_", window_size, sep = "")
-      write_raster_alpha(ALPHA$Simpson.SD, ALPHA$HDR, Alpha_Path, window_size, Index, FullRes = FullRes, LowRes = LowRes)
+      write_raster(ALPHA$Simpson.SD, HDR, Alpha_Path, window_size, FullRes = FullRes, LowRes = LowRes, SmoothImage = TRUE)
     }
   }
   return(invisible())
@@ -85,14 +92,14 @@ map_alpha_div <- function(Input_Image_File, Output_Dir, window_size,
 
 # Map alpha diversity metrics based on spectral species
 #
-# @param Spectral_Species_Path path for spectral species file to be written
-# @param window_size size of spatial units (in pixels) to compute diversity
-# @param nbclusters number of clusters defined in k-Means
-# @param pcelim
-# @param nbCPU
-# @param MaxRAM
-# @param Index_Alpha
-# @param MinSun minimum proportion of sunlit pixels required to consider plot
+# @param Spectral_Species_Path character. path for spectral species file to be written
+# @param window_size numeric. size of spatial units (in pixels) to compute diversity
+# @param nbclusters numeric. number of clusters defined in k-Means
+# @param pcelim numeric. percentage of occurence of a cluster below which cluster is eliminated
+# @param nbCPU numeric. number of CPUs available
+# @param MaxRAM numeric. maximum RAM available
+# @param Index_Alpha list. list of alpha diversity indices to be computed from spectral species
+# @param MinSun numeric. minimum proportion of sunlit pixels required to consider plot
 #
 # @return list of mean and SD of alpha diversity metrics
 #' @importFrom future plan multiprocess sequential
@@ -203,9 +210,13 @@ compute_alpha_metrics <- function(Spectral_Species_Path, window_size, nbclusters
   Shannon.SD <- do.call(rbind, Shannon_SD_Chunk)
   Fisher.SD <- do.call(rbind, Fisher_SD_Chunk)
   Simpson.SD <- do.call(rbind, Simpson_SD_Chunk)
+  # prepare HDR for alpha diversity
+  HDR <- HDR_SSD
+  HDR$bands <- 1
+  HDR$`data type` <- 4
   my_list <- list(
     "Shannon" = Shannon.Mean, "Fisher" = Fisher.Mean, "Simpson" = Simpson.Mean,
-    "Shannon.SD" = Shannon.SD, "Fisher.SD" = Fisher.SD, "Simpson.SD" = Simpson.SD, "HDR" = HDR_SSD
+    "Shannon.SD" = Shannon.SD, "Fisher.SD" = Fisher.SD, "Simpson.SD" = Simpson.SD, "HDR" = HDR
   )
   return(my_list)
 }
@@ -234,7 +245,7 @@ compute_alpha_metrics <- function(Spectral_Species_Path, window_size, nbclusters
 convert_PCA_to_SSD <- function(ReadWrite, Spectral_Species_Path, HDR_SS, HDR_SSD,
                                SS_Format, SSD_Format, ImgFormat, window_size, nbclusters,
                                MinSun, pcelim, Index_Alpha, SSD_Path, Sunlit_Path, Sunlit_Format) {
-  SS_Chunk <- read_image_subset(
+  SS_Chunk <- read_BIL_image_subset(
     Spectral_Species_Path, HDR_SS,
     ReadWrite$RW_SS$Byte_Start, ReadWrite$RW_SS$lenBin,
     ReadWrite$RW_SS$nbLines, SS_Format, ImgFormat
@@ -288,7 +299,7 @@ convert_PCA_to_SSD <- function(ReadWrite, Spectral_Species_Path, HDR_SS, HDR_SSD
 # @param window_size size of spatial units (in pixels) to compute diversity
 # @param nbclusters number of clusters defined in k-Means
 # @param MinSun minimum proportion of sunlit pixels required to consider plot
-# @param Index_Alpha
+# @param Index_Alpha list. list of alpha diversity indices to be computed from spectral species
 # @param pcelim minimum proportion for a spectral species to be included
 #
 # @return list of alpha diversity metrics for each iteration
@@ -379,88 +390,4 @@ get_Simpson <- function(Distrib) {
   Distrib <- Distrib / sum(Distrib, na.rm = TRUE)
   Simpson <- 1 - sum(Distrib * Distrib, na.rm = TRUE)
   return(Simpson)
-}
-
-# Writes image of alpha diversity indicator (1 band) and smoothed alpha diversity
-#
-# @param Image 2D matrix of image to be written
-# @param HDR_SSD hdr template derived from SSD to modify
-# @param ImagePath path of image file to be written
-# @param window_size spatial units use dto compute diversiy (in pixels)
-# @param Index name of the index (eg. Shannon)
-# @param FullRes should full resolution image be written (original pixel size)
-# @param LowRes should low resolution image be written (one value per spatial unit)
-#
-# @return
-write_raster_alpha <- function(Image, HDR_SSD, ImagePath, window_size, Index, FullRes = TRUE, LowRes = FALSE) {
-
-  # Write image with resolution corresponding to window_size
-  HDR_Alpha <- HDR_SSD
-  HDR_Alpha$bands <- 1
-  HDR_Alpha$`data type` <- 4
-  HDR_Alpha$`band names` <- Index
-  Image_Format <- ENVI_type2bytes(HDR_Alpha)
-  if (LowRes == TRUE) {
-    # write header
-    headerFpath <- paste(ImagePath, ".hdr", sep = "")
-    write_ENVI_header(HDR_Alpha, headerFpath)
-    # write image and make sure size does not matter ...
-    Write_Big_Image(Image,ImagePath,HDR_Alpha,Image_Format)
-  }
-  if (FullRes == TRUE) {
-    # Write image with Full native resolution
-    HDR_Full <- HDR_Alpha
-    HDR_Full$samples <- HDR_Alpha$samples * window_size
-    HDR_Full$lines <- HDR_Alpha$lines * window_size
-    HDR_Full <- revert_resolution_HDR(HDR_Full, window_size)
-    ImagePath_FullRes <- paste(ImagePath, "_Fullres", sep = "")
-    headerFpath <- paste(ImagePath_FullRes, ".hdr", sep = "")
-    write_ENVI_header(HDR_Full, headerFpath)
-    Image_Format <- ENVI_type2bytes(HDR_Full)
-    Image_FullRes <- matrix(NA, ncol = HDR_Full$samples, nrow = HDR_Full$lines)
-    for (i in 1:HDR_SSD$lines) {
-      for (j in 1:HDR_SSD$samples) {
-        Image_FullRes[((i - 1) * window_size + 1):(i * window_size), ((j - 1) * window_size + 1):(j * window_size)] <- Image[i, j]
-      }
-    }
-    # write image and make sure size does not matter ...
-    Write_Big_Image(Image_FullRes,ImagePath_FullRes,HDR_Full,Image_Format)
-    # zip resulting file
-    ZipFile(ImagePath_FullRes)
-  }
-  # write smoothed map
-  SizeFilt <- 1
-  nbi <- dim(Image)[1]
-  nbj <- dim(Image)[2]
-  if (min(c(nbi, nbj)) > (2 * SizeFilt + 1)) {
-    Image_Smooth <- mean_filter(Image, nbi, nbj, SizeFilt)
-    Image_Smooth[which(is.na(Image))] <- NA
-    ImagePath.Smooth <- paste(ImagePath, "_MeanFilter", sep = "")
-    headerFpath <- paste(ImagePath.Smooth, ".hdr", sep = "")
-    Image_Format <- ENVI_type2bytes(HDR_Alpha)
-    if (LowRes == TRUE) {
-      write_ENVI_header(HDR_Alpha, headerFpath)
-      # write image and make sure size does not matter ...
-      Write_Big_Image(Image_Smooth,ImagePath.Smooth,HDR_Alpha,Image_Format)
-      # close(fidOUT)
-    }
-    if (FullRes == TRUE) {
-      # Write image with Full native resolution
-      ImagePath_FullRes <- paste(ImagePath.Smooth, "_Fullres", sep = "")
-      headerFpath <- paste(ImagePath_FullRes, ".hdr", sep = "")
-      write_ENVI_header(HDR_Full, headerFpath)
-      Image_Format <- ENVI_type2bytes(HDR_Full)
-      Image_FullRes <- matrix(NA, ncol = HDR_Full$samples, nrow = HDR_Full$lines)
-      for (i in 1:HDR_SSD$lines) {
-        for (j in 1:HDR_SSD$samples) {
-          Image_FullRes[((i - 1) * window_size + 1):(i * window_size), ((j - 1) * window_size + 1):(j * window_size)] <- Image_Smooth[i, j]
-        }
-      }
-      # write image and make sure size does not matter ...
-      Write_Big_Image(Image_FullRes,ImagePath_FullRes,HDR_Full,Image_Format)
-      # zip resulting file
-      ZipFile(ImagePath_FullRes)
-    }
-  }
-  return("")
 }

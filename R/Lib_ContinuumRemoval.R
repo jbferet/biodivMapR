@@ -4,6 +4,7 @@
 # ===============================================================================
 # PROGRAMMERS:
 # Jean-Baptiste FERET <jb.feret@irstea.fr>
+# Florian de Boissieu <fdeboiss@gmail.com>
 # Copyright 2018/07 Jean-Baptiste FERET
 # ===============================================================================
 # This Library is dedicated to the computation of the continuum removal
@@ -53,10 +54,10 @@ apply_continuum_removal <- function(Spectral_Data, Spectral, nbCPU = 1) {
 # the convex hull is based on the computation of the derivative between R at a
 # given spectral band and R at the following bands
 #
-# @param Minit initial data matrix (nb samples x nb bands)
-# @param Spectral_Bands information about spectral bands
+#' @param Minit numeric. initial data matrix (nb samples x nb bands)
+#' @param Spectral_Bands numeric. central wavelength for the spectral bands
 #
-# @return samples from image and updated number of pixels to sampel if necessary
+#' @return samples from image and updated number of pixels to sampel if necessary
 ContinuumRemoval <- function(Minit, Spectral_Bands) {
 
   # Filter and prepare data prior to continuum removal
@@ -154,10 +155,10 @@ ContinuumRemoval <- function(Minit, Spectral_Bands) {
 # - possibly remaining negative values are set to 0
 # - constant spectra are eliminated
 #
-# @param Spectral_Bands
-# @param Minit initial data matrix, n rows = n samples, p cols = p spectral bands
+#' @param Minit numeric. initial data matrix (nb samples x nb bands)
+#' @param Spectral_Bands numeric. central wavelength for the spectral bands
 #
-# @return updated Minit
+#' @return list. updated Minit
 #' @importFrom matrixStats rowSds
 filter_prior_CR <- function(Minit, Spectral_Bands) {
 
