@@ -73,8 +73,8 @@ map_partition_div <- function(Original_Image_File,Partition_File = FALSE,
   HDR_Partition <- HDR
   HDR_Partition$bands <- 1
   HDR_Partition$`data type` <- 4
-  HDR_Partition$samples <- floor(HDR$samples / window_size)
-  HDR_Partition$lines <- floor(HDR$lines / window_size)
+  HDR_Partition$samples <- dim(Partition_Spectral$rasters$alpha_sdiv)[2]
+  HDR_Partition$lines <- dim(Partition_Spectral$rasters$alpha_sdiv)[1]
   HDR_Partition <- change_resolution_HDR(HDR_Partition, window_size)
   HDR_Partition$`band names` <- c('Alpha_spectral_diversity')
   # Write image
