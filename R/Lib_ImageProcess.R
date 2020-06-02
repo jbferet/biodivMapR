@@ -215,9 +215,13 @@ exclude_spectral_domains <- function(ImPath, Excluded_WL = FALSE) {
   # get image header data
   ImPathHDR <- get_HDR_name(ImPath)
   HDR <- read_ENVI_header(ImPathHDR)
-  if ((HDR$`wavelength units`=='Micrometers') | (HDR$`wavelength units`=='micrometers')){
-    Excluded_WL <- 0.001*Excluded_WL
-  }
+  if (!is.null(HDR$`wavelength units`)){
+    if ((HDR$`wavelength units`=='Micrometers') | (HDR$`wavelength units`=='micrometers')){
+      Excluded_WL <- 0.001*Excluded_WL
+    } else if (max(HDR$wavelength)<100){
+      Excluded_WL <- 0.001*Excluded_WL
+    }
+  } 
   nbchannels0 <- HDR$bands
   idOkBand <- seq(1, nbchannels0)
   if ("wavelength" %in% names(HDR)) {
@@ -611,7 +615,7 @@ get_image_bands <- function(Spectral_Bands, wavelength) {
 ind2sub <- function(Raster, Image_Index) {
   c <- ((Image_Index - 1) %% Raster@ncols) + 1
   r <- floor((Image_Index - 1) / Raster@ncols) + 1
-  my_list <- list("Column" = c, "Row" = r)
+  my_list <- list("col" = c, "row" = r)
   return(my_list)
 }
 
@@ -623,7 +627,7 @@ ind2sub <- function(Raster, Image_Index) {
 ind2sub2 <- function(Raster, Image_Index) {
   r <- ((Image_Index - 1) %% Raster@nrows) + 1
   c <- floor((Image_Index - 1) / Raster@nrows) + 1
-  my_list <- list("Column" = c, "Row" = r)
+  my_list <- list("col" = c, "row" = r)
   return(my_list)
 }
 
