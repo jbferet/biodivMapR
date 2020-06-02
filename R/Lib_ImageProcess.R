@@ -1171,14 +1171,15 @@ Write_Image_NativeRes <- function(Image,ImagePath,HDR,window_size){
 }
 
 
-# Writes a matrix or an array into a ENVI BIL raster
-#
+#' Writes a matrix or an array into a ENVI BIL raster
+#'
 #' @param Image numeric. matrix or array of image to be written
 #' @param HDR hdr template
 #' @param ImagePath path of image file to be written
 #' @param window_size spatial units use dto compute diversiy (in pixels)
 #' @param FullRes should full resolution image be written (original pixel size)
 #' @param LowRes should low resolution image be written (one value per spatial unit)
+#' @param SmoothImage boolean. set TRUE if you want smooting filter applied to resulting diversity rasters
 #
 #' @return None
 
