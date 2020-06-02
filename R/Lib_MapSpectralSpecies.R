@@ -4,6 +4,7 @@
 # ==============================================================================
 # PROGRAMMERS:
 # Jean-Baptiste FERET <jb.feret@irstea.fr>
+# Florian de Boissieu <fdeboiss@gmail.com>
 # Copyright 2019/06 Jean-Baptiste FERET
 # ==============================================================================
 # This Library applies clustering on a selection of components stored in a PCA
@@ -57,7 +58,9 @@ map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model
       # sample data from image and perform PCA
       ImPathHDR <- get_HDR_name(Input_Image_File)
       HDR <- read_ENVI_header(ImPathHDR)
-      Subset <- get_random_subset_from_image(Input_Image_File, Input_Mask_File, nb_partitions, Pix_Per_Partition)
+      Subset <- get_random_subset_from_image(ImPath = Input_Image_File, HDR = HDR, MaskPath = Input_Mask_File,
+                                             nb_partitions = nb_partitions, Pix_Per_Partition = Pix_Per_Partition,
+                                             kernel = NULL)
       SubsetInit <- Subset
       # if needed, apply continuum removal
       if (Continuum_Removal == TRUE) {
@@ -68,7 +71,7 @@ map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model
       if (!length(SpectralFilter$BandsNoVar) == 0) {
         Subset$DataSubset <- Subset$DataSubset[, -SpectralFilter$BandsNoVar]
       }
-      if (TypePCA == "PCA" | TypePCA == "SPCA") {
+      if (TypePCA == "PCA" | TypePCA == "SPCA" | TypePCA == "MNF") {
         dataPCA <- scale(Subset$DataSubset, PCA_model$center, PCA_model$scale) %*% PCA_model$rotation[, 1:PCA_model$Nb_PCs]
       }
       dataPCA <- dataPCA[, PC_Select]
@@ -210,6 +213,12 @@ apply_kmeans <- function(PCA_Path, PC_Select, Input_Mask_File, Kmeans_info, Spec
   HDR_SS$resolution <- NULL
   HDR_SS$bandwidth <- NULL
   HDR_SS$purpose <- NULL
+  HDR_SS$interleave <- 'BIL'
+  HDR_SS$`default bands` <- NULL
+  HDR_SS$`wavelength units` <- NULL
+  HDR_SS$`z plot titles` <- NULL
+  HDR_SS$`data gain values` <- NULL
+  HDR_SS$`default stretch` <- NULL
   HDR_SS$`byte order` <- get_byte_order()
   headerFpath <- paste(Spectral_Species_Path, ".hdr", sep = "")
   write_ENVI_header(HDR_SS, headerFpath)
@@ -263,14 +272,14 @@ compute_spectral_species <- function(PCA_Path, Input_Mask_File, Spectral_Species
   HDR_Shade <- read_ENVI_header(ShadeHDR)
   Shade.Format <- ENVI_type2bytes(HDR_Shade)
   ImgFormat <- "Shade"
-  Shade_Chunk <- read_image_subset(Input_Mask_File, HDR_Shade, Location_RW$Byte_Start_Shade, Location_RW$lenBin_Shade, Location_RW$nbLines, Shade.Format, ImgFormat)
+  Shade_Chunk <- read_BIL_image_subset(Input_Mask_File, HDR_Shade, Location_RW$Byte_Start_Shade, Location_RW$lenBin_Shade, Location_RW$nbLines, Shade.Format, ImgFormat)
 
   PCA_HDR <- get_HDR_name(PCA_Path)
   HDR_PCA <- read_ENVI_header(PCA_HDR)
   PCA_Format <- ENVI_type2bytes(HDR_PCA)
   # read "unfolded" (2D) PCA image
   ImgFormat <- "2D"
-  PCA_Chunk <- read_image_subset(PCA_Path, HDR_PCA, Location_RW$Byte_Start_PCA, Location_RW$lenBin_PCA, Location_RW$nbLines, PCA_Format, ImgFormat)
+  PCA_Chunk <- read_BIL_image_subset(PCA_Path, HDR_PCA, Location_RW$Byte_Start_PCA, Location_RW$lenBin_PCA, Location_RW$nbLines, PCA_Format, ImgFormat)
   PCA_Chunk <- PCA_Chunk[, PC_Select]
   if (length(PC_Select) == 1) {
     PCA_Chunk <- matrix(PCA_Chunk, ncol = 1)

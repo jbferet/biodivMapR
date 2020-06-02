@@ -45,7 +45,9 @@ map_beta_div <- function(Input_Image_File, Output_Dir, window_size,
   print("Write beta diversity maps")
   Index <- paste("BetaDiversity_BCdiss_", scaling, sep = "")
   Beta.Path <- paste(Output_Dir_BETA, Index, "_", window_size, sep = "")
-  write_raster_beta(Beta$BetaDiversity, Beta$HDR, Beta.Path, window_size, FullRes = FullRes, LowRes = LowRes)
+  write_raster(Image = Beta$BetaDiversity, HDR = Beta$HDR, ImagePath = Beta.Path, 
+               window_size = window_size, FullRes = FullRes, LowRes = LowRes, 
+               SmoothImage = FALSE)
   return(invisible())
 }
 
@@ -226,9 +228,11 @@ compute_beta_metrics <- function(Output_Dir, MinSun, Nb_Units_Ordin, nb_partitio
   MatBCdist <- as.dist(MatBC, diag = FALSE, upper = FALSE)
   if (scaling == "NMDS") {
     Beta_Ordination_sel <- compute_NMDS(MatBCdist)
+    PCname <- 'NMDS'
   } else if (scaling == "PCO") {
     BetaPCO <- pco(MatBCdist, k = 3)
     Beta_Ordination_sel <- BetaPCO$points
+    PCname <- 'PCoA'
   }
 
   # Perform nearest neighbor on spatial units excluded from Ordination
@@ -247,9 +251,21 @@ compute_beta_metrics <- function(Output_Dir, MinSun, Nb_Units_Ordin, nb_partitio
     BetaDiversityRGB[, , i] <- BetaTmp
   }
   list <- ls()
-  rm(list = list[-which(list == "BetaDiversityRGB" | list == "Select_Sunlit" | list == "HDR_Sunlit")])
+  
+  # update HDR file
+  HDR_Beta <- HDR_Sunlit
+  HDR_Beta$bands <- 3
+  HDR_Beta$`data type` <- 4
+  PCs <- list()
+  for (i in 1:3) {
+    PCs <- c(PCs, paste(PCname,'#', i,sep = ''))
+  }
+  PCs <- paste(PCs, collapse = ", ")
+  HDR_Beta$`band names` <- PCs
+
+  rm(list = list[-which(list == "BetaDiversityRGB" | list == "Select_Sunlit" | list == "HDR_Beta")])
   gc()
-  my_list <- list("BetaDiversity" = BetaDiversityRGB, "Select_Sunlit" = Select_Sunlit, "HDR" = HDR_Sunlit)
+  my_list <- list("BetaDiversity" = BetaDiversityRGB, "Select_Sunlit" = Select_Sunlit, "HDR" = HDR_Beta)
   return(my_list)
 }
 
@@ -309,74 +325,6 @@ compute_NN_from_ordination <- function(MatBC3, knn, BetaDiversity0) {
     Ordin_est[i, 1:3] <- aa
   }
   return(Ordin_est)
-}
-
-# Writes image of beta diversity indicator (3 bands) resulting from BC + NMDS
-#
-# @param Image 2D matrix of image to be written
-# @param HDR_SSD hdr template derived from SSD to modify
-# @param ImagePath path of image file to be written
-# @param window_size spatial units use dto compute diversiy (in pixels)
-# @param FullRes should full resolution image be written (original pixel size)
-# @param LowRes should low resolution image be written (one value per spatial unit)
-#
-# @return
-write_raster_beta <- function(Image, HDR_SSD, ImagePath, window_size, FullRes = TRUE, LowRes = FALSE) {
-  # Write image with resolution corresponding to window_size
-  HDR_Beta <- HDR_SSD
-  HDR_Beta$bands <- 3
-  HDR_Beta$`data type` <- 4
-  PCs <- list()
-  for (i in 1:3) {
-    PCs <- c(PCs, paste("NMDS ", i))
-  }
-  PCs <- paste(PCs, collapse = ", ")
-  HDR_Beta$`band names` <- PCs
-  Image_Format <- ENVI_type2bytes(HDR_Beta)
-  if (LowRes == TRUE) {
-    headerFpath <- paste(ImagePath, ".hdr", sep = "")
-    write_ENVI_header(HDR_Beta, headerFpath)
-    # write image and make sure size does not matter ...
-    Write_Big_Image(Image,ImagePath,HDR_Beta,Image_Format)
-    # ImgWrite <- aperm(Image, c(2, 3, 1))
-    # fidOUT <- file(
-    #   description = ImagePath, open = "wb", blocking = TRUE,
-    #   encoding = getOption("encoding"), raw = FALSE
-    # )
-    # writeBin(c(ImgWrite), fidOUT, size = Image_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
-    # close(fidOUT)
-  }
-  if (FullRes == TRUE) {
-    # Write image with Full native resolution
-    HDR_Full <- HDR_Beta
-    HDR_Full$samples <- HDR_Beta$samples * window_size
-    HDR_Full$lines <- HDR_Beta$lines * window_size
-    HDR_Full <- revert_resolution_HDR(HDR_Full, window_size)
-    ImagePath_FullRes <- paste(ImagePath, "_Fullres", sep = "")
-    headerFpath <- paste(ImagePath_FullRes, ".hdr", sep = "")
-    write_ENVI_header(HDR_Full, headerFpath)
-    Image_Format <- ENVI_type2bytes(HDR_Full)
-    Image_FullRes <- array(NA, c(HDR_Full$lines, HDR_Full$samples, 3))
-    for (b in 1:3) {
-      for (i in 1:HDR_SSD$lines) {
-        for (j in 1:HDR_SSD$samples) {
-          Image_FullRes[((i - 1) * window_size + 1):(i * window_size), ((j - 1) * window_size + 1):(j * window_size), b] <- Image[i, j, b]
-        }
-      }
-    }
-    # write image and make sure size does not matter ...
-    Write_Big_Image(Image_FullRes,ImagePath_FullRes,HDR_Full,Image_Format)
-    # ImgWrite <- aperm(Image_FullRes, c(2, 3, 1))
-    # fidOUT <- file(
-    #   description = ImagePath_FullRes, open = "wb", blocking = TRUE,
-    #   encoding = getOption("encoding"), raw = FALSE
-    # )
-    # writeBin(c(ImgWrite), fidOUT, size = Image_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
-    # close(fidOUT)
-    # zip resulting file
-    ZipFile(ImagePath_FullRes)
-  }
-  return("")
 }
 
 # Gets sunlit pixels from SpectralSpecies_Distribution_Sunlit

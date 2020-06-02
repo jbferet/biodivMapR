@@ -165,26 +165,26 @@ diversity_from_plots = function(Raster, Plots, NbClusters = 50, Name_Plot = FALS
     # extract data corresponding to the raster
     XY          = extract_pixels_coordinates.From.OGR(Raster,Plot)
     # if the plot is included in the raster
-    if (length(XY)==1 & length(XY[[1]]$Column)==0){
+    if (length(XY)==1 & length(XY[[1]]$col)==0){
       if (length(Name_Plot)==nbPlots){
         Name_Plot[ip] = NA
       }
     }
-    if (length(XY)>1 | length(XY[[1]]$Column)>0){
+    if (length(XY)>1 | length(XY[[1]]$col)>0){
       ID.Poly     = list()
       idPix       = 1
       if (length(XY)==1){
-        coordPix    = cbind(XY[[1]]$Row,XY[[1]]$Column)
-        ID.Poly[[1]]= seq(idPix,idPix+length(XY[[1]]$Row)-1,by = 1)
+        coordPix    = cbind(XY[[1]]$row,XY[[1]]$col)
+        ID.Poly[[1]]= seq(idPix,idPix+length(XY[[1]]$row)-1,by = 1)
       } else {
         coordPix    = list()
         ii          = 0
         for (pp in 1:length(XY)){
           ii        = ii+1
-          if (length(XY[[pp]]$Row)>0){
-            coordPix[[pp]]  = cbind(XY[[pp]]$Row,XY[[pp]]$Column)
-            ID.Poly[[pp]]   = seq(idPix,idPix+length(XY[[pp]]$Row)-1,by = 1)
-            idPix           = idPix+length(XY[[pp]]$Row)
+          if (length(XY[[pp]]$row)>0){
+            coordPix[[pp]]  = cbind(XY[[pp]]$row,XY[[pp]]$col)
+            ID.Poly[[pp]]   = seq(idPix,idPix+length(XY[[pp]]$row)-1,by = 1)
+            idPix           = idPix+length(XY[[pp]]$row)
           }
         }
         coordPix    = do.call(rbind,coordPix)

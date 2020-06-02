@@ -68,8 +68,15 @@ change_resolution_HDR <- function(HDR, window_size) {
 #
 # @return updated DataMatrix and Spectral
 # ' @importFrom stats sd
-#' @importFrom matrixStats rowAnys
+
 rm_invariant_bands <- function(DataMatrix, Spectral) {
+  # samples with inf value are eliminated
+  for (i in 1:ncol(DataMatrix)) {
+    elim <- which(DataMatrix[, i] == Inf)
+    if (length(elim) > 0) {
+      DataMatrix <- DataMatrix[-elim, ]
+    }
+  }
   # bands showing null std are removed
   stdsub <- apply(DataMatrix, 2, sd)
   BandsNoVar <- which(stdsub == 0)
@@ -195,6 +202,12 @@ exclude_spectral_domains <- function(ImPath, Excluded_WL = FALSE) {
       Excluded_WL <- rbind(Excluded_WL, c(1780, 2040))
     }
   }
+  message("Exclude spectral domains corresponding to water vapor absorption")
+  message("The following spectral domains (min and max spectral band in nanometers) will be discarded")
+  print(Excluded_WL)
+  message("Please define the input variable Excluded_WL when calling perform_PCA")
+  message("if you want to modify these spectral domains")
+
   # in case a unique specrtal domain is provided as excluded domain
   if (length(Excluded_WL)==2){
     Excluded_WL = matrix(Excluded_WL,ncol = 2)
@@ -202,6 +215,13 @@ exclude_spectral_domains <- function(ImPath, Excluded_WL = FALSE) {
   # get image header data
   ImPathHDR <- get_HDR_name(ImPath)
   HDR <- read_ENVI_header(ImPathHDR)
+  if (!is.null(HDR$`wavelength units`)){
+    if ((HDR$`wavelength units`=='Micrometers') | (HDR$`wavelength units`=='micrometers')){
+      Excluded_WL <- 0.001*Excluded_WL
+    } else if (max(HDR$wavelength)<100){
+      Excluded_WL <- 0.001*Excluded_WL
+    }
+  }
   nbchannels0 <- HDR$bands
   idOkBand <- seq(1, nbchannels0)
   if ("wavelength" %in% names(HDR)) {
@@ -293,15 +313,15 @@ extract_samples_from_image <- function(ImPath, coordPix, MaxRAM = FALSE, Already
     if (dim(coordPix)[2] == 2) {
       if (dim(coordPix)[1] >= 2) {
         coordPix_tmp <- list()
-        coordPix_tmp$Row <- coordPix[, 1]
-        coordPix_tmp$Column <- coordPix[, 2]
+        coordPix_tmp$row <- coordPix[, 1]
+        coordPix_tmp$col <- coordPix[, 2]
       } else if (dim(coordPix)[1] == 1) {
         coordPix_tmp <- list()
-        coordPix_tmp$Row <- coordPix[1]
-        coordPix_tmp$Column <- coordPix[2]
+        coordPix_tmp$row <- coordPix[1]
+        coordPix_tmp$col <- coordPix[2]
       }
     }
-  } else if (typeof(coordPix) == "list" & length(grep("Row", names(coordPix))) > 0 & length(grep("Column", names(coordPix))) > 0) {
+  } else if (typeof(coordPix) == "list" & length(grep("row", names(coordPix))) > 0 & length(grep("col", names(coordPix))) > 0) {
     coordPix_tmp <- coordPix
   }
   # initial index value of the pixels requested in the image, following original ranking
@@ -309,8 +329,8 @@ extract_samples_from_image <- function(ImPath, coordPix, MaxRAM = FALSE, Already
   # rank of the initial list of pixels
   Rank_Index_Init <- sort(Index_Init, index = TRUE)
   # convert
-  if (typeof(coordPix) == "list" & length(grep("Row", names(coordPix))) > 0 & length(grep("Column", names(coordPix))) > 0) {
-    coordPix <- cbind(coordPix$Row, coordPix$Column)
+  if (typeof(coordPix) == "list" & length(grep("row", names(coordPix))) > 0 & length(grep("col", names(coordPix))) > 0) {
+    coordPix <- cbind(coordPix$row, coordPix$col)
   }
   # divide data access based on the size of the image (to avoid reading 30 Gb file at once...)
   Image_Format <- ENVI_type2bytes(HDR)
@@ -346,16 +366,16 @@ extract_samples_from_image <- function(ImPath, coordPix, MaxRAM = FALSE, Already
 
   # re-sort samples
   Sample_Sort <- list()
-  Sample_Sort$Row <- coordPix_List[, 1]
-  Sample_Sort$Column <- coordPix_List[, 2]
+  Sample_Sort$row <- coordPix_List[, 1]
+  Sample_Sort$col <- coordPix_List[, 2]
   Coord_Pixels <- sub2ind(HDR, Sample_Sort)
   # rank of the pixels extracted from the image
   Rank_Pixels <- sort(Coord_Pixels, index = TRUE)
   # pixel re-ordering needs to be performed in order to get back to Rank_Index_Init
   # first re-order pixels in order to follow increasing index value
   # Sample_Sort$index   = Coord_Pixels[Rank_Pixels$ix]
-  # Sample_Sort$Row     = Sample_Sort$Row[Rank_Pixels$ix]
-  # Sample_Sort$Column  = Sample_Sort$Column[Rank_Pixels$ix]
+  # Sample_Sort$row     = Sample_Sort$row[Rank_Pixels$ix]
+  # Sample_Sort$col  = Sample_Sort$col[Rank_Pixels$ix]
   # if bug, check this line
   # Sample_Sel          = Sample_Sel[Rank_Pixels$ix]
   Sample_Sel <- Sample_Sel[Rank_Pixels$ix, ]
@@ -408,7 +428,7 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.25){
   rowcol$sampleIndex = 1:nrow(rowcol)  # sample index to reorder result
 
   sampleList = lapply(unique(rowcol$block), function(iblock){
-    rc = rowcol[rowcol$block==iblock]
+    rc = rowcol[rowcol$block==iblock,]
     rr = range(rc$row)
     nYSize = diff(rr)+1
     nXSize = max(rc$col)
@@ -428,69 +448,6 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.25){
   return(samples)
 }
 
-
-# Perform random sampling on an image including a mask
-#
-# @param ImPath path for image
-# @param HDR path for hdr file
-# @param MaskPath path for mask
-# @param nb_partitions number of k-means then averaged
-# @param Pix_Per_Partition number of pixels per iteration
-#
-# @return samples from image, coordinates of these samples and updated number of pixels to sample
-# #' @importFrom matlab ones
-# get_random_subset_from_image <- function(ImPath, HDR, MaskPath, nb_partitions, Pix_Per_Partition) {
-#   nbPix2Sample <- nb_partitions * Pix_Per_Partition
-#   # get total number of pixels
-#   nbpix <- as.double(HDR$lines) * as.double(HDR$samples)
-#   # 1- Exclude masked pixels from random subset
-#   # Read Mask
-#   if ((!MaskPath == "") & (!MaskPath == FALSE)) {
-#     fid <- file(
-#       description = MaskPath, open = "rb", blocking = TRUE,
-#       encoding = getOption("encoding"), raw = FALSE
-#     )
-#     ShadeMask <- readBin(fid, integer(), n = nbpix, size = 1)
-#     close(fid)
-#     ShadeMask <- aperm(array(ShadeMask, dim = c(HDR$samples, HDR$lines)))
-#   } else {
-#     ShadeMask <- array(ones(HDR$lines * HDR$samples, 1), dim = c(HDR$lines, HDR$samples))
-#   }
-#   # get a list of samples among unmasked pixels
-#   IndexInit <- (matrix(1:nbpix, ncol = HDR$samples))
-#   ValidPixels <- sample(which(ShadeMask == 1 | ShadeMask == 255))
-#   NbValidPixels <- length(ValidPixels)
-#   # Check if number of valid pixels is compatible with number of pixels to be extracted
-#   # if number of pixels to sample superior to number of valid pixels, then adjust iterations
-#   if (NbValidPixels < nbPix2Sample) {
-#     nbPix2Sample <- NbValidPixels
-#     nb_partitions <- ceiling(NbValidPixels / Pix_Per_Partition)
-#     Pix_Per_Partition <- floor(NbValidPixels / nb_partitions)
-#     nbPix2Sample <- nb_partitions * Pix_Per_Partition
-#   }
-#   # Select a subset of nbPix2Sample among pixselected
-#   pixselected <- ValidPixels[1:nbPix2Sample]
-#
-#   # define location of pixselected in binary file (avoid multiple reads) and optimize access to disk
-#   # the file is a BIL file, which means that for each line in the image,
-#   # we first need to define if datapoints are on the line, then read one point after the other
-#   coordi <- ((pixselected - 1) %% HDR$lines) + 1
-#   coordj <- floor((pixselected - 1) / HDR$lines) + 1
-#   # sort based on line and col
-#   indxPix <- order(coordi, coordj, na.last = FALSE)
-#   coordPix <- cbind(coordi[indxPix], coordj[indxPix])
-#
-#   # 2- Extract samples from image
-#   Sample_Sel <- extract_samples_from_image(ImPath, coordPix)
-#   # randomize!
-#   Sample_Sel <- Sample_Sel[sample(dim(Sample_Sel)[1]), ]
-#   coordPix <- coordPix[sample(dim(Sample_Sel)[1]), ]
-#   my_list <- list("DataSubset" = Sample_Sel, "nbPix2Sample" = nbPix2Sample,"coordPix"=coordPix)
-#   return(my_list)
-# }
-
-
-
 # @return list, see Details
 # @details
 # The returned list contains:
@@ -503,40 +460,21 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.25){
 #' @importFrom mmand erode
 #' @importFrom data.table data.table rbindlist setorder
 #' @importFrom matrixStats rowAnys
-get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Per_Partition, kernel=NULL, seed=10) {
-  # ImPath = '/home/boissieu/Data/HS/Guyane/2016/Paracou/hypip_wd_guyane_20160919_paracou_DZ/session01/L1c/VNIR_1600_SN0014/atmx2/DZ_FL01_20160919_181033_VNIR_1600_SN0014_PS01_IMG001_atm_slice_001_x2.hyspex'
-
-  r = brick(ImPath)
-  # mask = r[[1]]
-  # values(mask) = as.integer(values(mask)>100)
-  # mask = drop(as.array(mask))
-  # nb_partitions=1
-  # Pix_Per_Partition = 1000
-  # kernel = matrix(0, 3, 3)
-  # kernel[c(5, 6, 8)]=c(1, -1/2, -1/2)
-
-
+get_random_subset_from_image <- function(ImPath, HDR, MaskPath, nb_partitions, Pix_Per_Partition, kernel=NULL) {
+  r <- brick(ImPath)
   nbPix2Sample <- nb_partitions * Pix_Per_Partition
-
   # get total number of pixels
-  rdim = dim(r)
-  nlines = rdim[1]
-  nsamples = rdim[2]
+  rdim <- dim(r)
+  nlines <- rdim[1]
+  nsamples <- rdim[2]
   nbpix <- ncell(r)
   # 1- Exclude masked pixels from random subset
   # Read Mask
   if ((!MaskPath == "") & (!MaskPath == FALSE)) {
-    mask <- as.matrix(raster(MaskPath))
+    mask <- matrix(raster(MaskPath),ncol= HDR$samples,nrow = HDR$lines)
     if(any(dim(mask)[1:2] != dim(r)[1:2])){
       stop('Mask and Image rasters do not have the same XY diemnsions.')
     }
-    # fid <- file(
-    #   description = MaskPath, open = "rb", blocking = TRUE,
-    #   encoding = getOption("encoding"), raw = FALSE
-    # )
-    # mask <- readBin(fid, integer(), n = nbpix, size = 1)
-    # close(fid)
-    # mask <- aperm(array(mask, dim = c(nsamples, nlines)))
   } else {
     mask <- array(1, dim = c(nlines, nsamples))
   }
@@ -549,6 +487,7 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Pe
   }
 
   # get a list of samples among unmasked pixels
+
   ValidPixels <- which(mask > 0)
   NbValidPixels <- length(ValidPixels)
   # Check if number of valid pixels is compatible with number of pixels to be extracted
@@ -561,13 +500,9 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Pe
   }
 
   # Select a random subset of nbPix2Sample
+  seed <- sample(10000)[1]
   set.seed(seed)
   pixselected <- sample(ValidPixels, nbPix2Sample)
-
-  # define location of pixselected in binary file (avoid multiple reads) and optimize access to disk
-  # the file is a BIL file, which means that for each line in the image,
-  # we first need to define if datapoints are on the line, then read one point after the other
-
   Row <- ((pixselected - 1) %% nlines) + 1 # row
   Column <- floor((pixselected - 1) / nlines) + 1 # column
   if(is.matrix(kernel)){
@@ -602,7 +537,8 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Pe
   # remove NA and Inf pixels
   if(any(is.na(Sample_Sel) | is.infinite(Sample_Sel))){
     print('Removing pixels with NA values.')
-    rmrows <- !rowAnys(is.na(Sample_Sel) | is.infinite(Sample_Sel))
+    # rmrows <- !rowAnys(is.na(Sample_Sel) | is.infinite(Sample_Sel))
+    rmrows <- rowAnys(is.na(Sample_Sel) | is.infinite(Sample_Sel))
     rmpix <- unique(samplePixIndex$id[rmrows])
     Sample_Sel = Sample_Sel[!(samplePixIndex$id %in% rmpix),]
     samplePixIndex = samplePixIndex[!(samplePixIndex$id %in% rmpix)]
@@ -616,7 +552,6 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Pe
   my_list <- list("DataSubset" = Sample_Sel, "nbPix2Sample" = nbPix2Sample,"coordPix"=samplePixIndex)
   return(my_list)
 }
-
 
 # does the system work with little endians or big endians?
 #
@@ -681,7 +616,7 @@ get_image_bands <- function(Spectral_Bands, wavelength) {
 ind2sub <- function(Raster, Image_Index) {
   c <- ((Image_Index - 1) %% Raster@ncols) + 1
   r <- floor((Image_Index - 1) / Raster@ncols) + 1
-  my_list <- list("Column" = c, "Row" = r)
+  my_list <- list("col" = c, "row" = r)
   return(my_list)
 }
 
@@ -693,7 +628,7 @@ ind2sub <- function(Raster, Image_Index) {
 ind2sub2 <- function(Raster, Image_Index) {
   r <- ((Image_Index - 1) %% Raster@nrows) + 1
   c <- floor((Image_Index - 1) / Raster@nrows) + 1
-  my_list <- list("Column" = c, "Row" = r)
+  my_list <- list("col" = c, "row" = r)
   return(my_list)
 }
 
@@ -706,18 +641,31 @@ ind2sub2 <- function(Raster, Image_Index) {
 #
 # @return rank of all spectral bands of interest in the image and corresponding wavelength
 #' @importFrom matlab padarray
-mean_filter <- function(ImageInit, nbi, nbj, SizeFilt) {
-  E <- padarray(ImageInit, c(SizeFilt, SizeFilt), "symmetric", "both")
-  ImageSmooth <- matrix(0, nrow = nbi, ncol = nbj)
-  Mat2D <- MatSun <- matrix(0, nrow = ((2 * SizeFilt) + 1)^2, ncol = nbj)
-  spl <- split(1:nbj, 1:((2 * SizeFilt) + 1))
-  mid <- ceiling((((2 * SizeFilt) + 1)^2) / 2)
-  for (i in (SizeFilt + 1):(nbi + SizeFilt)) {
-    for (j in 1:((2 * SizeFilt) + 1)) {
-      # create a 2D matrix
-      Mat2D[, spl[[j]]] <- matrix(E[(i - SizeFilt):(i + SizeFilt), (spl[[j]][1]):(utils::tail(spl[[j]], n = 1) + 2 * SizeFilt)], nrow = ((2 * SizeFilt) + 1)^2)
+mean_filter <- function(Image, SizeFilt,NA_remove = FALSE) {
+  nbi <- dim(Image)[1]
+  nbj <- dim(Image)[2]
+  # if matrix: convert into array
+  if (is.na(dim(Image)[3])){
+    Image <- array(Image,dim = c(nbi,nbj,1))
+  }
+  ImageSmooth <- array(0,c(nbi,nbj,dim(Image)[3]))
+  for (band in 1: dim(Image)[3]){
+    E <- padarray(Image[,,band], c(SizeFilt, SizeFilt), "symmetric", "both")
+    ImageSmooth_tmp <- matrix(0, nrow = nbi, ncol = nbj)
+    Mat2D <- MatSun <- matrix(0, nrow = ((2 * SizeFilt) + 1)^2, ncol = nbj)
+    spl <- split(1:nbj, 1:((2 * SizeFilt) + 1))
+    mid <- ceiling((((2 * SizeFilt) + 1)^2) / 2)
+    for (i in (SizeFilt + 1):(nbi + SizeFilt)) {
+      for (j in 1:((2 * SizeFilt) + 1)) {
+        # create a 2D matrix
+        Mat2D[, spl[[j]]] <- matrix(E[(i - SizeFilt):(i + SizeFilt), (spl[[j]][1]):(tail(spl[[j]], n = 1) + 2 * SizeFilt)], nrow = ((2 * SizeFilt) + 1)^2)
+      }
+      ImageSmooth_tmp[(i - SizeFilt), ] <- colMeans(Mat2D, na.rm = TRUE)
     }
-    ImageSmooth[(i - SizeFilt), ] <- colMeans(Mat2D, na.rm = TRUE)
+    if (NA_remove == TRUE){
+      ImageSmooth_tmp[which(is.na(Image[,,band]))] <- NA
+    }
+    ImageSmooth[,,band] <- ImageSmooth_tmp
   }
   return(ImageSmooth)
 }
@@ -826,6 +774,8 @@ read_ENVI_header <- function(HDRpath) {
 # @param ImBand Bands to be read
 #
 # @return Image_Subset information corresponding to ImBand
+#' @import stars
+
 read_image_bands <- function(ImPath, HDR, ImBand) {
   # first get image format
   Image_Format <- ENVI_type2bytes(HDR)
@@ -833,42 +783,45 @@ read_image_bands <- function(ImPath, HDR, ImBand) {
   jpix <- HDR$samples
   nbChannels <- HDR$bands
   nbSubset <- length(ImBand)
-  # then open and read image
-  # depending on image size, need to read in one or multiple times
-  lenTot <- as.double(ipix) * as.double(jpix) * as.double(nbChannels)
-  lenSubset <- as.double(ipix) * as.double(jpix) * as.double(nbSubset)
-  ImSizeGb <- (lenTot * Image_Format$Bytes) / (1024^3)
-  # maximum image size read at once. If image larger, then reads in multiple pieces
-  LimitSizeGb <- 0.25
-  if (ImSizeGb < LimitSizeGb) {
-    nbLinesPerCPU <- ceiling(ipix)
-    nbPieces <- 1
-  } else {
-    # nb of lines corresponding to LimitSizeGb
-    OneLine <- as.double(jpix) * as.double(nbChannels) * Image_Format$Bytes
-    nbLinesPerCPU <- floor(LimitSizeGb * (1024^3) / OneLine)
-    # number of pieces to split the image into
-    nbPieces <- ceiling(ipix / nbLinesPerCPU)
+  Image_Subset <- array(NA,c(ipix,jpix,length(ImBand)))
+  i <- 0
+  for (band in ImBand){
+    i <- i+1
+    bndtmp = t(matrix(raster(ImPath, band = ImBand[i]),nrow = HDR$samples,ncol = HDR$lines))
+    Image_Subset[,,i] <- array(bndtmp,c(ipix,jpix,1))
   }
-  # Define segments of image to be read
-  SeqRead.Image <- where_to_read(HDR, nbPieces)
-  # Read segments (subsets) of image
-  Image_Subsets <- list()
-  for (i in 1:nbPieces) {
-    # number of elements to be read
-    Byte_Start <- SeqRead.Image$ReadByte_Start[i]
-    nbLines <- SeqRead.Image$Lines_Per_Chunk[i]
-    lenBin <- SeqRead.Image$ReadByte_End[i] - SeqRead.Image$ReadByte_Start[i] + 1
-    Image_Subsets[[i]] <- read_bin_subset(Byte_Start, nbLines, lenBin, ImPath, ImBand, jpix, nbChannels, Image_Format)
-  }
-  # reshape image with original size and selected bands
-  Image_Subset <- build_image_from_list(Image_Subsets, ipix, jpix, nbSubset)
-  rm(Image_Subsets)
-  gc()
   return(Image_Subset)
 }
 
-# reads subset of an image
+# reads subset of lines from an image
+#
+# @param ImPath path for the image
+# @param HDR header information corresponding to the image
+# @param Line_Start which line to start reading
+# @param Lines_To_Read number of lines to read
+#
+# @return data corresponding to the subset in original 3D format
+read_image_subset <- function(ImPath, HDR, Line_Start,Lines_To_Read,ImgFormat='3D'){
+  # list of pixels to be extracted
+  ListRows <- seq(Line_Start,Line_Start+Lines_To_Read-1)
+  ListCols <- seq(1,HDR$samples)
+  # list pixels
+  coordPix <- expand.grid(ListRows,ListCols)
+  names(coordPix) <- c('row','col')
+  coordPix[['sampleIndex']] = 1:nrow(coordPix)
+  # 2- Extract samples from image
+  Sample_Sel <- extract.big_raster(ImPath, coordPix[,1:2])
+  Sample_Sel <- array(matrix(as.numeric(unlist(Sample_Sel)),ncol = HDR$bands),c(Lines_To_Read,HDR$samples,HDR$bands))
+  if (ImgFormat == "2D") {
+    Sample_Sel <- array(Sample_Sel, c(Lines_To_Read * HDR$samples, HDR$bands))
+  }
+  if (ImgFormat == "Shade") {
+    Sample_Sel <- matrix(Sample_Sel, Lines_To_Read, HDR$samples, byrow = F)
+  }
+  return(Sample_Sel)
+}
+
+# reads subset of an ENVI BIL image
 #
 # @param ImPath path for the image
 # @param HDR header information corresponding to the image
@@ -879,7 +832,7 @@ read_image_bands <- function(ImPath, HDR, ImBand) {
 # @param ImgFormat should output be 2D or 3D (original image format)?
 #
 # @return data corresponding to the subset in original 3D format
-read_image_subset <- function(ImPath, HDR, Byte_Start, lenBin, nbLines, Image_Format, ImgFormat) {
+read_BIL_image_subset <- function(ImPath, HDR, Byte_Start, lenBin, nbLines, Image_Format, ImgFormat) {
   fidIm <- file(
     description = ImPath, open = "rb", blocking = TRUE,
     encoding = getOption("encoding"), raw = FALSE
@@ -1019,16 +972,18 @@ update_shademask <- function(MaskPath, HDR, Mask, MaskPath_Update) {
   close(fidOUT)
   # write updated shademask
   HDR_Update <- HDR
+  HDR_Update$description <- "Mask produced from radiometric filtering"
   HDR_Update$bands <- 1
   HDR_Update$`data type` <- 1
-  HDR_Update$`band names` <- {
-    "Mask"
-  }
+  HDR_Update$`band names` <- "Mask"
+  HDR_Update$`default stretch` <- '0 1 linear'
   HDR_Update$wavelength <- NULL
   HDR_Update$fwhm <- NULL
   HDR_Update$resolution <- NULL
   HDR_Update$bandwidth <- NULL
   HDR_Update$purpose <- NULL
+  HDR_Update$`default bands` <- NULL
+  HDR_Update$`data gain values` <- NULL
   HDRpath <- paste(MaskPath_Update, ".hdr", sep = "")
   write_ENVI_header(HDR_Update, HDRpath)
   return(MaskPath_Update)
@@ -1165,7 +1120,11 @@ Write_Big_Image <- function(ImgWrite,ImagePath,HDR,Image_Format){
     }
     ImgChunk <- aperm(ImgChunk, c(2, 3, 1))
     # writeBin(as.numeric(c(PCA_Chunk)), fidOUT, size = PCA_Format$Bytes,endian = .Platform$endian)
-    writeBin(c(ImgChunk), fidOUT, size = Image_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
+    if (!Image_Format$Bytes==1){
+      writeBin(c(ImgChunk), fidOUT, size = Image_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
+    } else {
+      writeBin(c(as.integer(ImgChunk)), fidOUT, size = Image_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
+    }
     close(fidOUT)
   }
   rm(ImgWrite)
@@ -1174,6 +1133,103 @@ Write_Big_Image <- function(ImgWrite,ImagePath,HDR,Image_Format){
   return("")
 }
 
+#' write an image resulting from "window processing" at native spatial resolution
+#' (assuming square windows & origin at top left corner)
+#'
+#' @param Image numeric. Image corresponding to a 2D matrix or 3D array
+#' @param ImagePath character. Path where the image should be written
+#' @param HDR list. Image header
+#' @param window_size numeric. window size used to generate Image
+#'
+#' @return None
+#' @export
+
+Write_Image_NativeRes <- function(Image,ImagePath,HDR,window_size){
+  # update HDR: dimensions & spatial resolution
+  HDR_Full <- HDR
+  HDR_Full$samples <- HDR$samples * window_size
+  HDR_Full$lines <- HDR$lines * window_size
+  HDR_Full <- revert_resolution_HDR(HDR_Full, window_size)
+  # define name for native resolution image and corresponding HDR
+  ImagePath_FullRes <- paste(ImagePath, "_Fullres", sep = "")
+  headerFpath <- paste(ImagePath_FullRes, ".hdr", sep = "")
+  # write header
+  write_ENVI_header(HDR_Full, headerFpath)
+  Image_Format <- ENVI_type2bytes(HDR_Full)
+  # create image the same size as native image: convert matrix into array
+  if (length(dim(Image))==2){
+    Image = array(Image,c(HDR$lines,HDR$samples,1))
+  }
+  Image_FullRes <- array(NA,c(HDR_Full$lines,HDR_Full$samples,HDR_Full$bands))
+  for (band in  1:HDR_Full$bands){
+    for (i in 1:HDR$lines) {
+      for (j in 1:HDR$samples) {
+        Image_FullRes[((i-1)*window_size+1):(i*window_size),((j-1)*window_size+1):(j*window_size),band] <- Image[i,j,band]
+      }
+    }
+  }
+  # write image and make sure size does not matter ...
+  Write_Big_Image(ImgWrite = Image_FullRes,ImagePath = ImagePath_FullRes,
+                  HDR = HDR_Full,Image_Format = Image_Format)
+  # zip resulting file
+  ZipFile(ImagePath_FullRes)
+  return("")
+}
+
+
+#' Writes a matrix or an array into a ENVI BIL raster
+#'
+#' @param Image numeric. matrix or array of image to be written
+#' @param HDR hdr template
+#' @param ImagePath path of image file to be written
+#' @param window_size spatial units use dto compute diversiy (in pixels)
+#' @param FullRes should full resolution image be written (original pixel size)
+#' @param LowRes should low resolution image be written (one value per spatial unit)
+#' @param SmoothImage boolean. set TRUE if you want smooting filter applied to resulting diversity rasters
+#
+#' @return None
+
+write_raster <- function(Image, HDR, ImagePath, window_size, FullRes = TRUE, LowRes = FALSE,SmoothImage = FALSE) {
+
+  Image_Format <- ENVI_type2bytes(HDR)
+  # Write image with resolution corresponding to window_size
+  if (LowRes == TRUE) {
+    # write header
+    headerFpath <- paste(ImagePath, ".hdr", sep = "")
+    write_ENVI_header(HDR, headerFpath)
+    # write image
+    Write_Big_Image(Image,ImagePath,HDR,Image_Format)
+  }
+
+  # Write image with Full native resolution
+  if (FullRes == TRUE) {
+    Write_Image_NativeRes(Image,ImagePath,HDR,window_size)
+  }
+
+  # write smoothed map
+  if (SmoothImage == TRUE){
+    SizeFilt <- 1
+    if (min(c(dim(Image)[1], dim(Image)[2])) > (2 * SizeFilt + 1)) {
+      Image_Smooth <- mean_filter(Image, SizeFilt,NA_remove = TRUE)
+      ImagePath.Smooth <- paste(ImagePath, "_MeanFilter", sep = "")
+      if (LowRes == TRUE) {
+        # write header
+        headerFpath <- paste(ImagePath.Smooth, ".hdr", sep = "")
+        write_ENVI_header(HDR, headerFpath)
+        # write image
+        Write_Big_Image(Image_Smooth,ImagePath.Smooth,HDR,Image_Format)
+        # close(fidOUT)
+      }
+      if (FullRes == TRUE) {
+        # Write image with Full native resolution
+        Write_Image_NativeRes(Image_Smooth,ImagePath.Smooth,HDR,window_size)
+      }
+    }
+  }
+  return("")
+}
+
+
 # convert image coordinates from X-Y to index
 #
 # @param HDR_Raster
@@ -1181,7 +1237,7 @@ Write_Big_Image <- function(ImgWrite,ImagePath,HDR,Image_Format){
 #
 # @return Image_Index
 sub2ind <- function(HDR_Raster, Pixels) {
-  Image_Index <- (Pixels$Column - 1) * HDR_Raster$lines + Pixels$Row
+  Image_Index <- (Pixels$col - 1) * HDR_Raster$lines + Pixels$row
   return(Image_Index)
 }
 
@@ -1231,8 +1287,12 @@ revert_resolution_HDR <- function(HDR, window_size) {
 # @param ImagePath path for the image
 # @return None
 ZipFile <- function(ImagePath) {
+
+
   ImagePath <- normalizePath(ImagePath)
+
   zip::zipr(zipfile = paste0(ImagePath, ".zip"), files = ImagePath)
   file.remove(ImagePath)
+
   return(invisible())
 }
