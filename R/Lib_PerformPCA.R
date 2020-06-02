@@ -49,9 +49,18 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
   ImPathHDR <- get_HDR_name(Input_Image_File)
   HDR <- read_ENVI_header(ImPathHDR)
   # extract a random selection of pixels from image
-  Subset <- get_random_subset_from_image(ImPath = Input_Image_File, HDR = HDR, MaskPath = Input_Mask_File,
-                                         nb_partitions = nb_partitions , Pix_Per_Partition = Pix_Per_Partition,
-                                         kernel=NULL)
+  if (TypePCA=='MNF'){
+    FilterPCA <- FALSE
+    kernel = matrix(0, 3, 3)
+    kernel[c(5, 6, 8)]=c(1, -1/2, -1/2)
+    Subset <- get_random_subset_from_image(ImPath = Input_Image_File, HDR = HDR, 
+                                           MaskPath = Input_Mask_File, nb_partitions = nb_partitions, 
+                                           Pix_Per_Partition = Pix_Per_Partition, kernel = kernel)
+  } else {
+    Subset <- get_random_subset_from_image(ImPath = Input_Image_File, HDR = HDR, 
+                                           MaskPath = Input_Mask_File, nb_partitions = nb_partitions, 
+                                           Pix_Per_Partition = Pix_Per_Partition, kernel = NULL)
+  }
   # if needed, apply continuum removal
   if (Continuum_Removal == TRUE) {
     Subset$DataSubset <- apply_continuum_removal(Subset$DataSubset, SpectralFilter, nbCPU = nbCPU)
@@ -83,6 +92,8 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
   #   tic()
   #   PCA_model <- nlpca(DataSubset)
   #   toc()
+  } else if(TypePCA=="MNF"){
+    PCA_model <- mnf(DataSubset, Subset$coordPix)
   }
 
   # if PCA based filtering:
@@ -167,7 +178,7 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
 # @param Input_Mask_File shade file path
 # @param Shade_Update updated shade mask
 # @param Spectral spectral information from data
-# @param CR logical: does continuum removal need to be performed?
+# @param Continuum_Removal logical: does continuum removal need to be performed?
 # @param PCA_model general parameters of the PCA
 # @param TypePCA
 # @param nbCPU
@@ -191,6 +202,7 @@ filter_PCA <- function(Input_Image_File, HDR, Input_Mask_File, Shade_Update,
   # 2- update shade mask based on PCA values
   # 2.1- create hdr and binary files corresponding to updated mask
   HDR_Shade <- HDR
+  HDR_Shade$description <- "Mask produced from PCA outlier filtering"
   HDR_Shade$bands <- 1
   HDR_Shade$`data type` <- 1
   HDR_Shade$`band names` <- "{Mask_PCA}"
@@ -200,6 +212,8 @@ filter_PCA <- function(Input_Image_File, HDR, Input_Mask_File, Shade_Update,
   HDR_Shade$bandwidth <- NULL
   HDR_Shade$purpose <- NULL
   HDR_Shade$`default stretch` <- '0 1 linear'
+  HDR_Shade$`default bands` <- NULL
+  HDR_Shade$`data gain values` <- NULL
   HDR_Shade$`byte order` <- get_byte_order()
   headerFpath <- paste(Shade_Update, ".hdr", sep = "")
   write_ENVI_header(HDR_Shade, headerFpath)
@@ -255,7 +269,7 @@ filter_PCA <- function(Input_Image_File, HDR, Input_Mask_File, Shade_Update,
     Image_Chunk <- Image_Chunk[keepShade,]
 
     # apply Continuum removal if needed
-    if (Continuum_Removal == TRUE) {
+    if (Continuum_Removal) {
       Image_Chunk <- apply_continuum_removal(Image_Chunk, Spectral, nbCPU = nbCPU)
     } else {
       if (!length(Spectral$WaterVapor) == 0) {
@@ -267,7 +281,7 @@ filter_PCA <- function(Input_Image_File, HDR, Input_Mask_File, Shade_Update,
       Image_Chunk <- Image_Chunk[, -Spectral$BandsNoVar]
     }
     # Apply PCA
-    if (TypePCA == "PCA" | TypePCA == "SPCA") {
+    if (TypePCA == "PCA" | TypePCA == "SPCA" | TypePCA == "MNF") {
       Image_Chunk <- scale(Image_Chunk, PCA_model$center, PCA_model$scale) %*% PCA_model$rotation[, PCsel]
     }
 
@@ -332,6 +346,11 @@ write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_mo
   HDR_PCA <- HDR
   HDR_PCA$bands <- Nb_PCs
   HDR_PCA$`data type` <- 4
+  HDR_PCA$interleave <- 'BIL'
+  HDR_PCA$`default bands` <- NULL
+  HDR_PCA$`wavelength units` <- NULL
+  HDR_PCA$`z plot titles` <- NULL
+  HDR_PCA$`data gain values` <- NULL
   HDR_PCA$`band names` <- paste('PC', 1:Nb_PCs, collapse = ", ")
   HDR_PCA$wavelength <- NULL
   HDR_PCA$fwhm <- NULL
@@ -405,7 +424,7 @@ write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_mo
     }
 
     # Apply PCA
-    if (TypePCA == "PCA" | TypePCA == "SPCA") {
+    if (TypePCA == "PCA" | TypePCA == "SPCA" | TypePCA == "MNF") {
       Image_Chunk <- scale(Image_Chunk, PCA_model$center, PCA_model$scale) %*% PCA_model$rotation[, 1:Nb_PCs]
     }
 
@@ -574,3 +593,95 @@ minmax <- function(x, mode = "define", MinX = FALSE, MaxX = FALSE) {
   my_list <- list("data" = x, "MinX" = MinX, "MaxX" = MaxX)
   return(my_list)
 }
+
+# If coordPix is not NULL, X and coordPix are exepected to have the same order,
+# i.e. coordPix[1, ] corresponds to X[1, ], coordPix[2, ] corresponds to X[2, ], ...
+noise <- function(X, coordPix=NULL){
+  if(is.null(coordPix)){
+    if(ndims(X)!=3)
+      stop('X is expected to be a 3D array: y,x,band for row,col,depth.')
+    Xdim = dim(X)
+    # Shift x/y difference
+    Y = ((X[2:Xdim[1],2:Xdim[2],]-X[1:(Xdim[1]-1),2:Xdim[2],]) +
+               (X[2:Xdim[1],2:Xdim[2],]-X[2:Xdim[1],1:(Xdim[2]-1),]))/2
+  }else{
+    if(!all(c('Kind', 'id') %in% colnames(coordPix)))
+      stop("Columns 'Kind' and 'id' are missing in coordPix.")
+    kernel = matrix(0, 3, 3)
+    kernel[c(5, 6, 8)]=c(1, -1/2, -1/2)
+
+    if(!identical(order(coordPix$id), 1:nrow(coordPix)))
+      stop("coordPix is not ordered along column 'id'. Order coordPix as well as X before trying again.")
+
+    Y=0
+    for(ik in which(kernel!=0)){
+      Y = Y + X[coordPix$Kind==ik,]*kernel[ik]
+    }
+  }
+  return(Y)
+}
+
+# used in noise
+# kernel = matrix(0, 3, 3)
+# kernel[c(5, 6, 8)]=c(1, -1/2, -1/2)
+coordPix_kernel <- function(X, kernel){
+  mesh = matlab::meshgrid(1:nrow(X), 1:ncol(X))
+  Row <- as.numeric(mesh$y) # row
+  Column <- as.numeric(mesh$x) # column
+
+  coordPixK = list()
+  mesh=matlab::meshgrid(-(ncol(kernel)%/%2):(ncol(kernel)%/%2), -(nrow(kernel)%/%2):(nrow(kernel)%/%2))
+  for(p in which(kernel!=0)){
+    coordPixK[[p]] = data.table(row = Row+mesh$y[p], col = Column+mesh$x[p], id=1:length(Row))
+  }
+  coordPix = rbindlist(coordPixK, idcol='Kind')
+  # Order along coordPix$id for further use in noise, mnf
+  setorder(coordPix, 'id')
+  return(coordPix)
+}
+
+# Function to perform PCA on a matrix
+#
+# @param X matrix to apply MNF on
+# @param coordPix dataframe to compute noise, cf get_random_subset_from_image
+# TODO: faire 2 fonctions: mnf et mnf.subset, de même pour noise, noise.subset
+mnf <- function(X, coordPix=NULL, retx=TRUE){
+  if(any(is.na(X))){
+    stop('Pixels with NAs found in X. Remove NA pixels before trying again.')
+  }
+
+  if(length(dim(X))>3)
+    stop('X has more than 3 dimensions.')
+
+  nz <- noise(X, coordPix)
+  Xdim = dim(X)
+
+  if(is.null(coordPix) && length(dim(X))>2){
+    X = matrix(X[1:(Xdim[1]-1), 1:(Xdim[2]-1),], nrow = Xdim[1]*Xdim[2])
+    nz = matrix(nz, nrow = Xdim[1]*Xdim[2])
+  }
+
+  Xc = scale(X, center = T, scale = F)
+
+  covNoise = cov(nz)
+  covXc = cov(Xc)
+  eig = eigen(solve(covNoise)%*%covXc)
+  colnames(eig$vectors) = paste0('PC', 1:ncol(eig$vectors))
+  modMNF = list(sdev = sqrt(eig$values), rotation = eig$vectors,
+                center = colMeans(X), scale = FALSE)
+  attr(modMNF, 'class') <- 'prcomp'
+  #   eig_pairs = tofsims:::EigenDecompose(covXc, covNoise, 1, nrow(covNoise))
+  #   vord = order(Re(eig_pairs$eigval), decreasing = T)
+  #   eig_pairs$eigval = Re(eig_pairs$eigval)[vord]
+  #   eig_pairs$eigvec = Re(eig_pairs$eigvec[, vord])
+  #   modMNF = list(rotation=eig_pairs$eigvec,
+  #                 sdev=sqrt(eig_pairs$eigval),
+  #                 center=colMeans(X),
+  #                 scale=FALSE)
+  if(retx==T)
+    modMNF$x= array(Xc %*% modMNF$rotation, dim = Xdim)
+
+  return(modMNF)
+}
+
+

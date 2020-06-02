@@ -74,10 +74,22 @@ create_mask_from_threshold <- function(ImPath, MaskPath, MaskPath_Update, NDVI_T
   # distance between expected bands defining red, blue and NIR info and available band from sensor
   Dist2Band <- 25
   # in case micrometers
-  if (max(HDR$wavelength)<100 | HDR$`wavelength units` == "micrometers"){
-    Spectral_Bands <- 0.001*Spectral_Bands
-    Dist2Band <- 0.001*Dist2Band
+  if (!is.null(HDR$`wavelength units`)){
+    if (max(HDR$wavelength)<100 | HDR$`wavelength units` == "micrometers"){
+      Spectral_Bands <- 0.001*Spectral_Bands
+      Dist2Band <- 0.001*Dist2Band
+    }
+  } else if (is.null(HDR$`wavelength units`)){
+    message('wavelength units not provided in the header of the image')
+    if (max(HDR$wavelength)<100){
+      message('assuming wavelengths are expressed in micrometers')
+      Spectral_Bands <- 0.001*Spectral_Bands
+      Dist2Band <- 0.001*Dist2Band
+    } else {
+      message('assuming wavelengths are expressed in nanometers')
+    }
   }
+  
   # get image bands correponding to spectral bands of interest
   Image_Bands <- get_image_bands(Spectral_Bands, HDR$wavelength)
   # read band data from image

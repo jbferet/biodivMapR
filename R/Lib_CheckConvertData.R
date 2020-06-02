@@ -178,21 +178,27 @@ check_data <- function(Raster_Path, Mask = FALSE) {
         message(" Otherwise, make sure Continuum_Removal is set to FALSE  ")
         message("*********************************************************")
       } else {
-        if (HDR$`wavelength units` == "Unknown") {
-          message("*********************************************************")
-          message("IF MULTI / HYPERSPECTRAL DATA: ")
-          message("Please make sure the wavelengths are in nanometers")
-          message("if not, stop processing and convert wavelengths in nanometers in HDR file")
-          message("*********************************************************")
-        }
-        if ((!HDR$`wavelength units` == "Nanometers") & (!HDR$`wavelength units` == "nanometers") &
-            (!HDR$`wavelength units` == "Micrometers") & (!HDR$`wavelength units` == "micrometers")) {
-          message("*********************************************************")
-          message("IF MULTI / HYPERSPECTRAL DATA: ")
-          message("Please make sure the wavelengths are in nanometers or micrometers")
-          message("if not, stop processing and convert wavelengths in nanometers")
-          message("or micrometers in HDR file")
-          message("*********************************************************")
+        if (!is.null(HDR$`wavelength units`)){
+          if (HDR$`wavelength units` == "Unknown") {
+            message("*********************************************************")
+            message("IF MULTI / HYPERSPECTRAL DATA: ")
+            message("Please make sure the wavelengths are in nanometers")
+            message("if not, stop processing and convert wavelengths in nanometers in HDR file")
+            message("*********************************************************")
+          }
+          if ((!HDR$`wavelength units` == "Nanometers") & (!HDR$`wavelength units` == "nanometers") &
+              (!HDR$`wavelength units` == "Micrometers") & (!HDR$`wavelength units` == "micrometers")) {
+            message("*********************************************************")
+            message("IF MULTI / HYPERSPECTRAL DATA: ")
+            message("Please make sure the wavelengths are in nanometers or micrometers")
+            message("if not, stop processing and convert wavelengths in nanometers")
+            message("or micrometers in HDR file")
+            message("*********************************************************")
+          }
+        } else {
+          message('wavelength units not provided in the header of the image')
+          message('assuming wavelengths are expressed in nanometers')
+          message('add wavelength units if you don t want to read this message anymore')
         }
       }
 	  } else if (Mask == TRUE & HDR$bands > 1) {

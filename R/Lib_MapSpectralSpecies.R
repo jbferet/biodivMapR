@@ -71,7 +71,7 @@ map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model
       if (!length(SpectralFilter$BandsNoVar) == 0) {
         Subset$DataSubset <- Subset$DataSubset[, -SpectralFilter$BandsNoVar]
       }
-      if (TypePCA == "PCA" | TypePCA == "SPCA") {
+      if (TypePCA == "PCA" | TypePCA == "SPCA" | TypePCA == "MNF") {
         dataPCA <- scale(Subset$DataSubset, PCA_model$center, PCA_model$scale) %*% PCA_model$rotation[, 1:PCA_model$Nb_PCs]
       }
       dataPCA <- dataPCA[, PC_Select]
@@ -213,6 +213,12 @@ apply_kmeans <- function(PCA_Path, PC_Select, Input_Mask_File, Kmeans_info, Spec
   HDR_SS$resolution <- NULL
   HDR_SS$bandwidth <- NULL
   HDR_SS$purpose <- NULL
+  HDR_SS$interleave <- 'BIL'
+  HDR_SS$`default bands` <- NULL
+  HDR_SS$`wavelength units` <- NULL
+  HDR_SS$`z plot titles` <- NULL
+  HDR_SS$`data gain values` <- NULL
+  HDR_SS$`default stretch` <- NULL
   HDR_SS$`byte order` <- get_byte_order()
   headerFpath <- paste(Spectral_Species_Path, ".hdr", sep = "")
   write_ENVI_header(HDR_SS, headerFpath)
