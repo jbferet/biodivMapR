@@ -48,12 +48,12 @@ perform_radiometric_filtering <- function(Image_Path, Mask_Path, Output_Dir, Typ
   return(Mask_Path)
 }
 
-# create a mask based on NDVI, Green reflectance and NIR reflectance
-# NDVI (min) threshold eliminates non vegetated pixels
-# Blue (max) threshold eliminates Clouds
-# NIR (min) threshold eliminates shadows
-# ! only valid if Optical data!!
-#
+#' create a mask based on NDVI, Green reflectance and NIR reflectance
+#' NDVI (min) threshold eliminates non vegetated pixels
+#' Blue (max) threshold eliminates Clouds
+#' NIR (min) threshold eliminates shadows
+#' ! only valid if Optical data!!
+#'
 #' @param ImPath character. Full path of a raster file
 #' @param MaskPath character. Full path of the mask to be used with the raster file
 #' @param MaskPath_Update character. Full path of the updated mask to be used with the raster file
