@@ -49,9 +49,18 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
   ImPathHDR <- get_HDR_name(Input_Image_File)
   HDR <- read_ENVI_header(ImPathHDR)
   # extract a random selection of pixels from image
-  Subset <- get_random_subset_from_image(ImPath = Input_Image_File, HDR = HDR, MaskPath = Input_Mask_File,
-                                         nb_partitions = nb_partitions , Pix_Per_Partition = Pix_Per_Partition,
-                                         kernel=NULL)
+  if (TypePCA=='MNF'){
+    FilterPCA <- FALSE
+    kernel = matrix(0, 3, 3)
+    kernel[c(5, 6, 8)]=c(1, -1/2, -1/2)
+    Subset <- get_random_subset_from_image(ImPath = Input_Image_File, HDR = HDR, 
+                                           MaskPath = Input_Mask_File, nb_partitions = nb_partitions, 
+                                           Pix_Per_Partition = Pix_Per_Partition, kernel = kernel)
+  } else {
+    Subset <- get_random_subset_from_image(ImPath = Input_Image_File, HDR = HDR, 
+                                           MaskPath = Input_Mask_File, nb_partitions = nb_partitions, 
+                                           Pix_Per_Partition = Pix_Per_Partition, kernel = NULL)
+  }
   # if needed, apply continuum removal
   if (Continuum_Removal == TRUE) {
     Subset$DataSubset <- apply_continuum_removal(Subset$DataSubset, SpectralFilter, nbCPU = nbCPU)
@@ -83,6 +92,8 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
   #   tic()
   #   PCA_model <- nlpca(DataSubset)
   #   toc()
+  } else if(TypePCA=="MNF"){
+    PCA_model <- mnf(DataSubset, Subset$coordPix)
   }
 
   # if PCA based filtering:
@@ -167,7 +178,7 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
 # @param Input_Mask_File shade file path
 # @param Shade_Update updated shade mask
 # @param Spectral spectral information from data
-# @param CR logical: does continuum removal need to be performed?
+# @param Continuum_Removal logical: does continuum removal need to be performed?
 # @param PCA_model general parameters of the PCA
 # @param TypePCA
 # @param nbCPU
@@ -191,6 +202,7 @@ filter_PCA <- function(Input_Image_File, HDR, Input_Mask_File, Shade_Update,
   # 2- update shade mask based on PCA values
   # 2.1- create hdr and binary files corresponding to updated mask
   HDR_Shade <- HDR
+  HDR_Shade$description <- "Mask produced from PCA outlier filtering"
   HDR_Shade$bands <- 1
   HDR_Shade$`data type` <- 1
   HDR_Shade$`band names` <- "{Mask_PCA}"
@@ -200,6 +212,8 @@ filter_PCA <- function(Input_Image_File, HDR, Input_Mask_File, Shade_Update,
   HDR_Shade$bandwidth <- NULL
   HDR_Shade$purpose <- NULL
   HDR_Shade$`default stretch` <- '0 1 linear'
+  HDR_Shade$`default bands` <- NULL
+  HDR_Shade$`data gain values` <- NULL
   HDR_Shade$`byte order` <- get_byte_order()
   headerFpath <- paste(Shade_Update, ".hdr", sep = "")
   write_ENVI_header(HDR_Shade, headerFpath)
@@ -255,7 +269,7 @@ filter_PCA <- function(Input_Image_File, HDR, Input_Mask_File, Shade_Update,
     Image_Chunk <- Image_Chunk[keepShade,]
 
     # apply Continuum removal if needed
-    if (Continuum_Removal == TRUE) {
+    if (Continuum_Removal) {
       Image_Chunk <- apply_continuum_removal(Image_Chunk, Spectral, nbCPU = nbCPU)
     } else {
       if (!length(Spectral$WaterVapor) == 0) {
@@ -267,7 +281,7 @@ filter_PCA <- function(Input_Image_File, HDR, Input_Mask_File, Shade_Update,
       Image_Chunk <- Image_Chunk[, -Spectral$BandsNoVar]
     }
     # Apply PCA
-    if (TypePCA == "PCA" | TypePCA == "SPCA") {
+    if (TypePCA == "PCA" | TypePCA == "SPCA" | TypePCA == "MNF") {
       Image_Chunk <- scale(Image_Chunk, PCA_model$center, PCA_model$scale) %*% PCA_model$rotation[, PCsel]
     }
 
@@ -332,6 +346,11 @@ write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_mo
   HDR_PCA <- HDR
   HDR_PCA$bands <- Nb_PCs
   HDR_PCA$`data type` <- 4
+  HDR_PCA$interleave <- 'BIL'
+  HDR_PCA$`default bands` <- NULL
+  HDR_PCA$`wavelength units` <- NULL
+  HDR_PCA$`z plot titles` <- NULL
+  HDR_PCA$`data gain values` <- NULL
   HDR_PCA$`band names` <- paste('PC', 1:Nb_PCs, collapse = ", ")
   HDR_PCA$wavelength <- NULL
   HDR_PCA$fwhm <- NULL
@@ -405,7 +424,7 @@ write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_mo
     }
 
     # Apply PCA
-    if (TypePCA == "PCA" | TypePCA == "SPCA") {
+    if (TypePCA == "PCA" | TypePCA == "SPCA" | TypePCA == "MNF") {
       Image_Chunk <- scale(Image_Chunk, PCA_model$center, PCA_model$scale) %*% PCA_model$rotation[, 1:Nb_PCs]
     }
 

@@ -537,7 +537,7 @@ get_random_subset_from_image <- function(ImPath, HDR, MaskPath, nb_partitions, P
   # remove NA and Inf pixels
   if(any(is.na(Sample_Sel) | is.infinite(Sample_Sel))){
     print('Removing pixels with NA values.')
-    rmrows <- !rowAnys(is.na(Sample_Sel) | is.infinite(Sample_Sel))
+    rmrows <- rowAnys(is.na(Sample_Sel) | is.infinite(Sample_Sel))
     rmpix <- unique(samplePixIndex$id[rmrows])
     Sample_Sel = Sample_Sel[!(samplePixIndex$id %in% rmpix),]
     samplePixIndex = samplePixIndex[!(samplePixIndex$id %in% rmpix)]
@@ -971,17 +971,18 @@ update_shademask <- function(MaskPath, HDR, Mask, MaskPath_Update) {
   close(fidOUT)
   # write updated shademask
   HDR_Update <- HDR
+  HDR_Update$description <- "Mask produced from radiometric filtering"
   HDR_Update$bands <- 1
   HDR_Update$`data type` <- 1
-  HDR_Update$`band names` <- {
-    "Mask"
-  }
+  HDR_Update$`band names` <- "Mask"
   HDR_Update$`default stretch` <- '0 1 linear'
   HDR_Update$wavelength <- NULL
   HDR_Update$fwhm <- NULL
   HDR_Update$resolution <- NULL
   HDR_Update$bandwidth <- NULL
   HDR_Update$purpose <- NULL
+  HDR_Update$`default bands` <- NULL
+  HDR_Update$`data gain values` <- NULL
   HDRpath <- paste(MaskPath_Update, ".hdr", sep = "")
   write_ENVI_header(HDR_Update, HDRpath)
   return(MaskPath_Update)
