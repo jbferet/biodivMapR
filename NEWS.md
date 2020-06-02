@@ -1,3 +1,13 @@
+# biodivMapR v1.3.1
+
+## Fixes
+- fixed identification and elimination of pixel samples with NA
+- fixed bug occuring when input raster is BSQ interleave, and BSQ reported in PC file and following files
+
+## Changes
+- finalized preparation for MNF
+- improved information in the header files
+
 # biodivMapR v1.3.0
 
 ## Changes

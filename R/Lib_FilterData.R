@@ -48,12 +48,12 @@ perform_radiometric_filtering <- function(Image_Path, Mask_Path, Output_Dir, Typ
   return(Mask_Path)
 }
 
-# create a mask based on NDVI, Green reflectance and NIR reflectance
-# NDVI (min) threshold eliminates non vegetated pixels
-# Blue (max) threshold eliminates Clouds
-# NIR (min) threshold eliminates shadows
-# ! only valid if Optical data!!
-#
+#' create a mask based on NDVI, Green reflectance and NIR reflectance
+#' NDVI (min) threshold eliminates non vegetated pixels
+#' Blue (max) threshold eliminates Clouds
+#' NIR (min) threshold eliminates shadows
+#' ! only valid if Optical data!!
+#'
 #' @param ImPath character. Full path of a raster file
 #' @param MaskPath character. Full path of the mask to be used with the raster file
 #' @param MaskPath_Update character. Full path of the updated mask to be used with the raster file
@@ -74,10 +74,22 @@ create_mask_from_threshold <- function(ImPath, MaskPath, MaskPath_Update, NDVI_T
   # distance between expected bands defining red, blue and NIR info and available band from sensor
   Dist2Band <- 25
   # in case micrometers
-  if (max(HDR$wavelength)<100 | HDR$`wavelength units` == "micrometers"){
-    Spectral_Bands <- 0.001*Spectral_Bands
-    Dist2Band <- 0.001*Dist2Band
+  if (!is.null(HDR$`wavelength units`)){
+    if (max(HDR$wavelength)<100 | HDR$`wavelength units` == "micrometers"){
+      Spectral_Bands <- 0.001*Spectral_Bands
+      Dist2Band <- 0.001*Dist2Band
+    }
+  } else if (is.null(HDR$`wavelength units`)){
+    message('wavelength units not provided in the header of the image')
+    if (max(HDR$wavelength)<100){
+      message('assuming wavelengths are expressed in micrometers')
+      Spectral_Bands <- 0.001*Spectral_Bands
+      Dist2Band <- 0.001*Dist2Band
+    } else {
+      message('assuming wavelengths are expressed in nanometers')
+    }
   }
+  
   # get image bands correponding to spectral bands of interest
   Image_Bands <- get_image_bands(Spectral_Bands, HDR$wavelength)
   # read band data from image
