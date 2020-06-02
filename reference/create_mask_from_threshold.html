@@ -6,7 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>gets alpha diversity indicators from plot — diversity_from_plots • biodivMapR</title>
+<title>create a mask based on NDVI, Green reflectance and NIR reflectance
+NDVI (min) threshold eliminates non vegetated pixels
+Blue (max) threshold eliminates Clouds
+NIR (min) threshold eliminates shadows
+! only valid if Optical data!! — create_mask_from_threshold • biodivMapR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +50,16 @@
 
 
 
-<meta property="og:title" content="gets alpha diversity indicators from plot — diversity_from_plots" />
-<meta property="og:description" content="gets alpha diversity indicators from plot" />
+<meta property="og:title" content="create a mask based on NDVI, Green reflectance and NIR reflectance
+NDVI (min) threshold eliminates non vegetated pixels
+Blue (max) threshold eliminates Clouds
+NIR (min) threshold eliminates shadows
+! only valid if Optical data!! — create_mask_from_threshold" />
+<meta property="og:description" content="create a mask based on NDVI, Green reflectance and NIR reflectance
+NDVI (min) threshold eliminates non vegetated pixels
+Blue (max) threshold eliminates Clouds
+NIR (min) threshold eliminates shadows
+! only valid if Optical data!!" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -134,41 +146,76 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>gets alpha diversity indicators from plot</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jbferet/biodivMapR/blob/master/R/Lib_Validation_biodivMapR.R'><code>R/Lib_Validation_biodivMapR.R</code></a></small>
-    <div class="hidden name"><code>diversity_from_plots.Rd</code></div>
+    <h1>create a mask based on NDVI, Green reflectance and NIR reflectance
+NDVI (min) threshold eliminates non vegetated pixels
+Blue (max) threshold eliminates Clouds
+NIR (min) threshold eliminates shadows
+! only valid if Optical data!!</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jbferet/biodivMapR/blob/master/R/Lib_FilterData.R'><code>R/Lib_FilterData.R</code></a></small>
+    <div class="hidden name"><code>create_mask_from_threshold.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>gets alpha diversity indicators from plot</p>
+    <p>create a mask based on NDVI, Green reflectance and NIR reflectance
+NDVI (min) threshold eliminates non vegetated pixels
+Blue (max) threshold eliminates Clouds
+NIR (min) threshold eliminates shadows
+! only valid if Optical data!!</p>
     </div>
 
-    <pre class="usage"><span class='fu'>diversity_from_plots</span>(<span class='no'>Raster</span>, <span class='no'>Plots</span>, <span class='kw'>NbClusters</span> <span class='kw'>=</span> <span class='fl'>50</span>, <span class='kw'>Name_Plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>create_mask_from_threshold</span>(
+  <span class='no'>ImPath</span>,
+  <span class='no'>MaskPath</span>,
+  <span class='no'>MaskPath_Update</span>,
+  <span class='no'>NDVI_Thresh</span>,
+  <span class='no'>Blue_Thresh</span>,
+  <span class='no'>NIR_Thresh</span>,
+  <span class='kw'>Blue</span> <span class='kw'>=</span> <span class='fl'>480</span>,
+  <span class='kw'>Red</span> <span class='kw'>=</span> <span class='fl'>690</span>,
+  <span class='kw'>NIR</span> <span class='kw'>=</span> <span class='fl'>835</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>Raster</th>
-      <td><p>character. path for the SpectralSpecies file computed from DiverstyMapping method</p></td>
+      <th>ImPath</th>
+      <td><p>character. Full path of a raster file</p></td>
     </tr>
     <tr>
-      <th>Plots</th>
-      <td><p>list. list of paths corresponding to shapefiles defining polygons in the raster</p></td>
+      <th>MaskPath</th>
+      <td><p>character. Full path of the mask to be used with the raster file</p></td>
     </tr>
     <tr>
-      <th>NbClusters</th>
-      <td><p>numeric. Number of clusters defined in k-Means.</p></td>
+      <th>MaskPath_Update</th>
+      <td><p>character. Full path of the updated mask to be used with the raster file</p></td>
     </tr>
     <tr>
-      <th>Name_Plot</th>
-      <td><p>character. Name of the plots defined in the shapefile</p></td>
+      <th>NDVI_Thresh</th>
+      <td><p>numeric. NDVI threshold applied to produce a mask (select pixels with NDVI&gt;NDVI_Thresh)</p></td>
+    </tr>
+    <tr>
+      <th>Blue_Thresh</th>
+      <td><p>numeric. Blue threshold applied to produce a mask (select pixels with Blue refl &lt; Blue_Thresh --&gt; filter clouds) refl expected between 0 and 10000</p></td>
+    </tr>
+    <tr>
+      <th>NIR_Thresh</th>
+      <td><p>numeric. NIR threshold applied to produce a mask (select pixels with NIR refl &lt; NIR_Thresh) refl expected between 0 and 10000</p></td>
+    </tr>
+    <tr>
+      <th>Blue</th>
+      <td><p>numeric. spectral band corresponding to the blue channel (in nanometers)</p></td>
+    </tr>
+    <tr>
+      <th>Red</th>
+      <td><p>numeric. spectral band corresponding to the red channel (in nanometers)</p></td>
+    </tr>
+    <tr>
+      <th>NIR</th>
+      <td><p>numeric. spectral band corresponding to the NIR channel (in nanometers)</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>alpha and beta diversity metrics</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
