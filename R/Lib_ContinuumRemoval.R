@@ -159,7 +159,7 @@ ContinuumRemoval <- function(Minit, Spectral_Bands) {
 #' - possibly remaining negative values are set to 0
 #' - constant spectra are eliminated
 #'
-#' @param Minit numeric. initial data matrix (nb samples x nb bands)
+#' @param Minit initial data matrix, n rows = n samples, p cols = p spectral bands
 #' @param Spectral_Bands numeric. central wavelength for the spectral bands
 #
 #' @return list. updated Minit

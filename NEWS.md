@@ -1,3 +1,9 @@
+# biodivMapR v1.4.0
+
+## Changes
+- implemented MNF
+- discarded HDR as input variable from get_random_subset_from_image
+
 # biodivMapR v1.3.1
 
 ## Fixes
