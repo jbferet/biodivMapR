@@ -11,7 +11,7 @@
 filter_prior_CR(Minit, Spectral_Bands)
 }
 \arguments{
-\item{Minit}{numeric. initial data matrix (nb samples x nb bands)}
+\item{Minit}{initial data matrix, n rows = n samples, p cols = p spectral bands}
 
 \item{Spectral_Bands}{numeric. central wavelength for the spectral bands}
 }

@@ -460,7 +460,7 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.25){
 #' @importFrom mmand erode
 #' @importFrom data.table data.table rbindlist setorder
 #' @importFrom matrixStats rowAnys
-get_random_subset_from_image <- function(ImPath, HDR, MaskPath, nb_partitions, Pix_Per_Partition, kernel=NULL) {
+get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Per_Partition, kernel=NULL) {
   r <- brick(ImPath)
   nbPix2Sample <- nb_partitions * Pix_Per_Partition
   # get total number of pixels
@@ -471,10 +471,7 @@ get_random_subset_from_image <- function(ImPath, HDR, MaskPath, nb_partitions, P
   # 1- Exclude masked pixels from random subset
   # Read Mask
   if ((!MaskPath == "") & (!MaskPath == FALSE)) {
-    mask <- matrix(raster(MaskPath),ncol= HDR$samples,nrow = HDR$lines)
-    if(any(dim(mask)[1:2] != dim(r)[1:2])){
-      stop('Mask and Image rasters do not have the same XY diemnsions.')
-    }
+    mask <- matrix(raster(MaskPath),ncol= nsamples,nrow = nlines)
   } else {
     mask <- array(1, dim = c(nlines, nsamples))
   }
@@ -537,7 +534,6 @@ get_random_subset_from_image <- function(ImPath, HDR, MaskPath, nb_partitions, P
   # remove NA and Inf pixels
   if(any(is.na(Sample_Sel) | is.infinite(Sample_Sel))){
     print('Removing pixels with NA values.')
-    # rmrows <- !rowAnys(is.na(Sample_Sel) | is.infinite(Sample_Sel))
     rmrows <- rowAnys(is.na(Sample_Sel) | is.infinite(Sample_Sel))
     rmpix <- unique(samplePixIndex$id[rmrows])
     Sample_Sel = Sample_Sel[!(samplePixIndex$id %in% rmpix),]
