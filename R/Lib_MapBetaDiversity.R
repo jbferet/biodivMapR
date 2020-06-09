@@ -3,7 +3,7 @@
 # Lib_MapBetaDiversity.R
 # ==============================================================================
 # PROGRAMMERS:
-# Jean-Baptiste FERET <jb.feret@irstea.fr>
+# Jean-Baptiste FERET <jb.feret@teledetection.fr>
 # Copyright 2018/07 Jean-Baptiste FERET
 # ==============================================================================
 # This Library computes bray curtis dissimilarity among spatial units based on

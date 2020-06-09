@@ -3,7 +3,7 @@
 # Lib_MapPartition.R
 # ==============================================================================
 # PROGRAMMERS:
-# Jean-Baptiste FERET <jb.feret@irstea.fr>
+# Jean-Baptiste FERET <jb.feret@teledetection.fr>
 # Copyright 2020/05 Jean-Baptiste FERET
 # ==============================================================================
 # This Library produces maps corresponding to the Partitioning of plant spectral

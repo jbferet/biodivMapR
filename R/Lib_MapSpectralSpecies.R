@@ -3,7 +3,7 @@
 # Lib_MapSpectralSpecies.R
 # ==============================================================================
 # PROGRAMMERS:
-# Jean-Baptiste FERET <jb.feret@irstea.fr>
+# Jean-Baptiste FERET <jb.feret@teledetection.fr>
 # Florian de Boissieu <fdeboiss@gmail.com>
 # Copyright 2019/06 Jean-Baptiste FERET
 # ==============================================================================
