@@ -43,7 +43,7 @@ Input_Mask_File <- FALSE
 # Output directory: files created by script will be written there.
 # For each image processed, a subdirectory will be created after its name
 Output_Dir <- '~/biodiv' # fill with your own path
-Output_Dir <- '../RESULTS_TEST' # fill with your own path
+Output_Dir <- '../RESULTS_TEST15' # fill with your own path
 
 # SPATIAL RESOLUTION
 # resolution of spatial units for alpha and beta diversity maps (in pixels), relative to original image
@@ -128,17 +128,17 @@ map_beta_div(Input_Image_File = Input_Image_File, Output_Dir = Output_Dir, TypeP
              window_size = window_size, nb_partitions=nb_partitions, nbCPU = nbCPU, MaxRAM = MaxRAM,
              nbclusters = nbclusters)
 
-# ################################################################################
-# ##              MAP FUNCTIONAL DIVERSITY METRICS FRic, FEve, FDiv             ##
-# ##          (Villeger et al, 2008 https://doi.org/10.1890/07-1206.1)          ##
-# ################################################################################
-# ## read selected features from dimensionality reduction
-# Selected_Features <- read.table(Sel_PC)[[1]]
-# ## path for selected components
-# map_functional_div(Original_Image_File = Input_Image_File, Functional_File = PCA_Files,
-#                    Selected_Features = Selected_Features, Output_Dir = Output_Dir,
-#                    window_size = window_size, nbCPU = nbCPU, MaxRAM = MaxRAM,TypePCA = TypePCA)
-#
+################################################################################
+##              MAP FUNCTIONAL DIVERSITY METRICS FRic, FEve, FDiv             ##
+##          (Villeger et al, 2008 https://doi.org/10.1890/07-1206.1)          ##
+################################################################################
+## read selected features from dimensionality reduction
+Selected_Features <- read.table(Sel_PC)[[1]]
+## path for selected components
+map_functional_div(Original_Image_File = Input_Image_File, Functional_File = PCA_Files,
+                   Selected_Features = Selected_Features, Output_Dir = Output_Dir,
+                   window_size = window_size, nbCPU = nbCPU, MaxRAM = MaxRAM,TypePCA = TypePCA)
+
 # ################################################################################
 # ## MAP PARTITIONING OF PLANT SPECTRAL DIVERSITY INTO ALPHA & BETA COMPONENTS  ##
 # ##        (Laliberte et al, 2020 https://doi.org/10.1111/ele.13429)           ##
@@ -165,10 +165,14 @@ Path_Vector <- list_shp(vect)
 Name_Vector <- tools::file_path_sans_ext(basename(Path_Vector))
 
 # get alpha and beta diversity indicators corresponding to shapefiles
-Biodiv_Indicators <- diversity_from_plots(Raster_SpectralSpecies = Path_Raster, Plots = Path_Vector,NbClusters = nbclusters)
+Biodiv_Indicators <- diversity_from_plots(Raster_SpectralSpecies = Path_Raster, Plots = Path_Vector,
+                                          NbClusters = nbclusters, Raster_Functional = PCA_Files, Selected_Features = Selected_Features)
 # if no name
 Biodiv_Indicators$Name_Plot <- seq(1,length(Biodiv_Indicators$Shannon[[1]]),by = 1)
 Shannon_RS <- c(Biodiv_Indicators$Shannon)[[1]]
+FRic <- c(Biodiv_Indicators$FunctionalDiversity$FRic)
+FEve <- c(Biodiv_Indicators$FunctionalDiversity$FEve)
+FDiv <- c(Biodiv_Indicators$FunctionalDiversity$FDiv)
 
 ####################################################
 # write RS indicators
@@ -179,9 +183,12 @@ write.table(Shannon_RS, file = file.path(Path_Results,"ShannonIndex.csv"),
             sep="\t", dec=".", na=" ", row.names = Biodiv_Indicators$Name_Plot, col.names= F,quote=FALSE)
 
 Results <- data.frame(Name_Vector, Biodiv_Indicators$Richness, Biodiv_Indicators$Fisher,
-                      Biodiv_Indicators$Shannon, Biodiv_Indicators$Simpson)
+                      Biodiv_Indicators$Shannon, Biodiv_Indicators$Simpson,
+                      Biodiv_Indicators$FunctionalDiversity$FRic,
+                      Biodiv_Indicators$FunctionalDiversity$FEve,
+                      Biodiv_Indicators$FunctionalDiversity$FDiv)
 
-names(Results)  = c("ID_Plot", "Species_Richness", "Fisher", "Shannon", "Simpson")
+names(Results)  = c("ID_Plot", "Species_Richness", "Fisher", "Shannon", "Simpson", "FRic", "FEve", "FDiv")
 write.table(Results, file = paste(Path_Results,"AlphaDiversity.csv",sep=''),
             sep="\t", dec=".", na=" ", row.names = F, col.names= T,quote=FALSE)
 
@@ -211,7 +218,8 @@ for (i in 1: length(nbSamples)){
 
 # create data frame including alpha and beta diversity
 library(ggplot2)
-Results <- data.frame('vgtype'=Type_Vegetation,'pco1'= BetaPCO$points[,1],'pco2'= BetaPCO$points[,2],'pco3' = BetaPCO$points[,3],'shannon'=Shannon_RS)
+Results <- data.frame('vgtype'=Type_Vegetation,'pco1'= BetaPCO$points[,1],'pco2'= BetaPCO$points[,2],'pco3' = BetaPCO$points[,3],
+                      'shannon'=Shannon_RS,'FRic' = FRic, 'FEve' = FEve, 'FDiv' = FDiv)
 
 # plot field data in the PCoA space, with size corresponding to shannon index
 ggplot(Results, aes(x=pco1, y=pco2, color=vgtype,size=shannon)) +
@@ -234,6 +242,57 @@ ggplot(Results, aes(x=pco2, y=pco3, color=vgtype,size=shannon)) +
   geom_point(alpha=0.6) +
   scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
 filename <- file.path(Path_Results,'BetaDiversity_PcoA2_vs_PcoA3.png')
+ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
+       scale = 1, width = 6, height = 4, units = "in",
+       dpi = 600, limitsize = TRUE)
+
+# plot field data in the PCoA space, with size corresponding to FRic
+ggplot(Results, aes(x=pco1, y=pco2, color=vgtype,size=FRic)) +
+  geom_point(alpha=0.6) +
+  scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
+filename <- file.path(Path_Results,'BetaDiversity_PcoA1_vs_PcoA2_FRic.png')
+ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
+       scale = 1, width = 6, height = 4, units = "in",
+       dpi = 600, limitsize = TRUE)
+
+
+ggplot(Results, aes(x=pco1, y=pco3, color=vgtype,size=FRic)) +
+  geom_point(alpha=0.6) +
+  scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
+filename <- file.path(Path_Results,'BetaDiversity_PcoA1_vs_PcoA3_FRic.png')
+ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
+       scale = 1, width = 6, height = 4, units = "in",
+       dpi = 600, limitsize = TRUE)
+
+ggplot(Results, aes(x=pco2, y=pco3, color=vgtype,size=FRic)) +
+  geom_point(alpha=0.6) +
+  scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
+filename <- file.path(Path_Results,'BetaDiversity_PcoA2_vs_PcoA3_FRic.png')
+ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
+       scale = 1, width = 6, height = 4, units = "in",
+       dpi = 600, limitsize = TRUE)
+
+# Compare Shannon and FRic
+ggplot(Results, aes(x=shannon, y=FRic, color=vgtype,size=shannon)) +
+  geom_point(alpha=0.6) +
+  scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
+filename <- file.path(Path_Results,'Shannon_Vs_FRic.png')
+ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
+       scale = 1, width = 6, height = 4, units = "in",
+       dpi = 600, limitsize = TRUE)
+
+ggplot(Results, aes(x=shannon, y=FEve, color=vgtype,size=shannon)) +
+  geom_point(alpha=0.6) +
+  scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
+filename <- file.path(Path_Results,'Shannon_Vs_FEve.png')
+ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
+       scale = 1, width = 6, height = 4, units = "in",
+       dpi = 600, limitsize = TRUE)
+
+ggplot(Results, aes(x=shannon, y=FDiv, color=vgtype,size=shannon)) +
+  geom_point(alpha=0.6) +
+  scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
+filename <- file.path(Path_Results,'Shannon_Vs_FDiv.png')
 ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
        scale = 1, width = 6, height = 4, units = "in",
        dpi = 600, limitsize = TRUE)

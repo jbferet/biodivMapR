@@ -1,3 +1,10 @@
+# biodivMapR v1.5.0
+
+## Changes
+- Added functional diversity metrics
+- updated example script
+- updated vignette
+
 # biodivMapR v1.4.0
 
 ## Changes

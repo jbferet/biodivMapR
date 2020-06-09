@@ -120,14 +120,18 @@ get_alpha_metrics = function(Distrib){
 #' @param Raster_SpectralSpecies character. path for the SpectralSpecies file computed from DiverstyMapping method
 #' @param Plots list. list of paths corresponding to shapefiles defining polygons in the raster
 #' @param NbClusters numeric. Number of clusters defined in k-Means.
+#' @param Raster_Functional character. path for the raster file used to compute functional diversity
+#' @param Selected_Features numeric. selected features for Raster_Functional. use all features if set to FALSE
 #' @param Name_Plot character. Name of the plots defined in the shapefiles
 #' @return alpha and beta diversity metrics
 #' @importFrom raster raster projection
 #' @importFrom rgdal readOGR
+#' @importFrom geometry convhulln
+#' @importFrom emstreeR ComputeMST
 #' @import tools
 #' @export
 diversity_from_plots = function(Raster_SpectralSpecies, Plots, NbClusters = 50,
-                                # Raster_Functional = FALSE, Selected_Features = FALSE,
+                                Raster_Functional = FALSE, Selected_Features = FALSE,
                                 Name_Plot = FALSE){
 
   # get hdr from Raster_SpectralSpecies
@@ -234,48 +238,48 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, NbClusters = 50,
   Fisher.AllRep <- do.call(rbind,Fisher.AllRep)
   Simpson.AllRep <- do.call(rbind,Simpson.AllRep)
 
-  # ###########################################################
-  # ###           Compute functional  diversity             ###
-  # ###########################################################
-  # if (!Raster_Functional==FALSE){
-  #   FunctionalDiversity = data.frame('FEve'=vector(length = nbPolygons),
-  #                                    'FRic'=vector(length = nbPolygons),
-  #                                    'FDiv'=vector(length = nbPolygons))
-  #   # for each polygon
-  #   for (ip in 1:nbPolygons){
-  #     # if only one polygon in the shapefile and if the polyon is not included in the raster
-  #     if (length(XY[[ip]]$col)==0){
-  #       FunctionalDiversity$FRic[ip] <- NA
-  #       FunctionalDiversity$FEve[ip] <- NA
-  #       FunctionalDiversity$FDiv[ip] <- NA
-  #       # if list of individual plots provided
-  #       if (length(Name_Plot)==nbPolygons){
-  #         message(paste('Polygon named',Name_Plot[ip],'is out of the raster'))
-  #         # Set name to NA
-  #         Name_Plot[ip] <- NA
-  #       }
-  #     } else {
-  #       ExtractIm <- extract.big_raster(Raster_Functional, XY[[ip]])
-  #       if (!Selected_Features[1]==FALSE){
-  #         ExtractIm <- ExtractIm[,Selected_Features]
-  #       }
-  #       ij <- ExtractIm
-  #       # keep non zero values
-  #       ij <- matrix(ij[which(!is.na(ij[,1])),], ncol = ncol(ExtractIm))
-  #       nbPix_Sunlit <- dim(ij)[1]
-  #       PCsun <- nbPix_Sunlit / nrow(ExtractIm)
-  #       FunctionalDiversity$FRic[ip] <- 100*convhulln(ij, output.options = 'FA')$vol
-  #       # 2- Functional Divergence
-  #       # mean distance from centroid
-  #       Centroid <- colMeans(ij)
-  #       FunctionalDiversity$FDiv[ip] <- 100*sum(sqrt(rowSums((t(t(ij) - Centroid)^2))))/nbPix_Sunlit
-  #       # FDivmap[ii,jj] <- 100*sum(sqrt(rowSums((t(t(ij) )^2))))/nbPix_Sunlit
-  #       # 3- Functional Evenness
-  #       # euclidean minimum spanning tree
-  #       FunctionalDiversity$FEve[ip] <- 100*sum(ComputeMST(ij,verbose = FALSE)$distance)/nbPix_Sunlit
-  #     }
-  #   }
-  # }
+  ###########################################################
+  ###           Compute functional  diversity             ###
+  ###########################################################
+  if (!Raster_Functional==FALSE){
+    FunctionalDiversity = data.frame('FEve'=vector(length = nbPolygons),
+                                     'FRic'=vector(length = nbPolygons),
+                                     'FDiv'=vector(length = nbPolygons))
+    # for each polygon
+    for (ip in 1:nbPolygons){
+      # if only one polygon in the shapefile and if the polyon is not included in the raster
+      if (length(XY[[ip]]$col)==0){
+        FunctionalDiversity$FRic[ip] <- NA
+        FunctionalDiversity$FEve[ip] <- NA
+        FunctionalDiversity$FDiv[ip] <- NA
+        # if list of individual plots provided
+        if (length(Name_Plot)==nbPolygons){
+          message(paste('Polygon named',Name_Plot[ip],'is out of the raster'))
+          # Set name to NA
+          Name_Plot[ip] <- NA
+        }
+      } else {
+        ExtractIm <- extract.big_raster(Raster_Functional, XY[[ip]])
+        if (!Selected_Features[1]==FALSE){
+          ExtractIm <- ExtractIm[,Selected_Features]
+        }
+        ij <- ExtractIm
+        # keep non zero values
+        ij <- matrix(ij[which(!is.na(ij[,1])),], ncol = ncol(ExtractIm))
+        nbPix_Sunlit <- dim(ij)[1]
+        PCsun <- nbPix_Sunlit / nrow(ExtractIm)
+        FunctionalDiversity$FRic[ip] <- 100*convhulln(ij, output.options = 'FA')$vol
+        # 2- Functional Divergence
+        # mean distance from centroid
+        Centroid <- colMeans(ij)
+        FunctionalDiversity$FDiv[ip] <- 100*sum(sqrt(rowSums((t(t(ij) - Centroid)^2))))/nbPix_Sunlit
+        # FDivmap[ii,jj] <- 100*sum(sqrt(rowSums((t(t(ij) )^2))))/nbPix_Sunlit
+        # 3- Functional Evenness
+        # euclidean minimum spanning tree
+        FunctionalDiversity$FEve[ip] <- 100*sum(ComputeMST(ij,verbose = FALSE)$distance)/nbPix_Sunlit
+      }
+    }
+  }
 
   ###########################################################
   ###                 Compute beta diversity              ###
@@ -304,8 +308,8 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, NbClusters = 50,
   BC_mean <- as.matrix(BC_mean/nbRepetitions)
   return(list("Richness" = Richness, "Fisher" = Fisher, "Shannon" = Shannon, "Simpson" = Simpson,
               "fisher.All" = Fisher.AllRep, "Shannon.All" = Shannon.AllRep, "Simpson.All" = Simpson.AllRep,
-              'BCdiss' = BC_mean, 'BCdiss.All' = BC,'Name_Plot' = Name_Plot))
-              # "FunctionalDiversity"= FunctionalDiversity))
+              'BCdiss' = BC_mean, 'BCdiss.All' = BC,'Name_Plot' = Name_Plot,
+              "FunctionalDiversity"= FunctionalDiversity))
 }
 
 # build a vector file from raster footprint
