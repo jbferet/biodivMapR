@@ -3,9 +3,9 @@
 # Lib_ContinuumRemoval.R
 # ===============================================================================
 # PROGRAMMERS:
-# Jean-Baptiste FERET <jb.feret@irstea.fr>
+# Jean-Baptiste FERET <jb.feret@teledetection.fr>
 # Florian de Boissieu <fdeboiss@gmail.com>
-# Copyright 2018/07 Jean-Baptiste FERET
+# Copyright 2020/06 Jean-Baptiste FERET
 # ===============================================================================
 # This Library is dedicated to the computation of the continuum removal
 # ===============================================================================
@@ -159,7 +159,7 @@ ContinuumRemoval <- function(Minit, Spectral_Bands) {
 #' - possibly remaining negative values are set to 0
 #' - constant spectra are eliminated
 #'
-#' @param Minit numeric. initial data matrix (nb samples x nb bands)
+#' @param Minit initial data matrix, n rows = n samples, p cols = p spectral bands
 #' @param Spectral_Bands numeric. central wavelength for the spectral bands
 #
 #' @return list. updated Minit

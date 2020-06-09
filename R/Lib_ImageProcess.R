@@ -3,9 +3,9 @@
 # Lib_ImageProcess.R
 # ==============================================================================
 # PROGRAMMERS:
-# Jean-Baptiste FERET <jb.feret@irstea.fr>
+# Jean-Baptiste FERET <jb.feret@teledetection.fr>
 # Florian de Boissieu <fdeboiss@gmail.com>
-# Copyright 2018/07 Jean-Baptiste FERET
+# Copyright 2020/06 Jean-Baptiste FERET
 # ==============================================================================
 # This Library contains functions to manipulate & process raster images
 # Mainly applicable to ENVI HDR data wth BIL interleave
@@ -221,7 +221,7 @@ exclude_spectral_domains <- function(ImPath, Excluded_WL = FALSE) {
     } else if (max(HDR$wavelength)<100){
       Excluded_WL <- 0.001*Excluded_WL
     }
-  } 
+  }
   nbchannels0 <- HDR$bands
   idOkBand <- seq(1, nbchannels0)
   if ("wavelength" %in% names(HDR)) {
@@ -460,7 +460,7 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.25){
 #' @importFrom mmand erode
 #' @importFrom data.table data.table rbindlist setorder
 #' @importFrom matrixStats rowAnys
-get_random_subset_from_image <- function(ImPath, HDR, MaskPath, nb_partitions, Pix_Per_Partition, kernel=NULL) {
+get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Per_Partition, kernel=NULL) {
   r <- brick(ImPath)
   nbPix2Sample <- nb_partitions * Pix_Per_Partition
   # get total number of pixels
@@ -471,10 +471,7 @@ get_random_subset_from_image <- function(ImPath, HDR, MaskPath, nb_partitions, P
   # 1- Exclude masked pixels from random subset
   # Read Mask
   if ((!MaskPath == "") & (!MaskPath == FALSE)) {
-    mask <- matrix(raster(MaskPath),ncol= HDR$samples,nrow = HDR$lines)
-    if(any(dim(mask)[1:2] != dim(r)[1:2])){
-      stop('Mask and Image rasters do not have the same XY diemnsions.')
-    }
+    mask <- matrix(raster(MaskPath),ncol= nsamples,nrow = nlines)
   } else {
     mask <- array(1, dim = c(nlines, nsamples))
   }

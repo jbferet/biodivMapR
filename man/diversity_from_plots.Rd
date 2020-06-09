@@ -4,16 +4,27 @@
 \alias{diversity_from_plots}
 \title{gets alpha diversity indicators from plot}
 \usage{
-diversity_from_plots(Raster, Plots, NbClusters = 50, Name_Plot = FALSE)
+diversity_from_plots(
+  Raster_SpectralSpecies,
+  Plots,
+  NbClusters = 50,
+  Raster_Functional = FALSE,
+  Selected_Features = FALSE,
+  Name_Plot = FALSE
+)
 }
 \arguments{
-\item{Raster}{character. path for the SpectralSpecies file computed from DiverstyMapping method}
+\item{Raster_SpectralSpecies}{character. path for the SpectralSpecies file computed from DiverstyMapping method}
 
 \item{Plots}{list. list of paths corresponding to shapefiles defining polygons in the raster}
 
 \item{NbClusters}{numeric. Number of clusters defined in k-Means.}
 
-\item{Name_Plot}{character. Name of the plots defined in the shapefile}
+\item{Raster_Functional}{character. path for the raster file used to compute functional diversity}
+
+\item{Selected_Features}{numeric. selected features for Raster_Functional. use all features if set to FALSE}
+
+\item{Name_Plot}{character. Name of the plots defined in the shapefiles}
 }
 \value{
 alpha and beta diversity metrics

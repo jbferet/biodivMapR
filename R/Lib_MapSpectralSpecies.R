@@ -3,9 +3,9 @@
 # Lib_MapSpectralSpecies.R
 # ==============================================================================
 # PROGRAMMERS:
-# Jean-Baptiste FERET <jb.feret@irstea.fr>
+# Jean-Baptiste FERET <jb.feret@teledetection.fr>
 # Florian de Boissieu <fdeboiss@gmail.com>
-# Copyright 2019/06 Jean-Baptiste FERET
+# Copyright 2020/06 Jean-Baptiste FERET
 # ==============================================================================
 # This Library applies clustering on a selection of components stored in a PCA
 # file previously created ("Perform_PCA.R") and produces corresponding spectral
@@ -58,7 +58,7 @@ map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model
       # sample data from image and perform PCA
       ImPathHDR <- get_HDR_name(Input_Image_File)
       HDR <- read_ENVI_header(ImPathHDR)
-      Subset <- get_random_subset_from_image(ImPath = Input_Image_File, HDR = HDR, MaskPath = Input_Mask_File,
+      Subset <- get_random_subset_from_image(ImPath = Input_Image_File, MaskPath = Input_Mask_File,
                                              nb_partitions = nb_partitions, Pix_Per_Partition = Pix_Per_Partition,
                                              kernel = NULL)
       SubsetInit <- Subset
