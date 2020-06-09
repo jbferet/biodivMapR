@@ -3,6 +3,11 @@
 ## Changes
 - implemented MNF
 - discarded HDR as input variable from get_random_subset_from_image
+- updated example file
+- added contribution of F de Boissieu
+- changed email address to teledetection.fr
+- updated diversity_from_plots
+- updated example script
 
 # biodivMapR v1.3.1
 

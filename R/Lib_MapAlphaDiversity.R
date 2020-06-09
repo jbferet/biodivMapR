@@ -3,8 +3,8 @@
 # Lib_MapAlphaDiversity.R
 # ==============================================================================
 # PROGRAMMERS:
-# Jean-Baptiste FERET <jb.feret@irstea.fr>
-# Copyright 2018/07 Jean-Baptiste FERET
+# Jean-Baptiste FERET <jb.feret@teledetection.fr>
+# Copyright 2020/06 Jean-Baptiste FERET
 # ==============================================================================
 # This Library produces maps of alpha diversity indicators (Shannon, Simpson,
 # Fischer...) based on spectral species file
