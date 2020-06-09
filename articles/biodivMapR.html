@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.0</span>
       </span>
     </div>
 
@@ -95,7 +95,7 @@
       <h1 data-toc-skip>Tutorial for biodivMapR</h1>
                         <h4 class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
             
-            <h4 class="date">2020-06-02</h4>
+            <h4 class="date">2020-06-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR.Rmd"><code>vignettes/biodivMapR.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR.Rmd</code></div>
@@ -104,24 +104,28 @@
 
     
     
-<p>This tutorial aims at describing the processing workflow and giving the associated code to compute <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps on an extraction of Sentinel-2 image taken over Cameroun forest. The workflow is composed of the following steps:</p>
+<p>This tutorial aims at describing the processing workflow and providing a script aiming at producing diversity maps on a Sentinel-2 subset image acquired over the Cameroonese forest. The workflow is divided into three steps:</p>
 <ul>
 <li>
-<p>define the processing parameters</p>
+<p>Definition of the processing parameters:</p>
 <ul>
 <li>input / output files paths</li>
 <li>output spatial resolution</li>
-<li>computing options</li>
+<li>preprocessing and processing options</li>
 </ul>
 </li>
-<li>compute the <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps:
+<li>Computation of the diversity maps. This includes several diversity metrics which can be computed independently:
 <ul>
-<li>compute PCA and select best components</li>
-<li>compute the diversity maps</li>
+<li>
+<span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps as defined in <a href="https://doi.org/10.1890/13-1824.1" title="Feret&amp;Asner2014">Feret &amp; Asner (2014)</a> and <a href="https://doi.org/10.1111/2041-210X.13310" title="Feret&amp;deBoissieu2014">Feret &amp; de Boissieu (2019)</a>
+</li>
+<li>Functional diversity maps, including Richnes, Evenness and Divergence as defined in <a href="https://doi.org/10.1890/07-1206.1" title="Villeger2008">Villeger et al. (2008)</a> <!-- * Partitioning of spectral diversity into $\alpha$ and $\beta$ components following an adaptation of the method proposed by [Laliberte et al. (2020)](https://doi.org/10.1111/ele.13429 "Laliberte2020") -->
+</li>
 </ul>
 </li>
-<li><p>validate results comparing to field plots measurements</p></li>
+<li><p>Validation of the resulting diversity metrics if field plots measurements are available</p></li>
 </ul>
+<p>The computation of the diversity maps is based on a certain number of prepocessing steps including: * Spectral normalization with continuum removal (relevant if woring with multi or hypersepctral images) * dimensionality reduction based on PCA, SPCA or MNF and component selection</p>
 <p>Below is the typical flow chart of the computation of diversity maps with <strong>biodivMapR</strong> :</p>
 <p><img align="bottom" width="100%" height="100%" src="../man/figures/Figure1_FlowChart_biodivMapR_Process_600DPI.png"></p>
 <div id="define-processing-parameters" class="section level1">
@@ -144,27 +148,18 @@
 <p>A mask can also be set to work on a selected part of the input image. The mask is expected to be a raster with values 0 = masked or 1 = selected. Only one band is required. If no mask is to be used set <code>Input_Mask_File = FALSE</code>.</p>
 <p>The output directory defined with <code>Output_Dir</code> will contain all the results. For each image processed, a subdirectory will be automatically created after its name. The output images are writted in ENVI HDR format, BIL interleaved.</p>
 <div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">biodivMapR</span>)
-<span class="no">Input_Image_File</span>  <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata'</span>, <span class="st">'RASTER'</span>, <span class="st">'S2A_T33NUD_20180104_Subset'</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">'biodivMapR'</span>)
-
-<span class="no">Input_Mask_File</span>   <span class="kw">=</span> <span class="fl">FALSE</span>
-
-<span class="no">Output_Dir</span>        <span class="kw">=</span> <span class="st">'RESULTS'</span></pre></body></html></div>
+<span class="no">Input_Image_File</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata'</span>, <span class="st">'RASTER'</span>, <span class="st">'S2A_T33NUD_20180104_Subset'</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">'biodivMapR'</span>)
+<span class="no">Input_Mask_File</span> <span class="kw">&lt;-</span> <span class="fl">FALSE</span>
+<span class="no">Output_Dir</span> <span class="kw">&lt;-</span> <span class="st">'RESULTS'</span></pre></body></html></div>
 <p>The image provided with the package is a subset of tile T33NUD acquired by Sentinel-2A satellite over Cameroonese rainforest in January 4th, 2018. <img align="bottom" width="100%" height="100%" src="../man/figures/01_RGB_S2A_T33NUD_20180104_Subset.png"></p>
 </div>
 <div id="spatial-resolution" class="section level2">
 <h2 class="hasAnchor">
 <a href="#spatial-resolution" class="anchor"></a>Spatial resolution</h2>
-<p>The algorithm estimates and diversity within a window, that is also the output spatial resolution. It is defined in number of pixels of the input image with parameter <code>window_size</code>, e.g. <code>window_size = 10</code> meaning a window of 10x10 pixels. It will be the spatial resolution of the ouput rasters.</p>
-<p>As a rule of thumb, spatial units between 0.25 and 4 ha usually match with ground data. if <code>window_size</code> is too small, it will result in low number of pixels per spatial unit, hence limited range of variation of diversity in the image.</p>
-<p>In this example, the spatial resolution of the input raster is 10m. Setting <code>window_size = 10</code> will result in diversity maps of spatial resolution 100m x 100m.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">window_size</span> <span class="kw">=</span> <span class="fl">10</span></pre></body></html></div>
-</div>
-<div id="pca" class="section level2">
-<h2 class="hasAnchor">
-<a href="#pca" class="anchor"></a>PCA</h2>
-<p>These parameters are related to the PCA method (<code>PCA</code> or <code>SPCA</code>, default is <code>SPCA</code>) and the filtering of PCA results. Set FilterPCA to <code>TRUE</code> if a second filtering based on PCA outliers is required.</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">TypePCA</span> <span class="kw">=</span> <span class="st">'SPCA'</span>
-<span class="no">FilterPCA</span> <span class="kw">=</span> <span class="fl">TRUE</span></pre></body></html></div>
+<p>The algorithm estimates <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity within individual spatial units of fixed surface, which correspond to the output spatial resolution. It is defined in number of pixels of the input image with parameter <code>window_size</code>, e.g. <code>window_size = 10</code> meaning a window of 10x10 pixels. It will correspond to the spatial resolution of the ouput rasters.</p>
+<p>As a rule of thumb, spatial units between 0.25 and 4 ha usually match with ground data, and are appropriate for forested ecosystems. if <code>window_size</code> is too small, it will result in low number of pixels per spatial unit, hence limited range of variation of diversity in the image.</p>
+<p>In this example, the spatial resolution of the input raster is 10m x 10m. Setting <code>window_size = 10</code> will result in diversity maps of spatial resolution 100m x 100m.</p>
+<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">window_size</span> <span class="kw">&lt;-</span> <span class="fl">10</span></pre></body></html></div>
 </div>
 <div id="computing-options" class="section level2">
 <h2 class="hasAnchor">
@@ -178,34 +173,75 @@
 <li>
 <code>nbclusters</code> controls the number of clusters defined by k-means clustering for each repetition. Images showing moderate diversity (temperate forests) may need lower number of clusters (20), whereas highly diverse tropical forest require more (50). The larger the value the longer the computation time. Users are invited to experiment with different numbers of clusters in order to identify the snsitivity of divrsity patterns to this parameter.</li>
 </ul>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">nbCPU</span>         <span class="kw">=</span> <span class="fl">2</span>
-<span class="no">MaxRAM</span>        <span class="kw">=</span> <span class="fl">0.5</span>
-<span class="no">nbclusters</span>    <span class="kw">=</span> <span class="fl">50</span></pre></body></html></div>
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">nbCPU</span> <span class="kw">&lt;-</span> <span class="fl">2</span>
+<span class="no">MaxRAM</span> <span class="kw">&lt;-</span> <span class="fl">0.5</span>
+<span class="no">nbclusters</span> <span class="kw">&lt;-</span> <span class="fl">50</span></pre></body></html></div>
 </div>
 </div>
-<div id="compute-diversity-maps" class="section level1">
+<div id="computation-of-the-diversity-maps" class="section level1">
 <h1 class="hasAnchor">
-<a href="#compute-diversity-maps" class="anchor"></a>Compute diversity maps</h1>
+<a href="#computation-of-the-diversity-maps" class="anchor"></a>Computation of the diversity maps</h1>
 <div id="mask-non-vegetated-shaded-cloudy-pixels" class="section level2">
 <h2 class="hasAnchor">
 <a href="#mask-non-vegetated-shaded-cloudy-pixels" class="anchor"></a>Mask non vegetated / shaded / cloudy pixels</h2>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">NDVI_Thresh</span> <span class="kw">=</span> <span class="fl">0.5</span>
+<p><strong>biodivMapR</strong> allows basic filtering based on different radiometric properties:</p>
+<ul>
+<li>
+<strong>NDVI filtering</strong> allows filtering to eliminate non-vegetated pixels. Nothing fancy so you may need to deal with mixed pixels… <code>NDVI_Thresh</code> defines the minimum NDVI value to be kept. By default, the NDVI is computed based on the NIR spectral band closest to 835nm, and the RED spectral band closest to 700nm. Which makes it closer to a RedEdge NDVI. These values can be adjusted as input variables for <code>perform_radiometric_filtering</code>.</li>
+<li>
+<strong>NIR filtering</strong> allows filtering of shadows and pixels with very low signal. <code>NIR_Thresh</code> defines the minimum NIR value to be kept. By default, the NIR spectral band closest to 835nm is used. This value can be adjusted as input variables for <code>perform_radiometric_filtering</code>.</li>
+<li>
+<strong>BLUE filtering</strong> allows filtering of clouds, based on the hypothesis that atmospheric scattering will lead to higher reflectance in the blue domain. <code>Blue_Thresh</code> defines the maximum Blue reflectance to be kept. By default, the Blue spectral band closest to 480nm is used. This value can be adjusted as input variables for <code>perform_radiometric_filtering</code>.</li>
+</ul>
+<p><code>perform_radiometric_filtering</code> provides the path for the updated shade mask as output.</p>
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">NDVI_Thresh</span> <span class="kw">&lt;-</span> <span class="fl">0.5</span>
 <span class="co"># these values are relevant only if reflectance is coded as integer values between 0 and 10000. </span>
-<span class="no">Blue_Thresh</span> <span class="kw">=</span> <span class="fl">500</span>
-<span class="no">NIR_Thresh</span>  <span class="kw">=</span> <span class="fl">1500</span>
+<span class="no">Blue_Thresh</span> <span class="kw">&lt;-</span> <span class="fl">500</span>
+<span class="no">NIR_Thresh</span> <span class="kw">&lt;-</span> <span class="fl">1500</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="st">"PERFORM RADIOMETRIC FILTERING"</span>)
-<span class="no">Input_Mask_File</span> <span class="kw">=</span> <span class="fu"><a href="../reference/perform_radiometric_filtering.html">perform_radiometric_filtering</a></span>(<span class="no">Input_Image_File</span>, <span class="no">Input_Mask_File</span>, <span class="no">Output_Dir</span>,
-                                            <span class="kw">NDVI_Thresh</span> <span class="kw">=</span> <span class="no">NDVI_Thresh</span>, <span class="kw">Blue_Thresh</span> <span class="kw">=</span> <span class="no">Blue_Thresh</span>,
-                                            <span class="kw">NIR_Thresh</span> <span class="kw">=</span> <span class="no">NIR_Thresh</span>)</pre></body></html></div>
+<span class="no">Input_Mask_File</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/perform_radiometric_filtering.html">perform_radiometric_filtering</a></span>(<span class="kw">Image_Path</span> <span class="kw">=</span> <span class="no">Input_Image_File</span>, <span class="kw">Mask_Path</span> <span class="kw">=</span> <span class="no">Input_Mask_File</span>,
+                                                 <span class="kw">Output_Dir</span> <span class="kw">=</span> <span class="no">Output_Dir</span>, <span class="kw">TypePCA</span> <span class="kw">=</span> <span class="no">TypePCA</span>,
+                                                 <span class="kw">NDVI_Thresh</span> <span class="kw">=</span> <span class="no">NDVI_Thresh</span>, <span class="kw">Blue_Thresh</span> <span class="kw">=</span> <span class="no">Blue_Thresh</span>,<span class="kw">NIR_Thresh</span> <span class="kw">=</span> <span class="no">NIR_Thresh</span>)</pre></body></html></div>
 </div>
-<div id="pca-1" class="section level2">
+<div id="dimensionality-reduction" class="section level2">
 <h2 class="hasAnchor">
-<a href="#pca-1" class="anchor"></a>PCA</h2>
-<p>A pixel-based PCA is run on the input image across the spectral bands to select the most interesting spectral information relative to spectral diversity and remove shaded pixels, spatial noise and sensor artefacts.</p>
-<p>The resulting PCA raster are then stored in a binalry file in the results directory, which in our case corresponds to <code>RESULTS/S2A_T33NUD_20180104_Subset/SPCA/PCA/OutputPCA_8_PCs</code></p>
-<p>This PCA raster file can be displayed using QGIS or any GIS / image processing software. Here, the PCs corresponding to our image look like this:</p>
+<a href="#dimensionality-reduction" class="anchor"></a>Dimensionality reduction</h2>
+<p><strong>biodivMapR</strong> includes multiple dimensionality reduction methods, including <code>PCA</code>, <code>SPCA</code> or <code>MNF</code> (default value: <code>SPCA</code>). In case TypePCA is set to <code>PCA</code> or <code>SPCA</code>, a second filtering based on PCA outliers is possible by setting FilterPCA to <code>TRUE</code>.</p>
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">TypePCA</span> <span class="kw">&lt;-</span> <span class="st">'SPCA'</span>
+<span class="no">FilterPCA</span> <span class="kw">&lt;-</span> <span class="fl">TRUE</span></pre></body></html></div>
+<p>The transformation preparing for dimensionality reduction is performed on the input image, after elimination of the spectral bands corresponding to atmospheric water absorption. By default, the domains to be discarded during the process can be defined in the variable <code>Excluded_WL</code>, which is an input variable for the function <code>perform_PCA</code>. The default values are the following for the spectral domains to exclude (in nanometers):</p>
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">Excluded_WL</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>, <span class="fl">400</span>)
+<span class="no">Excluded_WL</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(<span class="no">Excluded_WL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">895</span>, <span class="fl">1005</span>))
+<span class="no">Excluded_WL</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(<span class="no">Excluded_WL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1180</span>, <span class="fl">1480</span>))
+<span class="no">Excluded_WL</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(<span class="no">Excluded_WL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1780</span>, <span class="fl">2040</span>))</pre></body></html></div>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># apply continuum removal as normalization if working with multi or hyperspectral data</span>
+<span class="no">Continuum_Removal</span> <span class="kw">&lt;-</span> <span class="fl">TRUE</span>
+<span class="co"># Perform dimensionality reduction</span>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="st">"PERFORM DIMENSIONALITY REDUCTION"</span>)
+<span class="no">PCA_Output</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/perform_PCA.html">perform_PCA</a></span>(<span class="kw">Input_Image_File</span> <span class="kw">=</span> <span class="no">Input_Image_File</span>, <span class="kw">Input_Mask_File</span> <span class="kw">=</span> <span class="no">Input_Mask_File</span>,
+                          <span class="kw">Output_Dir</span> <span class="kw">=</span> <span class="no">Output_Dir</span>, <span class="kw">TypePCA</span> <span class="kw">=</span> <span class="no">TypePCA</span>, <span class="kw">FilterPCA</span><span class="kw">=</span><span class="no">FilterPCA</span>,
+                          <span class="kw">nbCPU</span> <span class="kw">=</span> <span class="no">nbCPU</span>, <span class="kw">MaxRAM</span> <span class="kw">=</span> <span class="no">MaxRAM</span>, <span class="kw">Continuum_Removal</span> <span class="kw">=</span> <span class="no">Continuum_Removal</span>)
+<span class="co"># path of the raster resulting from dimensionality reduction</span>
+<span class="no">PCA_Files</span> <span class="kw">&lt;-</span> <span class="no">PCA_Output</span>$<span class="no">PCA_Files</span>
+<span class="co"># number of pixels used for each partition used for k-means clustering</span>
+<span class="no">Pix_Per_Partition</span> <span class="kw">&lt;-</span> <span class="no">PCA_Output</span>$<span class="no">Pix_Per_Partition</span>
+<span class="co"># number of partitions used for k-means clustering</span>
+<span class="no">nb_partitions</span> <span class="kw">&lt;-</span> <span class="no">PCA_Output</span>$<span class="no">nb_partitions</span>
+<span class="co"># path for the updated mask</span>
+<span class="no">Input_Mask_File</span> <span class="kw">&lt;-</span> <span class="no">PCA_Output</span>$<span class="no">MaskPath</span>
+<span class="co"># parameters of the PCA/MNF model</span>
+<span class="no">PCA_model</span> <span class="kw">&lt;-</span> <span class="no">PCA_Output</span>$<span class="no">PCA_model</span>
+<span class="co"># definition of spectral bands to be excluded from the analysis</span>
+<span class="no">SpectralFilter</span> <span class="kw">&lt;-</span> <span class="no">PCA_Output</span>$<span class="no">SpectralFilter</span></pre></body></html></div>
+<p>The dimensionality reduction is performed to select the most interesting spectral information relative to spectral diversity and remove spatial noise and sensor artefacts. The resulting transformed raster (PCA, SPCA or MNF) is then stored in a binalry file in the <code>Output_Dir</code> directory, which in our case corresponds to <code>RESULTS/S2A_T33NUD_20180104_Subset/SPCA/PCA/OutputPCA_8_PCs</code></p>
+<p>This raster file can be displayed using QGIS or any GIS / image processing software. Here, the PCs corresponding to our image look like this:</p>
 <p><img align="bottom" width="100%" height="100%" src="../man/figures/PCs_1234.png"><img align="bottom" width="100%" height="100%" src="../man/figures/PCs_5678.png"></p>
-<p>This PCA band selection left to user judgement, who then writes the band to be kept in a <code>.txt</code> file located in the same directory as the PCA raster file. The file is automatically created and ready to edit with function <code>select_PCA_components</code>. Each selected band should be identified per line in this file. The main goal of PC selection is to discard PCs showing no relevant information corresponding to vegetation, or including artifacts possibly explained by sensor properties. It is somehow a subjective process, and we are currently working on automatic selection of these components.</p>
+<p>This component selection is left to user judgement, who then writes the band to be kept in a <code>.txt</code> file located in the same directory as the raster file. The file is automatically created and ready to edit with function <code>select_PCA_components</code>. One selected band per line should be written in this file. The main goal of PC selection is to discard PCs showing no relevant information corresponding to vegetation, or including artifacts possibly explained by sensor properties. It is somehow a subjective process, and we are currently working on automatic selection of these components.</p>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="co"># Select components from the PCA/SPCA/MNF raster</span>
+<span class="co"># Sel_PC = path of the file where selected components are stored</span>
+<span class="no">Sel_PC</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/select_PCA_components.html">select_PCA_components</a></span>(<span class="kw">Input_Image_File</span> <span class="kw">=</span> <span class="no">Input_Image_File</span>,
+                                <span class="kw">Output_Dir</span> <span class="kw">=</span> <span class="no">Output_Dir</span>, <span class="kw">PCA_Files</span> <span class="kw">=</span> <span class="no">PCA_Files</span>,
+                                <span class="kw">TypePCA</span> <span class="kw">=</span> <span class="no">TypePCA</span>, <span class="kw">File_Open</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
 <p>For this example, PCA bands 1, 2, 5, 6 and 8 can be kept if writing the following lines in file <code>Selected_Components.txt</code> opened for edition (do not forget carriage return after last value):</p>
 <pre><code>1
 2
@@ -213,47 +249,60 @@
 6
 8
 </code></pre>
-<p>PC#3 and PC#7 were discarded as the main patterns observed for these components did not correspond to vegetation patterns. As a rule of thumb, between 2 and 6 selected PCs are usually sufficient to catch the main diversity patterns, but this selection strongly depends on the conditions of acquisition, the type of sensor, and the complexity of the vegetation being observed. Here is the code to perform PCA and select PCA bands:</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="st">"PERFORM PCA ON RASTER"</span>)
-<span class="no">PCA_Output</span>        <span class="kw">=</span> <span class="fu"><a href="../reference/perform_PCA.html">perform_PCA</a></span>(<span class="no">Input_Image_File</span>, <span class="no">Input_Mask_File</span>, <span class="no">Output_Dir</span>,
-                               <span class="kw">TypePCA</span> <span class="kw">=</span> <span class="no">TypePCA</span>, <span class="kw">FilterPCA</span> <span class="kw">=</span> <span class="no">FilterPCA</span>, <span class="kw">nbCPU</span> <span class="kw">=</span> <span class="no">nbCPU</span>,<span class="kw">MaxRAM</span> <span class="kw">=</span> <span class="no">MaxRAM</span>, <span class="kw">Continuum_Removal</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="co"># path for the PCA raster</span>
-<span class="no">PCA_Files</span>         <span class="kw">=</span> <span class="no">PCA_Output</span>$<span class="no">PCA_Files</span>
-<span class="co"># number of pixels used for each partition used for k-means clustering</span>
-<span class="no">Pix_Per_Partition</span> <span class="kw">=</span> <span class="no">PCA_Output</span>$<span class="no">Pix_Per_Partition</span>
-<span class="co"># number of partitions used for k-means clustering</span>
-<span class="no">nb_partitions</span>     <span class="kw">=</span> <span class="no">PCA_Output</span>$<span class="no">nb_partitions</span>
-<span class="co"># path for the updated mask</span>
-<span class="no">Input_Mask_File</span>   <span class="kw">=</span> <span class="no">PCA_Output</span>$<span class="no">MaskPath</span>
-<span class="co"># parameters of the PCA model</span>
-<span class="no">PCA_model</span>         <span class="kw">=</span> <span class="no">PCA_Output</span>$<span class="no">PCA_model</span>
-<span class="co"># definition of spectral bands to be excluded from the analysis</span>
-<span class="no">SpectralFilter</span>    <span class="kw">=</span> <span class="no">PCA_Output</span>$<span class="no">SpectralFilter</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="st">"Select PCA components for diversity estimations"</span>)
-<span class="fu"><a href="../reference/select_PCA_components.html">select_PCA_components</a></span>(<span class="no">Input_Image_File</span>, <span class="no">Output_Dir</span>, <span class="no">PCA_Files</span>, <span class="kw">File_Open</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
+<p>PC#3 and PC#7 were discarded as the main patterns observed for these components did not correspond to vegetation patterns. As a rule of thumb, between 2 and 6 selected PCs are usually sufficient to catch the main diversity patterns, but this selection strongly depends on the conditions of acquisition, the type of sensor, and the complexity of the vegetation being observed.</p>
+</div>
+<div id="functional-diversity-maps" class="section level2">
+<h2 class="hasAnchor">
+<a href="#functional-diversity-maps" class="anchor"></a>Functional diversity maps</h2>
+<p>The functional diversity metrics (Richness, Evenness, Divergence) can be computed directly after dimensionality reduction. Here, we assume that each selected component correspond to a trait value (each trait is scaled over the full image), and each pixel corresponds to a species/individual (no clustering is performed, so one pixel from an individual spatial unit is seen as a different species).</p>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="co">################################################################################</span>
+<span class="co">##              MAP FUNCTIONAL DIVERSITY METRICS FRic, FEve, FDiv             ##</span>
+<span class="co">##          (Villeger et al, 2008 https://doi.org/10.1890/07-1206.1)          ##</span>
+<span class="co">################################################################################</span>
+<span class="co">## read selected features from dimensionality reduction</span>
+<span class="no">Selected_Features</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.table</a></span>(<span class="no">Sel_PC</span>)<span class="kw">[[</span><span class="fl">1</span>]]
+<span class="co">## path for selected components</span>
+<span class="fu"><a href="../reference/map_functional_div.html">map_functional_div</a></span>(<span class="kw">Original_Image_File</span> <span class="kw">=</span> <span class="no">Input_Image_File</span>, <span class="kw">Functional_File</span> <span class="kw">=</span> <span class="no">PCA_Files</span>,
+                   <span class="kw">Selected_Features</span> <span class="kw">=</span> <span class="no">Selected_Features</span>, <span class="kw">Output_Dir</span> <span class="kw">=</span> <span class="no">Output_Dir</span>,
+                   <span class="kw">window_size</span> <span class="kw">=</span> <span class="no">window_size</span>, <span class="kw">nbCPU</span> <span class="kw">=</span> <span class="no">nbCPU</span>, <span class="kw">MaxRAM</span> <span class="kw">=</span> <span class="no">MaxRAM</span>,<span class="kw">TypePCA</span> <span class="kw">=</span> <span class="no">TypePCA</span>)</pre></body></html></div>
+<!-- ## Partitioning of spectral diversity into $\alpha$ and $\beta$ components -->
+<!-- The partitioning of spectral diversity is based on the `specdiv` function provided by [Etienne Laliberte on Github](https://github.com/elaliberte/specdiv "specdiv"). The original method does not use the exact same normalization, and only the framework starting from component selection is used here. Future versions will include the full original framework.  -->
+<!-- ```{r Partitioning spectral diversity} -->
+<!-- ################################################################################ -->
+<!-- ## MAP PARTITIONING OF PLANT SPECTRAL DIVERSITY INTO ALPHA & BETA COMPONENTS  ## -->
+<!-- ##        (Laliberte et al, 2020 https://doi.org/10.1111/ele.13429)           ## -->
+<!-- ################################################################################ -->
+<!-- PartitionSpectralDiversity <- map_partition_div(Original_Image_File = Input_Image_File, Partition_File = PCA_Files, -->
+<!--                                                 Selected_Features = Selected_Features, Output_Dir = Output_Dir, -->
+<!--                                                 window_size = window_size, TypePCA = TypePCA) -->
+<!-- ``` -->
 </div>
 <div id="alpha-and-beta-diversity-maps" class="section level2">
 <h2 class="hasAnchor">
 <a href="#alpha-and-beta-diversity-maps" class="anchor"></a><span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps</h2>
-<p>The first step towards and diversity mapping corresponds to the computation of a <code>SpectralSpecies</code> map, which identifies the cluster (‘spectral species’) assigned to each pixel in the image, after k-means clustering is performed.</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="st">"MAP SPECTRAL SPECIES"</span>)
-<span class="fu"><a href="../reference/map_spectral_species.html">map_spectral_species</a></span>(<span class="no">Input_Image_File</span>, <span class="no">Output_Dir</span>, <span class="no">PCA_Files</span>, <span class="no">PCA_model</span>, <span class="no">SpectralFilter</span>, <span class="no">Input_Mask_File</span>,
-                     <span class="no">Pix_Per_Partition</span>, <span class="no">nb_partitions</span>, <span class="kw">nbCPU</span><span class="kw">=</span><span class="no">nbCPU</span>, <span class="kw">MaxRAM</span><span class="kw">=</span><span class="no">MaxRAM</span>,
-                     <span class="kw">nbclusters</span> <span class="kw">=</span> <span class="no">nbclusters</span>, <span class="kw">TypePCA</span> <span class="kw">=</span> <span class="no">TypePCA</span>, <span class="kw">Continuum_Removal</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
+<p>The first step towards <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity mapping corresponds to the computation of a <code>SpectralSpecies</code> map, which identifies the cluster (‘spectral species’) assigned to each pixel in the image, after k-means clustering is performed. Most of the input parameters are obtained when running <code>perform_PCA</code>.</p>
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="st">"MAP SPECTRAL SPECIES"</span>)
+<span class="fu"><a href="../reference/map_spectral_species.html">map_spectral_species</a></span>(<span class="kw">Input_Image_File</span> <span class="kw">=</span> <span class="no">Input_Image_File</span>, <span class="kw">Output_Dir</span> <span class="kw">=</span> <span class="no">Output_Dir</span>,
+                     <span class="kw">PCA_Files</span> <span class="kw">=</span> <span class="no">PCA_Files</span>, <span class="kw">PCA_model</span> <span class="kw">=</span> <span class="no">PCA_model</span>,
+                     <span class="kw">SpectralFilter</span> <span class="kw">=</span> <span class="no">SpectralFilter</span>, <span class="kw">Input_Mask_File</span> <span class="kw">=</span> <span class="no">Input_Mask_File</span>,
+                     <span class="kw">Pix_Per_Partition</span> <span class="kw">=</span> <span class="no">Pix_Per_Partition</span>, <span class="kw">nb_partitions</span> <span class="kw">=</span> <span class="no">nb_partitions</span>,
+                     <span class="kw">nbCPU</span> <span class="kw">=</span> <span class="no">nbCPU</span>, <span class="kw">MaxRAM</span> <span class="kw">=</span> <span class="no">MaxRAM</span>, <span class="kw">nbclusters</span> <span class="kw">=</span> <span class="no">nbclusters</span>, <span class="kw">TypePCA</span> <span class="kw">=</span> <span class="no">TypePCA</span>,
+                     <span class="kw">Continuum_Removal</span> <span class="kw">=</span> <span class="no">Continuum_Removal</span>)</pre></body></html></div>
 <p>SpectralSpecies is then stored in a raster file located here:</p>
 <p><code>RESULTS/S2A_T33NUD_20180104_Subset/SPCA/SpectralSpecies</code></p>
 <p><span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps, as well as validation, are based on this <code>SpectralSpecies</code> raster.</p>
 <p>The code to compute <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps from this file is as follows:</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="st">"MAP ALPHA DIVERSITY"</span>)
+<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="st">"MAP ALPHA DIVERSITY"</span>)
 <span class="co"># Index.Alpha   = c('Shannon','Simpson')</span>
-<span class="no">Index_Alpha</span>   <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'Shannon'</span>)
-<span class="fu"><a href="../reference/map_alpha_div.html">map_alpha_div</a></span>(<span class="no">Input_Image_File</span>, <span class="no">Output_Dir</span>, <span class="no">window_size</span>, <span class="kw">nbCPU</span><span class="kw">=</span><span class="no">nbCPU</span>,
-              <span class="kw">MaxRAM</span><span class="kw">=</span><span class="no">MaxRAM</span>, <span class="kw">Index_Alpha</span> <span class="kw">=</span> <span class="no">Index_Alpha</span>, <span class="kw">nbclusters</span> <span class="kw">=</span> <span class="no">nbclusters</span>)
+<span class="no">Index_Alpha</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'Shannon'</span>)
+<span class="fu"><a href="../reference/map_alpha_div.html">map_alpha_div</a></span>(<span class="kw">Input_Image_File</span> <span class="kw">=</span> <span class="no">Input_Image_File</span>, <span class="kw">Output_Dir</span> <span class="kw">=</span> <span class="no">Output_Dir</span>, <span class="kw">TypePCA</span> <span class="kw">=</span> <span class="no">TypePCA</span>,
+              <span class="kw">window_size</span> <span class="kw">=</span> <span class="no">window_size</span>, <span class="kw">nbCPU</span> <span class="kw">=</span> <span class="no">nbCPU</span>, <span class="kw">MaxRAM</span> <span class="kw">=</span> <span class="no">MaxRAM</span>,
+              <span class="kw">Index_Alpha</span> <span class="kw">=</span> <span class="no">Index_Alpha</span>, <span class="kw">nbclusters</span> <span class="kw">=</span> <span class="no">nbclusters</span>)
 
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="st">"MAP BETA DIVERSITY"</span>)
-<span class="fu"><a href="../reference/map_beta_div.html">map_beta_div</a></span>(<span class="no">Input_Image_File</span>, <span class="no">Output_Dir</span>, <span class="no">window_size</span>, <span class="kw">nb_partitions</span><span class="kw">=</span><span class="no">nb_partitions</span>,
-             <span class="kw">nbCPU</span><span class="kw">=</span><span class="no">nbCPU</span>, <span class="kw">MaxRAM</span><span class="kw">=</span><span class="no">MaxRAM</span>, <span class="kw">nbclusters</span> <span class="kw">=</span> <span class="no">nbclusters</span>)</pre></body></html></div>
+<span class="fu"><a href="../reference/map_beta_div.html">map_beta_div</a></span>(<span class="kw">Input_Image_File</span> <span class="kw">=</span> <span class="no">Input_Image_File</span>, <span class="kw">Output_Dir</span> <span class="kw">=</span> <span class="no">Output_Dir</span>, <span class="kw">TypePCA</span> <span class="kw">=</span> <span class="no">TypePCA</span>,
+             <span class="kw">window_size</span> <span class="kw">=</span> <span class="no">window_size</span>, <span class="kw">nb_partitions</span><span class="kw">=</span><span class="no">nb_partitions</span>, <span class="kw">nbCPU</span> <span class="kw">=</span> <span class="no">nbCPU</span>, <span class="kw">MaxRAM</span> <span class="kw">=</span> <span class="no">MaxRAM</span>,
+             <span class="kw">nbclusters</span> <span class="kw">=</span> <span class="no">nbclusters</span>)</pre></body></html></div>
 <p><span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps are then stored in raster files located here: <code>RESULTS/S2A_T33NUD_20180104_Subset/SPCA/ALPHA</code> and here: <code>RESULTS/S2A_T33NUD_20180104_Subset/SPCA/BETA</code></p>
 <p>Different rasters can be produced and users are invited to refer to the documentation for more options.</p>
 <p>Here, processing our example leads to the following <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps</p>
@@ -264,51 +313,64 @@
 <h1 class="hasAnchor">
 <a href="#compute-diversity-indices-from-a-vector-layer" class="anchor"></a>Compute diversity indices from a vector layer</h1>
 <p>The following code computes <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity from field plots and extracts the corresponding diversity indices from previouly computed <code>SpectralSpecies</code> raster in order to perform validation.</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="co"># location of the spectral species raster needed for validation</span>
-<span class="no">Dir_Raster</span>  <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">Output_Dir</span>,<span class="fu"><a href="https://rdrr.io/r/base/basename.html">basename</a></span>(<span class="no">Input_Image_File</span>),<span class="no">TypePCA</span>,<span class="st">'SpectralSpecies'</span>)
-<span class="no">Name_Raster</span> <span class="kw">=</span> <span class="st">'SpectralSpecies'</span>
-<span class="no">Path_Raster</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">Dir_Raster</span>,<span class="no">Name_Raster</span>)
+<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="co"># location of the spectral species raster needed for validation</span>
+<span class="no">Output_SubDir</span> <span class="kw">&lt;-</span> <span class="kw pkg">tools</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/r/tools/fileutils.html">file_path_sans_ext</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/basename.html">basename</a></span>(<span class="no">Input_Image_File</span>))
+<span class="no">Dir_Raster</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">Output_Dir</span>,<span class="no">Output_SubDir</span>,<span class="no">TypePCA</span>,<span class="st">'SpectralSpecies'</span>)
+<span class="no">Name_Raster</span> <span class="kw">&lt;-</span> <span class="st">'SpectralSpecies'</span>
+<span class="no">Path_Raster</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">Dir_Raster</span>,<span class="no">Name_Raster</span>)
 
 <span class="co"># location of the directory where shapefiles used for validation are saved</span>
-<span class="no">vect</span>        <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata'</span>, <span class="st">'VECTOR'</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">'biodivMapR'</span>)
-<span class="no">Shannon.All</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>() <span class="co"># ??</span>
+<span class="no">vect</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata'</span>, <span class="st">'VECTOR'</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">'biodivMapR'</span>)
+<span class="no">Shannon_All</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>()
 
 <span class="co"># list vector data</span>
-<span class="no">Path_Vector</span>         <span class="kw">=</span> <span class="fu"><a href="../reference/list_shp.html">list_shp</a></span>(<span class="no">vect</span>)
-<span class="no">Name_Vector</span>         <span class="kw">=</span> <span class="kw pkg">tools</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/r/tools/fileutils.html">file_path_sans_ext</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/basename.html">basename</a></span>(<span class="no">Path_Vector</span>))
+<span class="no">Path_Vector</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/list_shp.html">list_shp</a></span>(<span class="no">vect</span>)
+<span class="no">Name_Vector</span> <span class="kw">&lt;-</span> <span class="kw pkg">tools</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/r/tools/fileutils.html">file_path_sans_ext</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/basename.html">basename</a></span>(<span class="no">Path_Vector</span>))
 
-<span class="co"># get alpha and beta diversity indicators corresponding to shapefiles</span>
-<span class="no">Biodiv_Indicators</span>           <span class="kw">=</span> <span class="fu"><a href="../reference/diversity_from_plots.html">diversity_from_plots</a></span>(<span class="kw">Raster</span> <span class="kw">=</span> <span class="no">Path_Raster</span>, <span class="kw">Plots</span> <span class="kw">=</span> <span class="no">Path_Vector</span>,<span class="kw">NbClusters</span> <span class="kw">=</span> <span class="no">nbclusters</span>)
-<span class="co"># if no name</span>
-<span class="no">Biodiv_Indicators</span>$<span class="no">Name_Plot</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">1</span>,<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">Biodiv_Indicators</span>$<span class="no">Shannon</span><span class="kw">[[</span><span class="fl">1</span>]]),<span class="kw">by</span> <span class="kw">=</span> <span class="fl">1</span>)
-<span class="no">Shannon_RS</span>                  <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">Biodiv_Indicators</span>$<span class="no">Shannon</span>)<span class="kw">[[</span><span class="fl">1</span>]]</pre></body></html></div>
+<span class="co"># get diversity indicators corresponding to shapefiles (no partitioning of spectral dibversity based on field plots so far...)</span>
+<span class="no">Biodiv_Indicators</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/diversity_from_plots.html">diversity_from_plots</a></span>(<span class="kw">Raster_SpectralSpecies</span> <span class="kw">=</span> <span class="no">Path_Raster</span>, <span class="kw">Plots</span> <span class="kw">=</span> <span class="no">Path_Vector</span>,
+                                          <span class="kw">NbClusters</span> <span class="kw">=</span> <span class="no">nbclusters</span>, <span class="kw">Raster_Functional</span> <span class="kw">=</span> <span class="no">PCA_Files</span>, <span class="kw">Selected_Features</span> <span class="kw">=</span> <span class="no">Selected_Features</span>)
+
+<span class="no">Shannon_RS</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">Biodiv_Indicators</span>$<span class="no">Shannon</span>)<span class="kw">[[</span><span class="fl">1</span>]]
+<span class="no">FRic</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">Biodiv_Indicators</span>$<span class="no">FunctionalDiversity</span>$<span class="no">FRic</span>)
+<span class="no">FEve</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">Biodiv_Indicators</span>$<span class="no">FunctionalDiversity</span>$<span class="no">FEve</span>)
+<span class="no">FDiv</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">Biodiv_Indicators</span>$<span class="no">FunctionalDiversity</span>$<span class="no">FDiv</span>)
+<span class="co"># if no name for plots</span>
+<span class="no">Biodiv_Indicators</span>$<span class="no">Name_Plot</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">1</span>,<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">Biodiv_Indicators</span>$<span class="no">Shannon</span><span class="kw">[[</span><span class="fl">1</span>]]),<span class="kw">by</span> <span class="kw">=</span> <span class="fl">1</span>)</pre></body></html></div>
 <p>The tables are then written to tab-seperated files.</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co"># write RS indicators</span>
+<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="co"># write RS indicators</span>
 <span class="co">####################################################</span>
 <span class="co"># write indicators for alpha diversity</span>
-<span class="no">Path_Results</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">Output_Dir</span>, <span class="fu"><a href="https://rdrr.io/r/base/basename.html">basename</a></span>(<span class="no">Input_Image_File</span>), <span class="no">TypePCA</span>, <span class="st">'VALIDATION'</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span>(<span class="no">Path_Results</span>, <span class="kw">showWarnings</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">recursive</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="no">ShannonIndexFile</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">Path_Results</span>, <span class="st">"ShannonIndex.tab"</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span>(<span class="no">Shannon_RS</span>, <span class="kw">file</span> <span class="kw">=</span> <span class="no">ShannonIndexFile</span>, <span class="kw">sep</span> <span class="kw">=</span> <span class="st">"\t"</span>, <span class="kw">dec</span> <span class="kw">=</span> <span class="st">"."</span>, <span class="kw">na</span> <span class="kw">=</span> <span class="st">" "</span>,
-            <span class="kw">row.names</span> <span class="kw">=</span> <span class="no">Biodiv_Indicators</span>$<span class="no">Name_Plot</span>, <span class="kw">col.names</span><span class="kw">=</span> <span class="no">F</span>, <span class="kw">quote</span><span class="kw">=</span><span class="fl">FALSE</span>)
+<span class="no">Path_Results</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">Output_Dir</span>,<span class="no">Output_SubDir</span>,<span class="no">TypePCA</span>,<span class="st">'VALIDATION'</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span>(<span class="no">Path_Results</span>, <span class="kw">showWarnings</span> <span class="kw">=</span> <span class="fl">FALSE</span>,<span class="kw">recursive</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span>(<span class="no">Shannon_RS</span>, <span class="kw">file</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">Path_Results</span>,<span class="st">"ShannonIndex.csv"</span>),
+            <span class="kw">sep</span><span class="kw">=</span><span class="st">"\t"</span>, <span class="kw">dec</span><span class="kw">=</span><span class="st">"."</span>, <span class="kw">na</span><span class="kw">=</span><span class="st">" "</span>, <span class="kw">row.names</span> <span class="kw">=</span> <span class="no">Biodiv_Indicators</span>$<span class="no">Name_Plot</span>, <span class="kw">col.names</span><span class="kw">=</span> <span class="no">F</span>,<span class="kw">quote</span><span class="kw">=</span><span class="fl">FALSE</span>)
 
-<span class="no">Results</span> <span class="kw">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="no">Name_Vector</span>, <span class="no">Biodiv_Indicators</span>$<span class="no">Richness</span>, <span class="no">Biodiv_Indicators</span>$<span class="no">Fisher</span>,                                <span class="no">Biodiv_Indicators</span>$<span class="no">Shannon</span>, <span class="no">Biodiv_Indicators</span>$<span class="no">Simpson</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">Results</span>)  <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ID_Plot"</span>, <span class="st">"Species_Richness"</span>, <span class="st">"Fisher"</span>, <span class="st">"Shannon"</span>, <span class="st">"Simpson"</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span>(<span class="no">Results</span>, <span class="kw">file</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">Path_Results</span>,<span class="st">"AlphaDiversity.tab"</span>), <span class="kw">sep</span><span class="kw">=</span><span class="st">"\t"</span>, <span class="kw">dec</span><span class="kw">=</span><span class="st">"."</span>,<span class="kw">na</span><span class="kw">=</span><span class="st">" "</span>, <span class="kw">row.names</span> <span class="kw">=</span> <span class="no">F</span>, <span class="kw">col.names</span><span class="kw">=</span> <span class="no">T</span>,<span class="kw">quote</span><span class="kw">=</span><span class="fl">FALSE</span>)
+
+<span class="no">Results</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="no">Name_Vector</span>, <span class="no">Biodiv_Indicators</span>$<span class="no">Richness</span>, <span class="no">Biodiv_Indicators</span>$<span class="no">Fisher</span>,
+                      <span class="no">Biodiv_Indicators</span>$<span class="no">Shannon</span>, <span class="no">Biodiv_Indicators</span>$<span class="no">Simpson</span>,
+                      <span class="no">Biodiv_Indicators</span>$<span class="no">FunctionalDiversity</span>$<span class="no">FRic</span>,
+                      <span class="no">Biodiv_Indicators</span>$<span class="no">FunctionalDiversity</span>$<span class="no">FEve</span>,
+                      <span class="no">Biodiv_Indicators</span>$<span class="no">FunctionalDiversity</span>$<span class="no">FDiv</span>)
+
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">Results</span>)  <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ID_Plot"</span>, <span class="st">"Species_Richness"</span>, <span class="st">"Fisher"</span>, <span class="st">"Shannon"</span>, <span class="st">"Simpson"</span>, <span class="st">"FRic"</span>, <span class="st">"FEve"</span>, <span class="st">"FDiv"</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span>(<span class="no">Results</span>, <span class="kw">file</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="no">Path_Results</span>,<span class="st">"AlphaDiversity.csv"</span>,<span class="kw">sep</span><span class="kw">=</span><span class="st">''</span>),
+            <span class="kw">sep</span><span class="kw">=</span><span class="st">"\t"</span>, <span class="kw">dec</span><span class="kw">=</span><span class="st">"."</span>, <span class="kw">na</span><span class="kw">=</span><span class="st">" "</span>, <span class="kw">row.names</span> <span class="kw">=</span> <span class="no">F</span>, <span class="kw">col.names</span><span class="kw">=</span> <span class="no">T</span>,<span class="kw">quote</span><span class="kw">=</span><span class="fl">FALSE</span>)
 
 <span class="co"># write indicators for beta diversity</span>
-<span class="no">BC_mean</span> <span class="kw">=</span> <span class="no">Biodiv_Indicators</span>$<span class="no">BCdiss</span>
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(<span class="no">BC_mean</span>) <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="no">BC_mean</span>) <span class="kw">=</span> <span class="no">Biodiv_Indicators</span>$<span class="no">Name_Plot</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span>(<span class="no">BC_mean</span>, <span class="kw">file</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">Path_Results</span>,<span class="st">"BrayCurtis.csv"</span>), <span class="kw">sep</span><span class="kw">=</span><span class="st">"\t"</span>, <span class="kw">dec</span><span class="kw">=</span><span class="st">"."</span>, <span class="kw">na</span><span class="kw">=</span><span class="st">" "</span>, <span class="kw">row.names</span> <span class="kw">=</span> <span class="no">F</span>, <span class="kw">col.names</span><span class="kw">=</span> <span class="no">T</span>,<span class="kw">quote</span><span class="kw">=</span><span class="fl">FALSE</span>)</pre></body></html></div>
+<span class="no">BC_mean</span> <span class="kw">&lt;-</span> <span class="no">Biodiv_Indicators</span>$<span class="no">BCdiss</span>
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(<span class="no">BC_mean</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="no">BC_mean</span>) <span class="kw">&lt;-</span> <span class="no">Biodiv_Indicators</span>$<span class="no">Name_Plot</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span>(<span class="no">BC_mean</span>, <span class="kw">file</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="no">Path_Results</span>,<span class="st">"BrayCurtis.csv"</span>,<span class="kw">sep</span><span class="kw">=</span><span class="st">''</span>),
+            <span class="kw">sep</span><span class="kw">=</span><span class="st">"\t"</span>, <span class="kw">dec</span><span class="kw">=</span><span class="st">"."</span>, <span class="kw">na</span><span class="kw">=</span><span class="st">" "</span>, <span class="kw">row.names</span> <span class="kw">=</span> <span class="no">F</span>, <span class="kw">col.names</span><span class="kw">=</span> <span class="no">T</span>,<span class="kw">quote</span><span class="kw">=</span><span class="fl">FALSE</span>)</pre></body></html></div>
 <p>These results can then be displayed according to the need for further analysis. Here, for the purpose of illustration, we provide a code in order to visualize the differences among field plots located in the image: we first perform a PCoA on the Bray Curtis dissimilarity matrix computed from the field plots:</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="co"># apply ordination using PCoA (same as done for map_beta_div)</span>
+<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="co"># apply ordination using PCoA (same as done for map_beta_div)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">labdsv</span>)
-<span class="no">MatBCdist</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/dist.html">as.dist</a></span>(<span class="no">BC_mean</span>, <span class="kw">diag</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">upper</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
-<span class="no">BetaPCO</span>   <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/pkg/labdsv/man/pco.html">pco</a></span>(<span class="no">MatBCdist</span>, <span class="kw">k</span> <span class="kw">=</span> <span class="fl">3</span>)</pre></body></html></div>
+<span class="no">MatBCdist</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/dist.html">as.dist</a></span>(<span class="no">BC_mean</span>, <span class="kw">diag</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">upper</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
+<span class="no">BetaPCO</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/labdsv/man/pco.html">pco</a></span>(<span class="no">MatBCdist</span>, <span class="kw">k</span> <span class="kw">=</span> <span class="fl">3</span>)</pre></body></html></div>
 <p>The plots corresponding to forested areas with high, medium and low diversity, as well as low vegetation/degraded forest close tomain roads are distributed as follows:</p>
 <p><img align="bottom" width="100%" height="100%" src="../man/figures/04_RGB_FieldLegend.png"></p>
 <p>Here, we produce figures in order to locate the different types of vegetation in the PCoA space:</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="co"># very uglily assign vegetation type to polygons in shapefiles</span>
+<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="co"># very uglily assign vegetation type to polygons in shapefiles</span>
 <span class="no">nbSamples</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">6</span>,<span class="fl">4</span>,<span class="fl">7</span>,<span class="fl">7</span>)
 <span class="no">vg</span>        <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'Forest high diversity'</span>, <span class="st">'Forest low diversity'</span>, <span class="st">'Forest medium diversity'</span>, <span class="st">'low vegetation'</span>)
 <span class="no">Type_Vegetation</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>()
@@ -320,31 +382,32 @@
 
 <span class="co"># create data frame including alpha and beta diversity</span>
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)
-<span class="no">Results</span>     <span class="kw">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="st">'vgtype'</span><span class="kw">=</span><span class="no">Type_Vegetation</span>,<span class="st">'pco1'</span><span class="kw">=</span> <span class="no">BetaPCO</span>$<span class="no">points</span>[,<span class="fl">1</span>],<span class="st">'pco2'</span><span class="kw">=</span> <span class="no">BetaPCO</span>$<span class="no">points</span>[,<span class="fl">2</span>],<span class="st">'pco3'</span> <span class="kw">=</span> <span class="no">BetaPCO</span>$<span class="no">points</span>[,<span class="fl">3</span>],<span class="st">'shannon'</span><span class="kw">=</span><span class="no">Shannon_RS</span>)
+<span class="no">Results</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="st">'vgtype'</span><span class="kw">=</span><span class="no">Type_Vegetation</span>,<span class="st">'pco1'</span><span class="kw">=</span> <span class="no">BetaPCO</span>$<span class="no">points</span>[,<span class="fl">1</span>],<span class="st">'pco2'</span><span class="kw">=</span> <span class="no">BetaPCO</span>$<span class="no">points</span>[,<span class="fl">2</span>],<span class="st">'pco3'</span> <span class="kw">=</span> <span class="no">BetaPCO</span>$<span class="no">points</span>[,<span class="fl">3</span>],
+                          <span class="st">'shannon'</span><span class="kw">=</span><span class="no">Shannon_RS</span>,<span class="st">'FRic'</span> <span class="kw">=</span> <span class="no">FRic</span>, <span class="st">'FEve'</span> <span class="kw">=</span> <span class="no">FEve</span>, <span class="st">'FDiv'</span> <span class="kw">=</span> <span class="no">FDiv</span>)
 
 <span class="co"># plot field data in the PCoA space, with size corresponding to shannon index</span>
-<span class="fu">ggplot</span>(<span class="no">Results</span>, <span class="fu">aes</span>(<span class="kw">x</span><span class="kw">=</span><span class="no">pco1</span>, <span class="kw">y</span><span class="kw">=</span><span class="no">pco2</span>, <span class="kw">color</span><span class="kw">=</span><span class="no">vgtype</span>,<span class="kw">size</span><span class="kw">=</span><span class="no">shannon</span>)) +
-  <span class="fu">geom_point</span>(<span class="kw">alpha</span><span class="kw">=</span><span class="fl">0.6</span>) +
-  <span class="fu">scale_color_manual</span>(<span class="kw">values</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"#e6140a"</span>, <span class="st">"#e6d214"</span>, <span class="st">"#e68214"</span>, <span class="st">"#145ae6"</span>))
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="no">Results</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span><span class="kw">=</span><span class="no">pco1</span>, <span class="kw">y</span><span class="kw">=</span><span class="no">pco2</span>, <span class="kw">color</span><span class="kw">=</span><span class="no">vgtype</span>,<span class="kw">size</span><span class="kw">=</span><span class="no">shannon</span>)) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">alpha</span><span class="kw">=</span><span class="fl">0.6</span>) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_color_manual</a></span>(<span class="kw">values</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"#e6140a"</span>, <span class="st">"#e6d214"</span>, <span class="st">"#e68214"</span>, <span class="st">"#145ae6"</span>))
 <span class="no">filename</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">Path_Results</span>,<span class="st">'BetaDiversity_PcoA1_vs_PcoA2.png'</span>)
-<span class="fu">ggsave</span>(<span class="no">filename</span>, <span class="kw">plot</span> <span class="kw">=</span> <span class="fu">last_plot</span>(), <span class="kw">device</span> <span class="kw">=</span> <span class="st">'png'</span>, <span class="kw">path</span> <span class="kw">=</span> <span class="kw">NULL</span>,
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span>(<span class="no">filename</span>, <span class="kw">plot</span> <span class="kw">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/last_plot.html">last_plot</a></span>(), <span class="kw">device</span> <span class="kw">=</span> <span class="st">'png'</span>, <span class="kw">path</span> <span class="kw">=</span> <span class="kw">NULL</span>,
        <span class="kw">scale</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">width</span> <span class="kw">=</span> <span class="fl">6</span>, <span class="kw">height</span> <span class="kw">=</span> <span class="fl">4</span>, <span class="kw">units</span> <span class="kw">=</span> <span class="st">"in"</span>,
        <span class="kw">dpi</span> <span class="kw">=</span> <span class="fl">600</span>, <span class="kw">limitsize</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 
 
-<span class="fu">ggplot</span>(<span class="no">Results</span>, <span class="fu">aes</span>(<span class="kw">x</span><span class="kw">=</span><span class="no">pco1</span>, <span class="kw">y</span><span class="kw">=</span><span class="no">pco3</span>, <span class="kw">color</span><span class="kw">=</span><span class="no">vgtype</span>,<span class="kw">size</span><span class="kw">=</span><span class="no">shannon</span>)) +
-  <span class="fu">geom_point</span>(<span class="kw">alpha</span><span class="kw">=</span><span class="fl">0.6</span>) +
-  <span class="fu">scale_color_manual</span>(<span class="kw">values</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"#e6140a"</span>, <span class="st">"#e6d214"</span>, <span class="st">"#e68214"</span>, <span class="st">"#145ae6"</span>))
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="no">Results</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span><span class="kw">=</span><span class="no">pco1</span>, <span class="kw">y</span><span class="kw">=</span><span class="no">pco3</span>, <span class="kw">color</span><span class="kw">=</span><span class="no">vgtype</span>,<span class="kw">size</span><span class="kw">=</span><span class="no">shannon</span>)) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">alpha</span><span class="kw">=</span><span class="fl">0.6</span>) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_color_manual</a></span>(<span class="kw">values</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"#e6140a"</span>, <span class="st">"#e6d214"</span>, <span class="st">"#e68214"</span>, <span class="st">"#145ae6"</span>))
 <span class="no">filename</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">Path_Results</span>,<span class="st">'BetaDiversity_PcoA1_vs_PcoA3.png'</span>)
-<span class="fu">ggsave</span>(<span class="no">filename</span>, <span class="kw">plot</span> <span class="kw">=</span> <span class="fu">last_plot</span>(), <span class="kw">device</span> <span class="kw">=</span> <span class="st">'png'</span>, <span class="kw">path</span> <span class="kw">=</span> <span class="kw">NULL</span>,
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span>(<span class="no">filename</span>, <span class="kw">plot</span> <span class="kw">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/last_plot.html">last_plot</a></span>(), <span class="kw">device</span> <span class="kw">=</span> <span class="st">'png'</span>, <span class="kw">path</span> <span class="kw">=</span> <span class="kw">NULL</span>,
        <span class="kw">scale</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">width</span> <span class="kw">=</span> <span class="fl">6</span>, <span class="kw">height</span> <span class="kw">=</span> <span class="fl">4</span>, <span class="kw">units</span> <span class="kw">=</span> <span class="st">"in"</span>,
        <span class="kw">dpi</span> <span class="kw">=</span> <span class="fl">600</span>, <span class="kw">limitsize</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 
-<span class="fu">ggplot</span>(<span class="no">Results</span>, <span class="fu">aes</span>(<span class="kw">x</span><span class="kw">=</span><span class="no">pco2</span>, <span class="kw">y</span><span class="kw">=</span><span class="no">pco3</span>, <span class="kw">color</span><span class="kw">=</span><span class="no">vgtype</span>,<span class="kw">size</span><span class="kw">=</span><span class="no">shannon</span>)) +
-  <span class="fu">geom_point</span>(<span class="kw">alpha</span><span class="kw">=</span><span class="fl">0.6</span>) +
-  <span class="fu">scale_color_manual</span>(<span class="kw">values</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"#e6140a"</span>, <span class="st">"#e6d214"</span>, <span class="st">"#e68214"</span>, <span class="st">"#145ae6"</span>))
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="no">Results</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span><span class="kw">=</span><span class="no">pco2</span>, <span class="kw">y</span><span class="kw">=</span><span class="no">pco3</span>, <span class="kw">color</span><span class="kw">=</span><span class="no">vgtype</span>,<span class="kw">size</span><span class="kw">=</span><span class="no">shannon</span>)) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">alpha</span><span class="kw">=</span><span class="fl">0.6</span>) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_color_manual</a></span>(<span class="kw">values</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"#e6140a"</span>, <span class="st">"#e6d214"</span>, <span class="st">"#e68214"</span>, <span class="st">"#145ae6"</span>))
 <span class="no">filename</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">Path_Results</span>,<span class="st">'BetaDiversity_PcoA2_vs_PcoA3.png'</span>)
-<span class="fu">ggsave</span>(<span class="no">filename</span>, <span class="kw">plot</span> <span class="kw">=</span> <span class="fu">last_plot</span>(), <span class="kw">device</span> <span class="kw">=</span> <span class="st">'png'</span>, <span class="kw">path</span> <span class="kw">=</span> <span class="kw">NULL</span>,
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span>(<span class="no">filename</span>, <span class="kw">plot</span> <span class="kw">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/last_plot.html">last_plot</a></span>(), <span class="kw">device</span> <span class="kw">=</span> <span class="st">'png'</span>, <span class="kw">path</span> <span class="kw">=</span> <span class="kw">NULL</span>,
        <span class="kw">scale</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">width</span> <span class="kw">=</span> <span class="fl">6</span>, <span class="kw">height</span> <span class="kw">=</span> <span class="fl">4</span>, <span class="kw">units</span> <span class="kw">=</span> <span class="st">"in"</span>,
        <span class="kw">dpi</span> <span class="kw">=</span> <span class="fl">600</span>, <span class="kw">limitsize</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
 <p>The resulting figures are displayed here:</p>

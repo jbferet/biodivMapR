@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>maps spectral species based on PCA file computed previously — map_spectral_species • biodivMapR</title>
+<title>maps functional diversity indicators based on prior selection of PCs — map_functional_div • biodivMapR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="maps spectral species based on PCA file computed previously — map_spectral_species" />
-<meta property="og:description" content="maps spectral species based on PCA file computed previously" />
+<meta property="og:title" content="maps functional diversity indicators based on prior selection of PCs — map_functional_div" />
+<meta property="og:description" content="maps functional diversity indicators based on prior selection of PCs" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -134,78 +134,74 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>maps spectral species based on PCA file computed previously</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jbferet/biodivMapR/blob/master/R/Lib_MapSpectralSpecies.R'><code>R/Lib_MapSpectralSpecies.R</code></a></small>
-    <div class="hidden name"><code>map_spectral_species.Rd</code></div>
+    <h1>maps functional diversity indicators based on prior selection of PCs</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jbferet/biodivMapR/blob/master/R/Lib_MapFunctionalDiversity.R'><code>R/Lib_MapFunctionalDiversity.R</code></a></small>
+    <div class="hidden name"><code>map_functional_div.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>maps spectral species based on PCA file computed previously</p>
+    <p>maps functional diversity indicators based on prior selection of PCs</p>
     </div>
 
-    <pre class="usage"><span class='fu'>map_spectral_species</span>(
-  <span class='no'>Input_Image_File</span>,
+    <pre class="usage"><span class='fu'>map_functional_div</span>(
+  <span class='no'>Original_Image_File</span>,
+  <span class='kw'>Functional_File</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>Selected_Features</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='no'>Output_Dir</span>,
-  <span class='no'>PCA_Files</span>,
-  <span class='no'>PCA_model</span>,
-  <span class='no'>SpectralFilter</span>,
-  <span class='no'>Input_Mask_File</span>,
-  <span class='no'>Pix_Per_Partition</span>,
-  <span class='no'>nb_partitions</span>,
-  <span class='kw'>Continuum_Removal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='no'>window_size</span>,
   <span class='kw'>TypePCA</span> <span class='kw'>=</span> <span class='st'>"SPCA"</span>,
-  <span class='kw'>nbclusters</span> <span class='kw'>=</span> <span class='fl'>50</span>,
-  <span class='kw'>nbCPU</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>MaxRAM</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+  <span class='kw'>MinSun</span> <span class='kw'>=</span> <span class='fl'>0.25</span>,
+  <span class='kw'>FullRes</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>LowRes</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>MapSTD</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>nbCPU</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>MaxRAM</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>SmoothImage</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>Input_Image_File</th>
-      <td><p>character. Path of the image to be processed</p></td>
+      <th>Original_Image_File</th>
+      <td><p>character. Path and name of the original input image for biodivMapR.</p></td>
+    </tr>
+    <tr>
+      <th>Functional_File</th>
+      <td><p>character. Path and name of the image processed to be used to compute functional diversity
+--&gt; can be PCA file with. if FALSE: using Original_Image_File</p></td>
+    </tr>
+    <tr>
+      <th>Selected_Features</th>
+      <td><p>numeric. Contains features to be used from Input_Image_File. using all if FALSE</p></td>
     </tr>
     <tr>
       <th>Output_Dir</th>
-      <td><p>character. Path for output directory</p></td>
+      <td><p>character. Output directory.</p></td>
     </tr>
     <tr>
-      <th>PCA_Files</th>
-      <td><p>character. Path of the PCA image</p></td>
-    </tr>
-    <tr>
-      <th>PCA_model</th>
-      <td><p>list. Parameters for teh PCA model to be applied on original image</p></td>
-    </tr>
-    <tr>
-      <th>SpectralFilter</th>
-      <td><p>list. information about spectral band location
-(central wavelength), bands to keep...</p></td>
-    </tr>
-    <tr>
-      <th>Input_Mask_File</th>
-      <td><p>character. Path of the mask corresponding to the image</p></td>
-    </tr>
-    <tr>
-      <th>Pix_Per_Partition</th>
-      <td><p>numeric. number of pixels for each partition</p></td>
-    </tr>
-    <tr>
-      <th>nb_partitions</th>
-      <td><p>numeric. number of partition</p></td>
-    </tr>
-    <tr>
-      <th>Continuum_Removal</th>
-      <td><p>boolean. Set to TRUE if continuum removal should be applied</p></td>
+      <th>window_size</th>
+      <td><p>numeric. Size of spatial units (in pixels) to compute diversity.</p></td>
     </tr>
     <tr>
       <th>TypePCA</th>
-      <td><p>character. Type of PCA: choose either "PCA" or "SPCA"</p></td>
+      <td><p>character. Type of PCA (PCA, SPCA, NLPCA...).</p></td>
     </tr>
     <tr>
-      <th>nbclusters</th>
-      <td><p>numeric. number of clusters defined in k-Means</p></td>
+      <th>MinSun</th>
+      <td><p>numeric. Minimum proportion of sunlit pixels required to consider plot.</p></td>
+    </tr>
+    <tr>
+      <th>FullRes</th>
+      <td><p>boolean. Full resolution.</p></td>
+    </tr>
+    <tr>
+      <th>LowRes</th>
+      <td><p>boolean. Low resolution.</p></td>
+    </tr>
+    <tr>
+      <th>MapSTD</th>
+      <td><p>boolean. map of standard deviation of the alpha diversity map (over repetitions)</p></td>
     </tr>
     <tr>
       <th>nbCPU</th>
@@ -214,6 +210,10 @@
     <tr>
       <th>MaxRAM</th>
       <td><p>numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.</p></td>
+    </tr>
+    <tr>
+      <th>SmoothImage</th>
+      <td><p>boolean. set TRUE if you want smooting filter applied to resulting diversity rasters</p></td>
     </tr>
     </table>
 

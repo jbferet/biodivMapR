@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>maps spectral species based on PCA file computed previously — map_spectral_species • biodivMapR</title>
+<title>Function to perform MNF — mnf • biodivMapR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="maps spectral species based on PCA file computed previously — map_spectral_species" />
-<meta property="og:description" content="maps spectral species based on PCA file computed previously" />
+<meta property="og:title" content="Function to perform MNF — mnf" />
+<meta property="og:description" content="Function to perform MNF" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -134,92 +134,37 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>maps spectral species based on PCA file computed previously</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jbferet/biodivMapR/blob/master/R/Lib_MapSpectralSpecies.R'><code>R/Lib_MapSpectralSpecies.R</code></a></small>
-    <div class="hidden name"><code>map_spectral_species.Rd</code></div>
+    <h1>Function to perform MNF</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jbferet/biodivMapR/blob/master/R/Lib_PerformPCA.R'><code>R/Lib_PerformPCA.R</code></a></small>
+    <div class="hidden name"><code>mnf.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>maps spectral species based on PCA file computed previously</p>
+    <p>Function to perform MNF</p>
     </div>
 
-    <pre class="usage"><span class='fu'>map_spectral_species</span>(
-  <span class='no'>Input_Image_File</span>,
-  <span class='no'>Output_Dir</span>,
-  <span class='no'>PCA_Files</span>,
-  <span class='no'>PCA_model</span>,
-  <span class='no'>SpectralFilter</span>,
-  <span class='no'>Input_Mask_File</span>,
-  <span class='no'>Pix_Per_Partition</span>,
-  <span class='no'>nb_partitions</span>,
-  <span class='kw'>Continuum_Removal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>TypePCA</span> <span class='kw'>=</span> <span class='st'>"SPCA"</span>,
-  <span class='kw'>nbclusters</span> <span class='kw'>=</span> <span class='fl'>50</span>,
-  <span class='kw'>nbCPU</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>MaxRAM</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
-)</pre>
+    <pre class="usage"><span class='fu'>mnf</span>(<span class='no'>X</span>, <span class='kw'>coordPix</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>retx</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>Input_Image_File</th>
-      <td><p>character. Path of the image to be processed</p></td>
+      <th>X</th>
+      <td><p>numeric. matrix to apply MNF on</p></td>
     </tr>
     <tr>
-      <th>Output_Dir</th>
-      <td><p>character. Path for output directory</p></td>
+      <th>coordPix</th>
+      <td><p>dataframe to compute noise, cf get_random_subset_from_image</p></td>
     </tr>
     <tr>
-      <th>PCA_Files</th>
-      <td><p>character. Path of the PCA image</p></td>
-    </tr>
-    <tr>
-      <th>PCA_model</th>
-      <td><p>list. Parameters for teh PCA model to be applied on original image</p></td>
-    </tr>
-    <tr>
-      <th>SpectralFilter</th>
-      <td><p>list. information about spectral band location
-(central wavelength), bands to keep...</p></td>
-    </tr>
-    <tr>
-      <th>Input_Mask_File</th>
-      <td><p>character. Path of the mask corresponding to the image</p></td>
-    </tr>
-    <tr>
-      <th>Pix_Per_Partition</th>
-      <td><p>numeric. number of pixels for each partition</p></td>
-    </tr>
-    <tr>
-      <th>nb_partitions</th>
-      <td><p>numeric. number of partition</p></td>
-    </tr>
-    <tr>
-      <th>Continuum_Removal</th>
-      <td><p>boolean. Set to TRUE if continuum removal should be applied</p></td>
-    </tr>
-    <tr>
-      <th>TypePCA</th>
-      <td><p>character. Type of PCA: choose either "PCA" or "SPCA"</p></td>
-    </tr>
-    <tr>
-      <th>nbclusters</th>
-      <td><p>numeric. number of clusters defined in k-Means</p></td>
-    </tr>
-    <tr>
-      <th>nbCPU</th>
-      <td><p>numeric. Number of CPUs to use in parallel.</p></td>
-    </tr>
-    <tr>
-      <th>MaxRAM</th>
-      <td><p>numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.</p></td>
+      <th>retx</th>
+      <td><p>boolean.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>None</p>
+    <p>results of MNF applied on matrix</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
