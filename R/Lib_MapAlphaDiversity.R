@@ -38,7 +38,9 @@ map_alpha_div <- function(Input_Image_File, Output_Dir, window_size,
   Output_Dir_PCA <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "PCA")
   Spectral_Species_Path <- paste(Output_Dir_SS, "SpectralSpecies", sep = "")
   # 1- COMPUTE ALPHA DIVERSITY
-  ALPHA <- compute_alpha_metrics(Spectral_Species_Path, window_size, nbclusters, MinSun, pcelim, nbCPU = nbCPU, MaxRAM = MaxRAM, Index_Alpha = Index_Alpha)
+  ALPHA <- compute_alpha_metrics(Spectral_Species_Path = Spectral_Species_Path, window_size = window_size,
+                                 nbclusters = nbclusters, MinSun = MinSun, pcelim = pcelim,
+                                 nbCPU = nbCPU, MaxRAM = MaxRAM, Index_Alpha = Index_Alpha)
   # 2- SAVE ALPHA DIVERSITY MAPS
   print("Write alpha diversity maps")
   # which spectral indices will be computed
@@ -53,7 +55,9 @@ map_alpha_div <- function(Input_Image_File, Output_Dir, window_size,
     Index <- "Shannon"
     HDR$`band names` <- Index
     Alpha_Path <- paste(Output_Dir_Alpha, Index, "_", window_size, sep = "")
-    write_raster(ALPHA$Shannon, HDR, Alpha_Path, window_size, FullRes = FullRes, LowRes = LowRes, SmoothImage = TRUE)
+    write_raster(Image = ALPHA$Shannon, HDR = HDR, ImagePath = Alpha_Path,
+                 window_size = window_size, FullRes = FullRes, LowRes = LowRes,
+                 SmoothImage = TRUE)
     if (MapSTD == TRUE) {
       Index <- "Shannon_SD"
       HDR$`band names` <- Index
@@ -128,8 +132,8 @@ compute_alpha_metrics <- function(Spectral_Species_Path, window_size, nbclusters
   # define number of bands
   HDR_SSD$bands <- HDR_SS$bands * nbclusters
   # define image size
-  HDR_SSD$samples <- floor(HDR_SS$samples / window_size)
-  HDR_SSD$lines <- floor(HDR_SS$lines / window_size)
+  HDR_SSD$samples <- round(HDR_SS$samples / window_size)
+  HDR_SSD$lines <- round(HDR_SS$lines / window_size)
   # change resolution
   HDR_SSD <- change_resolution_HDR(HDR_SSD, window_size)
   HDR_SSD$`band names` <- NULL
@@ -214,6 +218,8 @@ compute_alpha_metrics <- function(Spectral_Species_Path, window_size, nbclusters
   HDR <- HDR_SSD
   HDR$bands <- 1
   HDR$`data type` <- 4
+  HDR$lines <- dim(Shannon.Mean)[1]
+  HDR$samples <- dim(Shannon.Mean)[2]
   my_list <- list(
     "Shannon" = Shannon.Mean, "Fisher" = Fisher.Mean, "Simpson" = Simpson.Mean,
     "Shannon.SD" = Shannon.SD, "Fisher.SD" = Fisher.SD, "Simpson.SD" = Simpson.SD, "HDR" = HDR
@@ -250,7 +256,9 @@ convert_PCA_to_SSD <- function(ReadWrite, Spectral_Species_Path, HDR_SS, HDR_SSD
     ReadWrite$RW_SS$Byte_Start, ReadWrite$RW_SS$lenBin,
     ReadWrite$RW_SS$nbLines, SS_Format, ImgFormat
   )
-  SSD_Alpha <- compute_SSD(SS_Chunk, window_size, nbclusters, MinSun, pcelim, Index_Alpha = Index_Alpha)
+  SSD_Alpha <- compute_SSD(Image_Chunk = SS_Chunk, window_size = window_size,
+                           nbclusters = nbclusters, MinSun = MinSun, pcelim = pcelim,
+                           Index_Alpha = Index_Alpha)
   # write spectral Species ditribution file
   fidSSD <- file(
     description = SSD_Path, open = "r+b", blocking = TRUE,
@@ -305,8 +313,8 @@ convert_PCA_to_SSD <- function(ReadWrite, Spectral_Species_Path, HDR_SS, HDR_SSD
 # @return list of alpha diversity metrics for each iteration
 #' @importFrom vegan fisher.alpha
 compute_SSD <- function(Image_Chunk, window_size, nbclusters, MinSun, pcelim, Index_Alpha = "Shannon") {
-  nbi <- floor(dim(Image_Chunk)[1] / window_size)
-  nbj <- floor(dim(Image_Chunk)[2] / window_size)
+  nbi <- round(dim(Image_Chunk)[1] / window_size)
+  nbj <- round(dim(Image_Chunk)[2] / window_size)
   nb_partitions <- dim(Image_Chunk)[3]
   SSDMap <- array(NA, c(nbi, nbj, nb_partitions * nbclusters))
   shannonIter <- FisherAlpha <- SimpsonAlpha <- array(NA, dim = c(nbi, nbj, nb_partitions))
@@ -323,9 +331,9 @@ compute_SSD <- function(Image_Chunk, window_size, nbclusters, MinSun, pcelim, In
     # for each kernel in the column
     for (jj in 1:nbj) {
       li <- ((ii - 1) * window_size) + 1
-      ui <- ii * window_size
+      ui <- min(c(ii * window_size,dim(Image_Chunk)[1]))
       lj <- ((jj - 1) * window_size) + 1
-      uj <- jj * window_size
+      uj <- min(c(jj * window_size,dim(Image_Chunk)[2]))
       # put all iterations in a 2D matrix shape
       ijit <- t(matrix(Image_Chunk[li:ui, lj:uj, ], ncol = nb_partitions))
       # keep non zero values

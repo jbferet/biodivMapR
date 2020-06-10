@@ -196,6 +196,10 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, NbClusters = 50,
         # Set name to NA
         Name_Plot[ip] <- NA
       }
+      Richness <- rbind(Richness, NA, row.names = NULL, col.names = NULL)
+      Fisher <- rbind(Fisher, NA, row.names = NULL, col.names = NULL)
+      Shannon <- rbind(Shannon, NA, row.names = NULL, col.names = NULL)
+      Simpson <- rbind(Simpson, NA, row.names = NULL, col.names = NULL)
     } else {
       ExtractIm <- extract.big_raster(Raster_SpectralSpecies, XY[[ip]])
       # compute alpha diversity for each repetition
