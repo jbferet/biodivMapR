@@ -173,6 +173,8 @@ compute_Functional_metrics <- function(Functional_File, Functional_Map_Path, Sel
   FRicMap <- do.call(rbind, FRic_Chunk)
   FEveMap <- do.call(rbind, FEve_Chunk)
   FDivMap <- do.call(rbind, FDiv_Chunk)
+  HDR_Funct$lines <- dim(FRicMap)[1]
+  HDR_Funct$samples <- dim(FRicMap)[2]
   FunctMap <- array(NA, c(HDR_Funct$lines, HDR_Funct$samples, 3))
   FunctMap[,,1] <- FRicMap
   FunctMap[,,2] <- FEveMap
