@@ -5,7 +5,7 @@
 # PROGRAMMERS:
 # Jean-Baptiste FERET <jb.feret@teledetection.fr>
 # Florian de Boissieu <fdeboiss@gmail.com>
-# Copyright 2018/07 Jean-Baptiste FERET
+# Copyright 2020/06 Jean-Baptiste FERET
 # ==============================================================================
 # This library checks if a raster in format expected for diversity mapping
 # if not, can convert the raster into BIL format expected for diversity mapping

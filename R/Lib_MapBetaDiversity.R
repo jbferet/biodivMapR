@@ -4,7 +4,7 @@
 # ==============================================================================
 # PROGRAMMERS:
 # Jean-Baptiste FERET <jb.feret@teledetection.fr>
-# Copyright 2018/07 Jean-Baptiste FERET
+# Copyright 2020/06 Jean-Baptiste FERET
 # ==============================================================================
 # This Library computes bray curtis dissimilarity among spatial units based on
 # spectral species distribution file and generates a RGB representation with NMDS
@@ -22,12 +22,12 @@
 #' --> 1000 will be fast but may not capture important patterns if large area
 #' --> 4000 will be slow but may show better ability to capture landscape patterns
 #' @param MinSun numeric. Minimum proportion of sunlit pixels required to consider plot.
+#' @param pcelim numeric. Minimum contribution (in \%) required for a spectral species
 #' @param scaling character. "PCO" or "NMDS".
 #' @param FullRes boolean.
 #' @param LowRes boolean.
 #' @param nbCPU numeric. Number of CPUs to use in parallel.
 #' @param MaxRAM numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.
-#' @param pcelim numeric. Minimum contribution (in \%) required for a spectral species
 #'
 #' @return None
 #' @export
@@ -36,26 +36,28 @@ map_beta_div <- function(Input_Image_File, Output_Dir, window_size,
                                Nb_Units_Ordin = 2000, MinSun = 0.25,
                                pcelim = 0.02, scaling = "PCO", FullRes = TRUE,
                                LowRes = FALSE, nbCPU = 1, MaxRAM = 0.25) {
+
   Output_Dir_SS <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "SpectralSpecies")
   Output_Dir_BETA <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "BETA")
-  Beta <- compute_beta_metrics(Output_Dir_SS, MinSun, Nb_Units_Ordin, nb_partitions,
-                                nbclusters, pcelim, scaling = scaling,
-                                nbCPU = nbCPU, MaxRAM = MaxRAM)
+  Beta <- compute_beta_metrics(Output_Dir = Output_Dir_SS, MinSun = MinSun,
+                               Nb_Units_Ordin = Nb_Units_Ordin, nb_partitions = nb_partitions,
+                               nbclusters = nbclusters, pcelim = pcelim, scaling = scaling,
+                               nbCPU = nbCPU, MaxRAM = MaxRAM)
   # Create images corresponding to Beta-diversity
   print("Write beta diversity maps")
   Index <- paste("BetaDiversity_BCdiss_", scaling, sep = "")
   Beta.Path <- paste(Output_Dir_BETA, Index, "_", window_size, sep = "")
-  write_raster(Image = Beta$BetaDiversity, HDR = Beta$HDR, ImagePath = Beta.Path, 
-               window_size = window_size, FullRes = FullRes, LowRes = LowRes, 
+  write_raster(Image = Beta$BetaDiversity, HDR = Beta$HDR, ImagePath = Beta.Path,
+               window_size = window_size, FullRes = FullRes, LowRes = TRUE,
                SmoothImage = FALSE)
   return(invisible())
 }
 
-# computes NMDS
+#' computes NMDS
 #
-# @param MatBCdist BC dissimilarity matrix
+#' @param MatBCdist BC dissimilarity matrix
 #
-# @return BetaNMDS_sel
+#' @return BetaNMDS_sel
 #' @importFrom future plan multiprocess sequential
 #' @importFrom future.apply future_lapply
 #' @importFrom ecodist nmds
@@ -251,7 +253,7 @@ compute_beta_metrics <- function(Output_Dir, MinSun, Nb_Units_Ordin, nb_partitio
     BetaDiversityRGB[, , i] <- BetaTmp
   }
   list <- ls()
-  
+
   # update HDR file
   HDR_Beta <- HDR_Sunlit
   HDR_Beta$bands <- 3

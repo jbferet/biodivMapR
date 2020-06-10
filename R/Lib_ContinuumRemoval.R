@@ -5,7 +5,7 @@
 # PROGRAMMERS:
 # Jean-Baptiste FERET <jb.feret@teledetection.fr>
 # Florian de Boissieu <fdeboiss@gmail.com>
-# Copyright 2018/07 Jean-Baptiste FERET
+# Copyright 2020/06 Jean-Baptiste FERET
 # ===============================================================================
 # This Library is dedicated to the computation of the continuum removal
 # ===============================================================================

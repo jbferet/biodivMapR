@@ -5,7 +5,7 @@
 # PROGRAMMERS:
 # Jean-Baptiste FERET <jb.feret@teledetection.fr>
 # Florian de Boissieu <fdeboiss@gmail.com>
-# Copyright 2018/07 Jean-Baptiste FERET
+# Copyright 2020/06 Jean-Baptiste FERET
 # ==============================================================================
 # This Library contains functions to manipulate & process raster images
 # Mainly applicable to ENVI HDR data wth BIL interleave
@@ -1186,6 +1186,10 @@ Write_Image_NativeRes <- function(Image,ImagePath,HDR,window_size){
 #' @return None
 
 write_raster <- function(Image, HDR, ImagePath, window_size, FullRes = TRUE, LowRes = FALSE,SmoothImage = FALSE) {
+
+  # check image format
+  HDR$lines <- dim(Image)[1]
+  HDR$samples <- dim(Image)[2]
 
   Image_Format <- ENVI_type2bytes(HDR)
   # Write image with resolution corresponding to window_size

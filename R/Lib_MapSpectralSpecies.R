@@ -5,7 +5,7 @@
 # PROGRAMMERS:
 # Jean-Baptiste FERET <jb.feret@teledetection.fr>
 # Florian de Boissieu <fdeboiss@gmail.com>
-# Copyright 2019/06 Jean-Baptiste FERET
+# Copyright 2020/06 Jean-Baptiste FERET
 # ==============================================================================
 # This Library applies clustering on a selection of components stored in a PCA
 # file previously created ("Perform_PCA.R") and produces corresponding spectral
