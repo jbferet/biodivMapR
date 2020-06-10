@@ -1187,6 +1187,10 @@ Write_Image_NativeRes <- function(Image,ImagePath,HDR,window_size){
 
 write_raster <- function(Image, HDR, ImagePath, window_size, FullRes = TRUE, LowRes = FALSE,SmoothImage = FALSE) {
 
+  # check image format
+  HDR$lines <- dim(Image)[1]
+  HDR$samples <- dim(Image)[2]
+
   Image_Format <- ENVI_type2bytes(HDR)
   # Write image with resolution corresponding to window_size
   if (LowRes == TRUE) {

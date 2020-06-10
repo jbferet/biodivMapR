@@ -1,3 +1,9 @@
+# biodivMapR v1.5.1
+
+## Fixes
+- Fixed bug occuring when writing image if initial raster is not a multiple of the window size. no bug occur but the raster files have wrong information
+- fixed problem when performing estimation of biodiversity for plots outside of the raster: now the value is NA
+
 # biodivMapR v1.5.0
 
 ## Changes
