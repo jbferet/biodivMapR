@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Performs radiometric filtering based on three criteria: NDVI, NIR reflectance, Blue reflectance — perform_radiometric_filtering • biodivMapR</title>
+<title>computes NMDS — compute_NMDS • biodivMapR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="Performs radiometric filtering based on three criteria: NDVI, NIR reflectance, Blue reflectance — perform_radiometric_filtering" />
-<meta property="og:description" content="Performs radiometric filtering based on three criteria: NDVI, NIR reflectance, Blue reflectance" />
+<meta property="og:title" content="computes NMDS — compute_NMDS" />
+<meta property="og:description" content="computes NMDS" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -134,76 +134,29 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Performs radiometric filtering based on three criteria: NDVI, NIR reflectance, Blue reflectance</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jbferet/biodivMapR/blob/master/R/Lib_FilterData.R'><code>R/Lib_FilterData.R</code></a></small>
-    <div class="hidden name"><code>perform_radiometric_filtering.Rd</code></div>
+    <h1>computes NMDS</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jbferet/biodivMapR/blob/master/R/Lib_MapBetaDiversity.R'><code>R/Lib_MapBetaDiversity.R</code></a></small>
+    <div class="hidden name"><code>compute_NMDS.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Performs radiometric filtering based on three criteria: NDVI, NIR reflectance, Blue reflectance</p>
+    <p>computes NMDS</p>
     </div>
 
-    <pre class="usage"><span class='fu'>perform_radiometric_filtering</span>(
-  <span class='no'>Image_Path</span>,
-  <span class='no'>Mask_Path</span>,
-  <span class='no'>Output_Dir</span>,
-  <span class='kw'>TypePCA</span> <span class='kw'>=</span> <span class='st'>"SPCA"</span>,
-  <span class='kw'>NDVI_Thresh</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>Blue_Thresh</span> <span class='kw'>=</span> <span class='fl'>500</span>,
-  <span class='kw'>NIR_Thresh</span> <span class='kw'>=</span> <span class='fl'>1500</span>,
-  <span class='kw'>Blue</span> <span class='kw'>=</span> <span class='fl'>480</span>,
-  <span class='kw'>Red</span> <span class='kw'>=</span> <span class='fl'>700</span>,
-  <span class='kw'>NIR</span> <span class='kw'>=</span> <span class='fl'>835</span>
-)</pre>
+    <pre class="usage"><span class='fu'>compute_NMDS</span>(<span class='no'>MatBCdist</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>Image_Path</th>
-      <td><p>character. Path of the image to be processed</p></td>
-    </tr>
-    <tr>
-      <th>Mask_Path</th>
-      <td><p>character. Path of the mask corresponding to the image</p></td>
-    </tr>
-    <tr>
-      <th>Output_Dir</th>
-      <td><p>character. Path for output directory</p></td>
-    </tr>
-    <tr>
-      <th>TypePCA</th>
-      <td><p>character. Type of PCA: choose either "PCA" or "SPCA"</p></td>
-    </tr>
-    <tr>
-      <th>NDVI_Thresh</th>
-      <td><p>numeric. NDVI threshold applied to produce a mask (select pixels with NDVI&gt;NDVI_Thresh)</p></td>
-    </tr>
-    <tr>
-      <th>Blue_Thresh</th>
-      <td><p>numeric. Blue threshold applied to produce a mask (select pixels with Blue refl &lt; Blue_Thresh --&gt; filter clouds) refl expected between 0 and 10000</p></td>
-    </tr>
-    <tr>
-      <th>NIR_Thresh</th>
-      <td><p>numeric. NIR threshold applied to produce a mask (select pixels with NIR refl &gt; NIR_Thresh) refl expected between 0 and 10000</p></td>
-    </tr>
-    <tr>
-      <th>Blue</th>
-      <td><p>numeric. central wavelength corresponding to the blue spectral band (in nanometers)</p></td>
-    </tr>
-    <tr>
-      <th>Red</th>
-      <td><p>numeric. central wavelength corresponding to the red spectral band (in nanometers)</p></td>
-    </tr>
-    <tr>
-      <th>NIR</th>
-      <td><p>numeric. central wavelength corresponding to the NIR spectral band (in nanometers)</p></td>
+      <th>MatBCdist</th>
+      <td><p>BC dissimilarity matrix</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>MaskPath = updated mask file</p>
+    <p>BetaNMDS_sel</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
