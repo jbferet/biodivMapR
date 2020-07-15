@@ -434,7 +434,7 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.25){
     nXSize = max(rc$col)
     # stars data cube dimension order is x*y*band
     ipix_stars = (rc$rowInBlock-min(rc$rowInBlock))*nXSize+rc$col
-    values = read_stars(ImPath, RasterIO =list(nXSize=nXSize, nYOff=rr[1], nYSize=nYSize))[[1]]
+    values = read_stars(ImPath, RasterIO =list(nXSize=nXSize, nYOff=rr[1], nYSize=nYSize),proxy = FALSE)[[1]]
     values = matrix(values, nrow=nYSize*nXSize)
     res = cbind(rc$sampleIndex, values[ipix_stars, ])
     rm('values')
