@@ -156,7 +156,9 @@
   <span class='kw'>TypePCA</span> <span class='kw'>=</span> <span class='st'>"SPCA"</span>,
   <span class='kw'>nbclusters</span> <span class='kw'>=</span> <span class='fl'>50</span>,
   <span class='kw'>nbCPU</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>MaxRAM</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+  <span class='kw'>MaxRAM</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>Kmeans_Only</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>SelectedPCs</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -214,6 +216,14 @@
     <tr>
       <th>MaxRAM</th>
       <td><p>numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.</p></td>
+    </tr>
+    <tr>
+      <th>Kmeans_Only</th>
+      <td><p>boolean. set to TRUE if computation of kmeans without production of spectral species map</p></td>
+    </tr>
+    <tr>
+      <th>SelectedPCs</th>
+      <td><p>numeric. Define PCs to be selected. Set to FALSE if you want to use the "Selected_Components.txt" file</p></td>
     </tr>
     </table>
 
