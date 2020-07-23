@@ -400,7 +400,7 @@ extract_samples_from_image <- function(ImPath, coordPix, MaxRAM = FALSE, Already
 #
 # @return matrix. Rows are corresponding to the samples, columns are the bands.
 #' @import stars
-extract.big_raster <- function(ImPath, rowcol, MaxRAM=.25){
+extract.big_raster <- function(ImPath, rowcol, MaxRAM=.50){
   # ImPath = hs_file
   # rowcol = arcd
   # rowcol = as.data.table(rowcol)
@@ -460,7 +460,7 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.25){
 #' @importFrom mmand erode
 #' @importFrom data.table data.table rbindlist setorder
 #' @importFrom matrixStats rowAnys
-get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Per_Partition, kernel=NULL) {
+get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Per_Partition, kernel=NULL,MaxRAM = 0.5) {
   r <- brick(ImPath)
   nbPix2Sample <- nb_partitions * Pix_Per_Partition
   # get total number of pixels
