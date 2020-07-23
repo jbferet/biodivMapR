@@ -28,13 +28,15 @@
 #' @param nbCPU numeric. Number of CPUs to use in parallel.
 #' @param MaxRAM numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.
 #' @param nbclusters numeric. number of clusters defined in k-Means
+#' @param Kmeans_Only boolean. set to TRUE if computation of kmeans without production of spectral species map
+#' @param SelectedPCs numeric. Define PCs to be selected. Set to FALSE if you want to use the "Selected_Components.txt" file
 #'
 #' @return None
 #' @importFrom utils read.table
 #' @export
 map_spectral_species <- function(Input_Image_File, Output_Dir, PCA_Files, PCA_model, SpectralFilter, Input_Mask_File,
                                  Pix_Per_Partition, nb_partitions, Continuum_Removal= TRUE, TypePCA = "SPCA",
-                                 nbclusters = 50, nbCPU = 1, MaxRAM = FALSE, ValidationOnly=FALSE, SelectedPCs = FALSE) {
+                                 nbclusters = 50, nbCPU = 1, MaxRAM = FALSE, Kmeans_Only=FALSE, SelectedPCs = FALSE) {
 
   Kmeans_info <- NULL
   if (MaxRAM == FALSE) {
@@ -114,13 +116,13 @@ map_spectral_species <- function(Input_Image_File, Output_Dir, PCA_Files, PCA_mo
     # scaling factor subPCA between 0 and 1
     Kmeans_info <- init_kmeans(dataPCA, Pix_Per_Partition, nb_partitions, nbclusters, nbCPU)
     if (Kmeans_info$Error==FALSE){
-      if (ValidationOnly==FALSE){
+      if (Kmeans_Only==FALSE){
         ##    3- ASSIGN SPECTRAL SPECIES TO EACH PIXEL
         print("apply Kmeans to the whole image and determine spectral species")
         apply_kmeans(PCA_Files, PC_Select, Input_Mask_File, Kmeans_info, Spectral_Species_Path, nbCPU, MaxRAM)
       } else {
-        print("'ValidationOnly' was set to TRUE: kmeans was not applied on the full image")
-        print("Please set 'ValidationOnly' to FALSE if you want to produce spectral species map")
+        print("'Kmeans_Only' was set to TRUE: kmeans was not applied on the full image")
+        print("Please set 'Kmeans_Only' to FALSE if you want to produce spectral species map")
       }
       # save kmeans info into binary variable
       Kmeans_Path <- file.path(Output_Dir_PCA, "Kmeans_Info.RData")
