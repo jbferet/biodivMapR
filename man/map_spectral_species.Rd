@@ -17,7 +17,9 @@ map_spectral_species(
   TypePCA = "SPCA",
   nbclusters = 50,
   nbCPU = 1,
-  MaxRAM = FALSE
+  MaxRAM = FALSE,
+  Kmeans_Only = FALSE,
+  SelectedPCs = FALSE
 )
 }
 \arguments{
@@ -47,6 +49,10 @@ map_spectral_species(
 \item{nbCPU}{numeric. Number of CPUs to use in parallel.}
 
 \item{MaxRAM}{numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.}
+
+\item{Kmeans_Only}{boolean. set to TRUE if computation of kmeans without production of spectral species map}
+
+\item{SelectedPCs}{numeric. Define PCs to be selected. Set to FALSE if you want to use the "Selected_Components.txt" file}
 }
 \value{
 None

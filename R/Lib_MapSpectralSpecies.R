@@ -28,12 +28,20 @@
 #' @param nbCPU numeric. Number of CPUs to use in parallel.
 #' @param MaxRAM numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.
 #' @param nbclusters numeric. number of clusters defined in k-Means
+#' @param Kmeans_Only boolean. set to TRUE if computation of kmeans without production of spectral species map
+#' @param SelectedPCs numeric. Define PCs to be selected. Set to FALSE if you want to use the "Selected_Components.txt" file
 #'
 #' @return None
 #' @importFrom utils read.table
 #' @export
-map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model,SpectralFilter,Input_Mask_File,Pix_Per_Partition,nb_partitions,Continuum_Removal= TRUE,TypePCA = "SPCA", nbclusters = 50, nbCPU = 1, MaxRAM = FALSE) {
+map_spectral_species <- function(Input_Image_File, Output_Dir, PCA_Files, PCA_model, SpectralFilter, Input_Mask_File,
+                                 Pix_Per_Partition, nb_partitions, Continuum_Removal= TRUE, TypePCA = "SPCA",
+                                 nbclusters = 50, nbCPU = 1, MaxRAM = FALSE, Kmeans_Only=FALSE, SelectedPCs = FALSE) {
 
+  Kmeans_info <- NULL
+  if (MaxRAM == FALSE) {
+    MaxRAM <- 0.25
+  }
   # if no prior diversity map has been produced --> need PCA file
   if (!file.exists(PCA_Files)) {
     message("")
@@ -52,50 +60,73 @@ map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model
     # WS_Save <- paste(Output_Dir_PCA, "PCA_Info.RData", sep = "")
     # load(file = WS_Save)
     ##    1- Select components used to perform clustering
-    PC_Select_Path <- paste(Output_Dir_PCA, "Selected_Components.txt", sep = "")
+    if (SelectedPCs == FALSE){
+      PC_Select_Path <- paste(Output_Dir_PCA, "Selected_Components.txt", sep = "")
+    } else {
+      PC_Select_Path = 'NoFile'
+    }
+
     if (file.exists(PC_Select_Path)) {
       PC_Select <- read.table(PC_Select_Path)[[1]]
-      # sample data from image and perform PCA
-      ImPathHDR <- get_HDR_name(Input_Image_File)
-      HDR <- read_ENVI_header(ImPathHDR)
-      Subset <- get_random_subset_from_image(ImPath = Input_Image_File, MaskPath = Input_Mask_File,
-                                             nb_partitions = nb_partitions, Pix_Per_Partition = Pix_Per_Partition,
-                                             kernel = NULL)
-      SubsetInit <- Subset
-      # if needed, apply continuum removal
-      if (Continuum_Removal == TRUE) {
-        Subset$DataSubset <- apply_continuum_removal(Subset$DataSubset, SpectralFilter, nbCPU = nbCPU)
-      }
-      print("Apply PCA to subset prior to k-Means")
-      # remove constant bands if needed
-      if (!length(SpectralFilter$BandsNoVar) == 0) {
-        Subset$DataSubset <- Subset$DataSubset[, -SpectralFilter$BandsNoVar]
-      }
-      if (TypePCA == "PCA" | TypePCA == "SPCA" | TypePCA == "MNF") {
-        dataPCA <- scale(Subset$DataSubset, PCA_model$center, PCA_model$scale) %*% PCA_model$rotation[, 1:PCA_model$Nb_PCs]
-      }
-      dataPCA <- dataPCA[, PC_Select]
-      if (length(PC_Select) == 1) {
-        dataPCA <- matrix(dataPCA, ncol = 1)
-      }
-      message("Selected components:")
-      print(PC_Select)
-      message("Please add carriage return after last selected component if not part of the list")
-      message("If these do not match with your selection, please correct file following file:")
-      print(PC_Select_Path)
+    } else if (!SelectedPCs == FALSE){
+      PC_Select <- SelectedPCs
     } else {
-      print(paste("File named ", PC_Select_Path, "needs to be created first"))
+      print("PC SELECTION MUST BE PERFORMED FIRST")
+      print("Please identify selected components either in this file:")
+      PC_Select_Path <- file.path(Output_Dir_PCA, "Selected_Components.txt")
+      print(PC_Select_Path)
+      print("or in the 'SelectedPCs' variable of map_spectral_species")
       print("Image processing aborted")
       stop()
     }
+    # sample data from PCA image
+    ImPathHDR <- get_HDR_name(PCA_Files)
+    HDR <- read_ENVI_header(ImPathHDR)
+    Subset <- get_random_subset_from_image(ImPath = PCA_Files, MaskPath = Input_Mask_File,
+                                           nb_partitions = nb_partitions, Pix_Per_Partition = Pix_Per_Partition,
+                                           kernel = NULL,MaxRAM = MaxRAM)
+    SubsetInit <- Subset
+    # # sample data from image and perform PCA
+    # ImPathHDR <- get_HDR_name(Input_Image_File)
+    # HDR <- read_ENVI_header(ImPathHDR)
+    # Subset <- get_random_subset_from_image(ImPath = Input_Image_File, MaskPath = Input_Mask_File,
+    #                                        nb_partitions = nb_partitions, Pix_Per_Partition = Pix_Per_Partition,
+    #                                        kernel = NULL,MaxRAM = MaxRAM)
+    # SubsetInit <- Subset
+    # # if needed, apply continuum removal
+    # if (Continuum_Removal == TRUE) {
+    #   Subset$DataSubset <- apply_continuum_removal(Subset$DataSubset, SpectralFilter, nbCPU = nbCPU)
+    # }
+    # print("Apply PCA to subset prior to k-Means")
+    # # remove constant bands if needed
+    # if (!length(SpectralFilter$BandsNoVar) == 0) {
+    #   Subset$DataSubset <- Subset$DataSubset[, -SpectralFilter$BandsNoVar]
+    # }
+    # if (TypePCA == "PCA" | TypePCA == "SPCA" | TypePCA == "MNF") {
+    #   dataPCA <- scale(Subset$DataSubset, PCA_model$center, PCA_model$scale) %*% PCA_model$rotation[, 1:PCA_model$Nb_PCs]
+    # }
+    dataPCA <- Subset$DataSubset[, PC_Select]
+    if (length(PC_Select) == 1) {
+      dataPCA <- matrix(dataPCA, ncol = 1)
+    }
+    message("Selected components:")
+    print(PC_Select)
     ##    2- PERFORM KMEANS FOR EACH ITERATION & DEFINE SPECTRAL SPECIES
     print("perform k-means clustering for each subset and define centroids")
     # scaling factor subPCA between 0 and 1
     Kmeans_info <- init_kmeans(dataPCA, Pix_Per_Partition, nb_partitions, nbclusters, nbCPU)
     if (Kmeans_info$Error==FALSE){
-      ##    3- ASSIGN SPECTRAL SPECIES TO EACH PIXEL
-      print("apply Kmeans to the whole image and determine spectral species")
-      apply_kmeans(PCA_Files, PC_Select, Input_Mask_File, Kmeans_info, Spectral_Species_Path, nbCPU, MaxRAM)
+      if (Kmeans_Only==FALSE){
+        ##    3- ASSIGN SPECTRAL SPECIES TO EACH PIXEL
+        print("apply Kmeans to the whole image and determine spectral species")
+        apply_kmeans(PCA_Files, PC_Select, Input_Mask_File, Kmeans_info, Spectral_Species_Path, nbCPU, MaxRAM)
+      } else {
+        print("'Kmeans_Only' was set to TRUE: kmeans was not applied on the full image")
+        print("Please set 'Kmeans_Only' to FALSE if you want to produce spectral species map")
+      }
+      # save kmeans info into binary variable
+      Kmeans_Path <- file.path(Output_Dir_PCA, "Kmeans_Info.RData")
+      save(Kmeans_info, file = Kmeans_Path)
     } else {
       ##    produce error report
       # create directory where error should be stored
@@ -122,7 +153,7 @@ map_spectral_species <- function(Input_Image_File,Output_Dir,PCA_Files,PCA_model
       stop()
     }
   }
-  return(invisible())
+  return(Kmeans_info)
 }
 
 # computes k-means from nb_partitions subsets taken from dataPCA

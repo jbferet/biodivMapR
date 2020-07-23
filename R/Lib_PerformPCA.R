@@ -53,13 +53,13 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
     FilterPCA <- FALSE
     kernel = matrix(0, 3, 3)
     kernel[c(5, 6, 8)]=c(1, -1/2, -1/2)
-    Subset <- get_random_subset_from_image(ImPath = Input_Image_File, 
+    Subset <- get_random_subset_from_image(ImPath = Input_Image_File,
                                            MaskPath = Input_Mask_File, nb_partitions = nb_partitions,
-                                           Pix_Per_Partition = Pix_Per_Partition, kernel = kernel)
+                                           Pix_Per_Partition = Pix_Per_Partition, kernel = kernel, MaxRAM = MaxRAM)
   } else {
-    Subset <- get_random_subset_from_image(ImPath = Input_Image_File, 
+    Subset <- get_random_subset_from_image(ImPath = Input_Image_File,
                                            MaskPath = Input_Mask_File, nb_partitions = nb_partitions,
-                                           Pix_Per_Partition = Pix_Per_Partition, kernel = NULL)
+                                           Pix_Per_Partition = Pix_Per_Partition, kernel = NULL, MaxRAM = MaxRAM)
   }
   # if needed, apply continuum removal
   if (Continuum_Removal == TRUE) {
@@ -119,7 +119,7 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
     # extract a random selection of pixels from image
     Subset <- get_random_subset_from_image(ImPath = Input_Image_File, MaskPath = Input_Mask_File,
                                            nb_partitions = nb_partitions, Pix_Per_Partition = Pix_Per_Partition,
-                                           kernel = NULL)
+                                           kernel = NULL, MaxRAM = MaxRAM)
     # if needed, apply continuum removal
     if (Continuum_Removal == TRUE) {
       Subset$DataSubset <- apply_continuum_removal(Subset$DataSubset, SpectralFilter, nbCPU = nbCPU)
