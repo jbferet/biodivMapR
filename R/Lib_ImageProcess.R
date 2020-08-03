@@ -471,7 +471,7 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Pe
   # 1- Exclude masked pixels from random subset
   # Read Mask
   if ((!MaskPath == "") & (!MaskPath == FALSE)) {
-    mask <- matrix(raster(MaskPath),ncol= nsamples,nrow = nlines)
+    mask <- matrix(t(raster(MaskPath)),ncol= nsamples,nrow = nlines)
   } else {
     mask <- array(1, dim = c(nlines, nsamples))
   }
