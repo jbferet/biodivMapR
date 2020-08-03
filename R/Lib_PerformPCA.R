@@ -169,9 +169,9 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
                    nbCPU = nbCPU, MaxRAM = MaxRAM)
   # save workspace for this stage
   WS_Save <- paste(Output_Dir_PCA, "PCA_Info.RData", sep = "")
-  save(PCA_model, file = WS_Save)
   my_list <- list("PCA_Files" = PCA_Files,"Pix_Per_Partition" =Pix_Per_Partition, "nb_partitions" = nb_partitions,
                   "MaskPath" = Input_Mask_File, "PCA_model" =PCA_model,"SpectralFilter"=   SpectralFilter)
+  save(my_list, file = WS_Save)
   return(my_list)
 }
 
