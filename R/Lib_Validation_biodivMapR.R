@@ -41,13 +41,13 @@ list_shp <- function(x){
 reproject_vector <-  function(Initial.File,Projection,Reprojected.File){
 
   Shp.Path <- dirname(Initial.File)
-  Shp.Name <- file_path_sans_ext(basename(Initial.File))
+  Shp.Name <- tools::file_path_sans_ext(basename(Initial.File))
   Vect.Init <- readOGR(Shp.Path,Shp.Name,verbose = FALSE)
   Proj.init <- projection(Vect.Init)
 
   if (!Proj.init==Projection){
     Shp.Path <- dirname(Reprojected.File)
-    Shp.Name <- file_path_sans_ext(basename(Reprojected.File))
+    Shp.Name <- tools::file_path_sans_ext(basename(Reprojected.File))
     Vect.reproj <- spTransform(Vect.Init, Projection)
     writeOGR(obj = Vect.reproj, dsn = Shp.Path,layer = Shp.Name, driver="ESRI Shapefile",overwrite_layer = TRUE) #also you were missing the driver argument
   }
@@ -63,7 +63,7 @@ reproject_vector <-  function(Initial.File,Projection,Reprojected.File){
 extract_pixels_coordinates = function(Path.Raster,Path.Vector){
   # read vector file
   Shp.Path <- dirname(Path.Vector)
-  Shp.Name <- file_path_sans_ext(basename(Path.Vector))
+  Shp.Name <- tools::file_path_sans_ext(basename(Path.Vector))
   Shp.Crop <- readOGR(Shp.Path,Shp.Name)
   # read raster info
   Raster <- raster(Path.Raster, band = 1)
@@ -124,7 +124,7 @@ get_alpha_metrics = function(Distrib){
 #' @param Selected_Features numeric. selected features for Raster_Functional. use all features if set to FALSE
 #' @param Name_Plot character. Name of the plots defined in the shapefiles
 #' @return alpha and beta diversity metrics
-#' @importFrom raster raster projection
+#' @importFrom raster raster projection compareCRS
 #' @importFrom rgdal readOGR
 #' @importFrom geometry convhulln
 #' @importFrom emstreeR ComputeMST
@@ -158,15 +158,15 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, NbClusters = 50,
   for (ip in 1:nbPlots){
     # prepare for possible reprojection
     File.Vector <- Plots[[ip]]
-    Name.Vector[[ip]] <- file_path_sans_ext(basename(File.Vector))
+    Name.Vector[[ip]] <- tools::file_path_sans_ext(basename(File.Vector))
     print(paste('Reading pixels coordinates for polygons in ',Name.Vector[[ip]],sep=''))
     File.Vector.reproject <- paste(Dir.Vector.reproject,'/',Name.Vector[[ip]],'.shp','sep'='')
 
-    if (file.exists(paste(file_path_sans_ext(File.Vector),'.shp',sep=''))){
+    if (file.exists(paste(tools::file_path_sans_ext(File.Vector),'.shp',sep=''))){
       Plot <- readOGR(Dir.Vector,Name.Vector[[ip]],verbose = FALSE)
       # check if vector and rasters are in the same referential
       # if not, convert vector file
-      if (!compareCRS(raster(Raster_SpectralSpecies), Plot)){
+      if (!raster::compareCRS(raster(Raster_SpectralSpecies), Plot)){
         stop('Raster and Plots have different projection. Plots should be reprojected to Raster CRS')
       }
     } else if (file.exists(paste(File.Vector,'kml','sep'='.'))){
