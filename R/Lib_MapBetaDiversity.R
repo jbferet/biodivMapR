@@ -166,6 +166,68 @@ ordination_parallel <- function(id.sub, coordTotSort, SSD_Path, Sample_Sel, Beta
   return(OutPut)
 }
 
+
+#' compute beta diversity from spectral species computed for a plot
+#' expecting a matrix of spectral species (n pixels x p repetitions)
+#'
+#' @param SpectralSpecies_Plots list. list of matrices of spectral species corresponding to plots
+#' @param nbclusters numeric. number of clusters
+#' @param pcelim minimum contribution of spectral species to estimation of diversity
+#' each spectral species with a proprtion < pcelim is eliminated before computation of diversity
+#
+#' @return Mean bray curtis dissimilarity matrix for all plots, and individual BC matrices corresponding to each repetitions
+#' @importFrom vegan vegdist
+#' @export
+
+compute_BETA_FromPlots <- function(SpectralSpecies_Plots,nbclusters,pcelim = 0.02){
+
+  nbPolygons<- length(SpectralSpecies_Plots)
+  Pixel.Inventory.All <- list()
+  nb_partitions <- dim(SpectralSpecies_Plots[[1]])[2]
+  # for each plot
+  for (plot in 1:nbPolygons){
+    # for each repetition
+    Pixel.Inventory <- list()
+    for (i in 1:nb_partitions){
+      # compute distribution of spectral species
+      Distritab <- table(SpectralSpecies_Plots[[plot]][,i])
+      # compute distribution of spectral species
+      Pixel.Inventory[[i]] <- as.data.frame(Distritab)
+      SumPix <- sum(Pixel.Inventory[[i]]$Freq)
+      ThreshElim <- pcelim*SumPix
+      ElimZeros <- which(Pixel.Inventory[[i]]$Freq<ThreshElim)
+      if (length(ElimZeros)>=1){
+        Pixel.Inventory[[i]] <- Pixel.Inventory[[i]][-ElimZeros,]
+      }
+      if (length(which(Pixel.Inventory[[i]]$Var1==0))==1){
+        Pixel.Inventory[[i]] <- Pixel.Inventory[[i]][-which(Pixel.Inventory[[i]]$Var1==0),]
+      }
+    }
+    Pixel.Inventory.All[[plot]] <- Pixel.Inventory
+  }
+
+  # for each pair of plot, compute beta diversity indices
+  BC <- list()
+  for(i in 1:nb_partitions){
+    MergeDiversity <- matrix(0,nrow = nbclusters,ncol = nbPolygons)
+    for(j in 1:nbPolygons){
+      SelSpectralSpecies <- as.numeric(as.vector(Pixel.Inventory.All[[j]][[i]]$Var1))
+      SelFrequency <- Pixel.Inventory.All[[j]][[i]]$Freq
+      MergeDiversity[SelSpectralSpecies,j] = SelFrequency
+    }
+    BC[[i]] <- vegan::vegdist(t(MergeDiversity),method="bray")
+  }
+  BC_mean <- 0*BC[[1]]
+  for(i in 1:nb_partitions){
+    BC_mean <- BC_mean+BC[[i]]
+  }
+  BC_mean <- BC_mean/nb_partitions
+  beta <- list('BrayCurtis' = BC_mean, 'BrayCurtis_ALL' = BC)
+  return(beta)
+}
+
+
+
 # computes beta diversity
 #
 # @param Output_Dir directory where spectral species are stored

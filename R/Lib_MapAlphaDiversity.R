@@ -94,6 +94,52 @@ map_alpha_div <- function(Input_Image_File, Output_Dir, window_size,
   return(invisible())
 }
 
+
+#' compute alpha diversity from spectral species computed for a plot
+#' expecting a matrix of spectral species (n pixels x p repetitions)
+#'
+#' @param SpectralSpecies_Plot numeric. matrix of spectral species
+#' @param pcelim minimum contribution of spectral species to estimation of diversity
+#' each spectral species with a proprtion < pcelim is eliminated before computation of diversity
+#
+#' @return list of alpha diversity metrics
+#' @export
+
+compute_ALPHA_FromPlot <- function(SpectralSpecies_Plot,pcelim = 0.02){
+
+  nb_partitions <- dim(SpectralSpecies_Plot)[2]
+  Richness.tmp <- Shannon.tmp <- Fisher.tmp <- Simpson.tmp <- vector(length = nb_partitions)
+  for (i in 1:nb_partitions){
+    # compute distribution of spectral species
+    Distritab <- table(SpectralSpecies_Plot[,i])
+    # compute distribution of spectral species
+    Pixel.Inventory <- as.data.frame(Distritab)
+    SumPix <- sum(Pixel.Inventory$Freq)
+    ThreshElim <- pcelim*SumPix
+    ElimZeros <- which(Pixel.Inventory$Freq<ThreshElim)
+    if (length(ElimZeros)>=1){
+      Pixel.Inventory <- Pixel.Inventory[-ElimZeros,]
+    }
+    if (length(which(Pixel.Inventory$Var1==0))==1){
+      Pixel.Inventory <- Pixel.Inventory[-which(Pixel.Inventory$Var1==0),]
+    }
+    Alpha <- get_alpha_metrics(Pixel.Inventory$Freq)
+    # Alpha diversity
+    Richness.tmp[i] <- as.numeric(Alpha$Richness)
+    Fisher.tmp[i] <- Alpha$fisher
+    Shannon.tmp[i] <- Alpha$Shannon
+    Simpson.tmp[i] <- Alpha$Simpson
+  }
+  Richness <- mean(Richness.tmp)
+  Fisher <- mean(Fisher.tmp)
+  Shannon <- mean(Shannon.tmp)
+  Simpson <- mean(Simpson.tmp)
+  alpha <- list('Richness' = Richness, 'Fisher' = Fisher, 'Shannon' = Shannon, 'Simpson' = Simpson,
+                'Richness_ALL' = Richness.tmp, 'Fisher_ALL' = Fisher.tmp, 'Shannon_ALL' = Shannon.tmp, 'Simpson_ALL' = Simpson.tmp)
+  return(alpha)
+}
+
+
 # Map alpha diversity metrics based on spectral species
 #
 # @param Spectral_Species_Path character. path for spectral species file to be written
