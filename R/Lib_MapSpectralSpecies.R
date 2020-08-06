@@ -168,6 +168,7 @@ map_spectral_species <- function(Input_Image_File, Output_Dir, PCA_Files, PCA_mo
 #' @importFrom future plan multiprocess sequential
 #' @importFrom future.apply future_lapply
 #' @importFrom stats kmeans
+
 init_kmeans <- function(dataPCA, Pix_Per_Partition, nb_partitions, nbclusters, nbCPU = 1) {
   m0 <- apply(dataPCA, 2, function(x) min(x))
   M0 <- apply(dataPCA, 2, function(x) max(x))
@@ -357,6 +358,48 @@ compute_spectral_species <- function(PCA_Path, Input_Mask_File, Spectral_Species
   rm(list = ls())
   gc()
   return(invisible())
+}
+
+#' compute spectral species for a subset of pixels provided in a list, each element
+#' corresponding to a polygon
+#'
+#' @param subset_Raster numeric. Subset of a raster file on which computation of spectral species sould be performed
+#' @param List_FieldPlot list. list of information from same file as subset, corresponding to field plots
+#' @param nb_partitions numeric. number of repetitions of kmeans
+#' @param Pix_Per_Partition numeric. number of pixels per partition
+#' @param nbclusters numeric. number of clusters / spectral species
+#' @param PC_Select numeric. selection of components from subset_Raster and List_FieldPlot on which spctral species are computed
+#' @param nbCPU numeric. number of CPU on which kmeans is computed
+#'
+#' @return list. vector_coordinates and vector_ID for each element in the vector file
+
+compute_spectral_species_FieldPlots <- function(subset_Raster, List_FieldPlot, nb_partitions,
+                                                Pix_Per_Partition, nbclusters, PC_Select=NULL, nbCPU=1){
+  # COMPUTE KMEANS
+  nbFieldPlots <- length(List_FieldPlot)
+  if (!is.null(PC_Select)){
+    subset_Raster <- matrix(subset_Raster[,PC_Select],ncol = length(PC_Select))
+    for (ll in 1:nbFieldPlots){
+      List_FieldPlot[[ll]] <- matrix(List_FieldPlot[[ll]][, PC_Select],ncol = length(PC_Select))
+    }
+  }
+  Kmeans_info <- init_kmeans(subset_Raster, Pix_Per_Partition, nb_partitions, nbclusters, nbCPU)
+  # APPLY KMEANS ON THE FIELD DATA
+  Nearest_Cluster <- list()
+  # prepare to save spectral species for each plot, for this band combination
+  SpectralSpecies_Plots <- list()
+  for (ip in 1:nbFieldPlots){
+    # if only one polygon in the shapefile and if the polyon is not included in the Raster_SpectralSpecies
+    if (length(List_FieldPlot[[ip]])>0){
+      PCA_plot <- center_reduce(List_FieldPlot[[ip]], Kmeans_info$MinVal, Kmeans_info$Range)
+      # for each pixel in the subset, compute the nearest cluster for each iteration
+      Nearest_Cluster[[ip]] <- matrix(0, nrow = nrow(PCA_plot), ncol = nb_partitions)
+      CentroidsArray <- do.call("rbind", Kmeans_info$Centroids)
+      Nearest_Cluster[[ip]] <- RdistList(PCA_plot, CentroidsArray, nbclusters, nb_partitions)
+      SpectralSpecies_Plots[[ip]] <- Nearest_Cluster[[ip]]
+    }
+  }
+  return(SpectralSpecies_Plots)
 }
 
 # Compute distance between each pixel of input data and each of the nbClusters x nb_partitions centroids
