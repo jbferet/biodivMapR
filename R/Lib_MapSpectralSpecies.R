@@ -372,6 +372,7 @@ compute_spectral_species <- function(PCA_Path, Input_Mask_File, Spectral_Species
 #' @param nbCPU numeric. number of CPU on which kmeans is computed
 #'
 #' @return list. vector_coordinates and vector_ID for each element in the vector file
+#' @export
 
 compute_spectral_species_FieldPlots <- function(subset_Raster, List_FieldPlot, nb_partitions,
                                                 Pix_Per_Partition, nbclusters, PC_Select=NULL, nbCPU=1){

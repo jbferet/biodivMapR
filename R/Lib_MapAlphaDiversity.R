@@ -103,6 +103,7 @@ map_alpha_div <- function(Input_Image_File, Output_Dir, window_size,
 #' each spectral species with a proprtion < pcelim is eliminated before computation of diversity
 #
 #' @return list of alpha diversity metrics
+#' @export
 
 compute_ALPHA_FromPlot <- function(SpectralSpecies_Plot,pcelim = 0.02){
 

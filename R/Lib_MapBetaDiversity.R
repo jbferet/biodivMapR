@@ -177,6 +177,7 @@ ordination_parallel <- function(id.sub, coordTotSort, SSD_Path, Sample_Sel, Beta
 #
 #' @return Mean bray curtis dissimilarity matrix for all plots, and individual BC matrices corresponding to each repetitions
 #' @importFrom vegan vegdist
+#' @export
 
 compute_BETA_FromPlots <- function(SpectralSpecies_Plots,nbclusters,pcelim = 0.02){
 
