@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>maps alpha diversity indicators  based on prior selection of PCs — map_alpha_div • biodivMapR</title>
+<title>writes ENVI hdr file — write_ENVI_header • biodivMapR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="maps alpha diversity indicators  based on prior selection of PCs — map_alpha_div" />
-<meta property="og:description" content="maps alpha diversity indicators  based on prior selection of PCs" />
+<meta property="og:title" content="writes ENVI hdr file — write_ENVI_header" />
+<meta property="og:description" content="writes ENVI hdr file" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -134,91 +134,35 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>maps alpha diversity indicators  based on prior selection of PCs</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jbferet/biodivMapR/blob/master/R/Lib_MapAlphaDiversity.R'><code>R/Lib_MapAlphaDiversity.R</code></a></small>
-    <div class="hidden name"><code>map_alpha_div.Rd</code></div>
+    <h1>writes ENVI hdr file</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jbferet/biodivMapR/blob/master/R/Lib_ImageProcess.R'><code>R/Lib_ImageProcess.R</code></a></small>
+    <div class="hidden name"><code>write_ENVI_header.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>maps alpha diversity indicators  based on prior selection of PCs</p>
+    <p>writes ENVI hdr file</p>
     </div>
 
-    <pre class="usage"><span class='fu'>map_alpha_div</span><span class='op'>(</span>
-  <span class='va'>Input_Image_File</span>,
-  <span class='va'>Output_Dir</span>,
-  <span class='va'>window_size</span>,
-  TypePCA <span class='op'>=</span> <span class='st'>"SPCA"</span>,
-  nbclusters <span class='op'>=</span> <span class='fl'>50</span>,
-  MinSun <span class='op'>=</span> <span class='fl'>0.25</span>,
-  pcelim <span class='op'>=</span> <span class='fl'>0.02</span>,
-  Index_Alpha <span class='op'>=</span> <span class='st'>"Shannon"</span>,
-  FullRes <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  LowRes <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  MapSTD <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  nbCPU <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  MaxRAM <span class='op'>=</span> <span class='cn'>FALSE</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>write_ENVI_header</span><span class='op'>(</span><span class='va'>HDR</span>, <span class='va'>HDRpath</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>Input_Image_File</th>
-      <td><p>character. Path and name of the image to be processed.</p></td>
+      <th>HDR</th>
+      <td><p>content to be written</p></td>
     </tr>
     <tr>
-      <th>Output_Dir</th>
-      <td><p>character. Output directory.</p></td>
-    </tr>
-    <tr>
-      <th>window_size</th>
-      <td><p>numeric. Size of spatial units (in pixels) to compute diversity.</p></td>
-    </tr>
-    <tr>
-      <th>TypePCA</th>
-      <td><p>character. Type of PCA (PCA, SPCA, NLPCA...).</p></td>
-    </tr>
-    <tr>
-      <th>nbclusters</th>
-      <td><p>numeric. Number of clusters defined in k-Means.</p></td>
-    </tr>
-    <tr>
-      <th>MinSun</th>
-      <td><p>numeric. Minimum proportion of sunlit pixels required to consider plot.</p></td>
-    </tr>
-    <tr>
-      <th>pcelim</th>
-      <td><p>numeric. Minimum contribution (in %) required for a spectral species.</p></td>
-    </tr>
-    <tr>
-      <th>Index_Alpha</th>
-      <td><p>character. Either 'Shannon', 'Simpson' or 'Fisher'.</p></td>
-    </tr>
-    <tr>
-      <th>FullRes</th>
-      <td><p>boolean. Full resolution.</p></td>
-    </tr>
-    <tr>
-      <th>LowRes</th>
-      <td><p>boolean. Low resolution.</p></td>
-    </tr>
-    <tr>
-      <th>MapSTD</th>
-      <td><p>boolean. map of standard deviation of the alpha diversity map (over repetitions)</p></td>
-    </tr>
-    <tr>
-      <th>nbCPU</th>
-      <td><p>numeric. Number of CPUs to use in parallel.</p></td>
-    </tr>
-    <tr>
-      <th>MaxRAM</th>
-      <td><p>numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.</p></td>
+      <th>HDRpath</th>
+      <td><p>Path of the hdr file</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>None</p>
+    
+
+
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

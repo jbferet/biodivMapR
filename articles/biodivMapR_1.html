@@ -95,7 +95,7 @@
       <h1 data-toc-skip>Converting a raster file to the proper file format</h1>
                         <h4 class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
             
-            <h4 class="date">2020-08-10</h4>
+            <h4 class="date">2020-10-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR_1.Rmd"><code>vignettes/biodivMapR_1.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_1.Rmd</code></div>
@@ -121,28 +121,29 @@
 <a href="#how-to-produce-raster-data-with-proper-format-using-raster2bil" class="anchor"></a>How to produce raster data with proper format using <code>raster2BIL</code>
 </h1>
 <p><code>raster2BIL</code> can be run as follows:</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">biodivMapR</span>)
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jbferet/biodivMapR">biodivMapR</a></span><span class="op">)</span>
 <span class="co"># define input variables for raster2BIL:</span>
 <span class="co"># full path or relative path for the raster file to convert</span>
-<span class="no">Path_Raster_File</span> <span class="kw">&lt;-</span> <span class="st">'Where/is/your/raster/file/?'</span>
+<span class="va">Path_Raster_File</span> <span class="op">&lt;-</span> <span class="st">'Where/is/your/raster/file/?'</span>
 <span class="co"># you also need to define a template for the .hdr file corresponding to your sensor. </span>
 <span class="co"># locate the install directory for biodivMapR</span>
 <span class="co"># system.file(package = "biodivMapR")`</span>
 <span class="co"># and write a file with description corresponding to your image (in terms of spectral bands, band name, etc)</span>
-<span class="no">Name_Template_HDR</span> <span class="kw">&lt;-</span> <span class="st">'Name_of_hdr_template'</span>
+<span class="va">Name_Template_HDR</span> <span class="op">&lt;-</span> <span class="st">'Name_of_hdr_template'</span>
 <span class="co"># you may want to convert reflectance from [0-1] real32 values to [0-10000] integer16</span>
 <span class="co"># see explanation below</span>
-<span class="no">Convert_Integer</span> <span class="kw">&lt;-</span> <span class="fl">TRUE</span>
-<span class="no">Multiplying_Factor</span> <span class="kw">&lt;-</span> <span class="fl">10000</span>
-<span class="no">Multiplying_Factor_Last</span> <span class="kw">&lt;-</span> <span class="fl">1.0</span>
+<span class="va">Convert_Integer</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span>
+<span class="va">Multiplying_Factor</span> <span class="op">&lt;-</span> <span class="fl">10000</span>
+<span class="va">Multiplying_Factor_Last</span> <span class="op">&lt;-</span> <span class="fl">1.0</span>
 
-<span class="no">Input_Image_File</span>  <span class="kw">=</span> <span class="fu"><a href="../reference/raster2BIL.html">raster2BIL</a></span>(<span class="kw">Raster_Path</span> <span class="kw">=</span> <span class="no">Path_Raster_File</span>,
-                               <span class="kw">Sensor</span> <span class="kw">=</span> <span class="no">Name_Template_HDR</span>,
-                               <span class="kw">Output_Dir</span> <span class="kw">=</span> <span class="no">Path_Output_Directory</span>,
-                               <span class="kw">Convert_Integer</span> <span class="kw">=</span> <span class="no">Convert_Integer</span>,
-                               <span class="kw">Multiplying_Factor</span> <span class="kw">=</span> <span class="no">Multiplying_Factor</span>,
-                               <span class="kw">Multiplying_Factor_Last</span><span class="kw">=</span><span class="no">Multiplying_Factor_Last</span>,
-                               <span class="kw">Mask</span> <span class="kw">=</span> <span class="fl">FALSE</span>)</pre></body></html></div>
+<span class="va">Input_Image_File</span>  <span class="op">=</span> <span class="fu"><a href="../reference/raster2BIL.html">raster2BIL</a></span><span class="op">(</span>Raster_Path <span class="op">=</span> <span class="va">Path_Raster_File</span>,
+                               Sensor <span class="op">=</span> <span class="va">Name_Template_HDR</span>,
+                               Output_Dir <span class="op">=</span> <span class="va">Path_Output_Directory</span>,
+                               Convert_Integer <span class="op">=</span> <span class="va">Convert_Integer</span>,
+                               Multiplying_Factor <span class="op">=</span> <span class="va">Multiplying_Factor</span>,
+                               Multiplying_Factor_Last<span class="op">=</span><span class="va">Multiplying_Factor_Last</span>,
+                               Mask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></pre></div>
 <div id="input-variables" class="section level2">
 <h2 class="hasAnchor">
 <a href="#input-variables" class="anchor"></a>Input variables</h2>
@@ -193,7 +194,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
