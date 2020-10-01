@@ -245,8 +245,9 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, NbClusters = 50,
   ###########################################################
   ###           Compute functional  diversity             ###
   ###########################################################
+  FunctionalDiversity <- NULL
   if (!Raster_Functional==FALSE){
-    FunctionalDiversity = data.frame('FEve'=vector(length = nbPolygons),
+    FunctionalDiversity <- data.frame('FEve'=vector(length = nbPolygons),
                                      'FRic'=vector(length = nbPolygons),
                                      'FDiv'=vector(length = nbPolygons))
     # for each polygon
