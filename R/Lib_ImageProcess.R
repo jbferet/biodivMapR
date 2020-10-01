@@ -1108,13 +1108,15 @@ where_to_write_kernel <- function(HDR_SS, HDR_SSD, nbPieces, SE.Size) {
   return(my_list)
 }
 
-# writes ENVI hdr file
-#
-# @param HDR content to be written
-# @param HDRpath Path of the hdr file
-#
-# @return
+#' writes ENVI hdr file
+#'
+#' @param HDR content to be written
+#' @param HDRpath Path of the hdr file
+#'
+#' @return
 #' @importFrom stringr str_count
+#' @export
+
 write_ENVI_header <- function(HDR, HDRpath) {
   h <- lapply(HDR, function(x) {
     if (length(x) > 1 || (is.character(x) && str_count(x, "\\w+") > 1)) {
@@ -1124,6 +1126,7 @@ write_ENVI_header <- function(HDR, HDRpath) {
     x <- as.character(x)
   })
   writeLines(c("ENVI", paste(names(HDR), h, sep = " = ")), con = HDRpath)
+  return("")
 }
 
 #' write an image which size is > 2**31-1
