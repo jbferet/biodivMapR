@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.0</span>
       </span>
     </div>
 
@@ -137,12 +137,30 @@
       <small>Source: <a href='https://github.com/jbferet/biodivMapR/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="biodivmapr-v1-5-1" class="section level1">
-<h1 class="page-header" data-toc-text="1.5.1">
-<a href="#biodivmapr-v1-5-1" class="anchor"></a>biodivMapR v1.5.1</h1>
+    <div id="biodivmapr-v1-6-0" class="section level1">
+<h1 class="page-header" data-toc-text="1.6.0">
+<a href="#biodivmapr-v1-6-0" class="anchor"></a>biodivMapR v1.6.0</h1>
+<div id="changes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes" class="anchor"></a>Changes</h2>
+<ul>
+<li>Added option to directly compute alpha and beta diversity maps from classification maps, even if it does not correspond to SpectralSpecies file produced from biodivMapR</li>
+</ul>
+</div>
 <div id="fixes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#fixes" class="anchor"></a>Fixes</h2>
+<ul>
+<li>Fixed bug occuring when calling function diversity_from_plots if no functional duversity map was produced before</li>
+</ul>
+</div>
+</div>
+    <div id="biodivmapr-v1-5-1" class="section level1">
+<h1 class="page-header" data-toc-text="1.5.1">
+<a href="#biodivmapr-v1-5-1" class="anchor"></a>biodivMapR v1.5.1</h1>
+<div id="fixes-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#fixes-1" class="anchor"></a>Fixes</h2>
 <ul>
 <li>Fixed bug occuring when writing image if initial raster is not a multiple of the window size. no bug occur but the raster files have wrong information</li>
 <li>fixed problem when performing estimation of biodiversity for plots outside of the raster: now the value is NA</li>
@@ -152,9 +170,9 @@
     <div id="biodivmapr-v1-5-0" class="section level1">
 <h1 class="page-header" data-toc-text="1.5.0">
 <a href="#biodivmapr-v1-5-0" class="anchor"></a>biodivMapR v1.5.0</h1>
-<div id="changes" class="section level2">
+<div id="changes-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#changes" class="anchor"></a>Changes</h2>
+<a href="#changes-1" class="anchor"></a>Changes</h2>
 <ul>
 <li>Added functional diversity metrics</li>
 <li>updated example script</li>
@@ -165,9 +183,9 @@
     <div id="biodivmapr-v1-4-0" class="section level1">
 <h1 class="page-header" data-toc-text="1.4.0">
 <a href="#biodivmapr-v1-4-0" class="anchor"></a>biodivMapR v1.4.0</h1>
-<div id="changes-1" class="section level2">
+<div id="changes-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#changes-1" class="anchor"></a>Changes</h2>
+<a href="#changes-2" class="anchor"></a>Changes</h2>
 <ul>
 <li>implemented MNF</li>
 <li>discarded HDR as input variable from get_random_subset_from_image</li>
@@ -182,17 +200,17 @@
     <div id="biodivmapr-v1-3-1" class="section level1">
 <h1 class="page-header" data-toc-text="1.3.1">
 <a href="#biodivmapr-v1-3-1" class="anchor"></a>biodivMapR v1.3.1</h1>
-<div id="fixes-1" class="section level2">
+<div id="fixes-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#fixes-1" class="anchor"></a>Fixes</h2>
+<a href="#fixes-2" class="anchor"></a>Fixes</h2>
 <ul>
 <li>fixed identification and elimination of pixel samples with NA</li>
 <li>fixed bug occuring when input raster is BSQ interleave, and BSQ reported in PC file and following files</li>
 </ul>
 </div>
-<div id="changes-2" class="section level2">
+<div id="changes-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#changes-2" class="anchor"></a>Changes</h2>
+<a href="#changes-3" class="anchor"></a>Changes</h2>
 <ul>
 <li>finalized preparation for MNF</li>
 <li>improved information in the header files</li>
@@ -202,9 +220,9 @@
     <div id="biodivmapr-v1-3-0" class="section level1">
 <h1 class="page-header" data-toc-text="1.3.0">
 <a href="#biodivmapr-v1-3-0" class="anchor"></a>biodivMapR v1.3.0</h1>
-<div id="changes-3" class="section level2">
+<div id="changes-4" class="section level2">
 <h2 class="hasAnchor">
-<a href="#changes-3" class="anchor"></a>Changes</h2>
+<a href="#changes-4" class="anchor"></a>Changes</h2>
 <ul>
 <li>integrated stars package in order to read any file format, including TIFF format</li>
 <li>developed a generic function to write rasters</li>
@@ -216,9 +234,9 @@
     <div id="biodivmapr-v1-2-1" class="section level1">
 <h1 class="page-header" data-toc-text="1.2.1">
 <a href="#biodivmapr-v1-2-1" class="anchor"></a>biodivMapR v1.2.1</h1>
-<div id="changes-4" class="section level2">
+<div id="changes-5" class="section level2">
 <h2 class="hasAnchor">
-<a href="#changes-4" class="anchor"></a>Changes</h2>
+<a href="#changes-5" class="anchor"></a>Changes</h2>
 <ul>
 <li>added option to convert the mask file into proper format with raster2BIL</li>
 </ul>
@@ -227,17 +245,17 @@
     <div id="biodivmapr-v1-2-0" class="section level1">
 <h1 class="page-header" data-toc-text="1.2.0">
 <a href="#biodivmapr-v1-2-0" class="anchor"></a>biodivMapR v1.2.0</h1>
-<div id="fixes-2" class="section level2">
+<div id="fixes-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#fixes-2" class="anchor"></a>Fixes</h2>
+<a href="#fixes-3" class="anchor"></a>Fixes</h2>
 <ul>
 <li>fixed bug raised when processing data over large number of pixels (image products &gt;2^31 bits)</li>
 <li>fixed bug by adding elimination of bands disturbed by water vapor even when ContinuumRemoval set to FALSE</li>
 </ul>
 </div>
-<div id="changes-5" class="section level2">
+<div id="changes-6" class="section level2">
 <h2 class="hasAnchor">
-<a href="#changes-5" class="anchor"></a>Changes</h2>
+<a href="#changes-6" class="anchor"></a>Changes</h2>
 <ul>
 <li>Changed name of default directory when saving image after calling raster2BIL</li>
 <li>added documentation for raster data conversion using raster2BIL</li>
@@ -247,17 +265,17 @@
     <div id="biodivmapr-v1-1-0" class="section level1">
 <h1 class="page-header" data-toc-text="1.1.0">
 <a href="#biodivmapr-v1-1-0" class="anchor"></a>biodivMapR v1.1.0</h1>
-<div id="fixes-3" class="section level2">
+<div id="fixes-4" class="section level2">
 <h2 class="hasAnchor">
-<a href="#fixes-3" class="anchor"></a>Fixes</h2>
+<a href="#fixes-4" class="anchor"></a>Fixes</h2>
 <ul>
 <li>fixed bug in Lib_MapSpectralSpecies: remove constant bands from Subset$DataSubset if needed</li>
 <li>fix bug when continuum removal applied on pixels with constant values which were not filtered in previous stages</li>
 </ul>
 </div>
-<div id="changes-6" class="section level2">
+<div id="changes-7" class="section level2">
 <h2 class="hasAnchor">
-<a href="#changes-6" class="anchor"></a>Changes</h2>
+<a href="#changes-7" class="anchor"></a>Changes</h2>
 <ul>
 <li>Updated continuum removal</li>
 <li>Named Continuum_Removal instead of CR</li>
@@ -271,13 +289,13 @@
     <div id="biodivmapr-v1-0-2" class="section level1">
 <h1 class="page-header" data-toc-text="1.0.2">
 <a href="#biodivmapr-v1-0-2" class="anchor"></a>biodivMapR v1.0.2</h1>
-<div id="fixes-4" class="section level2">
+<div id="fixes-5" class="section level2">
 <h2 class="hasAnchor">
-<a href="#fixes-4" class="anchor"></a>Fixes</h2>
+<a href="#fixes-5" class="anchor"></a>Fixes</h2>
 </div>
-<div id="changes-7" class="section level2">
+<div id="changes-8" class="section level2">
 <h2 class="hasAnchor">
-<a href="#changes-7" class="anchor"></a>Changes</h2>
+<a href="#changes-8" class="anchor"></a>Changes</h2>
 <ul>
 <li>moved examples to repository root: example files are not installed with package anymore.</li>
 <li>removed Plots reprojection from <code>diversity_from_plots</code>: now, Plots and Raster must be in the same projection. Changed example Plots projection accordingly.</li>

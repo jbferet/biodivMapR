@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.0</span>
       </span>
     </div>
 
@@ -156,7 +156,8 @@
   LowRes <span class='op'>=</span> <span class='cn'>FALSE</span>,
   MapSTD <span class='op'>=</span> <span class='cn'>FALSE</span>,
   nbCPU <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  MaxRAM <span class='op'>=</span> <span class='cn'>FALSE</span>
+  MaxRAM <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  ClassifMap <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -213,6 +214,11 @@
     <tr>
       <th>MaxRAM</th>
       <td><p>numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.</p></td>
+    </tr>
+    <tr>
+      <th>ClassifMap</th>
+      <td><p>character. If FALSE, perform standard biodivMapR based on SpectralSpecies.
+else corresponds to path for a classification map.</p></td>
     </tr>
     </table>
 
