@@ -17,7 +17,8 @@ map_alpha_div(
   LowRes = FALSE,
   MapSTD = FALSE,
   nbCPU = FALSE,
-  MaxRAM = FALSE
+  MaxRAM = FALSE,
+  ClassifMap = FALSE
 )
 }
 \arguments{
@@ -46,6 +47,9 @@ map_alpha_div(
 \item{nbCPU}{numeric. Number of CPUs to use in parallel.}
 
 \item{MaxRAM}{numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.}
+
+\item{ClassifMap}{character. If FALSE, perform standard biodivMapR based on SpectralSpecies.
+else corresponds to path for a classification map.}
 }
 \value{
 None

@@ -18,7 +18,8 @@ map_beta_div(
   FullRes = TRUE,
   LowRes = FALSE,
   nbCPU = 1,
-  MaxRAM = 0.25
+  MaxRAM = 0.25,
+  ClassifMap = FALSE
 )
 }
 \arguments{
@@ -51,6 +52,9 @@ map_beta_div(
 \item{nbCPU}{numeric. Number of CPUs to use in parallel.}
 
 \item{MaxRAM}{numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.}
+
+\item{ClassifMap}{character. If FALSE, perform standard biodivMapR based on SpectralSpecies.
+else corresponds to path for a classification map.}
 }
 \value{
 None

@@ -1,3 +1,11 @@
+# biodivMapR v1.6.0
+
+## Changes
+- Added option to directly compute alpha and beta diversity maps from classification maps, even if it does not correspond to SpectralSpecies file produced from biodivMapR
+
+## Fixes
+- Fixed bug occuring when calling function diversity_from_plots if no functional duversity map was produced before
+
 # biodivMapR v1.5.1
 
 ## Fixes

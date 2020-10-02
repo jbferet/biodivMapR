@@ -208,7 +208,11 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, NbClusters = 50,
       # eliminate spectral species contributing to less than pcelim percent of the total valid pixels
       pcelim <- 0.02
       for (i in 1:nbRepetitions){
-        Distritab <- table(ExtractIm[,i])
+        if (nbRepetitions ==1){
+          Distritab <- table(ExtractIm)
+        } else {
+          Distritab <- table(ExtractIm[,i])
+        }
         Pixel.Inventory[[i]] <- as.data.frame(Distritab)
         SumPix <- sum(Pixel.Inventory[[i]]$Freq)
         ThreshElim <- pcelim*SumPix
@@ -294,8 +298,13 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, NbClusters = 50,
   for(i in 1:nbRepetitions){
     MergeDiversity <- matrix(0,nrow = NbClusters,ncol = nbPolygons)
     for(j in 1:nbPolygons){
-      SelSpectralSpecies <- as.numeric(as.vector(Pixel.Inventory.All[[j]][[i]]$Var1))
-      SelFrequency <- Pixel.Inventory.All[[j]][[i]]$Freq
+      if (nbRepetitions>1){
+        SelSpectralSpecies <- as.numeric(as.vector(Pixel.Inventory.All[[j]][[i]]$Var1))
+        SelFrequency <- Pixel.Inventory.All[[j]][[i]]$Freq
+      } else {
+        SelSpectralSpecies <- as.numeric(as.vector(Pixel.Inventory.All[[j]][[i]]$ExtractIm))
+        SelFrequency <- Pixel.Inventory.All[[j]][[i]]$Freq
+      }
       MergeDiversity[SelSpectralSpecies,j] = SelFrequency
     }
     BC[[i]] <- vegan::vegdist(t(MergeDiversity),method="bray")

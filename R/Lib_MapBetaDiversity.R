@@ -28,18 +28,41 @@
 #' @param LowRes boolean.
 #' @param nbCPU numeric. Number of CPUs to use in parallel.
 #' @param MaxRAM numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.
+#' @param ClassifMap character. If FALSE, perform standard biodivMapR based on SpectralSpecies.
+#'                              else corresponds to path for a classification map.
 #'
 #' @return None
 #' @export
 map_beta_div <- function(Input_Image_File, Output_Dir, window_size,
-                               TypePCA = "SPCA", nb_partitions = 20,nbclusters = 50,
-                               Nb_Units_Ordin = 2000, MinSun = 0.25,
-                               pcelim = 0.02, scaling = "PCO", FullRes = TRUE,
-                               LowRes = FALSE, nbCPU = 1, MaxRAM = 0.25) {
+                         TypePCA = "SPCA", nb_partitions = 20,nbclusters = 50,
+                         Nb_Units_Ordin = 2000, MinSun = 0.25,
+                         pcelim = 0.02, scaling = "PCO", FullRes = TRUE,
+                         LowRes = FALSE, nbCPU = 1, MaxRAM = 0.25,
+                         ClassifMap = FALSE) {
 
-  Output_Dir_SS <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "SpectralSpecies")
   Output_Dir_BETA <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "BETA")
-  Beta <- compute_beta_metrics(Output_Dir = Output_Dir_SS, MinSun = MinSun,
+  if (ClassifMap == FALSE){
+    Output_Dir_SS <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "SpectralSpecies")
+    Spectral_Species_Path <- paste(Output_Dir_SS, "SpectralSpecies", sep = "")
+  } else {
+    message("Classification Map will be used instead of SpectralSpecies")
+    message("Please make sure it is in ENVI format with proper hdr file")
+    message("and classes coded in INT8 or INT16")
+    message("Class '0' will be excluded")
+    if (! file.exists(ClassifMap)){
+      message("classification map is not found:")
+      print(ClassifMap)
+    } else {
+      Spectral_Species_Path <- ClassifMap
+      message("updating nbclusters based on number of classes")
+      Classif_Values <- read_stars(ClassifMap,proxy = FALSE)[[1]]
+      nbclusters <- max(Classif_Values,na.rm = TRUE)
+      nb_partitions <- 1
+      message(paste("Number of classes : "),nbclusters)
+    }
+  }
+
+  Beta <- compute_beta_metrics(ClusterMap_Path = Spectral_Species_Path, MinSun = MinSun,
                                Nb_Units_Ordin = Nb_Units_Ordin, nb_partitions = nb_partitions,
                                nbclusters = nbclusters, pcelim = pcelim, scaling = scaling,
                                nbCPU = nbCPU, MaxRAM = MaxRAM)
@@ -230,7 +253,7 @@ compute_BETA_FromPlots <- function(SpectralSpecies_Plots,nbclusters,pcelim = 0.0
 
 # computes beta diversity
 #
-# @param Output_Dir directory where spectral species are stored
+# @param ClusterMap_Path File containing spectral species or classes from prior classification
 # @param MinSun minimum proportion of sunlit pixels required to consider plot
 # @param Nb_Units_Ordin maximum number of spatial units to be processed in Ordination
 # @param nb_partitions number of iterations
@@ -243,10 +266,10 @@ compute_BETA_FromPlots <- function(SpectralSpecies_Plots,nbclusters,pcelim = 0.0
 # @return
 #' @importFrom labdsv pco
 #' @importFrom stats as.dist
-compute_beta_metrics <- function(Output_Dir, MinSun, Nb_Units_Ordin, nb_partitions, nbclusters, pcelim, scaling = "PCO", nbCPU = FALSE, MaxRAM = FALSE) {
+compute_beta_metrics <- function(ClusterMap_Path, MinSun, Nb_Units_Ordin, nb_partitions, nbclusters, pcelim, scaling = "PCO", nbCPU = FALSE, MaxRAM = FALSE) {
   # Define path for images to be used
-  SSD_Path <- paste(Output_Dir, "SpectralSpecies_Distribution", sep = "")
-  ImPathSunlit <- paste(Output_Dir, "SpectralSpecies_Distribution_Sunlit", sep = "")
+  SSD_Path <- paste(ClusterMap_Path, "_Distribution", sep = "")
+  ImPathSunlit <- paste(ClusterMap_Path, "_Distribution_Sunlit", sep = "")
   # Get illuminated pixels based on  SpectralSpecies_Distribution_Sunlit
   Sunlit_Pixels <- get_sunlit_pixels(ImPathSunlit, MinSun)
   Select_Sunlit <- Sunlit_Pixels$Select_Sunlit
