@@ -569,7 +569,14 @@ select_PCA_components <- function(Input_Image_File, Output_Dir, PCA_Files, TypeP
     file.create(Sel_PC)
   }
   if (File_Open == TRUE) {
-    file.edit(Sel_PC, title=basename(Sel_PC),editor = "internal")
+    # if (Sys.info()["sysname"]=='Windows'){
+    #   file.edit(Sel_PC, title=basename(Sel_PC),editor = "internal")
+    # } else if (Sys.info()["sysname"]=='Linux'){
+    #   file.edit(Sel_PC, title=basename(Sel_PC))
+    # } else {
+    #   file.edit(Sel_PC, title=basename(Sel_PC))
+    # }
+    file.edit(Sel_PC, title=basename(Sel_PC))
   }
   message("*********************************************************")
   message("")
