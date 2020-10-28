@@ -1,3 +1,8 @@
+# biodivMapR v1.6.1
+
+## Fixes
+- Fixed bug when calling file.edit from linux terminal. initial parameter editor='internal' is not cross platforms. removed it. 
+
 # biodivMapR v1.6.0
 
 ## Changes
