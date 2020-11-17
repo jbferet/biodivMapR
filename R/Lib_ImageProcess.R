@@ -398,13 +398,10 @@ extract_samples_from_image <- function(ImPath, coordPix, MaxRAM = FALSE, Already
 #' It constrains the maximum number rows of a block
 #'
 #' @return matrix. Rows are corresponding to the samples, columns are the bands.
+#' @importFrom raster brick
 #' @import stars
 #' @export
 extract.big_raster <- function(ImPath, rowcol, MaxRAM=.50){
-  # ImPath = hs_file
-  # rowcol = arcd
-  # rowcol = as.data.table(rowcol)
-  # MaxRAM = .25
 
   if(!is.data.frame(rowcol)){
     rowcol <- as.data.frame(rowcol)

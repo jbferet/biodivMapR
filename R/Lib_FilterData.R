@@ -89,7 +89,7 @@ create_mask_from_threshold <- function(ImPath, MaskPath, MaskPath_Update, NDVI_T
       message('assuming wavelengths are expressed in nanometers')
     }
   }
-  
+
   # get image bands correponding to spectral bands of interest
   Image_Bands <- get_image_bands(Spectral_Bands, HDR$wavelength)
   # read band data from image
