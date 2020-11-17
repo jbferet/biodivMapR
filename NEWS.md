@@ -1,3 +1,8 @@
+# biodivMapR v1.6.2
+
+## Fixes
+- added importFrom raster brick in function extract.big_raster
+
 # biodivMapR v1.6.1
 
 ## Fixes
