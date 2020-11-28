@@ -203,6 +203,7 @@ compute_alpha_metrics <- function(Spectral_Species_Path, window_size, nbclusters
   HDR_SSD$samples <- round(HDR_SS$samples / window_size)
   HDR_SSD$lines <- round(HDR_SS$lines / window_size)
   HDR_SSD$interleave <- 'bil'
+  HDR_SSD$`file type` <- NULL
   # change resolution
   HDR_SSD <- change_resolution_HDR(HDR_SSD, window_size)
   HDR_SSD$`band names` <- NULL

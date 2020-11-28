@@ -620,18 +620,21 @@ get_image_bands <- function(Spectral_Bands, wavelength) {
 #' @param IDshp character. field in the shapefile determining ID of element
 #'
 #' @return list. vector_coordinates and vector_ID for each element in the vector file
+#' @importFrom tools file_path_sans_ext
+#' @importFrom rgdal readOGR
+#' @import raster
 #' @export
 get_polygonCoord_from_Shp <- function(path_SHP,path_Raster,IDshp=NULL){
   # prepare for possible reprojection
   Dir_Vector <- dirname(path_SHP)
-  Name_Vector <- file_path_sans_ext(basename(path_SHP))
+  Name_Vector <- tools::file_path_sans_ext(basename(path_SHP))
   print(paste('Reading pixels coordinates for polygons in ',Name_Vector,sep=''))
   # File.Vector.reproject <- paste(Dir_Vector.reproject,'/',Name_Vector,'.shp','sep'='')
   if (file.exists(paste(file_path_sans_ext(path_SHP),'.shp',sep=''))){
-    Plot <- readOGR(Dir_Vector,Name_Vector,verbose = FALSE)
+    Plot <- rgdal::readOGR(Dir_Vector,Name_Vector,verbose = FALSE)
     # check if vector and rasters are in the same referential
     # if not, convert vector file
-    if (!compareCRS(raster(path_Raster), Plot)){
+    if (!raster::compareCRS(raster(path_Raster), Plot)){
       stop('Raster and Plots have different projection. Plots should be reprojected to Raster CRS')
     }
   } else if (file.exists(paste(path_SHP,'kml','sep'='.'))){
@@ -1020,6 +1023,7 @@ update_shademask <- function(MaskPath, HDR, Mask, MaskPath_Update) {
   HDR_Update$description <- "Mask produced from radiometric filtering"
   HDR_Update$bands <- 1
   HDR_Update$`data type` <- 1
+  HDR_Update$`file type` <- NULL
   HDR_Update$`band names` <- "Mask"
   HDR_Update$`default stretch` <- '0 1 linear'
   HDR_Update$wavelength <- NULL

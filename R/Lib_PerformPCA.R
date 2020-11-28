@@ -357,6 +357,7 @@ write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_mo
   HDR_PCA$`wavelength units` <- NULL
   HDR_PCA$`z plot titles` <- NULL
   HDR_PCA$`data gain values` <- NULL
+  HDR_PCA$`file type` <- NULL
   HDR_PCA$`band names` <- paste('PC', 1:Nb_PCs, collapse = ", ")
   HDR_PCA$wavelength <- NULL
   HDR_PCA$fwhm <- NULL
