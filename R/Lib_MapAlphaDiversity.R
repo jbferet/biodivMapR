@@ -19,24 +19,46 @@
 #' @param nbclusters numeric. Number of clusters defined in k-Means.
 #' @param MinSun numeric. Minimum proportion of sunlit pixels required to consider plot.
 #' @param pcelim numeric. Minimum contribution (in \%) required for a spectral species.
+#' @param Index_Alpha character. Either 'Shannon', 'Simpson' or 'Fisher'.
 #' @param FullRes boolean. Full resolution.
 #' @param LowRes boolean. Low resolution.
 #' @param MapSTD boolean. map of standard deviation of the alpha diversity map (over repetitions)
 #' @param nbCPU numeric. Number of CPUs to use in parallel.
 #' @param MaxRAM numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.
-#' @param Index_Alpha character. Either 'Shannon', 'Simpson' or 'Fisher'.
+#' @param ClassifMap character. If FALSE, perform standard biodivMapR based on SpectralSpecies.
+#'                              else corresponds to path for a classification map.
 #'
 #' @return None
+#' @import stars
 #' @export
 map_alpha_div <- function(Input_Image_File, Output_Dir, window_size,
-                                TypePCA = "SPCA", nbclusters = 50,
-                                MinSun = 0.25, pcelim = 0.02,
-                                Index_Alpha = "Shannon", FullRes = TRUE,
-                                LowRes = FALSE, MapSTD = FALSE,
-                                nbCPU = FALSE, MaxRAM = FALSE) {
-  Output_Dir_SS <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "SpectralSpecies")
-  Output_Dir_PCA <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "PCA")
-  Spectral_Species_Path <- paste(Output_Dir_SS, "SpectralSpecies", sep = "")
+                          TypePCA = "SPCA", nbclusters = 50,
+                          MinSun = 0.25, pcelim = 0.02,
+                          Index_Alpha = "Shannon", FullRes = TRUE,
+                          LowRes = FALSE, MapSTD = FALSE,
+                          nbCPU = FALSE, MaxRAM = FALSE,
+                          ClassifMap = FALSE) {
+
+  # if 'standard use' of biodivMapR
+  if (ClassifMap == FALSE){
+    Output_Dir_SS <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "SpectralSpecies")
+    Spectral_Species_Path <- paste(Output_Dir_SS, "SpectralSpecies", sep = "")
+  } else {
+    message("Classification Map will be used instead of SpectralSpecies")
+    message("Please make sure it is in ENVI format with proper hdr file")
+    message("and classes coded in INT8 or INT16")
+    message("Class '0' will be excluded")
+    if (! file.exists(ClassifMap)){
+      message("classification map is not found:")
+      print(ClassifMap)
+    } else {
+      Spectral_Species_Path <- ClassifMap
+      message("updating nbclusters based on number of classes")
+      Classif_Values <- read_stars(ClassifMap,proxy = FALSE)[[1]]
+      nbclusters <- max(Classif_Values,na.rm = TRUE)
+      message(paste("Number of classes : "),nbclusters)
+    }
+  }
   # 1- COMPUTE ALPHA DIVERSITY
   ALPHA <- compute_alpha_metrics(Spectral_Species_Path = Spectral_Species_Path, window_size = window_size,
                                  nbclusters = nbclusters, MinSun = MinSun, pcelim = pcelim,
@@ -94,6 +116,52 @@ map_alpha_div <- function(Input_Image_File, Output_Dir, window_size,
   return(invisible())
 }
 
+
+#' compute alpha diversity from spectral species computed for a plot
+#' expecting a matrix of spectral species (n pixels x p repetitions)
+#'
+#' @param SpectralSpecies_Plot numeric. matrix of spectral species
+#' @param pcelim minimum contribution of spectral species to estimation of diversity
+#' each spectral species with a proprtion < pcelim is eliminated before computation of diversity
+#
+#' @return list of alpha diversity metrics
+#' @export
+
+compute_ALPHA_FromPlot <- function(SpectralSpecies_Plot,pcelim = 0.02){
+
+  nb_partitions <- dim(SpectralSpecies_Plot)[2]
+  Richness.tmp <- Shannon.tmp <- Fisher.tmp <- Simpson.tmp <- vector(length = nb_partitions)
+  for (i in 1:nb_partitions){
+    # compute distribution of spectral species
+    Distritab <- table(SpectralSpecies_Plot[,i])
+    # compute distribution of spectral species
+    Pixel.Inventory <- as.data.frame(Distritab)
+    SumPix <- sum(Pixel.Inventory$Freq)
+    ThreshElim <- pcelim*SumPix
+    ElimZeros <- which(Pixel.Inventory$Freq<ThreshElim)
+    if (length(ElimZeros)>=1){
+      Pixel.Inventory <- Pixel.Inventory[-ElimZeros,]
+    }
+    if (length(which(Pixel.Inventory$Var1==0))==1){
+      Pixel.Inventory <- Pixel.Inventory[-which(Pixel.Inventory$Var1==0),]
+    }
+    Alpha <- get_alpha_metrics(Pixel.Inventory$Freq)
+    # Alpha diversity
+    Richness.tmp[i] <- as.numeric(Alpha$Richness)
+    Fisher.tmp[i] <- Alpha$fisher
+    Shannon.tmp[i] <- Alpha$Shannon
+    Simpson.tmp[i] <- Alpha$Simpson
+  }
+  Richness <- mean(Richness.tmp)
+  Fisher <- mean(Fisher.tmp)
+  Shannon <- mean(Shannon.tmp)
+  Simpson <- mean(Simpson.tmp)
+  alpha <- list('Richness' = Richness, 'Fisher' = Fisher, 'Shannon' = Shannon, 'Simpson' = Simpson,
+                'Richness_ALL' = Richness.tmp, 'Fisher_ALL' = Fisher.tmp, 'Shannon_ALL' = Shannon.tmp, 'Simpson_ALL' = Simpson.tmp)
+  return(alpha)
+}
+
+
 # Map alpha diversity metrics based on spectral species
 #
 # @param Spectral_Species_Path character. path for spectral species file to be written
@@ -134,6 +202,8 @@ compute_alpha_metrics <- function(Spectral_Species_Path, window_size, nbclusters
   # define image size
   HDR_SSD$samples <- round(HDR_SS$samples / window_size)
   HDR_SSD$lines <- round(HDR_SS$lines / window_size)
+  HDR_SSD$interleave <- 'bil'
+  HDR_SSD$`file type` <- NULL
   # change resolution
   HDR_SSD <- change_resolution_HDR(HDR_SSD, window_size)
   HDR_SSD$`band names` <- NULL

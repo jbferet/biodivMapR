@@ -60,7 +60,7 @@ map_partition_div <- function(Original_Image_File,Partition_File = FALSE,
   }
   # define output directory
   Output_Dir_Partition <- define_output_subdir(Output_Dir, Original_Image_File, TypePCA, "PARTITION_SPECTRAL")
-  print("Partitioning spectral diversity following Lalibert?, Schweiger & Legendre (2020)")
+  print("Partitioning spectral diversity following Laliberte, Schweiger & Legendre (2020)")
   brick_SelPC <- brick(Partition_File)
   if (!Selected_Features == FALSE){
     brick_SelPC <- brick(brick_SelPC[[Selected_Features]])

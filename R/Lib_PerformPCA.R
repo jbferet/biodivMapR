@@ -53,13 +53,13 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
     FilterPCA <- FALSE
     kernel = matrix(0, 3, 3)
     kernel[c(5, 6, 8)]=c(1, -1/2, -1/2)
-    Subset <- get_random_subset_from_image(ImPath = Input_Image_File, 
+    Subset <- get_random_subset_from_image(ImPath = Input_Image_File,
                                            MaskPath = Input_Mask_File, nb_partitions = nb_partitions,
-                                           Pix_Per_Partition = Pix_Per_Partition, kernel = kernel)
+                                           Pix_Per_Partition = Pix_Per_Partition, kernel = kernel, MaxRAM = MaxRAM)
   } else {
-    Subset <- get_random_subset_from_image(ImPath = Input_Image_File, 
+    Subset <- get_random_subset_from_image(ImPath = Input_Image_File,
                                            MaskPath = Input_Mask_File, nb_partitions = nb_partitions,
-                                           Pix_Per_Partition = Pix_Per_Partition, kernel = NULL)
+                                           Pix_Per_Partition = Pix_Per_Partition, kernel = NULL, MaxRAM = MaxRAM)
   }
   # if needed, apply continuum removal
   if (Continuum_Removal == TRUE) {
@@ -119,7 +119,7 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
     # extract a random selection of pixels from image
     Subset <- get_random_subset_from_image(ImPath = Input_Image_File, MaskPath = Input_Mask_File,
                                            nb_partitions = nb_partitions, Pix_Per_Partition = Pix_Per_Partition,
-                                           kernel = NULL)
+                                           kernel = NULL, MaxRAM = MaxRAM)
     # if needed, apply continuum removal
     if (Continuum_Removal == TRUE) {
       Subset$DataSubset <- apply_continuum_removal(Subset$DataSubset, SpectralFilter, nbCPU = nbCPU)
@@ -169,9 +169,10 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
                    nbCPU = nbCPU, MaxRAM = MaxRAM)
   # save workspace for this stage
   WS_Save <- paste(Output_Dir_PCA, "PCA_Info.RData", sep = "")
-  save(PCA_model, file = WS_Save)
   my_list <- list("PCA_Files" = PCA_Files,"Pix_Per_Partition" =Pix_Per_Partition, "nb_partitions" = nb_partitions,
                   "MaskPath" = Input_Mask_File, "PCA_model" =PCA_model,"SpectralFilter"=   SpectralFilter)
+  MaskPath = Input_Mask_File
+  save(PCA_Files,Pix_Per_Partition, nb_partitions, MaskPath, PCA_model, SpectralFilter,file = WS_Save)
   return(my_list)
 }
 
@@ -356,6 +357,7 @@ write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_mo
   HDR_PCA$`wavelength units` <- NULL
   HDR_PCA$`z plot titles` <- NULL
   HDR_PCA$`data gain values` <- NULL
+  HDR_PCA$`file type` <- NULL
   HDR_PCA$`band names` <- paste('PC', 1:Nb_PCs, collapse = ", ")
   HDR_PCA$wavelength <- NULL
   HDR_PCA$fwhm <- NULL
@@ -568,7 +570,14 @@ select_PCA_components <- function(Input_Image_File, Output_Dir, PCA_Files, TypeP
     file.create(Sel_PC)
   }
   if (File_Open == TRUE) {
-    file.edit(Sel_PC, title=basename(Sel_PC),editor = "internal")
+    # if (Sys.info()["sysname"]=='Windows'){
+    #   file.edit(Sel_PC, title=basename(Sel_PC),editor = "internal")
+    # } else if (Sys.info()["sysname"]=='Linux'){
+    #   file.edit(Sel_PC, title=basename(Sel_PC))
+    # } else {
+    #   file.edit(Sel_PC, title=basename(Sel_PC))
+    # }
+    file.edit(Sel_PC, title=basename(Sel_PC))
   }
   message("*********************************************************")
   message("")

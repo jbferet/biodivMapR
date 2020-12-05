@@ -91,13 +91,14 @@ rm_invariant_bands <- function(DataMatrix, Spectral) {
   return(my_list)
 }
 
-# define output directory and create it if necessary
-#
-# @param Output_Dir output directory
-# @param ImPath image path
-# @param TypePCA Type of PCA (PCA, SPCA, NLPCA...)
-#
-# @return path of the output directory
+#' define output directory and create it if necessary
+#'
+#' @param Output_Dir output directory
+#' @param ImPath image path
+#' @param TypePCA Type of PCA (PCA, SPCA, NLPCA...)
+#'
+#' @return path of the output directory
+#' @export
 define_output_directory <- function(Output_Dir, ImPath, TypePCA) {
   Image_Name <- strsplit(basename(ImPath), "\\.")[[1]][1]
   Output_Dir <- paste(Output_Dir, "/", Image_Name, "/", TypePCA, "/", sep = "")
@@ -389,22 +390,18 @@ extract_samples_from_image <- function(ImPath, coordPix, MaxRAM = FALSE, Already
   return(Sample_Sel)
 }
 
-# Extract bands of sparse pixels in big image data cube.
-#
-# Extract bands of sparse pixels in big image data cube, typically hyperspectral data cube.
-# @param ImPath character. Path to the image cube
-# @param rowcol matrix or data.frame with two columns: row, col.
-# If columns are not named, 1st=row, 2nd=col.
-# @param MaxRAM numeric. Maximum memory use at block reading.
-# It constrains the maximum number rows of a block
-#
-# @return matrix. Rows are corresponding to the samples, columns are the bands.
+#' Extract bands of sparse pixels in image data cube
+#' @param ImPath character. Path to the image cube
+#' @param rowcol matrix or data.frame with two columns: row, col.
+#' If columns are not named, 1st=row, 2nd=col.
+#' @param MaxRAM numeric. Maximum memory use at block reading.
+#' It constrains the maximum number rows of a block
+#'
+#' @return matrix. Rows are corresponding to the samples, columns are the bands.
+#' @importFrom raster brick
 #' @import stars
-extract.big_raster <- function(ImPath, rowcol, MaxRAM=.25){
-  # ImPath = hs_file
-  # rowcol = arcd
-  # rowcol = as.data.table(rowcol)
-  # MaxRAM = .25
+#' @export
+extract.big_raster <- function(ImPath, rowcol, MaxRAM=.50){
 
   if(!is.data.frame(rowcol)){
     rowcol <- as.data.frame(rowcol)
@@ -434,7 +431,7 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.25){
     nXSize = max(rc$col)
     # stars data cube dimension order is x*y*band
     ipix_stars = (rc$rowInBlock-min(rc$rowInBlock))*nXSize+rc$col
-    values = read_stars(ImPath, RasterIO =list(nXSize=nXSize, nYOff=rr[1], nYSize=nYSize))[[1]]
+    values = read_stars(ImPath, RasterIO =list(nXSize=nXSize, nYOff=rr[1], nYSize=nYSize),proxy = FALSE)[[1]]
     values = matrix(values, nrow=nYSize*nXSize)
     res = cbind(rc$sampleIndex, values[ipix_stars, ])
     rm('values')
@@ -448,19 +445,29 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.25){
   return(samples)
 }
 
-# @return list, see Details
-# @details
-# The returned list contains:
-# - DataSubset: matrix of NxP of N samples and P bands
-# - nbPix2Sample: integer giving the number of pixels sampled (only central pixel of kernel)
-# - coordPix: a data.table with columns 'row', 'col' of pixel in the image corresponding to each row of DataSubset, and if kernel is not NULL
-# Kind (Kernel index) and 'id' the sample ID to be used with the kernel
+#' extract random subset of pixels from an image
+#'
+#' @param ImPath character. path for the image to sample
+#' @param MaskPath character. path for the corresponding mask
+#' @param nb_partitions numeric. number of repetitions of kmeans
+#' @param Pix_Per_Partition numeric.
+#' @param kernel numeric.
+#' @param MaxRAM numeric.
+#'
 #' @importFrom matlab ones
 #' @import raster
 #' @importFrom mmand erode
 #' @importFrom data.table data.table rbindlist setorder
 #' @importFrom matrixStats rowAnys
-get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Per_Partition, kernel=NULL) {
+#' @return list, see Details
+#' @details
+#' The returned list contains:
+#' - DataSubset: matrix of NxP of N samples and P bands
+#' - nbPix2Sample: integer giving the number of pixels sampled (only central pixel of kernel)
+#' - coordPix: a data.table with columns 'row', 'col' of pixel in the image corresponding to each row of DataSubset, and if kernel is not NULL
+#' Kind (Kernel index) and 'id' the sample ID to be used with the kernel
+#' @export
+get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Per_Partition, kernel=NULL,MaxRAM = 0.5) {
   r <- brick(ImPath)
   nbPix2Sample <- nb_partitions * Pix_Per_Partition
   # get total number of pixels
@@ -471,7 +478,7 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Pe
   # 1- Exclude masked pixels from random subset
   # Read Mask
   if ((!MaskPath == "") & (!MaskPath == FALSE)) {
-    mask <- matrix(raster(MaskPath),ncol= nsamples,nrow = nlines)
+    mask <- matrix(t(raster(MaskPath)),ncol= nsamples,nrow = nlines)
   } else {
     mask <- array(1, dim = c(nlines, nsamples))
   }
@@ -562,12 +569,13 @@ get_byte_order <- function() {
   return(ByteOrder)
 }
 
-# get hdr name from image file name, assuming it is BIL format
-#
-# @param ImPath path of the image
-#
-# @return corresponding hdr
+#' get hdr name from image file name, assuming it is BIL format
+#'
+#' @param ImPath path of the image
+#'
+#' @return corresponding hdr
 #' @import tools
+#' @export
 get_HDR_name <- function(ImPath) {
   if (file_ext(ImPath) == "") {
     ImPathHDR <- paste(ImPath, ".hdr", sep = "")
@@ -602,6 +610,48 @@ get_image_bands <- function(Spectral_Bands, wavelength) {
     Distance2WL <- c(Distance2WL, abs(wavelength[Closest_Band] - band))
   }
   my_list <- list("ImBand" = ImBand, "Distance2WL" = Distance2WL)
+  return(my_list)
+}
+
+#' extract coordinates of the footprint of elements of a shapefile in a raster
+#'
+#' @param path_SHP character. path for the shapefile
+#' @param path_Raster character. path for the raster
+#' @param IDshp character. field in the shapefile determining ID of element
+#'
+#' @return list. vector_coordinates and vector_ID for each element in the vector file
+#' @importFrom tools file_path_sans_ext
+#' @importFrom rgdal readOGR
+#' @import raster
+#' @export
+get_polygonCoord_from_Shp <- function(path_SHP,path_Raster,IDshp=NULL){
+  # prepare for possible reprojection
+  Dir_Vector <- dirname(path_SHP)
+  Name_Vector <- tools::file_path_sans_ext(basename(path_SHP))
+  print(paste('Reading pixels coordinates for polygons in ',Name_Vector,sep=''))
+  # File.Vector.reproject <- paste(Dir_Vector.reproject,'/',Name_Vector,'.shp','sep'='')
+  if (file.exists(paste(file_path_sans_ext(path_SHP),'.shp',sep=''))){
+    Plot <- rgdal::readOGR(Dir_Vector,Name_Vector,verbose = FALSE)
+    # check if vector and rasters are in the same referential
+    # if not, convert vector file
+    if (!raster::compareCRS(raster(path_Raster), Plot)){
+      stop('Raster and Plots have different projection. Plots should be reprojected to Raster CRS')
+    }
+  } else if (file.exists(paste(path_SHP,'kml','sep'='.'))){
+    print('Please convert vector file to shpfile')
+  }
+  # extract data corresponding to the Raster_SpectralSpecies
+  vector_coordinates <- extract_pixels_coordinates.From.OGR(path_Raster,Plot)
+  # if the different elements can be identified
+  vector_ID <- c()
+  for (elem in 1:length(vector_coordinates)){
+    if (!is.null(IDshp)){
+      vector_ID <- c(vector_ID,Plot[[IDshp]])
+    } else {
+      vector_ID <- c(vector_ID,'No ID Available')
+    }
+  }
+  my_list <- list("vector_coordinates" = vector_coordinates, "vector_ID" = vector_ID)
   return(my_list)
 }
 
@@ -705,11 +755,12 @@ read_bin_subset <- function(Byte_Start, nbLines, lenBin, ImPath, ImBand, jpix, n
   return(linetmp)
 }
 
-# Reads ENVI hdr file
-#
-# @param HDRpath Path of the hdr file
-#
-# @return list of the content of the hdr file
+#' Reads ENVI hdr file
+#'
+#' @param HDRpath Path of the hdr file
+#'
+#' @return list of the content of the hdr file
+#' @export
 read_ENVI_header <- function(HDRpath) {
   # header <- paste(header, collapse = "\n")
   if (!grepl(".hdr$", HDRpath)) {
@@ -874,6 +925,7 @@ read_BIL_image_subset <- function(ImPath, HDR, Byte_Start, lenBin, nbLines, Imag
 #'
 #' @return list.
 #' @export
+
 split_line <- function(x, separator, trim.blank = TRUE) {
   tmp <- regexpr(separator, x)
   key <- substr(x, 1, tmp - 1)
@@ -971,6 +1023,7 @@ update_shademask <- function(MaskPath, HDR, Mask, MaskPath_Update) {
   HDR_Update$description <- "Mask produced from radiometric filtering"
   HDR_Update$bands <- 1
   HDR_Update$`data type` <- 1
+  HDR_Update$`file type` <- NULL
   HDR_Update$`band names` <- "Mask"
   HDR_Update$`default stretch` <- '0 1 linear'
   HDR_Update$wavelength <- NULL
@@ -1056,13 +1109,15 @@ where_to_write_kernel <- function(HDR_SS, HDR_SSD, nbPieces, SE.Size) {
   return(my_list)
 }
 
-# writes ENVI hdr file
-#
-# @param HDR content to be written
-# @param HDRpath Path of the hdr file
-#
-# @return
+#' writes ENVI hdr file
+#'
+#' @param HDR content to be written
+#' @param HDRpath Path of the hdr file
+#'
+#' @return
 #' @importFrom stringr str_count
+#' @export
+
 write_ENVI_header <- function(HDR, HDRpath) {
   h <- lapply(HDR, function(x) {
     if (length(x) > 1 || (is.character(x) && str_count(x, "\\w+") > 1)) {
@@ -1072,6 +1127,7 @@ write_ENVI_header <- function(HDR, HDRpath) {
     x <- as.character(x)
   })
   writeLines(c("ENVI", paste(names(HDR), h, sep = " = ")), con = HDRpath)
+  return("")
 }
 
 #' write an image which size is > 2**31-1

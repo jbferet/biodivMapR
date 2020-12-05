@@ -49,7 +49,7 @@ map_functional_div <- function(Original_Image_File,Functional_File = FALSE,
   # check if selected features match with image dimensions
   HDRname <- get_HDR_name(Functional_File)
   HDR <- read_ENVI_header(HDRname)
-  if (Selected_Features==FALSE){
+  if (Selected_Features[1]==FALSE){
     Selected_Features = seq(1,HDR$bands)
   } else {
     if (max(Selected_Features)>HDR$bands){
@@ -160,7 +160,7 @@ compute_Functional_metrics <- function(Functional_File, Functional_Map_Path, Sel
     MinMaxRaster = MinMaxRaster, HDR = HDR, HDR_Funct = HDR_Funct,
     FunctIN_Format = FunctIN_Format, FunctOUT_Format = FunctOUT_Format,
     ImgFormat = ImgFormat, window_size = window_size, MinSun = MinSun,
-    Functional_Map_Path = Functional_Map_Path,  future.scheduling = Schedule_Per_Thread
+    Functional_Map_Path = Functional_Map_Path,  future.scheduling = Schedule_Per_Thread, future.seed = TRUE
   )
   plan(sequential)
   # create ful map from chunks
