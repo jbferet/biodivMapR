@@ -1,8 +1,20 @@
-# biodivMapR v1.5.2
+# biodivMapR v1.6.2
 
 ## Fixes
-Applied fixes and changes corresponding to 1.5.1
+- added importFrom raster brick in function extract.big_raster
 
+# biodivMapR v1.6.1
+
+## Fixes
+- Fixed bug when calling file.edit from linux terminal. initial parameter editor='internal' is not cross platforms. removed it. 
+
+# biodivMapR v1.6.0
+
+## Changes
+- Added option to directly compute alpha and beta diversity maps from classification maps, even if it does not correspond to SpectralSpecies file produced from biodivMapR
+
+## Fixes
+- Fixed bug occuring when calling function diversity_from_plots if no functional duversity map was produced before
 
 # biodivMapR v1.5.1
 
