@@ -171,8 +171,8 @@ filter_prior_CR <- function(Minit, Spectral_Bands) {
   # number of samples to be processed
   nbSamples <- nrow(Minit)
   # make sure there is no negative values
-  Minit <- Minit + 100.0
-  Minit[which(Minit < 0)] <- 0
+  # Minit[Minit<0] <- Minit + 100.0
+  Minit[Minit < 0] <- 0
   # eliminate invariant spectra
   SD <- rowSds(Minit)
   elim <- which(SD == 0 | is.na(SD))
