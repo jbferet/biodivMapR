@@ -86,10 +86,13 @@ jobs:
         if: runner.os == 'Linux'
         run: sudo apt install libcurl4-openssl-dev libgit2-dev
 
+<<<<<<< HEAD
       - name: "[Stage] [Linux] Install dependencies"
         if: runner.os == 'Linux'
         run: sudo apt install libudunits2-dev libnetcdf-dev libproj-dev libgeos-dev libgdal-dev netcdf-bin
 
+=======
+>>>>>>> aefbd40b5aa880707dd05f330708b15e807bed8a
       - name: "[Stage] [macOS] Install libgit2"
         if: runner.os == 'macOS'
         run: brew install libgit2
