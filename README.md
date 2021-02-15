@@ -2,12 +2,11 @@
 
 # An R package for α- and β-diversity mapping using remotely-sensed images
 
-[![tic](https://github.com/floriandeboissieu/biodivMapR/workflows/tic/badge.svg?branch=ghactions)](https://github.com/floriandeboissieu/biodivMapR/actions)
+[![tic](https://github.com/jbferet/biodivMapR/workflows/tic/badge.svg?branch=ghactions)](https://github.com/jbferet/biodivMapR/actions)
 [![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg)](https://www.r-project.org/Licenses/GPL-3)
 [![Build Status](https://travis-ci.org/jbferet/biodivMapR.png?branch=master)](https://travis-ci.org/jbferet/biodivMapR)
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/jbferet/biodivmapr?branch=master&svg=true)](https://ci.appveyor.com/project/jbferet/biodivmapr)
 
-__test ghaction bis__
 
 # 1 Install
 

@@ -47,6 +47,6 @@ Suggests:
     rmarkdown,
     testthat (>= 2.0.0)
 VignetteBuilder: knitr
-URL: https://github.com/floriandeboissieu/biodivMapR
-BugReports: https://github.com/floriandeboissieu/biodivMapR/issues
+URL: https://github.com/jbferet/biodivMapR
+BugReports: https://github.com/jbferet/biodivMapR/issues
 Config/testthat/edition: 2
