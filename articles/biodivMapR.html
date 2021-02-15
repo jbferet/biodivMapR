@@ -46,7 +46,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -75,7 +75,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/jbferet/biodivMapR/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -89,14 +89,13 @@
 
       
 
-      </header><link href="biodivMapR_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="biodivMapR_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><script src="biodivMapR_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Tutorial for biodivMapR</h1>
                         <h4 class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
             
-            <h4 class="date">2020-11-28</h4>
+            <h4 class="date">2021-02-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR.Rmd"><code>vignettes/biodivMapR.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR.Rmd</code></div>
@@ -115,12 +114,13 @@
 <li>preprocessing and processing options</li>
 </ul>
 </li>
-<li>Computation of the diversity maps. This includes several diversity metrics which can be computed independently:
+<li>
+<p>Computation of the diversity maps. This includes several diversity metrics which can be computed independently:</p>
 <ul>
 <li>
 <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps as defined in <a href="https://doi.org/10.1890/13-1824.1" title="Feret&amp;Asner2014">Feret &amp; Asner (2014)</a> and <a href="https://doi.org/10.1111/2041-210X.13310" title="Feret&amp;deBoissieu2014">Feret &amp; de Boissieu (2019)</a>
 </li>
-<li>Functional diversity maps, including Richnes, Evenness and Divergence as defined in <a href="https://doi.org/10.1890/07-1206.1" title="Villeger2008">Villeger et al. (2008)</a> <!-- * Partitioning of spectral diversity into $\alpha$ and $\beta$ components following an adaptation of the method proposed by [Laliberte et al. (2020)](https://doi.org/10.1111/ele.13429 "Laliberte2020") -->
+<li>Functional diversity maps, including Richnes, Evenness and Divergence as defined in <a href="https://doi.org/10.1890/07-1206.1" title="Villeger2008">Villeger et al. (2008)</a> <!-- * Partitioning of spectral diversity into $\alpha$ and $\beta$ components following an adaptation of the method proposed by [Laliberte et al. (2020)](https://doi.org/10.1111/ele.13429 "Laliberte2020") -->
 </li>
 </ul>
 </li>
@@ -148,21 +148,21 @@
 <p><strong>Spectral bands should be defined if the image is multi or hyperspectral image.</strong></p>
 <p>A mask can also be set to work on a selected part of the input image. The mask is expected to be a raster with values 0 = masked or 1 = selected. Only one band is required. If no mask is to be used set <code>Input_Mask_File = FALSE</code>.</p>
 <p>The output directory defined with <code>Output_Dir</code> will contain all the results. For each image processed, a subdirectory will be automatically created after its name. The output images are writted in ENVI HDR format, BIL interleaved.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jbferet/biodivMapR">biodivMapR</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jbferet/biodivMapR">biodivMapR</a></span><span class="op">)</span>
 <span class="va">Input_Image_File</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">'extdata'</span>, <span class="st">'RASTER'</span>, <span class="st">'S2A_T33NUD_20180104_Subset'</span>, package <span class="op">=</span> <span class="st">'biodivMapR'</span><span class="op">)</span>
 <span class="va">Input_Mask_File</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span>
-<span class="va">Output_Dir</span> <span class="op">&lt;-</span> <span class="st">'RESULTS'</span></pre></div>
+<span class="va">Output_Dir</span> <span class="op">&lt;-</span> <span class="st">'RESULTS'</span></code></pre></div>
 <p>The image provided with the package is a subset of tile T33NUD acquired by Sentinel-2A satellite over Cameroonese rainforest in January 4th, 2018. <img align="bottom" width="100%" height="100%" src="../man/figures/01_RGB_S2A_T33NUD_20180104_Subset.png"></p>
 </div>
 <div id="spatial-resolution" class="section level2">
 <h2 class="hasAnchor">
 <a href="#spatial-resolution" class="anchor"></a>Spatial resolution</h2>
-<p>The algorithm estimates <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity within individual spatial units of fixed surface, which correspond to the output spatial resolution. It is defined in number of pixels of the input image with parameter <code>window_size</code>, e.g. <code>window_size = 10</code> meaning a window of 10x10 pixels. It will correspond to the spatial resolution of the ouput rasters.</p>
+<p>The algorithm estimates <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity within individual spatial units of fixed surface, which correspond to the output spatial resolution. It is defined in number of pixels of the input image with parameter <code>window_size</code>, e.g. <code>window_size = 10</code> meaning a window of 10x10 pixels. It will correspond to the spatial resolution of the ouput rasters.</p>
 <p>As a rule of thumb, spatial units between 0.25 and 4 ha usually match with ground data, and are appropriate for forested ecosystems. if <code>window_size</code> is too small, it will result in low number of pixels per spatial unit, hence limited range of variation of diversity in the image.</p>
 <p>In this example, the spatial resolution of the input raster is 10m x 10m. Setting <code>window_size = 10</code> will result in diversity maps of spatial resolution 100m x 100m.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="va">window_size</span> <span class="op">&lt;-</span> <span class="fl">10</span></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">window_size</span> <span class="op">&lt;-</span> <span class="fl">10</span></code></pre></div>
 </div>
 <div id="computing-options" class="section level2">
 <h2 class="hasAnchor">
@@ -176,10 +176,10 @@
 <li>
 <code>nbclusters</code> controls the number of clusters defined by k-means clustering for each repetition. Images showing moderate diversity (temperate forests) may need lower number of clusters (20), whereas highly diverse tropical forest require more (50). The larger the value the longer the computation time. Users are invited to experiment with different numbers of clusters in order to identify the snsitivity of divrsity patterns to this parameter.</li>
 </ul>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="va">nbCPU</span> <span class="op">&lt;-</span> <span class="fl">2</span>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">nbCPU</span> <span class="op">&lt;-</span> <span class="fl">2</span>
 <span class="va">MaxRAM</span> <span class="op">&lt;-</span> <span class="fl">0.5</span>
-<span class="va">nbclusters</span> <span class="op">&lt;-</span> <span class="fl">50</span></pre></div>
+<span class="va">nbclusters</span> <span class="op">&lt;-</span> <span class="fl">50</span></code></pre></div>
 </div>
 </div>
 <div id="computation-of-the-diversity-maps" class="section level1">
@@ -198,31 +198,31 @@
 <strong>BLUE filtering</strong> allows filtering of clouds, based on the hypothesis that atmospheric scattering will lead to higher reflectance in the blue domain. <code>Blue_Thresh</code> defines the maximum Blue reflectance to be kept. By default, the Blue spectral band closest to 480nm is used. This value can be adjusted as input variables for <code>perform_radiometric_filtering</code>.</li>
 </ul>
 <p><code>perform_radiometric_filtering</code> provides the path for the updated shade mask as output.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="va">NDVI_Thresh</span> <span class="op">&lt;-</span> <span class="fl">0.5</span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">NDVI_Thresh</span> <span class="op">&lt;-</span> <span class="fl">0.5</span>
 <span class="co"># these values are relevant only if reflectance is coded as integer values between 0 and 10000. </span>
 <span class="va">Blue_Thresh</span> <span class="op">&lt;-</span> <span class="fl">500</span>
 <span class="va">NIR_Thresh</span> <span class="op">&lt;-</span> <span class="fl">1500</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="st">"PERFORM RADIOMETRIC FILTERING"</span><span class="op">)</span>
 <span class="va">Input_Mask_File</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/perform_radiometric_filtering.html">perform_radiometric_filtering</a></span><span class="op">(</span>Image_Path <span class="op">=</span> <span class="va">Input_Image_File</span>, Mask_Path <span class="op">=</span> <span class="va">Input_Mask_File</span>,
                                                  Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,
-                                                 NDVI_Thresh <span class="op">=</span> <span class="va">NDVI_Thresh</span>, Blue_Thresh <span class="op">=</span> <span class="va">Blue_Thresh</span>,NIR_Thresh <span class="op">=</span> <span class="va">NIR_Thresh</span><span class="op">)</span></pre></div>
+                                                 NDVI_Thresh <span class="op">=</span> <span class="va">NDVI_Thresh</span>, Blue_Thresh <span class="op">=</span> <span class="va">Blue_Thresh</span>,NIR_Thresh <span class="op">=</span> <span class="va">NIR_Thresh</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="dimensionality-reduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#dimensionality-reduction" class="anchor"></a>Dimensionality reduction</h2>
 <p><strong>biodivMapR</strong> includes multiple dimensionality reduction methods, including <code>PCA</code>, <code>SPCA</code> or <code>MNF</code> (default value: <code>SPCA</code>). In case TypePCA is set to <code>PCA</code> or <code>SPCA</code>, a second filtering based on PCA outliers is possible by setting FilterPCA to <code>TRUE</code>.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="va">TypePCA</span> <span class="op">&lt;-</span> <span class="st">'SPCA'</span>
-<span class="va">FilterPCA</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">TypePCA</span> <span class="op">&lt;-</span> <span class="st">'SPCA'</span>
+<span class="va">FilterPCA</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></code></pre></div>
 <p>The transformation preparing for dimensionality reduction is performed on the input image, after elimination of the spectral bands corresponding to atmospheric water absorption. By default, the domains to be discarded during the process can be defined in the variable <code>Excluded_WL</code>, which is an input variable for the function <code>perform_PCA</code>. The default values are the following for the spectral domains to exclude (in nanometers):</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="va">Excluded_WL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">400</span><span class="op">)</span>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">Excluded_WL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">400</span><span class="op">)</span>
 <span class="va">Excluded_WL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">Excluded_WL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">895</span>, <span class="fl">1005</span><span class="op">)</span><span class="op">)</span>
 <span class="va">Excluded_WL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">Excluded_WL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1180</span>, <span class="fl">1480</span><span class="op">)</span><span class="op">)</span>
-<span class="va">Excluded_WL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">Excluded_WL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1780</span>, <span class="fl">2040</span><span class="op">)</span><span class="op">)</span></pre></div>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="co"># apply continuum removal as normalization if working with multi or hyperspectral data</span>
+<span class="va">Excluded_WL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">Excluded_WL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1780</span>, <span class="fl">2040</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># apply continuum removal as normalization if working with multi or hyperspectral data</span>
 <span class="va">Continuum_Removal</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span>
 <span class="co"># Perform dimensionality reduction</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="st">"PERFORM DIMENSIONALITY REDUCTION"</span><span class="op">)</span>
@@ -240,17 +240,17 @@
 <span class="co"># parameters of the PCA/MNF model</span>
 <span class="va">PCA_model</span> <span class="op">&lt;-</span> <span class="va">PCA_Output</span><span class="op">$</span><span class="va">PCA_model</span>
 <span class="co"># definition of spectral bands to be excluded from the analysis</span>
-<span class="va">SpectralFilter</span> <span class="op">&lt;-</span> <span class="va">PCA_Output</span><span class="op">$</span><span class="va">SpectralFilter</span></pre></div>
+<span class="va">SpectralFilter</span> <span class="op">&lt;-</span> <span class="va">PCA_Output</span><span class="op">$</span><span class="va">SpectralFilter</span></code></pre></div>
 <p>The dimensionality reduction is performed to select the most interesting spectral information relative to spectral diversity and remove spatial noise and sensor artefacts. The resulting transformed raster (PCA, SPCA or MNF) is then stored in a binalry file in the <code>Output_Dir</code> directory, which in our case corresponds to <code>RESULTS/S2A_T33NUD_20180104_Subset/SPCA/PCA/OutputPCA_8_PCs</code></p>
 <p>This raster file can be displayed using QGIS or any GIS / image processing software. Here, the PCs corresponding to our image look like this:</p>
 <p><img align="bottom" width="100%" height="100%" src="../man/figures/PCs_1234.png"><img align="bottom" width="100%" height="100%" src="../man/figures/PCs_5678.png"></p>
 <p>This component selection is left to user judgement, who then writes the band to be kept in a <code>.txt</code> file located in the same directory as the raster file. The file is automatically created and ready to edit with function <code>select_PCA_components</code>. One selected band per line should be written in this file. The main goal of PC selection is to discard PCs showing no relevant information corresponding to vegetation, or including artifacts possibly explained by sensor properties. It is somehow a subjective process, and we are currently working on automatic selection of these components.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="co"># Select components from the PCA/SPCA/MNF raster</span>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Select components from the PCA/SPCA/MNF raster</span>
 <span class="co"># Sel_PC = path of the file where selected components are stored</span>
 <span class="va">Sel_PC</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_PCA_components.html">select_PCA_components</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>,
                                 Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, PCA_Files <span class="op">=</span> <span class="va">PCA_Files</span>,
-                                TypePCA <span class="op">=</span> <span class="va">TypePCA</span>, File_Open <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
+                                TypePCA <span class="op">=</span> <span class="va">TypePCA</span>, File_Open <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p>For this example, PCA bands 1, 2, 5, 6 and 8 can be kept if writing the following lines in file <code>Selected_Components.txt</code> opened for edition (do not forget carriage return after last value):</p>
 <pre><code>1
 2
@@ -264,8 +264,8 @@
 <h2 class="hasAnchor">
 <a href="#functional-diversity-maps" class="anchor"></a>Functional diversity maps</h2>
 <p>The functional diversity metrics (Richness, Evenness, Divergence) can be computed directly after dimensionality reduction. Here, we assume that each selected component correspond to a trait value (each trait is scaled over the full image), and each pixel corresponds to a species/individual (no clustering is performed, so one pixel from an individual spatial unit is seen as a different species).</p>
-<div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="co">################################################################################</span>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">################################################################################</span>
 <span class="co">##              MAP FUNCTIONAL DIVERSITY METRICS FRic, FEve, FDiv             ##</span>
 <span class="co">##          (Villeger et al, 2008 https://doi.org/10.1890/07-1206.1)          ##</span>
 <span class="co">################################################################################</span>
@@ -274,7 +274,7 @@
 <span class="co">## path for selected components</span>
 <span class="fu"><a href="../reference/map_functional_div.html">map_functional_div</a></span><span class="op">(</span>Original_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Functional_File <span class="op">=</span> <span class="va">PCA_Files</span>,
                    Selected_Features <span class="op">=</span> <span class="va">Selected_Features</span>, Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>,
-                   window_size <span class="op">=</span> <span class="va">window_size</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,TypePCA <span class="op">=</span> <span class="va">TypePCA</span><span class="op">)</span></pre></div>
+                   window_size <span class="op">=</span> <span class="va">window_size</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,TypePCA <span class="op">=</span> <span class="va">TypePCA</span><span class="op">)</span></code></pre></div>
 <!-- ## Partitioning of spectral diversity into $\alpha$ and $\beta$ components -->
 <!-- The partitioning of spectral diversity is based on the `specdiv` function provided by [Etienne Laliberte on Github](https://github.com/elaliberte/specdiv "specdiv"). The original method does not use the exact same normalization, and only the framework starting from component selection is used here. Future versions will include the full original framework.  -->
 <!-- ```{r Partitioning spectral diversity} -->
@@ -291,20 +291,20 @@
 <h2 class="hasAnchor">
 <a href="#alpha-and-beta-diversity-maps" class="anchor"></a><span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps</h2>
 <p>The first step towards <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity mapping corresponds to the computation of a <code>SpectralSpecies</code> map, which identifies the cluster (‘spectral species’) assigned to each pixel in the image, after k-means clustering is performed. Most of the input parameters are obtained when running <code>perform_PCA</code>.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="st">"MAP SPECTRAL SPECIES"</span><span class="op">)</span>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="st">"MAP SPECTRAL SPECIES"</span><span class="op">)</span>
 <span class="fu"><a href="../reference/map_spectral_species.html">map_spectral_species</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>,
                      PCA_Files <span class="op">=</span> <span class="va">PCA_Files</span>, PCA_model <span class="op">=</span> <span class="va">PCA_model</span>,
                      SpectralFilter <span class="op">=</span> <span class="va">SpectralFilter</span>, Input_Mask_File <span class="op">=</span> <span class="va">Input_Mask_File</span>,
                      Pix_Per_Partition <span class="op">=</span> <span class="va">Pix_Per_Partition</span>, nb_partitions <span class="op">=</span> <span class="va">nb_partitions</span>,
                      nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>, nbclusters <span class="op">=</span> <span class="va">nbclusters</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,
-                     Continuum_Removal <span class="op">=</span> <span class="va">Continuum_Removal</span><span class="op">)</span></pre></div>
+                     Continuum_Removal <span class="op">=</span> <span class="va">Continuum_Removal</span><span class="op">)</span></code></pre></div>
 <p>SpectralSpecies is then stored in a raster file located here:</p>
 <p><code>RESULTS/S2A_T33NUD_20180104_Subset/SPCA/SpectralSpecies</code></p>
 <p><span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps, as well as validation, are based on this <code>SpectralSpecies</code> raster.</p>
 <p>The code to compute <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps from this file is as follows:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="st">"MAP ALPHA DIVERSITY"</span><span class="op">)</span>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="st">"MAP ALPHA DIVERSITY"</span><span class="op">)</span>
 <span class="co"># Index.Alpha   = c('Shannon','Simpson')</span>
 <span class="va">Index_Alpha</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'Shannon'</span><span class="op">)</span>
 <span class="fu"><a href="../reference/map_alpha_div.html">map_alpha_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,
@@ -314,7 +314,7 @@
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="st">"MAP BETA DIVERSITY"</span><span class="op">)</span>
 <span class="fu"><a href="../reference/map_beta_div.html">map_beta_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,
              window_size <span class="op">=</span> <span class="va">window_size</span>, nb_partitions<span class="op">=</span><span class="va">nb_partitions</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,
-             nbclusters <span class="op">=</span> <span class="va">nbclusters</span><span class="op">)</span></pre></div>
+             nbclusters <span class="op">=</span> <span class="va">nbclusters</span><span class="op">)</span></code></pre></div>
 <p><span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps are then stored in raster files located here: <code>RESULTS/S2A_T33NUD_20180104_Subset/SPCA/ALPHA</code> and here: <code>RESULTS/S2A_T33NUD_20180104_Subset/SPCA/BETA</code></p>
 <p>Different rasters can be produced and users are invited to refer to the documentation for more options.</p>
 <p>Here, processing our example leads to the following <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps</p>
@@ -325,8 +325,8 @@
 <h1 class="hasAnchor">
 <a href="#compute-diversity-indices-from-a-vector-layer" class="anchor"></a>Compute diversity indices from a vector layer</h1>
 <p>The following code computes <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity from field plots and extracts the corresponding diversity indices from previouly computed <code>SpectralSpecies</code> raster in order to perform validation.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit">
-<span class="co"># location of the spectral species raster needed for validation</span>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># location of the spectral species raster needed for validation</span>
 <span class="va">Output_SubDir</span> <span class="op">&lt;-</span> <span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/fileutils.html">file_path_sans_ext</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/basename.html">basename</a></span><span class="op">(</span><span class="va">Input_Image_File</span><span class="op">)</span><span class="op">)</span>
 <span class="va">Dir_Raster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">Output_Dir</span>,<span class="va">Output_SubDir</span>,<span class="va">TypePCA</span>,<span class="st">'SpectralSpecies'</span><span class="op">)</span>
 <span class="va">Name_Raster</span> <span class="op">&lt;-</span> <span class="st">'SpectralSpecies'</span>
@@ -349,10 +349,10 @@
 <span class="va">FEve</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">Biodiv_Indicators</span><span class="op">$</span><span class="va">FunctionalDiversity</span><span class="op">$</span><span class="va">FEve</span><span class="op">)</span>
 <span class="va">FDiv</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">Biodiv_Indicators</span><span class="op">$</span><span class="va">FunctionalDiversity</span><span class="op">$</span><span class="va">FDiv</span><span class="op">)</span>
 <span class="co"># if no name for plots</span>
-<span class="va">Biodiv_Indicators</span><span class="op">$</span><span class="va">Name_Plot</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">Biodiv_Indicators</span><span class="op">$</span><span class="va">Shannon</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,by <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></pre></div>
+<span class="va">Biodiv_Indicators</span><span class="op">$</span><span class="va">Name_Plot</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">Biodiv_Indicators</span><span class="op">$</span><span class="va">Shannon</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,by <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></code></pre></div>
 <p>The tables are then written to tab-seperated files.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit">
-<span class="co"># write RS indicators</span>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># write RS indicators</span>
 <span class="co">####################################################</span>
 <span class="co"># write indicators for alpha diversity</span>
 <span class="va">Path_Results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">Output_Dir</span>,<span class="va">Output_SubDir</span>,<span class="va">TypePCA</span>,<span class="st">'VALIDATION'</span><span class="op">)</span>
@@ -375,18 +375,18 @@
 <span class="va">BC_mean</span> <span class="op">&lt;-</span> <span class="va">Biodiv_Indicators</span><span class="op">$</span><span class="va">BCdiss</span>
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">BC_mean</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">BC_mean</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">Biodiv_Indicators</span><span class="op">$</span><span class="va">Name_Plot</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span><span class="op">(</span><span class="va">BC_mean</span>, file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">Path_Results</span>,<span class="st">"BrayCurtis.csv"</span>,sep<span class="op">=</span><span class="st">''</span><span class="op">)</span>,
-            sep<span class="op">=</span><span class="st">"\t"</span>, dec<span class="op">=</span><span class="st">"."</span>, na<span class="op">=</span><span class="st">" "</span>, row.names <span class="op">=</span> <span class="cn">F</span>, col.names<span class="op">=</span> <span class="cn">T</span>,quote<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></pre></div>
+            sep<span class="op">=</span><span class="st">"\t"</span>, dec<span class="op">=</span><span class="st">"."</span>, na<span class="op">=</span><span class="st">" "</span>, row.names <span class="op">=</span> <span class="cn">F</span>, col.names<span class="op">=</span> <span class="cn">T</span>,quote<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <p>These results can then be displayed according to the need for further analysis. Here, for the purpose of illustration, we provide a code in order to visualize the differences among field plots located in the image: we first perform a PCoA on the Bray Curtis dissimilarity matrix computed from the field plots:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit">
-<span class="co"># apply ordination using PCoA (same as done for map_beta_div)</span>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># apply ordination using PCoA (same as done for map_beta_div)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://ecology.msu.montana.edu/labdsv/R">labdsv</a></span><span class="op">)</span>
 <span class="va">MatBCdist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/dist.html">as.dist</a></span><span class="op">(</span><span class="va">BC_mean</span>, diag <span class="op">=</span> <span class="cn">FALSE</span>, upper <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="va">BetaPCO</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/labdsv/man/pco.html">pco</a></span><span class="op">(</span><span class="va">MatBCdist</span>, k <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></pre></div>
+<span class="va">BetaPCO</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/labdsv/man/pco.html">pco</a></span><span class="op">(</span><span class="va">MatBCdist</span>, k <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></code></pre></div>
 <p>The plots corresponding to forested areas with high, medium and low diversity, as well as low vegetation/degraded forest close tomain roads are distributed as follows:</p>
 <p><img align="bottom" width="100%" height="100%" src="../man/figures/04_RGB_FieldLegend.png"></p>
 <p>Here, we produce figures in order to locate the different types of vegetation in the PCoA space:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit">
-<span class="co"># very uglily assign vegetation type to polygons in shapefiles</span>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># very uglily assign vegetation type to polygons in shapefiles</span>
 <span class="va">nbSamples</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">6</span>,<span class="fl">4</span>,<span class="fl">7</span>,<span class="fl">7</span><span class="op">)</span>
 <span class="va">vg</span>        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'Forest high diversity'</span>, <span class="st">'Forest low diversity'</span>, <span class="st">'Forest medium diversity'</span>, <span class="st">'low vegetation'</span><span class="op">)</span>
 <span class="va">Type_Vegetation</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">)</span>
@@ -397,7 +397,7 @@
 <span class="op">}</span>
 
 <span class="co"># create data frame including alpha and beta diversity</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
 <span class="va">Results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="st">'vgtype'</span><span class="op">=</span><span class="va">Type_Vegetation</span>,<span class="st">'pco1'</span><span class="op">=</span> <span class="va">BetaPCO</span><span class="op">$</span><span class="va">points</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,<span class="st">'pco2'</span><span class="op">=</span> <span class="va">BetaPCO</span><span class="op">$</span><span class="va">points</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span>,<span class="st">'pco3'</span> <span class="op">=</span> <span class="va">BetaPCO</span><span class="op">$</span><span class="va">points</span><span class="op">[</span>,<span class="fl">3</span><span class="op">]</span>,
                           <span class="st">'shannon'</span><span class="op">=</span><span class="va">Shannon_RS</span>,<span class="st">'FRic'</span> <span class="op">=</span> <span class="va">FRic</span>, <span class="st">'FEve'</span> <span class="op">=</span> <span class="va">FEve</span>, <span class="st">'FDiv'</span> <span class="op">=</span> <span class="va">FDiv</span><span class="op">)</span>
 
@@ -425,7 +425,7 @@
 <span class="va">filename</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">Path_Results</span>,<span class="st">'BetaDiversity_PcoA2_vs_PcoA3.png'</span><span class="op">)</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="va">filename</span>, plot <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/last_plot.html">last_plot</a></span><span class="op">(</span><span class="op">)</span>, device <span class="op">=</span> <span class="st">'png'</span>, path <span class="op">=</span> <span class="cn">NULL</span>,
        scale <span class="op">=</span> <span class="fl">1</span>, width <span class="op">=</span> <span class="fl">6</span>, height <span class="op">=</span> <span class="fl">4</span>, units <span class="op">=</span> <span class="st">"in"</span>,
-       dpi <span class="op">=</span> <span class="fl">600</span>, limitsize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
+       dpi <span class="op">=</span> <span class="fl">600</span>, limitsize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p>The resulting figures are displayed here:</p>
 <p><img align="bottom" width="100%" height="100%" src="../man/figures/BetaDiversity_PcoA1_vs_PcoA2.png"><img align="bottom" width="100%" height="100%" src="../man/figures/BetaDiversity_PcoA1_vs_PcoA3.png"><img align="bottom" width="100%" height="100%" src="../man/figures/BetaDiversity_PcoA2_vs_PcoA3.png"></p>
 </div>
