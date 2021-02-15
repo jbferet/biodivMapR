@@ -17,6 +17,6 @@ test_that("Radiometric Filtering", {
   Input_Mask_File <- perform_radiometric_filtering(Image_Path = Input_Image_File, Mask_Path = Input_Mask_File,
                                                    Output_Dir = Output_Dir, TypePCA = TypePCA,
                                                    NDVI_Thresh = NDVI_Thresh, Blue_Thresh = Blue_Thresh,NIR_Thresh = NIR_Thresh)
-  expect_equal(Input_Mask_File, 'RESULTS/S2A_T33NUD_20180104_Subset/SPCA/ShadeMask_Updat')
+  expect_equal(Input_Mask_File, 'RESULTS/S2A_T33NUD_20180104_Subset/SPCA/ShadeMask_Update')
 })
 
