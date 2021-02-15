@@ -7,3 +7,5 @@
 ^appveyor\.yml$
 ^tic\.R$
 ^pkgdown/
+^\.ccache$
+^\.github$
