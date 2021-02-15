@@ -4,7 +4,8 @@
 
 [![tic](https://github.com/jbferet/biodivMapR/workflows/tic/badge.svg?branch=ghactions)](https://github.com/jbferet/biodivMapR/actions)
 [![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg)](https://www.r-project.org/Licenses/GPL-3)
-
+[![Latest Stable Version](https://img.shields.io/packagist/v/jbferet/biodivMapR?label=version)](https://packagist.org/packages/jbferet/biodivMapR)
+[![Total Downloads](https://img.shields.io/packagist/dt/jbferet/biodivMapR?color=blue)](https://packagist.org/packages/jbferet/biodivMapR)
 
 # 1 Install
 
