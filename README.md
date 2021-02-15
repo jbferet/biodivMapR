@@ -6,7 +6,7 @@
 [![Build Status](https://travis-ci.org/jbferet/biodivMapR.png?branch=master)](https://travis-ci.org/jbferet/biodivMapR)
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/jbferet/biodivmapr?branch=master&svg=true)](https://ci.appveyor.com/project/jbferet/biodivmapr)
 
-__test ghaction__
+__test ghaction bis__
 
 # 1 Install
 
