@@ -42,8 +42,11 @@ Imports:
     vegan,
     zip
 RoxygenNote: 7.1.1
-Suggests: knitr,
-    rmarkdown
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat (>= 2.0.0)
 VignetteBuilder: knitr
 URL: https://github.com/jbferet/biodivMapR
 BugReports: https://github.com/jbferet/biodivMapR/issues
+Config/testthat/edition: 2
