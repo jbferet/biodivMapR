@@ -8,9 +8,9 @@
 
 # 1 Install
 
-After installing package `devtools`, package `biodivMapR` can be installed with the following command line in R session:
+After installing package `remotes`, package `biodivMapR` can be installed with the following command line in R session:
 ```
-devtools::install_github('jbferet/biodivMapR')
+remotes::install_github('jbferet/biodivMapR')
 ```
 # 2 Tutorial
 
