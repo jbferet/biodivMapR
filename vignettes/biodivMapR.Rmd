@@ -98,7 +98,17 @@ nbclusters <- 50
 
 # Computation of the diversity maps
 
-## Mask non vegetated / shaded / cloudy pixels
+## (Very basic) radiometric mask non vegetated / shaded / cloudy pixels & Dimensionality reduction
+
+__biodivMapR__ includes multiple dimensionality reduction methods, including `PCA`, `SPCA` or `MNF` (default value: `SPCA`). In case TypePCA is set to `PCA` or `SPCA`, a second filtering based on PCA outliers is possible by setting FilterPCA to `TRUE`.
+`TypePCA` needs to be defined before the first steps of the processing, as the type of dimensionality reduction will produce a specific directory corresponding to the type selected. Users can then compare easily different dimensionality reduction techniques with no risk to write over results from other runs.   
+
+```{r PCA method and filtering}
+TypePCA <- 'SPCA'
+FilterPCA <- TRUE
+```
+
+
 __biodivMapR__ allows basic filtering based on different radiometric properties: 
 
 * **NDVI filtering** allows filtering to eliminate non-vegetated pixels. Nothing fancy so you may need to deal with mixed pixels... `NDVI_Thresh` defines the minimum NDVI value to be kept. By default, the NDVI is computed based on the NIR spectral band closest to 835nm, and the RED spectral band closest to 700nm. Which makes it closer to a RedEdge NDVI. These values can be adjusted as input variables for `perform_radiometric_filtering`. 
@@ -119,13 +129,6 @@ Input_Mask_File <- perform_radiometric_filtering(Image_Path = Input_Image_File, 
                                                  NDVI_Thresh = NDVI_Thresh, Blue_Thresh = Blue_Thresh,NIR_Thresh = NIR_Thresh)
 ```
 
-## Dimensionality reduction
-__biodivMapR__ includes multiple dimensionality reduction methods, including `PCA`, `SPCA` or `MNF` (default value: `SPCA`). In case TypePCA is set to `PCA` or `SPCA`, a second filtering based on PCA outliers is possible by setting FilterPCA to `TRUE`.
-
-```{r PCA method and filtering}
-TypePCA <- 'SPCA'
-FilterPCA <- TRUE
-```
 
 The transformation preparing for dimensionality reduction is performed on the input image, after elimination of the spectral bands corresponding to atmospheric water absorption. By default, the domains to be discarded during the process can be defined in the variable `Excluded_WL`, which is an input variable for the function `perform_PCA`. The default values are the following for the spectral domains to exclude (in nanometers):
 
