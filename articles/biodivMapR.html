@@ -95,7 +95,7 @@
       <h1 data-toc-skip>Tutorial for biodivMapR</h1>
                         <h4 class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
             
-            <h4 class="date">2021-02-15</h4>
+            <h4 class="date">2021-02-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR.Rmd"><code>vignettes/biodivMapR.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR.Rmd</code></div>
@@ -185,9 +185,13 @@
 <div id="computation-of-the-diversity-maps" class="section level1">
 <h1 class="hasAnchor">
 <a href="#computation-of-the-diversity-maps" class="anchor"></a>Computation of the diversity maps</h1>
-<div id="mask-non-vegetated-shaded-cloudy-pixels" class="section level2">
+<div id="very-basic-radiometric-mask-non-vegetated-shaded-cloudy-pixels-dimensionality-reduction" class="section level2">
 <h2 class="hasAnchor">
-<a href="#mask-non-vegetated-shaded-cloudy-pixels" class="anchor"></a>Mask non vegetated / shaded / cloudy pixels</h2>
+<a href="#very-basic-radiometric-mask-non-vegetated-shaded-cloudy-pixels-dimensionality-reduction" class="anchor"></a>(Very basic) radiometric mask non vegetated / shaded / cloudy pixels &amp; Dimensionality reduction</h2>
+<p><strong>biodivMapR</strong> includes multiple dimensionality reduction methods, including <code>PCA</code>, <code>SPCA</code> or <code>MNF</code> (default value: <code>SPCA</code>). In case TypePCA is set to <code>PCA</code> or <code>SPCA</code>, a second filtering based on PCA outliers is possible by setting FilterPCA to <code>TRUE</code>. <code>TypePCA</code> needs to be defined before the first steps of the processing, as the type of dimensionality reduction will produce a specific directory corresponding to the type selected. Users can then compare easily different dimensionality reduction techniques with no risk to write over results from other runs.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">TypePCA</span> <span class="op">&lt;-</span> <span class="st">'SPCA'</span>
+<span class="va">FilterPCA</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></code></pre></div>
 <p><strong>biodivMapR</strong> allows basic filtering based on different radiometric properties:</p>
 <ul>
 <li>
@@ -198,7 +202,7 @@
 <strong>BLUE filtering</strong> allows filtering of clouds, based on the hypothesis that atmospheric scattering will lead to higher reflectance in the blue domain. <code>Blue_Thresh</code> defines the maximum Blue reflectance to be kept. By default, the Blue spectral band closest to 480nm is used. This value can be adjusted as input variables for <code>perform_radiometric_filtering</code>.</li>
 </ul>
 <p><code>perform_radiometric_filtering</code> provides the path for the updated shade mask as output.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">NDVI_Thresh</span> <span class="op">&lt;-</span> <span class="fl">0.5</span>
 <span class="co"># these values are relevant only if reflectance is coded as integer values between 0 and 10000. </span>
 <span class="va">Blue_Thresh</span> <span class="op">&lt;-</span> <span class="fl">500</span>
@@ -207,14 +211,6 @@
 <span class="va">Input_Mask_File</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/perform_radiometric_filtering.html">perform_radiometric_filtering</a></span><span class="op">(</span>Image_Path <span class="op">=</span> <span class="va">Input_Image_File</span>, Mask_Path <span class="op">=</span> <span class="va">Input_Mask_File</span>,
                                                  Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,
                                                  NDVI_Thresh <span class="op">=</span> <span class="va">NDVI_Thresh</span>, Blue_Thresh <span class="op">=</span> <span class="va">Blue_Thresh</span>,NIR_Thresh <span class="op">=</span> <span class="va">NIR_Thresh</span><span class="op">)</span></code></pre></div>
-</div>
-<div id="dimensionality-reduction" class="section level2">
-<h2 class="hasAnchor">
-<a href="#dimensionality-reduction" class="anchor"></a>Dimensionality reduction</h2>
-<p><strong>biodivMapR</strong> includes multiple dimensionality reduction methods, including <code>PCA</code>, <code>SPCA</code> or <code>MNF</code> (default value: <code>SPCA</code>). In case TypePCA is set to <code>PCA</code> or <code>SPCA</code>, a second filtering based on PCA outliers is possible by setting FilterPCA to <code>TRUE</code>.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">TypePCA</span> <span class="op">&lt;-</span> <span class="st">'SPCA'</span>
-<span class="va">FilterPCA</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></code></pre></div>
 <p>The transformation preparing for dimensionality reduction is performed on the input image, after elimination of the spectral bands corresponding to atmospheric water absorption. By default, the domains to be discarded during the process can be defined in the variable <code>Excluded_WL</code>, which is an input variable for the function <code>perform_PCA</code>. The default values are the following for the spectral domains to exclude (in nanometers):</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">Excluded_WL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">400</span><span class="op">)</span>
