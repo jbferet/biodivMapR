@@ -412,13 +412,19 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.50){
     colnames(rowcol)[1:2]= c('row', 'col')
   }
 
+  metarast <- raster(ImPath)
+  # updated raster package: do not use brick with 2D raster
+  if (dim(metarast)[3]>1){
+    rasterInfo <- raster::brick(ImPath)
+  } else{
+    rasterInfo <- metarast
+  }
 
-  r = brick(ImPath)
-  # nbytes = as.numeric(substring(dataType(r), 4, 4))
+  # nbytes = as.numeric(substring(dataType(rasterInfo), 4, 4))
   # stars converts automatically values to numeric
   nbytes = 8
-  ImgSizeGb = prod(dim(r))*nbytes/2^30
-  LineSizeGb = prod(dim(r)[2:3])*nbytes/2^30
+  ImgSizeGb = prod(dim(rasterInfo))*nbytes/2^30
+  LineSizeGb = prod(dim(rasterInfo)[2:3])*nbytes/2^30
   LinesBlock = floor(MaxRAM/LineSizeGb)
   rowcol$rowInBlock = ((rowcol$row-1) %% LinesBlock)+1  # row in block number
   rowcol$block=floor((rowcol$row-1)/LinesBlock)+1  # block number
@@ -468,13 +474,20 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.50){
 #' Kind (Kernel index) and 'id' the sample ID to be used with the kernel
 #' @export
 get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Per_Partition, kernel=NULL,MaxRAM = 0.5) {
-  r <- brick(ImPath)
+
+  metarast <- raster(ImPath)
+  # updated raster package: do not use brick with 2D raster
+  if (dim(metarast)[3]>1){
+    rasterInfo <- raster::brick(ImPath)
+  } else{
+    rasterInfo <- metarast
+  }
   nbPix2Sample <- nb_partitions * Pix_Per_Partition
   # get total number of pixels
-  rdim <- dim(r)
+  rdim <- dim(rasterInfo)
   nlines <- rdim[1]
   nsamples <- rdim[2]
-  nbpix <- ncell(r)
+  nbpix <- ncell(rasterInfo)
   # 1- Exclude masked pixels from random subset
   # Read Mask
   if ((!MaskPath == "") & (!MaskPath == FALSE)) {
