@@ -422,24 +422,26 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.50){
 
   # nbytes = as.numeric(substring(dataType(rasterInfo), 4, 4))
   # stars converts automatically values to numeric
-  nbytes = 8
-  ImgSizeGb = prod(dim(rasterInfo))*nbytes/2^30
-  LineSizeGb = prod(dim(rasterInfo)[2:3])*nbytes/2^30
-  LinesBlock = floor(MaxRAM/LineSizeGb)
-  rowcol$rowInBlock = ((rowcol$row-1) %% LinesBlock)+1  # row in block number
-  rowcol$block=floor((rowcol$row-1)/LinesBlock)+1  # block number
-  rowcol$sampleIndex = 1:nrow(rowcol)  # sample index to reorder result
+  nbytes <- 8
+  ImgSizeGb <- prod(dim(rasterInfo))*nbytes/2^30
+  LineSizeGb <- prod(dim(rasterInfo)[2:3])*nbytes/2^30
+  LinesBlock <- floor(MaxRAM/LineSizeGb)
+  rowcol$rowInBlock <- ((rowcol$row-1) %% LinesBlock)+1  # row in block number
+  rowcol$block <- floor((rowcol$row-1)/LinesBlock)+1  # block number
+  rowcol$sampleIndex <- 1:nrow(rowcol)  # sample index to reorder result
 
   sampleList = lapply(unique(rowcol$block), function(iblock){
-    rc = rowcol[rowcol$block==iblock,]
-    rr = range(rc$row)
-    nYSize = diff(rr)+1
-    nXSize = max(rc$col)
+    rc <- rowcol[rowcol$block==iblock,]
+    rr <- range(rc$row)
+    nYSize <- diff(rr)+1
+    nXSize <- max(rc$col)
     # stars data cube dimension order is x*y*band
-    ipix_stars = (rc$rowInBlock-min(rc$rowInBlock))*nXSize+rc$col
-    values = read_stars(ImPath, RasterIO =list(nXSize=nXSize, nYOff=rr[1], nYSize=nYSize),proxy = FALSE)[[1]]
-    values = matrix(values, nrow=nYSize*nXSize)
-    res = cbind(rc$sampleIndex, values[ipix_stars, ])
+    ipix_stars <- (rc$rowInBlock-min(rc$rowInBlock))*nXSize+rc$col
+    # get driver
+    driver <- attr(rgdal::GDALinfo(ImPath,returnStats = FALSE), 'driver')
+    values <- read_stars(ImPath, RasterIO =list(nXSize=nXSize, nYOff=rr[1], nYSize=nYSize),proxy = FALSE, driver=driver)[[1]]
+    values <- matrix(values, nrow=nYSize*nXSize)
+    res <- cbind(rc$sampleIndex, values[ipix_stars, ])
     rm('values')
     gc()
     return(res)
