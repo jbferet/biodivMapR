@@ -414,7 +414,7 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.50){
 
   metarast <- raster(ImPath)
   # updated raster package: do not use brick with 2D raster
-  if (dim(metarast)[3]>1){
+  if (nbands(metarast)>1){
     rasterInfo <- raster::brick(ImPath)
   } else{
     rasterInfo <- metarast
@@ -479,7 +479,7 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Pe
 
   metarast <- raster(ImPath)
   # updated raster package: do not use brick with 2D raster
-  if (dim(metarast)[3]>1){
+  if (nbands(metarast)>1){
     rasterInfo <- raster::brick(ImPath)
   } else{
     rasterInfo <- metarast
