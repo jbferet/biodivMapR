@@ -49,7 +49,7 @@ map_functional_div <- function(Original_Image_File,Functional_File = FALSE,
   # check if selected features match with image dimensions
   HDRname <- get_HDR_name(Functional_File)
   HDR <- read_ENVI_header(HDRname)
-  if (Selected_Features==FALSE){
+  if (length(Selected_Features) ==1 & Selected_Features[1] ==FALSE){
     Selected_Features = seq(1,HDR$bands)
   } else {
     if (max(Selected_Features)>HDR$bands){
