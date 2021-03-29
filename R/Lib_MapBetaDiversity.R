@@ -33,32 +33,47 @@
 #'
 #' @return None
 #' @export
-map_beta_div <- function(Input_Image_File, Output_Dir, window_size,
+map_beta_div <- function(Input_Image_File=FALSE, Output_Dir='', window_size=10,
                          TypePCA = "SPCA", nb_partitions = 20,nbclusters = 50,
                          Nb_Units_Ordin = 2000, MinSun = 0.25,
                          pcelim = 0.02, scaling = "PCO", FullRes = TRUE,
                          LowRes = FALSE, nbCPU = 1, MaxRAM = 0.25,
                          ClassifMap = FALSE) {
 
-  Output_Dir_BETA <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "BETA")
   if (ClassifMap == FALSE){
+    Output_Dir_BETA <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "BETA")
     Output_Dir_SS <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "SpectralSpecies")
     Spectral_Species_Path <- paste(Output_Dir_SS, "SpectralSpecies", sep = "")
   } else {
     message("Classification Map will be used instead of SpectralSpecies")
-    message("Please make sure it is in ENVI format with proper hdr file")
-    message("and classes coded in INT8 or INT16")
-    message("Class '0' will be excluded")
+    message("Classes are expected to be integer values")
+    message("conversion to ENVI File if not the format of the original classification map")
+    message("Class '0' will be considered as No Data and excluded")
     if (! file.exists(ClassifMap)){
       message("classification map is not found:")
       print(ClassifMap)
     } else {
       Spectral_Species_Path <- ClassifMap
       message("updating nbclusters based on number of classes")
-      Classif_Values <- read_stars(ClassifMap,proxy = FALSE)[[1]]
+      ClassifRaster <- stars::read_stars(ClassifMap,proxy = FALSE)
+      Classif_Values <- ClassifRaster[[1]]
       nbclusters <- max(Classif_Values,na.rm = TRUE)
-      nb_partitions <- 1
       message(paste("Number of classes : "),nbclusters)
+
+      # save classification map in proper format in output directory
+      # if not expected file format for Spectral Species map
+      driver <- attr(rgdal::GDALinfo(ClassifMap,returnStats = FALSE), 'driver')
+      if (!driver=='ENVI'){
+        if (Input_Image_File==FALSE){
+          Input_Image_File <- tools::file_path_sans_ext(basename(ClassifMap))
+        }
+        Output_Dir_SS <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "UserClassification")
+        Spectral_Species_Path <- paste(Output_Dir_SS, "UserClassification", sep = "")
+        if (! file.exists(Spectral_Species_Path)){
+          stars::write_stars(ClassifRaster, Spectral_Species_Path, driver =  "ENVI",type='Int16')
+        }
+        Output_Dir_BETA <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "BETA")
+      }
     }
   }
 

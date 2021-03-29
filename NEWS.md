@@ -1,3 +1,15 @@
+# biodivMapR v1.7.0
+
+## Changes
+- capacity to produce diversity maps based on classification raster
+
+## Fixes
+- warning eliminated when testing Selected_Features in Lib_MapFunctionalDiversity.R 
+- Corrected data extraction function using nbands in extract.big_raster and get_random_subset_from_image
+- updated extract.big_raster and get_random_subset_from_image in order to account for 2D rasters which cannot be read with brick
+- added driver definition when using read_stars (extract.big_raster)
+- corrected vignettes (TypePCA used before defined in previous version) 
+
 # biodivMapR v1.6.2
 
 ## Fixes

@@ -5,9 +5,9 @@
 \title{maps alpha diversity indicators  based on prior selection of PCs}
 \usage{
 map_alpha_div(
-  Input_Image_File,
-  Output_Dir,
-  window_size,
+  Input_Image_File = FALSE,
+  Output_Dir = "",
+  window_size = 10,
   TypePCA = "SPCA",
   nbclusters = 50,
   MinSun = 0.25,

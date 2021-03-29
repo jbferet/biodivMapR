@@ -115,6 +115,10 @@ define_output_directory <- function(Output_Dir, ImPath, TypePCA) {
 #
 # @return path of the output directory
 define_output_subdir <- function(Output_Dir, ImPath, TypePCA, Sub) {
+  if (ImPath==FALSE){
+    message('Please provide input image file')
+    stop()
+  }
   Image_Name <- strsplit(basename(ImPath), "\\.")[[1]][1]
   Output_Dir <- paste(Output_Dir, "/", Image_Name, "/", TypePCA, "/", Sub, "/", sep = "")
   dir.create(Output_Dir, showWarnings = FALSE, recursive = TRUE)

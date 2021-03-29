@@ -5,9 +5,9 @@
 \title{maps beta diversity indicator based on spectral species distribution}
 \usage{
 map_beta_div(
-  Input_Image_File,
-  Output_Dir,
-  window_size,
+  Input_Image_File = FALSE,
+  Output_Dir = "",
+  window_size = 10,
   TypePCA = "SPCA",
   nb_partitions = 20,
   nbclusters = 50,
