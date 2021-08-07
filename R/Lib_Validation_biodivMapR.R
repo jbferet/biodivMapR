@@ -280,12 +280,12 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, NbClusters = 50,
         ij <- matrix(ij[which(!is.na(ij[,1])),], ncol = ncol(ExtractIm))
         nbPix_Sunlit <- dim(ij)[1]
         PCsun <- nbPix_Sunlit / nrow(ExtractIm)
-        if (nbPix_Sunlit>4){
+        if (nbPix_Sunlit>Selected_Features){
           FunctionalDiversity$FRic[ip] <- 100*convhulln(ij, output.options = 'FA')$vol
         } else {
           FunctionalDiversity$FRic[ip] <- 0
           message(paste('FRic cannot be computed from',Name_Plot[ip]))
-          message('5 pixels minimum required to compute convex hull')
+          message('Minimum number of pixel required to compute convex hull must be > nb selected features')
         }
         if (nbPix_Sunlit>1){
           # 2- Functional Divergence
