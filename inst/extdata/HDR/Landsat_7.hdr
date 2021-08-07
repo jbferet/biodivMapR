@@ -1,0 +1,19 @@
+ENVI
+description = { Template for HDR Landsat_7}
+samples = 10980
+lines   = 10980
+bands   = 10
+header offset = 0
+file type = ENVI Standard
+data type = 2
+interleave = bil
+sensor type = Landsat_7
+byte order = 0
+data ignore value = -32768
+wavelength units = Nanometers
+map info = {UTM, 1, 1, XX, XX, XX, XX, 32, North,WGS-84}
+coordinate system string = {PROJCS["WGS_1984_UTM_Zone_32N",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",XX,XX]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",9],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["Meter",1]]}
+band names 		= {B01, B02, B03, B04, B05, B07}
+purpose			= {blue, green, red, near infrared, SWIR1, SWIR2}
+wavelength 		= {485.0, 560.0, 660.5, 835.0, 1650.0, 2220.0}
+resolution 		= {30, 30, 30, 30, 30, 30}

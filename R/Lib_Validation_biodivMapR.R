@@ -202,6 +202,9 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, NbClusters = 50,
       Simpson <- rbind(Simpson, NA, row.names = NULL, col.names = NULL)
     } else {
       ExtractIm <- extract.big_raster(Raster_SpectralSpecies, XY[[ip]])
+      if (length(XY[[ip]]$col)==1){
+        ExtractIm <- matrix(ExtractIm,ncol = nbRepetitions)
+      }
       # compute alpha diversity for each repetition
       Pixel.Inventory <- list()
       Richness.tmp <- Shannon.tmp <- Fisher.tmp <- Simpson.tmp <- vector(length = nbRepetitions)
@@ -277,15 +280,26 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, NbClusters = 50,
         ij <- matrix(ij[which(!is.na(ij[,1])),], ncol = ncol(ExtractIm))
         nbPix_Sunlit <- dim(ij)[1]
         PCsun <- nbPix_Sunlit / nrow(ExtractIm)
-        FunctionalDiversity$FRic[ip] <- 100*convhulln(ij, output.options = 'FA')$vol
-        # 2- Functional Divergence
-        # mean distance from centroid
-        Centroid <- colMeans(ij)
-        FunctionalDiversity$FDiv[ip] <- 100*sum(sqrt(rowSums((t(t(ij) - Centroid)^2))))/nbPix_Sunlit
-        # FDivmap[ii,jj] <- 100*sum(sqrt(rowSums((t(t(ij) )^2))))/nbPix_Sunlit
-        # 3- Functional Evenness
-        # euclidean minimum spanning tree
-        FunctionalDiversity$FEve[ip] <- 100*sum(ComputeMST(ij,verbose = FALSE)$distance)/nbPix_Sunlit
+        if (nbPix_Sunlit>4){
+          FunctionalDiversity$FRic[ip] <- 100*convhulln(ij, output.options = 'FA')$vol
+        } else {
+          FunctionalDiversity$FRic[ip] <- 0
+          message(paste('FRic cannot be computed from',Name_Plot[ip]))
+          message('5 pixels minimum required to compute convex hull')
+        }
+        if (nbPix_Sunlit>1){
+          # 2- Functional Divergence
+          # mean distance from centroid
+          Centroid <- colMeans(ij)
+          FunctionalDiversity$FDiv[ip] <- 100*sum(sqrt(rowSums((t(t(ij) - Centroid)^2))))/nbPix_Sunlit
+          # FDivmap[ii,jj] <- 100*sum(sqrt(rowSums((t(t(ij) )^2))))/nbPix_Sunlit
+          # 3- Functional Evenness
+          # euclidean minimum spanning tree
+          FunctionalDiversity$FEve[ip] <- 100*sum(ComputeMST(ij,verbose = FALSE)$distance)/nbPix_Sunlit
+        } else {
+          FunctionalDiversity$FDiv[ip] <- 0
+          FunctionalDiversity$FEve[ip] <- 0
+        }
       }
     }
   }
@@ -320,6 +334,11 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, NbClusters = 50,
   #   }
   # }
   BC_mean <- as.matrix(BC_mean/nbRepetitions)
+  names(Richness) <- 'Richness'
+  names(Fisher) <- 'Fisher'
+  names(Shannon) <- 'Shannon'
+  names(Simpson) <- 'Simpson'
+  names(Richness) <- 'Richness'
   return(list("Richness" = Richness, "Fisher" = Fisher, "Shannon" = Shannon, "Simpson" = Simpson,
               "fisher.All" = Fisher.AllRep, "Shannon.All" = Shannon.AllRep, "Simpson.All" = Simpson.AllRep,
               'BCdiss' = BC_mean, 'BCdiss.All' = BC,'Name_Plot' = Name_Plot,
