@@ -7,11 +7,11 @@
 define_output_directory(Output_Dir, ImPath, TypePCA)
 }
 \arguments{
-\item{Output_Dir}{output directory}
+\item{Output_Dir}{character. output directory}
 
-\item{ImPath}{image path}
+\item{ImPath}{character. image path}
 
-\item{TypePCA}{Type of PCA (PCA, SPCA, NLPCA...)}
+\item{TypePCA}{character. Type of PCA (PCA, SPCA, NLPCA...)}
 }
 \value{
 path of the output directory

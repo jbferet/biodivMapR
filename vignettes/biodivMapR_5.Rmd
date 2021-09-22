@@ -1,0 +1,49 @@
+---
+title: "Spectral species mapping"
+author: "Jean-Baptiste Féret, Florian de Boissieu"
+date: "`r Sys.Date()`"
+output:
+  html_vignette:
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Spectralspecies}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+  ```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval=FALSE
+)
+```
+
+
+The first step towards $\alpha$ and $\beta$ diversity mapping corresponds to the computation of a `SpectralSpecies` map, which identifies the cluster ('spectral species') assigned to each pixel in the image, after k-means clustering is performed. Most of the input parameters are obtained when running `perform_PCA`.
+
+Info about K-means clustering and the path for the spectral species file can be obtained as outputs. 
+
+
+```{r Spectral species map}
+print("MAP SPECTRAL SPECIES")
+Kmeans_info <- map_spectral_species(Input_Image_File = Input_Image_File, Output_Dir = Output_Dir,
+                                    PCA_Files = PCA_Files, Input_Mask_File = Input_Mask_File,
+                                    Pix_Per_Partition = Pix_Per_Partition, nb_partitions = nb_partitions,
+                                    nbCPU = nbCPU, MaxRAM = MaxRAM, nbclusters = nbclusters, TypePCA = TypePCA,
+                                    Continuum_Removal = Continuum_Removal)
+```
+
+SpectralSpecies is then stored in a raster file located here:
+
+```{r Spectral Species Path}
+Kmeans_info$SpectralSpecies
+'RESULTS/S2A_T33NUD_20180104_Subset/SPCA/SpectralSpecies'
+
+```
+
+
+
+$\alpha$ and $\beta$ diversity maps can then be computed based on this `SpectralSpecies` raster.
+
+The computation of $\alpha$ and $\beta$ diversity maps is performed in the [next step](https://jbferet.github.io/biodivMapR/articles/biodivMapR_6.html){target="_blank"}.

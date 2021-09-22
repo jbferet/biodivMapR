@@ -111,7 +111,7 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
     } else {
       PCsel <- 1:dim(PCA_model$x)[2]
     }
-    Shade_Update <- paste(Output_Dir_Full, "ShadeMask_Update_PCA", sep = "")
+    Shade_Update <- file.path(Output_Dir_Full, "ShadeMask_Update_PCA")
     Input_Mask_File <- filter_PCA(Input_Image_File, HDR, Input_Mask_File, Shade_Update,
                                   Spectral = SpectralFilter,Continuum_Removal, PCA_model,
                                   PCsel, TypePCA,nbCPU = nbCPU, MaxRAM = MaxRAM)
@@ -162,13 +162,13 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
   # CREATE PCA FILE CONTAINING ONLY SELECTED PCs
   print("Apply PCA model to the whole image")
   Output_Dir_PCA <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "PCA")
-  PCA_Files <- paste(Output_Dir_PCA, "OutputPCA_", Nb_PCs, "_PCs", sep = "")
+  PCA_Files <- file.path(Output_Dir_PCA, paste("OutputPCA_", Nb_PCs, "_PCs", sep = ""))
   write_PCA_raster(Input_Image_File = Input_Image_File, Input_Mask_File = Input_Mask_File,
                    PCA_Path = PCA_Files, PCA_model = PCA_model, Spectral = SpectralFilter,
                    Nb_PCs = Nb_PCs, Continuum_Removal = Continuum_Removal, TypePCA = TypePCA,
                    nbCPU = nbCPU, MaxRAM = MaxRAM)
   # save workspace for this stage
-  WS_Save <- paste(Output_Dir_PCA, "PCA_Info.RData", sep = "")
+  WS_Save <- file.path(Output_Dir_PCA, "PCA_Info.RData")
   my_list <- list("PCA_Files" = PCA_Files,"Pix_Per_Partition" =Pix_Per_Partition, "nb_partitions" = nb_partitions,
                   "MaskPath" = Input_Mask_File, "PCA_model" =PCA_model,"SpectralFilter"=   SpectralFilter)
   MaskPath = Input_Mask_File
@@ -558,8 +558,8 @@ select_PCA_components <- function(Input_Image_File, Output_Dir, PCA_Files, TypeP
   print(PCA_Files)
   message("*********************************************************")
   Image_Name <- strsplit(basename(Input_Image_File), "\\.")[[1]][1]
-  Output_Dir_Full <- paste(Output_Dir, "/", Image_Name, "/", TypePCA, "/", sep = "")
-  Sel_PC <- paste(Output_Dir_Full, "/PCA/Selected_Components.txt", sep = "")
+  Output_Dir_Full <- file.path(Output_Dir, Image_Name, TypePCA)
+  Sel_PC <- file.path(Output_Dir_Full, "PCA/Selected_Components.txt")
   message("list the principal components that will be used to estimate biodiversity in the file")
   message("")
   print(Sel_PC)

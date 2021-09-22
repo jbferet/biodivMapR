@@ -8,8 +8,6 @@ map_spectral_species(
   Input_Image_File,
   Output_Dir,
   PCA_Files,
-  PCA_model,
-  SpectralFilter,
   Input_Mask_File,
   Pix_Per_Partition,
   nb_partitions,
@@ -19,7 +17,9 @@ map_spectral_species(
   nbCPU = 1,
   MaxRAM = FALSE,
   Kmeans_Only = FALSE,
-  SelectedPCs = FALSE
+  SelectedPCs = FALSE,
+  PCA_model = NULL,
+  SpectralFilter = NULL
 )
 }
 \arguments{
@@ -28,11 +28,6 @@ map_spectral_species(
 \item{Output_Dir}{character. Path for output directory}
 
 \item{PCA_Files}{character. Path of the PCA image}
-
-\item{PCA_model}{list. Parameters for teh PCA model to be applied on original image}
-
-\item{SpectralFilter}{list. information about spectral band location
-(central wavelength), bands to keep...}
 
 \item{Input_Mask_File}{character. Path of the mask corresponding to the image}
 
@@ -53,9 +48,14 @@ map_spectral_species(
 \item{Kmeans_Only}{boolean. set to TRUE if computation of kmeans without production of spectral species map}
 
 \item{SelectedPCs}{numeric. Define PCs to be selected. Set to FALSE if you want to use the "Selected_Components.txt" file}
+
+\item{PCA_model}{list. Parameters for the PCA model to be applied on original image}
+
+\item{SpectralFilter}{list. information about spectral band location
+(central wavelength), bands to keep...}
 }
 \value{
-None
+Kmeans_info
 }
 \description{
 maps spectral species based on PCA file computed previously

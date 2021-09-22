@@ -66,15 +66,17 @@ map_functional_div <- function(Original_Image_File,Functional_File = FALSE,
   }
   # define output directory
   Output_Dir_Funct <- define_output_subdir(Output_Dir, Original_Image_File, TypePCA, "FUNCTIONAL")
-  Functional_Map_Path <- paste(Output_Dir_Funct, "FunctionalDiversity_Map", sep = "")
+  Functional_Map_Path <- file.path(Output_Dir_Funct, "FunctionalDiversity_Map")
   # 1- COMPUTE FUNCTIONAL DIVERSITY: RICHNESS, EVENNESS, DIVERGENCE
   print("Compute functional metrics")
-  FunctionalMetrics <- compute_Functional_metrics(Functional_File,Functional_Map_Path,Selected_Features,
-                                           window_size, MinSun, nbCPU = nbCPU, MaxRAM = MaxRAM)
+  FunctionalMetrics <- compute_Functional_metrics(Functional_File = Functional_File, Functional_Map_Path = Functional_Map_Path,
+                                                  Selected_Features = Selected_Features, window_size = window_size,
+                                                  MinSun = MinSun, nbCPU = nbCPU, MaxRAM = MaxRAM)
 
   # 2- SAVE FUNCTIONAL DIVERSITY MAPS
   print("Write functional diversity maps")
-  write_raster(FunctionalMetrics$FunctMap, FunctionalMetrics$HDR, Functional_Map_Path, window_size, FullRes = FullRes, LowRes = LowRes,SmoothImage = SmoothImage)
+  write_raster(FunctionalMetrics$FunctMap, FunctionalMetrics$HDR, Functional_Map_Path,
+               window_size, FullRes = FullRes, LowRes = LowRes,SmoothImage = SmoothImage)
   return(invisible())
 }
 
@@ -92,6 +94,7 @@ map_functional_div <- function(Original_Image_File,Functional_File = FALSE,
 #' @importFrom future plan multiprocess sequential
 #' @importFrom future.apply future_lapply
 #' @importFrom stats sd
+#' @importFrom raster brick values
 compute_Functional_metrics <- function(Functional_File, Functional_Map_Path, Selected_Features,
                                        window_size, MinSun, nbCPU = FALSE, MaxRAM = FALSE) {
 
@@ -140,14 +143,25 @@ compute_Functional_metrics <- function(Functional_File, Functional_Map_Path, Sel
   FunctOUT_Format <- ENVI_type2bytes(HDR_Funct)
   FunctIN_Format <- ENVI_type2bytes(HDR)
 
-  # get minimum and maximum value for each feature
+  # # get minimum and maximum value for each feature
+  # FunctRaster <- brick(Functional_File)
+  # RasterVal <- setMinMax(FunctRaster)
+  # MinFunct <- MaxFunct <- c()
+  # for (i in 1:nbands(FunctRaster)){
+  #   MinFunct[i] <- minValue(RasterVal[[i]])
+  #   MaxFunct[i] <- maxValue(RasterVal[[i]])
+  # }
+
+  # get interquantile range for standardization
   FunctRaster <- brick(Functional_File)
-  RasterVal <- setMinMax(FunctRaster)
   MinFunct <- MaxFunct <- c()
   for (i in 1:nbands(FunctRaster)){
-    MinFunct[i] <- minValue(RasterVal[[i]])
-    MaxFunct[i] <- maxValue(RasterVal[[i]])
+    RasterVal <- FunctRaster[[i]]
+    RangeTraits <- IQR_outliers(raster::values(RasterVal))
+    MinFunct[i] <- RangeTraits[1]
+    MaxFunct[i] <- RangeTraits[2]
   }
+
   MinFunct <- MinFunct[Selected_Features]
   MaxFunct <- MaxFunct[Selected_Features]
   MinMaxRaster <- data.frame('MinRaster'=MinFunct,'MaxRaster'=MaxFunct)

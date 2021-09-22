@@ -9,3 +9,5 @@
 ^pkgdown/
 ^\.ccache$
 ^\.github$
+^doc$
+^Meta$

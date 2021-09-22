@@ -33,10 +33,10 @@ raster2BIL <- function(Raster_Path, Sensor = "unknown", Output_Dir = FALSE, Conv
   Input_Dir <- dirname(Raster_Path)
   # define path where data will be stored
   if (Output_Dir == FALSE) {
-    Output_Path <- paste(Input_Dir, "/biodivMapR_Convert_BIL/", file_path_sans_ext(Input_File), sep = "")
+    Output_Path <- file.path(Input_Dir, "biodivMapR_Convert_BIL", file_path_sans_ext(Input_File))
   } else {
     dir.create(Output_Dir, showWarnings = FALSE, recursive = TRUE)
-    Output_Path <- paste(Output_Dir, "/", file_path_sans_ext(Input_File), sep = "")
+    Output_Path <- file.path(Output_Dir, file_path_sans_ext(Input_File))
   }
   message("The converted file will be written in the following location:")
   print(Output_Path)

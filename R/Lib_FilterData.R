@@ -41,7 +41,7 @@ perform_radiometric_filtering <- function(Image_Path, Mask_Path, Output_Dir, Typ
   } else {
     print("Update mask based on NDVI, NIR and Blue threshold")
   }
-  Shade_Update <- paste(Output_Dir_Full, "ShadeMask_Update", sep = "")
+  Shade_Update <- file.path(Output_Dir_Full, "ShadeMask_Update")
   Mask_Path <- create_mask_from_threshold(ImPath = Image_Path, MaskPath = Mask_Path, MaskPath_Update = Shade_Update,
                                           NDVI_Thresh = NDVI_Thresh, Blue_Thresh = Blue_Thresh, NIR_Thresh = NIR_Thresh,
                                           Blue = Blue, Red = Red, NIR = NIR)

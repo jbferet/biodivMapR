@@ -7,7 +7,7 @@
 diversity_from_plots(
   Raster_SpectralSpecies,
   Plots,
-  NbClusters = 50,
+  nbclusters = 50,
   Raster_Functional = FALSE,
   Selected_Features = FALSE,
   Name_Plot = FALSE
@@ -18,7 +18,7 @@ diversity_from_plots(
 
 \item{Plots}{list. list of paths corresponding to shapefiles defining polygons in the raster}
 
-\item{NbClusters}{numeric. Number of clusters defined in k-Means.}
+\item{nbclusters}{numeric. Number of clusters defined in k-Means.}
 
 \item{Raster_Functional}{character. path for the raster file used to compute functional diversity}
 

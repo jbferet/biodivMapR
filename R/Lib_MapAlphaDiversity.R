@@ -42,7 +42,7 @@ map_alpha_div <- function(Input_Image_File=FALSE, Output_Dir='', window_size=10,
   # if 'standard use' of biodivMapR
   if (ClassifMap == FALSE){
     Output_Dir_SS <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "SpectralSpecies")
-    Spectral_Species_Path <- paste(Output_Dir_SS, "SpectralSpecies", sep = "")
+    Spectral_Species_Path <- file.path(Output_Dir_SS, "SpectralSpecies")
   } else {
     message("Classification Map will be used instead of SpectralSpecies")
     message("Classes are expected to be integer values")
@@ -66,7 +66,7 @@ map_alpha_div <- function(Input_Image_File=FALSE, Output_Dir='', window_size=10,
           Input_Image_File <- tools::file_path_sans_ext(basename(ClassifMap))
         }
         Output_Dir_SS <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "UserClassification")
-        Spectral_Species_Path <- paste(Output_Dir_SS, "UserClassification", sep = "")
+        Spectral_Species_Path <- file.path(Output_Dir_SS, "UserClassification")
         if (! file.exists(Spectral_Species_Path)){
           stars::write_stars(ClassifRaster, Spectral_Species_Path, driver =  "ENVI",type='Int16')
         }

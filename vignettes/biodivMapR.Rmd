@@ -1,12 +1,12 @@
 ---
-title: "Tutorial for biodivMapR"
+title: "Produce diversity maps from optical images with biodivMapR"
 author: "Jean-Baptiste Féret, Florian de Boissieu"
 date: "`r Sys.Date()`"
 output: 
   html_vignette:
     number_sections: true
 vignette: >
-  %\VignetteIndexEntry{Tutorial}
+  %\VignetteIndexEntry{Introduction}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---

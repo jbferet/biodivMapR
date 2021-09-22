@@ -1,0 +1,170 @@
+---
+title: "Set parameters for biodivMapR"
+author: "Jean-Baptiste Féret, Florian de Boissieu"
+date: "`r Sys.Date()`"
+output: 
+  html_vignette:
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Set parameters for biodivMapR}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval=FALSE
+)
+```
+
+
+The image is [ready to process](https://jbferet.github.io/biodivMapR/articles/biodivMapR_1.html){target="_blank"}, parameter setting for `biodivMapR` can start. 
+
+
+### Image to be processed
+
+First, let's define the (absolute or relative) path to the image file to be processed. 
+
+Here we are using the image downloaded during the first step of the tutorial. The raster file systematically needs to pair with a __.hdr__ file which will be automatically identified.
+
+```{r set parameters#1}
+Input_Image_File <- destfile
+```
+
+### Mask corresponding to the image
+
+It is possible to provide a mask file at this first stage of the process, in order take advantage of cloud detection or any other preprocessing step, and to target specific/valid areas.
+
+This mask file is introduced the same way as the image, by providing the absolute or relative path to the raster file.
+
+The mask is expected to be the same spatial dimensions and extent as the raster file to process (columns and lines)
+
+Expected values in the mask: 
+
+* 0 = pixel is masked
+
+* 1 = pixel is selected
+
+If possible, the mask should be written in ENVI HDR format, with 1 band and values coded in integer 8bits.
+
+```{r set parameters#2}
+# Set to FALSE if no mask available
+Input_Mask_File <- FALSE
+```
+
+
+### Definition of an output directory
+
+Various files will be computed and written on the disk during the process.
+
+These files will be written in a directory structure created within a main output directory
+
+A sub directory named after the name of the image processed is automatically created in this main output directory, in order to facilitate identification of the results corresponding to a given image. 
+
+If the same image is processed with different parameter settings, some files may be overwritten. 
+```{r set parameters#3}
+Output_Dir <- '../RESULTS'
+```
+
+
+### Radiometric filterings
+
+If no mask file is available with the image to process, it is possible to perform basic radiometric filterings:  
+
+* __Elimination of non vegetated pixels__: the mask can be updated based on NDVI thresholding. Pixels with NDVI lower than this threshold are masked.
+
+* __Elimination of residual clouds__: : the mask can be updated based on NDVI thresholding. Pixels with reflectance in blue domain higher than this threshold are masked
+
+* __Elimination of shaded areas__: the mask can be updated based on NIR thresholding. Pixels with reflectance in NIR domain lower than this threshold are masked. 
+
+__These radiometric filters are very basic filters and should not replace algorthms dedicated to the detection of cloud/shade/non-vegetated pixels. 
+```{r set parameters#4}
+NDVI_Thresh <- 0.5
+Blue_Thresh <- 500
+NIR_Thresh <- 1500
+```
+
+
+### Normalization of reflectance data
+
+__Continuum Removal__, a normalization procedure, is available when working with reflectance data. This procedure eliminates multiplicative effects, and proved to be relatively efficient in decreasing the effect of changes in illumination within individual tree crowns, when using high spatial resolution imaging spectroscopy over tropical forests. 
+
+__Continuum Removal__ is recommended when processing high spatial resolution (spatial resolutionc $\leq$ 10 m) multi and hyperspectral data.
+
+```{r set parameters#5}
+Continuum_Removal <- TRUE
+```
+
+### Transformation of reflectance and dimensionality reduction
+
+Once normalization is performed, the next step in `biodivMapR` consists in transformation of the data using one of the following techniques: 
+
+* `PCA`: Principal component analysis (no rescaling of the data, computation from covariance matrix)
+
+* `SPCA`: Standardized Principal component analysis (no rescaling of the data, computation from correlation matrix)
+
+* `MNF`:  minimum noise fraction (appropriate for high dimensionality data such as imaging spectroscopy)
+
+These transformations will be followed by component selection in order to perform dimensionality reduction. 
+
+```{r set parameters#6}
+TypePCA <- 'SPCA'
+```
+
+### Filtering outliers in PCA
+
+An additional filtering step can be performed, based on the detection of outliers in components of the PCA. This strategy is computationally more demanding and significantly longer. However, this outlier detection may be useful to mask pixels including residual effect of atmosphere, or outliers which may not be relevant to include in the process of computation of spectral variation. 
+
+This PCA filtering can be performed by setting a unique parameter, `FilterPCA`, to `TRUE`.
+
+```{r set parameters#7}
+# PCA FILTERING: 		Set to TRUE if you want second filtering based on PCA outliers to be processed.
+# Slower process
+# Automatically set to FALSE if TypePCA     = 'MNF'
+FilterPCA <- FALSE
+```
+
+### Definition of window size for computation of spectral diversity
+
+`biodivMapR` computes spectral diversity over a set of pixels. The number of pixels included for each spectral diversity data point is defined by a window size. The window size defines the spatial resolution of all diversity maps. 
+
+The length of the side of the window is provided as input parameter: if `window_size=10`, then the pixels in the spectral diversity maps will correspond to a 10x10 pixels windows in the original image. 
+
+Both image spatial resolution and type of ecosystem under study should be taken into account when defining the window size: in forested ecosystems, window size should be large enough to include groups of individuals. 
+
+In forested ecosystems, window size between 0.25 and 4 ha usually match with ground data and correspond to a fair compromise. However, this would need to be adapted to specific situations. 
+
+If the value of window_size is too low, this will result in low number of pixels per spatial unit, hence limited range of variation of diversity in the image.
+
+```{r set parameters#8}
+window_size <- 10
+```
+
+### Optimization of computational resource
+
+The computational resource can be adjusted:
+
+* `nbCPU` corresponds to the number of processing units to be used during steps of the computation which are parallelized. Make sure you do not ask for more than what your computer can provide. 
+
+* `MaxRAM` corresponds to the maximum size of file chunk of loaded in the RAM when processing the image. __WARNING__: this does not corresponds to the maximum amount of RAM needed for data processing. Once a chunk of file is written, its processing may require several time this amount of RAM to perfom different processing steps. `MaxRAM <- 0.5` is reasonable when processing a 2Gb raster on a personal computer with 16Gb RAM. However, larger values of `MaxRAM` may rapidly require larger amount of RAM.
+
+```{r set parameters#9}
+nbCPU <- 4
+MaxRAM <- 0.5
+```
+
+### Number of spectral species
+
+The main spectral diversity metrics computed by `biodivMapR` are based on a clustering of normalized & dimensionality reduced image. Following this clustering, a cluster ID is assigned to each pixel, corresponding to the __'spectral species'__ defined in the original publication. 
+
+The number of clusters is defined by the value of `nbclusters`. 
+
+```{r set parameters#10}
+nbclusters <- 50
+```
+
+<br/><br/>
+
+Once parameterization has been set, the image processing can start, first with an optional [radiometric filtering](https://jbferet.github.io/biodivMapR/articles/biodivMapR_3.html){target="_blank"}.

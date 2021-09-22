@@ -1,0 +1,60 @@
+---
+title: "Perform spatial & spectral filtering"
+author: "Jean-Baptiste Féret, Florian de Boissieu"
+date: "`r Sys.Date()`"
+output: 
+  html_vignette:
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{DataFiltering}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval=FALSE
+)
+```
+
+### Produce a vegetation / cloud / shade mask
+
+The full radiometric filtering can be peformed with a unique function, including: 
+
+* NDVI thresholding
+
+* NIR thresholding
+
+* Blue thresholding
+
+The spectral bands corresponding to the Blue, Green and NIR spectral bands can be defined as optional parameters. 
+
+```{r perform radiometric filtering}
+print("PERFORM RADIOMETRIC FILTERING")
+Input_Mask_File <- perform_radiometric_filtering(Image_Path = Input_Image_File, Mask_Path = Input_Mask_File,
+                                                 Output_Dir = Output_Dir, TypePCA = TypePCA,
+                                                 NDVI_Thresh = NDVI_Thresh, Blue_Thresh = Blue_Thresh,
+                                                 NIR_Thresh = NIR_Thresh)
+```
+
+
+### Produce a spectral filter
+
+Spectral bands or spectral domains can be discarded during the process. This is particularly useful when spectral domains with high SNR are includd in the image. 
+
+By default, the spectral domains corresponding to atmospheric water absorption are masked. 
+
+However, these spectral domains can be extended, or included with the variable `Excluded_WL`, which is an input variable for the function `perform_PCA`. The default values are the following for the spectral domains to exclude (in nanometers):
+
+```{r Excluded_WL}
+Excluded_WL <- c(0, 400)
+Excluded_WL <- rbind(Excluded_WL, c(895, 1005))
+Excluded_WL <- rbind(Excluded_WL, c(1180, 1480))
+Excluded_WL <- rbind(Excluded_WL, c(1780, 2040))
+```
+
+<br/><br/>
+
+The PCA transformation and dimensional reduction are performed in the [next step](https://jbferet.github.io/biodivMapR/articles/biodivMapR_4.html){target="_blank"}.

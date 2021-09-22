@@ -18,9 +18,6 @@
 #' @param Output_Dir character. Path for output directory
 #' @param TypePCA character. Type of PCA: choose either "PCA" or "SPCA"
 #' @param PCA_Files character. Path of the PCA image
-#' @param PCA_model list. Parameters for teh PCA model to be applied on original image
-#' @param SpectralFilter list. information about spectral band location
-#' (central wavelength), bands to keep...
 #' @param Input_Mask_File character. Path of the mask corresponding to the image
 #' @param Pix_Per_Partition numeric. number of pixels for each partition
 #' @param nb_partitions numeric. number of partition
@@ -30,13 +27,17 @@
 #' @param nbclusters numeric. number of clusters defined in k-Means
 #' @param Kmeans_Only boolean. set to TRUE if computation of kmeans without production of spectral species map
 #' @param SelectedPCs numeric. Define PCs to be selected. Set to FALSE if you want to use the "Selected_Components.txt" file
+#' @param PCA_model list. Parameters for the PCA model to be applied on original image
+#' @param SpectralFilter list. information about spectral band location
+#' (central wavelength), bands to keep...
 #'
-#' @return None
+#' @return Kmeans_info
 #' @importFrom utils read.table
 #' @export
-map_spectral_species <- function(Input_Image_File, Output_Dir, PCA_Files, PCA_model, SpectralFilter, Input_Mask_File,
+map_spectral_species <- function(Input_Image_File, Output_Dir, PCA_Files, Input_Mask_File,
                                  Pix_Per_Partition, nb_partitions, Continuum_Removal= TRUE, TypePCA = "SPCA",
-                                 nbclusters = 50, nbCPU = 1, MaxRAM = FALSE, Kmeans_Only=FALSE, SelectedPCs = FALSE) {
+                                 nbclusters = 50, nbCPU = 1, MaxRAM = FALSE, Kmeans_Only=FALSE, SelectedPCs = FALSE,
+                                 PCA_model = NULL, SpectralFilter = NULL) {
 
   Kmeans_info <- NULL
   if (MaxRAM == FALSE) {
@@ -46,7 +47,7 @@ map_spectral_species <- function(Input_Image_File, Output_Dir, PCA_Files, PCA_mo
   if (!file.exists(PCA_Files)) {
     message("")
     message("*********************************************************")
-    message("WARNING: PCA file expected but not found")
+    message("WARNING: This file required to compute spectral species is missing")
     print(PCA_Files)
     message("process aborted")
     message("*********************************************************")
@@ -56,12 +57,12 @@ map_spectral_species <- function(Input_Image_File, Output_Dir, PCA_Files, PCA_mo
     # define directories
     Output_Dir_SS <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "SpectralSpecies")
     Output_Dir_PCA <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "PCA")
-    Spectral_Species_Path <- paste(Output_Dir_SS, "SpectralSpecies", sep = "")
+    Spectral_Species_Path <-  file.path(Output_Dir_SS, "SpectralSpecies")
     # WS_Save <- paste(Output_Dir_PCA, "PCA_Info.RData", sep = "")
     # load(file = WS_Save)
     ##    1- Select components used to perform clustering
     if (SelectedPCs == FALSE){
-      PC_Select_Path <- paste(Output_Dir_PCA, "Selected_Components.txt", sep = "")
+      PC_Select_Path <- file.path(Output_Dir_PCA, "Selected_Components.txt")
     } else {
       PC_Select_Path = 'NoFile'
     }
@@ -115,6 +116,7 @@ map_spectral_species <- function(Input_Image_File, Output_Dir, PCA_Files, PCA_mo
     print("perform k-means clustering for each subset and define centroids")
     # scaling factor subPCA between 0 and 1
     Kmeans_info <- init_kmeans(dataPCA, Pix_Per_Partition, nb_partitions, nbclusters, nbCPU)
+    Kmeans_info$SpectralSpecies <- Spectral_Species_Path
     if (Kmeans_info$Error==FALSE){
       if (Kmeans_Only==FALSE){
         ##    3- ASSIGN SPECTRAL SPECIES TO EACH PIXEL
@@ -170,14 +172,23 @@ map_spectral_species <- function(Input_Image_File, Output_Dir, PCA_Files, PCA_mo
 #' @importFrom stats kmeans
 
 init_kmeans <- function(dataPCA, Pix_Per_Partition, nb_partitions, nbclusters, nbCPU = 1) {
-  m0 <- apply(dataPCA, 2, function(x) min(x))
-  M0 <- apply(dataPCA, 2, function(x) max(x))
+
+  # define boundaries defining outliers based on IQR
+  m0 <- M0 <- c()
+  for (i in 1:ncol(dataPCA)){
+    IQR <- IQR_outliers(dataPCA[,i], weightIRQ = 2)
+    m0 <- c(m0,IQR[1])
+    M0 <- c(M0,IQR[2])
+  }
   d0 <- M0 - m0
+
+  # m0 <- apply(dataPCA, 2, function(x) min(x))
+  # M0 <- apply(dataPCA, 2, function(x) max(x))
+  # d0 <- M0 - m0
   if (length(which(is.na(m0)))>0 | length(which(is.na(M0)))>0 | length(which(is.infinite(m0)))>0 | length(which(is.infinite(M0)))>0){
     message("")
     message("*********************************************************")
     message("WARNING: the processing resulted in NA or infinite values")
-    message("       This may be due to noisy spectral domains         ")
     message("     This may be due to noisy spectral domains or        ")
     message(" individual pixels showing Inf or Na values in input data")
     message("               Please check input data                   ")
