@@ -90,14 +90,14 @@ map_alpha_div <- function(Input_Image_File=FALSE, Output_Dir='', window_size=10,
   if (Shannon == TRUE) {
     Index <- "Shannon"
     HDR$`band names` <- Index
-    Alpha_Path <- paste(Output_Dir_Alpha, Index, "_", window_size, sep = "")
+    Alpha_Path <- file.path(Output_Dir_Alpha, paste(Index, "_", window_size, sep = ""))
     write_raster(Image = ALPHA$Shannon, HDR = HDR, ImagePath = Alpha_Path,
                  window_size = window_size, FullRes = FullRes, LowRes = LowRes,
                  SmoothImage = TRUE)
     if (MapSTD == TRUE) {
       Index <- "Shannon_SD"
       HDR$`band names` <- Index
-      Alpha_Path <- paste(Output_Dir_Alpha, Index, "_", window_size, sep = "")
+      Alpha_Path <- file.path(Output_Dir_Alpha, paste(Index, "_", window_size, sep = ""))
       write_raster(ALPHA$Shannon.SD, HDR, Alpha_Path, window_size, FullRes = FullRes, LowRes = LowRes, SmoothImage = TRUE)
     }
   }
@@ -105,12 +105,12 @@ map_alpha_div <- function(Input_Image_File=FALSE, Output_Dir='', window_size=10,
   if (Fisher == TRUE) {
     Index <- "Fisher"
     HDR$`band names` <- Index
-    Alpha_Path <- paste(Output_Dir_Alpha, Index, "_", window_size, sep = "")
+    Alpha_Path <- file.path(Output_Dir_Alpha, paste(Index, "_", window_size, sep = ""))
     write_raster(ALPHA$Fisher, HDR, Alpha_Path, window_size, FullRes = FullRes, LowRes = LowRes, SmoothImage = TRUE)
     if (MapSTD == TRUE) {
       Index <- "Fisher_SD"
       HDR$`band names` <- Index
-      Alpha_Path <- paste(Output_Dir_Alpha, Index, "_", window_size, sep = "")
+      Alpha_Path <- file.path(Output_Dir_Alpha, paste(Index, "_", window_size, sep = ""))
       write_raster(ALPHA$Fisher.SD, HDR, Alpha_Path, window_size, FullRes = FullRes, LowRes = LowRes, SmoothImage = TRUE)
     }
   }
@@ -118,12 +118,12 @@ map_alpha_div <- function(Input_Image_File=FALSE, Output_Dir='', window_size=10,
   if (Simpson == TRUE) {
     Index <- "Simpson"
     HDR$`band names` <- Index
-    Alpha_Path <- paste(Output_Dir_Alpha, Index, "_", window_size, sep = "")
+    Alpha_Path <- file.path(Output_Dir_Alpha, paste(Index, "_", window_size, sep = ""))
     write_raster(ALPHA$Simpson, HDR, Alpha_Path, window_size, FullRes = FullRes, LowRes = LowRes, SmoothImage = TRUE)
     if (MapSTD == TRUE) {
       Index <- "Simpson_SD"
       HDR$`band names` <- Index
-      Alpha_Path <- paste(Output_Dir_Alpha, Index, "_", window_size, sep = "")
+      Alpha_Path <- file.path(Output_Dir_Alpha, paste(Index, "_", window_size, sep = ""))
       write_raster(ALPHA$Simpson.SD, HDR, Alpha_Path, window_size, FullRes = FullRes, LowRes = LowRes, SmoothImage = TRUE)
     }
   }
