@@ -21,7 +21,6 @@
 #' @param Input_Mask_File character. Path of the mask corresponding to the image
 #' @param Pix_Per_Partition numeric. number of pixels for each partition
 #' @param nb_partitions numeric. number of partition
-#' @param Continuum_Removal boolean. Set to TRUE if continuum removal should be applied
 #' @param nbCPU numeric. Number of CPUs to use in parallel.
 #' @param MaxRAM numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.
 #' @param nbclusters numeric. number of clusters defined in k-Means
@@ -29,15 +28,16 @@
 #' @param SelectedPCs numeric. Define PCs to be selected. Set to FALSE if you want to use the "Selected_Components.txt" file
 #' @param PCA_model list. Parameters for the PCA model to be applied on original image
 #' @param SpectralFilter list. information about spectral band location
+#' @param Continuum_Removal boolean. Set to TRUE if continuum removal should be applied
 #' (central wavelength), bands to keep...
 #'
 #' @return Kmeans_info
 #' @importFrom utils read.table
 #' @export
 map_spectral_species <- function(Input_Image_File, Output_Dir, PCA_Files, Input_Mask_File,
-                                 Pix_Per_Partition, nb_partitions, Continuum_Removal= TRUE, TypePCA = "SPCA",
+                                 Pix_Per_Partition, nb_partitions, TypePCA = "SPCA",
                                  nbclusters = 50, nbCPU = 1, MaxRAM = FALSE, Kmeans_Only=FALSE, SelectedPCs = FALSE,
-                                 PCA_model = NULL, SpectralFilter = NULL) {
+                                 PCA_model = NULL, SpectralFilter = NULL,Continuum_Removal= TRUE) {
 
   Kmeans_info <- NULL
   if (MaxRAM == FALSE) {

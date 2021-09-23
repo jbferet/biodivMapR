@@ -30,8 +30,7 @@ print("MAP SPECTRAL SPECIES")
 Kmeans_info <- map_spectral_species(Input_Image_File = Input_Image_File, Output_Dir = Output_Dir,
                                     PCA_Files = PCA_Files, Input_Mask_File = Input_Mask_File,
                                     Pix_Per_Partition = Pix_Per_Partition, nb_partitions = nb_partitions,
-                                    nbCPU = nbCPU, MaxRAM = MaxRAM, nbclusters = nbclusters, TypePCA = TypePCA,
-                                    Continuum_Removal = Continuum_Removal)
+                                    nbCPU = nbCPU, MaxRAM = MaxRAM, nbclusters = nbclusters, TypePCA = TypePCA)
 ```
 
 SpectralSpecies is then stored in a raster file located here:
