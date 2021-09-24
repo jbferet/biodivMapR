@@ -543,6 +543,87 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.50){
   return(samples)
 }
 
+#' This function gets coordinates of a bounding box defined by a vector (optional) and a raster
+#'
+#' @param path_raster character. path for raster file
+#' @param path_vector character. path for vector file
+#' @param Buffer numeric. buffer applied to vector file (in meters)
+#'
+#' @return BB_XYcoords list. Coordinates (in pixels) of the upper/lower right/left corners of bounding box
+#' @export
+get_BB <- function(path_raster,path_vector=NULL,Buffer = 0){
+
+  if (!is.null(path_vector)){
+    # get bounding box with a 50m buffer in order to allow for interpolation
+    BB_XYcoords <- get_BB_from_Vector(path_raster = path_raster,
+                                      path_vector = path_vector,
+                                      Buffer = Buffer)
+  } else if (is.null(path_vector)){
+    BB_XYcoords <- get_BB_from_fullImage(path_raster)
+  }
+  return(BB_XYcoords)
+}
+
+#' This function gets extreme coordinates of a bounding box corresponding to a full image
+#'
+#' @param path_raster character. path for raster file
+#'
+#' @return BB_XYcoords list. Coordinates (in pixels) of the upper/lower right/left corners of bounding box
+#' @importFrom raster raster
+#' @export
+get_BB_from_fullImage <- function(path_raster){
+  # get raster coordinates corresponding to Full image
+  rasterobj <- raster::raster(path_raster)
+  BB_XYcoords <- list()
+  BB_XYcoords[['UL']] <- data.frame('row'=1,'col'=1)
+  BB_XYcoords[['UR']] <- data.frame('row'=1,'col'=dim(rasterobj)[2])
+  BB_XYcoords[['LL']] <- data.frame('row'=dim(rasterobj)[1],'col'=1)
+  BB_XYcoords[['LR']] <- data.frame('row'=dim(rasterobj)[1],'col'=dim(rasterobj)[2])
+  return(BB_XYcoords)
+}
+
+#' This gets bounding box corresponding to a vector from a raster (UL, UR, LL, LR corners)
+#'
+#' @param path_raster character. path for raster file
+#' @param path_vector character. path for vector file
+#' @param Buffer numeric. buffer applied to vector file (in meters)
+#'
+#' @return BB_XYcoords list. Coordinates (in pixels) of the upper/lower right/left corners of bounding box
+#' @importFrom sf st_read
+#' @importFrom rgeos gBuffer
+#' @importFrom sp SpatialPoints
+#' @importFrom raster projection extract extent raster
+#' @importFrom methods as
+#' @export
+get_BB_from_Vector <- function(path_raster,path_vector,Buffer = 0){
+
+  Raster <- raster::raster(path_raster)
+  # xmin <- xmax <- ymin <- ymax <- c()
+  # extract BB coordinates from vector
+  BB <- rgeos::gBuffer(spgeom = as(st_read(dsn = path_vector,quiet = T), "Spatial"),width=Buffer,byid = TRUE)
+  BBext <- raster::extent(BB)
+  xmin <- BBext[1]
+  xmax <- BBext[2]
+  ymin <- BBext[3]
+  ymax <- BBext[4]
+  # get coordinates of bounding box corresponding to vector
+  Corners <- list()
+  Corners[['UR']] <- sp::SpatialPoints(coords = cbind(xmax, ymax))
+  Corners[['LR']] <- sp::SpatialPoints(coords = cbind(xmax, ymin))
+  Corners[['UL']] <- sp::SpatialPoints(coords = cbind(xmin, ymax))
+  Corners[['LL']] <- sp::SpatialPoints(coords = cbind(xmin, ymin))
+  raster::projection(Corners[['UL']]) <- raster::projection(Corners[['UR']]) <-
+    raster::projection(Corners[['LL']]) <- raster::projection(Corners[['LR']]) <- raster::projection(st_read(dsn = path_vector,quiet = T))
+  # get coordinates for corners of bounding box
+  BB_XYcoords <- list()
+  for (corner in names(Corners)){
+    ex.df <- as.data.frame(raster::extract(Raster,Corners[[corner]],cellnumbers=T))
+    ColRow <- ind2sub(Raster,ex.df$cell)
+    BB_XYcoords[[corner]] <- data.frame('row'=ColRow$row,'col'=ColRow$col)
+  }
+  return(BB_XYcoords)
+}
+
 #' extract random subset of pixels from an image
 #'
 #' @param ImPath character. path for the image to sample
@@ -1050,6 +1131,45 @@ read_BIL_image_subset <- function(ImPath, HDR, Byte_Start, lenBin, nbLines, Imag
   return(Image_Chunk)
 }
 
+#' This function produces a raster stack which can be directly processed with
+#' biodivMapR to produce spectral diversity maps.
+#' Input variables can be spectral indices, biophysical variables...
+#' @param ListRasters list. list of rasters to be stacked
+#' @param path_vector path for a vector file
+#' @param resampling numeric. resampling factor (default = 1, set to resampling = 2 to convert 20m into 10m resolution)
+#' @param interpolation character. method for resampling. default = 'bilinear'
+#'
+#' @return StarsObj list. contains stack of S2 bands
+#'
+#' @importFrom stars read_stars
+#' @importFrom sf st_bbox st_read st_crop
+#' @export
+read_ListRasters <- function(ListRasters, path_vector = NULL,
+                             resampling = 1, interpolation = 'bilinear'){
+  # get bounding box corresponding to footprint of image or image subset
+  BB_XYcoords <- get_BB(path_raster = ListRasters[[1]],
+                        path_vector = path_vector, Buffer = 0)
+
+  # prepare reading data for extent defined by bounding box
+  nXOff <- BB_XYcoords$UL$col
+  nYOff <- BB_XYcoords$UL$row
+  nXSize <- BB_XYcoords$UR$col-BB_XYcoords$UL$col+1
+  nYSize <- BB_XYcoords$LR$row-BB_XYcoords$UR$row+1
+  nBufXSize <- resampling*nXSize
+  nBufYSize <- resampling*nYSize
+  if (resampling==1){
+    interpolation = 'nearest_neighbour'
+  }
+  StarsObj <- stars::read_stars(ListRasters, along = 'band',
+                                RasterIO = list(nXOff = nXOff, nYOff = nYOff,
+                                                nXSize = nXSize, nYSize = nYSize,
+                                                nBufXSize = nBufXSize, nBufYSize = nBufYSize,
+                                                resample=interpolation),proxy = FALSE)
+  return(StarsObj)
+}
+
+
+
 #' ENVI functions
 #'
 #' based on https://github.com/cran/hyperSpec/blob/master/R/read.ENVI.R
@@ -1434,6 +1554,33 @@ write_raster <- function(Image, HDR, ImagePath, window_size, FullRes = TRUE, Low
   return("")
 }
 
+#' This function writes a stars object into a raster file
+#'
+#' @param StarsObj list. stars object containing raster data. Can be produced with function Crop_n_resample_S2
+#' @param dsn character. path where to store the image produced
+#' @param BandNames character. vector of band names to be assigned to the raster
+#' @param datatype character. should be Int16 or Float64 for example
+#'
+#' @return None
+#' @export
+write_StarsStack <- function(StarsObj, dsn, BandNames=NULL, datatype='Float32'){
+
+  write_stars(StarsObj, dsn=dsn,driver =  "EHdr",type=datatype)
+  raster::hdr(raster(dsn), format = "ENVI")
+  # Edit HDR file to add metadata
+  HDR <- read_ENVI_header(get_HDR_name(dsn))
+  HDR$`band names` <- BandNames
+  HDR$`coordinate system string` <- read.table(paste(dsn, ".prj", sep = ""))
+  write_ENVI_header(HDR = HDR,HDRpath = get_HDR_name(dsn))
+  # remove unnecessary files
+  File2Remove <- paste(dsn, ".aux.xml", sep = "")
+  if (file.exists(File2Remove)) file.remove(File2Remove)
+  File2Remove <- paste(dsn, ".prj", sep = "")
+  if (file.exists(File2Remove)) file.remove(File2Remove)
+  File2Remove <- paste(dsn, ".stx", sep = "")
+  if (file.exists(File2Remove)) file.remove(File2Remove)
+  return(invisible())
+}
 
 #' convert image coordinates from X-Y to index
 #'

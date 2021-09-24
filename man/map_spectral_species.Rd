@@ -11,7 +11,6 @@ map_spectral_species(
   Input_Mask_File,
   Pix_Per_Partition,
   nb_partitions,
-  Continuum_Removal = TRUE,
   TypePCA = "SPCA",
   nbclusters = 50,
   nbCPU = 1,
@@ -19,7 +18,8 @@ map_spectral_species(
   Kmeans_Only = FALSE,
   SelectedPCs = FALSE,
   PCA_model = NULL,
-  SpectralFilter = NULL
+  SpectralFilter = NULL,
+  Continuum_Removal = TRUE
 )
 }
 \arguments{
@@ -35,8 +35,6 @@ map_spectral_species(
 
 \item{nb_partitions}{numeric. number of partition}
 
-\item{Continuum_Removal}{boolean. Set to TRUE if continuum removal should be applied}
-
 \item{TypePCA}{character. Type of PCA: choose either "PCA" or "SPCA"}
 
 \item{nbclusters}{numeric. number of clusters defined in k-Means}
@@ -51,7 +49,9 @@ map_spectral_species(
 
 \item{PCA_model}{list. Parameters for the PCA model to be applied on original image}
 
-\item{SpectralFilter}{list. information about spectral band location
+\item{SpectralFilter}{list. information about spectral band location}
+
+\item{Continuum_Removal}{boolean. Set to TRUE if continuum removal should be applied
 (central wavelength), bands to keep...}
 }
 \value{

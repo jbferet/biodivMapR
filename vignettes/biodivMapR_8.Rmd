@@ -59,13 +59,13 @@ Results <- data.frame(Name_Vector, Biodiv_Indicators$Richness, Biodiv_Indicators
                       Biodiv_Indicators$FunctionalDiversity$FDiv)
 
 names(Results)  = c("ID_Plot", "Species_Richness", "Fisher", "Shannon", "Simpson", "FRic", "FEve", "FDiv")
-write.table(Results, file = paste(Path_Results,"AlphaDiversity.csv",sep=''),
+write.table(Results, file = file.path(Path_Results,"AlphaDiversity.csv"),
             sep="\t", dec=".", na=" ", row.names = F, col.names= T,quote=FALSE)
 
 # write a table for Bray Curtis dissimilarity
 BC_mean <- Biodiv_Indicators$BCdiss
 colnames(BC_mean) <- rownames(BC_mean) <- Biodiv_Indicators$Name_Plot
-write.table(BC_mean, file = paste(Path_Results,"BrayCurtis.csv",sep=''),
+write.table(BC_mean, file = file.path(Path_Results,"BrayCurtis.csv"),
             sep="\t", dec=".", na=" ", row.names = F, col.names= T,quote=FALSE)
 ```
 

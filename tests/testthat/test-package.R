@@ -1,5 +1,5 @@
 test_that("Radiometric Filtering", {
-  
+
   library(utils)
   destfile <- 'S2A_T33NUD_20180104_Subset'
   # url for the S2 subset
@@ -8,7 +8,7 @@ test_that("Radiometric Filtering", {
                 cacheOK = TRUE,
                 extra = getOption("download.file.extra"),
                 headers = NULL)
-  
+
   # name your raster HDR
   destfile_HDR <- get_HDR_name(destfile,showWarnings = FALSE)
   # url for the S2 subset header
@@ -24,7 +24,6 @@ test_that("Radiometric Filtering", {
   nbCPU <- 2
   MaxRAM <- 0.5
   nbclusters <- 50
-  
   NDVI_Thresh <- 0.5
   # these values are relevant only if reflectance is coded as integer values between 0 and 10000.
   Blue_Thresh <- 500
