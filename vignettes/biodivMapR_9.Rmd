@@ -1,12 +1,12 @@
 ---
-title: "Misc"
+title: "Compute diversity from user-defined set of layers"
 author: "Jean-Baptiste Féret, Florian de Boissieu"
 date: "`r Sys.Date()`"
 output:
   html_vignette:
     number_sections: true
 vignette: >
-  %\VignetteIndexEntry{Misc}
+  %\VignetteIndexEntry{CustomLayerDiversity}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
@@ -18,3 +18,216 @@ knitr::opts_chunk$set(
   eval=FALSE
 )
 ```
+
+Users may want to compute diversity from a set of raster layers differing from reflectance data.
+
+This functionality allows for more flexible and faster application of `biodivMapR`, as all processings dedicated to the analysis of a multispectral/hyperspectral continuum (such as continuum removal, and possibly PCA if the variables supporting the analysis show minimum correlation). 
+
+Here we will illustrate this functionality with the S2 subset used in the previous steps. 
+
+
+## Computation of the spectral indices
+
+The computation of spectral indices can be performed with the package `prosail`. Please refer to the [homepage](https://jbferet.gitlab.io/prosail/index.html) and follow instructions for installation. 
+
+### Load additional libraries and prepare data for computation
+
+Here, the path for the image to be processed is assumed to be defined in the `destfile` variable defined [previously](https://jbferet.github.io/biodivMapR/articles/biodivMapR_1.html){target="_blank"}.
+
+We will first read it with the `raster` package, and get the central wavelength corresponding to each spectral band in the file from the __header file__, which is critical for the automated computation of spectral indices. 
+
+```{r load libraries and read image}
+library(prosail) # https://jbferet.gitlab.io/prosail/
+library(preprocS2) # https://jbferet.gitlab.io/preprocs2/
+library(stars)
+library(raster)
+# path (absolute or relative) for the image to process
+Input_Image_File <- destfile
+NameRaster <- basename(Input_Image_File)
+# path (absolute or relative) for the image to process
+ImBrick <- raster::brick(Input_Image_File)
+HDR <- read_ENVI_header(get_HDR_name(Input_Image_File))
+SensorBands <- HDR$wavelength
+```
+
+
+### Computation of spectral indices pre-defined in `prosail`
+
+A set of spectral indices specific to Sentinel-2 sensors is already available. If you are not using Sentinel-2 data, then the spctral indices will still be computed, but they will use the closest band available to the Sentinel-2 bands required. 
+
+__There are over 35 spectral indices, some showing high redundancy with each others.__
+
+You can check the expression used to compute them [here](https://gitlab.com/jbferet/prosail/-/blob/master/R/Lib_SpectralIndices.R){target="_blank"}.
+
+To obtain the list of spectral indices, and to compute a set of spectral indices from this list, please proceed as follows:
+
+```{r Compute pre-defined indices}
+# First define a list of spectral indices
+Sel_Indices <- c('mNDVI705','CR_SWIR','LAI_SAVI')
+# then compute the spectral indices
+Spectral_Indices <- ComputeSpectralIndices_Raster(ImBrick, SensorBands, Sel_Indices=Sel_Indices, 
+                                                  StackOut=T,ReflFactor = 10000)
+# get the name of all spectral indices available
+unlist(Spectral_Indices$listIndices)
+
+# [1] "ARI1" "ARI2" "ARVI" "BAI" "BAIS2" "CHL_RE" "CRI1" "CRI2" "EVI" "EVI2" "GRVI1" "GNDVI" "IRECI" 
+# [14] "LAI_SAVI" "MCARI" "mNDVI705" "MSAVI2" "MSI" "mSR705" "MTCI" "nBR_RAW" "NDI_45" "NDII" "NDVI" "NDVI_G" "NDVI705" 
+# [27] "NDWI1" "NDWI2" "PSRI" "PSRI_NIR" "RE_NDVI" "RE_NDWI" "S2REP" "SAVI" "SIPI" "SR" "CR_SWIR" 
+ 
+```
+
+`ReflFactor` is the multiplicative factor applied on the reflectance data. Here Sentinel-2 are distributed in Int16 value types, meaning that the original reflectance was multiplied by 10000. The function then conveerts to standard reflectance values prior to computation of spectral index. 
+
+- if `StackOut=T`: a stack of the spectral indices is directly returned in `Spectral_Indices$SpectralIndices`.
+
+- if `StackOut=F`: a single raster layer is returned for each spectral index, accessible in `Spectral_Indices$SpectralIndices$CR_SWIR` for example.
+
+
+### Computation of user-defined spectral indices through spectral index interpreter
+
+You may want to be able to compute your own spectral index, if interested in a specific spectral index which is not in the list of pre-defined indices, or if using a sensor which is not Sentinel-2. 
+
+The function `ComputeSpectralIndices_fromExpression` allows this flexibility, if the spectral index can be expressed as a sufficiently simple expression. Here is an illustration of the computation of the NDVI using this function: 
+
+
+```{r Compute from expression}
+# 1- Define the expression corresponding to the spectral index
+Expression_NDVI <- '(B2-B1)/(B2+B1)'
+# 2- Define the spectral bands corresponding to bands in the spectral index, identified as BXX, with XX the number of the band
+Bands_NDVI <- list()
+Bands_NDVI[['B1']] <- 665
+Bands_NDVI[['B2']] <- 835
+# 3- Compute the spectral indices
+NDVI <- ComputeSpectralIndices_fromExpression(Refl = ImBrick, SensorBands = SensorBands, 
+                                               ExpressIndex = Expression_NDVI, listBands = Bands_NDVI, 
+                                               ReflFactor=10000, NameIndex = 'NDVI')
+```
+
+The same results should be obtained as when using pre-defined NDVI, with a correlation of 1. 
+
+```{r Compute pre-defined NDVI}
+# First define a list of spectral indices
+Index <- c('NDVI')
+# then compute the spectral indices
+NDVI_Precomp <- ComputeSpectralIndices_Raster(ImBrick, SensorBands, Sel_Indices=Index, 
+                                                  StackOut=F,ReflFactor = 10000)
+cor.test(c(values(NDVI)),c(values(NDVI_Precomp$SpectralIndices$NDVI)))
+```
+
+
+## Stacking and writing spectral indices in format expected by biodivMapR
+
+Once the spectral indices are computed, they will be written in __ENVI format with [BIL interleaves](https://bitbucket.org/hu-geomatics/enmap-box-idl/wiki/Data%20Format%20Definition){target="_blank"}__.
+
+This file format is used as this image stack will directly replace the PCA file produced by biodivMapR.
+
+It may be necessary to apply a filter on these spectral indices in order to mask outliers, as these may strongly impact the spatial variability of the features to be used, and the corresponding diversity indices. 
+
+Here we are suggesting a method based on interquartile range (IQR), but feel free to use your own method to mask unwanted data from your stack: you can use the mask produced from the function `perform_radiometric_filtering`, if using optical data. 
+
+
+### Mask data from spectral indices and apply the mask on spectral indices
+
+```{r Produce mask based on IQR and apply it on spectral indices}
+# initialize mask
+Mask <- 0*Spectral_Indices$SpectralIndices$mNDVI705+1
+# remove outliers from spectral indices
+for (idx in Sel_Indices){
+  rast <- Spectral_Indices$SpectralIndices[[idx]]
+  IQRminmax <- IQR_outliers(DistVal = raster::values(rast),weightIRQ = 3)
+  Mask[rast<IQRminmax[1] | rast>IQRminmax[2]] <- NA
+}
+# apply mask on stack and convert as stars object
+StarsObj <- st_as_stars(Spectral_Indices$SpectralIndices*Mask)
+
+```
+
+
+### Save Mask file and spectral indices as raster stack
+
+
+```{r Save files}
+# define path where to store spectral indices (same as root path for biodivMapR output directory)
+NameStack <- paste(NameRaster,'_StackIndices',sep = '')
+PathIndices <- file.path(Output_Dir,NameStack)
+dir.create(PathIndices,recursive = T,showWarnings = F)
+# save mask in raster file
+Input_Mask_File <- file.path(PathIndices,'Mask')
+stars::write_stars(st_as_stars(Mask), dsn=Input_Mask_File, driver =  "ENVI",type='Byte')
+# save Stack of spectral indices in raster file with spectral indices defining band names
+Path_StackIndices <- file.path(PathIndices,NameStack)
+write_StarsStack(StarsObj = StarsObj, dsn = Path_StackIndices, Bands=Sel_Indices, datatype='Float32')
+```
+
+
+## Run biodivMapR on a raster stack
+
+
+### Set parameters for biodivMapR
+
+```{r Parameterize biodivMapR}
+# see additional information here
+# https://jbferet.github.io/biodivMapR/articles/biodivMapR_2.html
+
+# Define path for original image file to be processed
+Input_SIstack_File <- Path_StackIndices
+# trick to define the same directory as PathIndices defined in previous chunk
+TypePCA <- 'noPCA'
+# Define path for master output directory where files produced during the process are saved 
+Output_Dir <- '../RESULTS'
+# window size forcomputation of spectral diversity
+window_size <- 10
+# computational parameters
+nbCPU <- 4
+MaxRAM <- 0.5
+# number of clusters (spectral species)
+nbclusters <- 50
+
+# use 10% of image to sample pixels and partition it in 20 runs of kmeans
+NbPix <- sum(Mask[,,,1],na.rm = T)
+nb_partitions <- 20
+Pix_Per_Partition <- round(0.1*NbPix/nb_partitions)
+```
+
+### Perform Spectral species mapping
+
+```{r Perform Spectral species mapping}
+# https://jbferet.github.io/biodivMapR/articles/biodivMapR_5.html
+print("MAP SPECTRAL SPECIES")
+# select all spectral indices
+SelectedPCs <- seq(1,dim(raster::stack(Input_SIstack_File))[3])
+Kmeans_info <- map_spectral_species(Input_Image_File = Input_SIstack_File, Output_Dir = Output_Dir, SelectedPCs = SelectedPCs,
+                                    PCA_Files = Input_SIstack_File, Input_Mask_File = Input_Mask_File,
+                                    Pix_Per_Partition = Pix_Per_Partition, nb_partitions = nb_partitions,
+                                    nbCPU = nbCPU, MaxRAM = MaxRAM, nbclusters = nbclusters, TypePCA = TypePCA)
+```
+
+### Map diversity indices
+
+```{r Map diversity indices}
+# https://jbferet.github.io/biodivMapR/articles/biodivMapR_6.html
+print("MAP ALPHA DIVERSITY")
+Index_Alpha <- c('Shannon')
+map_alpha_div(Input_Image_File = Input_SIstack_File, Output_Dir = Output_Dir, TypePCA = TypePCA,
+              window_size = window_size, nbCPU = nbCPU, MaxRAM = MaxRAM,
+              Index_Alpha = Index_Alpha, nbclusters = nbclusters,LowRes = T)
+
+print("MAP BETA DIVERSITY")
+map_beta_div(Input_Image_File = Input_SIstack_File, Output_Dir = Output_Dir, TypePCA = TypePCA,
+             window_size = window_size, nb_partitions=nb_partitions, nbCPU = nbCPU, MaxRAM = MaxRAM,
+             nbclusters = nbclusters)
+
+print("MAP FUNCTIONAL DIVERSITY")
+# https://jbferet.github.io/biodivMapR/articles/biodivMapR_7.html
+# Villeger et al, 2008 https://doi.org/10.1890/07-1206.1
+map_functional_div(Original_Image_File = Input_SIstack_File, Functional_File = Input_SIstack_File,
+                   Selected_Features = SelectedPCs, Output_Dir = Output_Dir,
+                   window_size = window_size, nbCPU = nbCPU, MaxRAM = MaxRAM,TypePCA = TypePCA, LowRes = T)
+```
+
+### Perform validation based on a vectorized plot network
+
+The same procedure as in the [previous tutorial](https://jbferet.github.io/biodivMapR/articles/biodivMapR_8.html){target="_blank"} can be applied.
+
+
+

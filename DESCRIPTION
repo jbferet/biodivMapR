@@ -40,7 +40,9 @@ Imports:
     stringr,
     tools,
     vegan,
-    zip
+    zip,
+    sf,
+    rgeos
 RoxygenNote: 7.1.2
 Suggests: 
     knitr,

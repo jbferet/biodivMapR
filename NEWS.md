@@ -1,3 +1,16 @@
+# biodivMapR v1.8.0
+
+## Changes
+- Added functionality to allow for computation of spectral diversity maps based on spectral index stack or any raster stack
+- added function to compute interquartile range (IQR) and identify outliers
+- applied IQR instead of center reduction
+- exported most of the functions in the Lib_ImageProcess
+- Image sample was removed and placed in external repository
+- Major update of vignettes for tutorial 
+
+## Fixes
+- used file.path instead of paste
+
 # biodivMapR v1.7.0
 
 ## Changes
