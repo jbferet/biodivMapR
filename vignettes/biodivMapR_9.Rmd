@@ -228,6 +228,3 @@ map_functional_div(Original_Image_File = Input_SIstack_File, Functional_File = I
 ### Perform validation based on a vectorized plot network
 
 The same procedure as in the [previous tutorial](https://jbferet.github.io/biodivMapR/articles/biodivMapR_8.html){target="_blank"} can be applied.
-
-
-

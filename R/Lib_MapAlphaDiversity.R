@@ -29,7 +29,7 @@
 #'                              else corresponds to path for a classification map.
 #'
 #' @return None
-#' @import stars
+#' @importFrom stars read_stars write_stars
 #' @export
 map_alpha_div <- function(Input_Image_File=FALSE, Output_Dir='', window_size=10,
                           TypePCA = "SPCA", nbclusters = 50,

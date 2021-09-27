@@ -34,12 +34,14 @@ apply_continuum_removal <- function(Spectral_Data, Spectral, nbCPU = 1) {
     # avoids memory crash
     Max.nb.Values <- 2e6
     nb.CR <- ceiling(nb.Values / Max.nb.Values)
-    Spectral_Data <- splitRows(Spectral_Data, nb.CR)
+    Spectral_Data <- snow::splitRows(Spectral_Data, nb.CR)
     # perform multithread continuum removal
-    plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
+    future::plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
     Schedule_Per_Thread <- ceiling(nb.CR / nbCPU)
-    Spectral_Data_tmp <- future_lapply(Spectral_Data, FUN = ContinuumRemoval, Spectral_Bands = Spectral$Wavelength, future.scheduling = Schedule_Per_Thread)
-    plan(sequential)
+    Spectral_Data_tmp <- future.apply::future_lapply(Spectral_Data, FUN = ContinuumRemoval,
+                                                     Spectral_Bands = Spectral$Wavelength,
+                                                     future.scheduling = Schedule_Per_Thread)
+    future::plan(sequential)
     Spectral_Data <- do.call("rbind", Spectral_Data_tmp)
     rm(Spectral_Data_tmp)
   } else {

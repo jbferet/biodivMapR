@@ -19,7 +19,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-
 The following code performs computation of $\alpha$ and $\beta$ diversity from field plots and extracts the corresponding diversity indices from previouly computed `SpectralSpecies` raster in order to perform validation.
 
 ```{r alpha and beta diversity indices from vector layer}
@@ -87,13 +86,14 @@ The plots corresponding to forested areas with high, medium and low diversity, a
   <img width="50%" height="50%" src="../man/figures/04_RGB_FieldLegend.png">
 </p>
 
-  Here, we produce figures in order to locate the different types of vegetation in the PCoA space:
+Here, we produce figures in order to locate the different types of vegetation in the PCoA space:
 
 ```{r plot PCoA & Shannon}
 # assign a type of vegetation to each plot, assuming that the type of vegetation 
 # is defined by the name of the shapefile
 library(rgdal)
 library(tools)
+library(ggplot2)
 nbSamples <- shpName <- c()
 for (i in 1:length(Path_Vector)){
   shp <- Path_Vector[i]
@@ -113,38 +113,41 @@ Results <- data.frame('vgtype'=Type_Vegetation,'pco1'= BetaPCO$points[,1],'pco2'
                       'shannon'=Shannon_RS,'FRic' = FRic, 'FEve' = FEve, 'FDiv' = FDiv)
 
 # plot field data in the PCoA space, with size corresponding to shannon index
-library(ggplot2)
-ggplot(Results, aes(x=pco1, y=pco2, color=vgtype,size=shannon)) +
+g1 <-ggplot (Results, aes (x=pco1, y=pco2, color=vgtype,size=shannon)) + 
   geom_point(alpha=0.6) +
   scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
-filename = file.path(Path_Results,'BetaDiversity_PcoA1_vs_PcoA2.png')
-ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
-       scale = 1, width = 6, height = 4, units = "in",
-       dpi = 600, limitsize = TRUE)
 
-
-ggplot(Results, aes(x=pco1, y=pco3, color=vgtype,size=shannon)) +
+g2 <-ggplot (Results, aes (x=pco1, y=pco3, color=vgtype,size=shannon)) + 
   geom_point(alpha=0.6) +
   scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
-filename = file.path(Path_Results,'BetaDiversity_PcoA1_vs_PcoA3.png')
-ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
-       scale = 1, width = 6, height = 4, units = "in",
-       dpi = 600, limitsize = TRUE)
 
-ggplot(Results, aes(x=pco2, y=pco3, color=vgtype,size=shannon)) +
+g3 <-ggplot (Results, aes (x=pco2, y=pco3, color=vgtype,size=shannon)) + 
   geom_point(alpha=0.6) +
   scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
-filename = file.path(Path_Results,'BetaDiversity_PcoA2_vs_PcoA3.png')
-ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
-       scale = 1, width = 6, height = 4, units = "in",
-       dpi = 600, limitsize = TRUE)
 
+#extract legend
+#https://github.com/hadley/ggplot2/wiki/Share-a-legend-between-two-ggplot2-graphs
+get_legend <- function(a.gplot){
+  tmp <- ggplot_gtable(ggplot_build(a.gplot))
+  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend <- tmp$grobs[[leg]]
+  return(legend)
+}
+
+legend <- get_legend(g3)
+gAll <- grid.arrange(arrangeGrob(g1 + theme(legend.position="none"),
+                                 g2 + theme(legend.position="none"),
+                                 g3 + theme(legend.position="none"),
+                                 nrow=1),legend,nrow=2,heights=c(5, 4))
+
+filename <- file.path(Path_Results,'BetaDiversity_PcoA1_vs_PcoA2_vs_PcoA3.png')
+ggsave(filename, plot = gAll, device = 'png', path = NULL,
+       scale = 1, width = 12, height = 7, units = "in",
+       dpi = 600, limitsize = TRUE)
 ```
 
 The resulting figures are displayed here:
 
-  <img align="left" width="50%" height="50%" src="../man/figures/BetaDiversity_PcoA1_vs_PcoA2.png">
-  <img align="right" width="50%" height="50%" src="../man/figures/BetaDiversity_PcoA1_vs_PcoA3.png">
 <p align="center">
-  <img width="50%" height="50%" src="../man/figures/BetaDiversity_PcoA2_vs_PcoA3.png">
+  <img width="100%" height="100%" src="../man/figures/BetaDiversity_PcoA1_vs_PcoA2_vs_PcoA3.png">
 </p>

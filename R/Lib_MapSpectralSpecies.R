@@ -16,14 +16,14 @@
 #'
 #' @param Input_Image_File character. Path of the image to be processed
 #' @param Output_Dir character. Path for output directory
-#' @param TypePCA character. Type of PCA: choose either "PCA" or "SPCA"
 #' @param PCA_Files character. Path of the PCA image
 #' @param Input_Mask_File character. Path of the mask corresponding to the image
 #' @param Pix_Per_Partition numeric. number of pixels for each partition
 #' @param nb_partitions numeric. number of partition
+#' @param TypePCA character. Type of PCA: choose either "PCA" or "SPCA"
+#' @param nbclusters numeric. number of clusters defined in k-Means
 #' @param nbCPU numeric. Number of CPUs to use in parallel.
 #' @param MaxRAM numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.
-#' @param nbclusters numeric. number of clusters defined in k-Means
 #' @param Kmeans_Only boolean. set to TRUE if computation of kmeans without production of spectral species map
 #' @param SelectedPCs numeric. Define PCs to be selected. Set to FALSE if you want to use the "Selected_Components.txt" file
 #' @param PCA_model list. Parameters for the PCA model to be applied on original image
@@ -68,7 +68,7 @@ map_spectral_species <- function(Input_Image_File, Output_Dir, PCA_Files, Input_
     }
 
     if (file.exists(PC_Select_Path)) {
-      PC_Select <- read.table(PC_Select_Path)[[1]]
+      PC_Select <- utils::read.table(PC_Select_Path)[[1]]
     } else if (!SelectedPCs == FALSE){
       PC_Select <- SelectedPCs
     } else {
@@ -158,18 +158,19 @@ map_spectral_species <- function(Input_Image_File, Output_Dir, PCA_Files, Input_
   return(Kmeans_info)
 }
 
-# computes k-means from nb_partitions subsets taken from dataPCA
-#
-# @param dataPCA initial dataset sampled from PCA image
-# @param Pix_Per_Partition number of pixels per iteration
-# @param nb_partitions number of k-means then averaged
-# @param nbCPU
-# @param nbclusters number of clusters used in kmeans
-#
-# @return list of centroids and parameters needed to center/reduce data
+#' computes k-means from nb_partitions subsets taken from dataPCA
+#'
+#' @param dataPCA initial dataset sampled from PCA image
+#' @param Pix_Per_Partition number of pixels per iteration
+#' @param nb_partitions number of k-means then averaged
+#' @param nbCPU numeric. Number of CPUs available
+#' @param nbclusters number of clusters used in kmeans
+#'
+#' @return list of centroids and parameters needed to center/reduce data
 #' @importFrom future plan multiprocess sequential
 #' @importFrom future.apply future_lapply
 #' @importFrom stats kmeans
+#' @export
 
 init_kmeans <- function(dataPCA, Pix_Per_Partition, nb_partitions, nbclusters, nbCPU = 1) {
 
@@ -287,23 +288,26 @@ apply_kmeans <- function(PCA_Path, PC_Select, Input_Mask_File, Kmeans_info, Spec
   return(invisible())
 }
 
-# this function reads PCA file and defines the spectral species for each pixel
-# based on the set of cluster centroids defined for each iteration
-# applies kmeans --> closest cluster corresponds to the "spectral species"
-#
-# @param PCA_Path path for the PCA image
-# @param Input_Mask_File Path for the mask
-# @param Spectral_Species_Path path for spectral species file to be written
-# @param Location_RW where to read/write information in binary file
-# @param PC_Select PCs selected from PCA
-# @param nbCPU
-# @param Kmeans_info information about kmeans computed in previous step
-#
-# @return None
+#' this function reads PCA file and defines the spectral species for each pixel
+#' based on the set of cluster centroids defined for each iteration
+#' applies kmeans --> closest cluster corresponds to the "spectral species"
+#'
+#' @param PCA_Path character. path for the PCA image
+#' @param Input_Mask_File character. Path for the mask
+#' @param Spectral_Species_Path character. path for spectral species file to be written
+#' @param Location_RW numeric. where to read/write information in binary file
+#' @param PC_Select numeric. PCs selected from PCA
+#' @param Kmeans_info list. information about kmeans computed in previous step
+#' @param nbCPU numeric. number of CPUs available
+#'
+#' @return None
 #' @importFrom snow splitRows
 #' @importFrom future plan multiprocess sequential
 #' @importFrom future.apply future_lapply
-compute_spectral_species <- function(PCA_Path, Input_Mask_File, Spectral_Species_Path, Location_RW, PC_Select, Kmeans_info, nbCPU = 1) {
+#' @export
+
+compute_spectral_species <- function(PCA_Path, Input_Mask_File, Spectral_Species_Path,
+                                     Location_RW, PC_Select, Kmeans_info, nbCPU = 1) {
 
   # characteristics of the centroids computed during preprocessing
   nb_partitions <- length(Kmeans_info$Centroids)
@@ -343,7 +347,7 @@ compute_spectral_species <- function(PCA_Path, Input_Mask_File, Spectral_Species
   nbSamples_Per_Rdist <- 25000
   if (length(keepShade) > 0) {
     nbSubsets <- ceiling(length(keepShade) / nbSamples_Per_Rdist)
-    PCA_Chunk <- splitRows(PCA_Chunk, nbSubsets)
+    PCA_Chunk <- snow::splitRows(PCA_Chunk, nbSubsets)
 
     plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
     Schedule_Per_Thread <- ceiling(nbSubsets / nbCPU)
