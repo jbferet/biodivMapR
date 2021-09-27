@@ -272,12 +272,13 @@ ENVI_type2bytes <- function(HDR) {
   return(my_list)
 }
 
-# define Water Vapor bands based on spectral smapling of original image
-#
-# @param ImPath path of the image
-# @param Excluded_WL spectral domains corresponding to water vapor absorption
-#
-# @return bands corresponding to atmospheric water absorption domain
+#' define Water Vapor bands based on spectral smapling of original image
+#'
+#' @param ImPath character. path of the image
+#' @param Excluded_WL numeric. spectral domains corresponding to water vapor absorption
+#'
+#' @return bands corresponding to atmospheric water absorption domain
+#' @export
 exclude_spectral_domains <- function(ImPath, Excluded_WL = FALSE) {
   # definition of water vapor absorption
   if (is.null(Excluded_WL)){
@@ -331,13 +332,14 @@ exclude_spectral_domains <- function(ImPath, Excluded_WL = FALSE) {
   return(my_list)
 }
 
-# extracts sample points from binary image file
-#
-# @param coordPix_List coordinates of pixels to sample
-# @param ImPath path for image
-# @param HDR hdr path
-#
-# @return samples from image subset corresponding to coordPix_List
+#' extracts sample points from binary image file
+#'
+#' @param coordPix_List list. coordinates of pixels to sample
+#' @param ImPath character. path for image
+#' @param HDR list. hdr path
+#'
+#' @return samples from image subset corresponding to coordPix_List
+#' @export
 extract_pixels <- function(coordPix_List, ImPath, HDR) {
   coordPix_List <- matrix(coordPix_List, ncol = 2)
   Sample_Sel <- matrix(0, nrow = nrow(coordPix_List), ncol = HDR$bands)
@@ -487,7 +489,7 @@ extract_samples_from_image <- function(ImPath, coordPix, MaxRAM = FALSE, Already
 #' It constrains the maximum number rows of a block
 #'
 #' @return matrix. Rows are corresponding to the samples, columns are the bands.
-#' @importFrom raster brick
+#' @importFrom raster brick nbands
 #' @import stars
 #' @export
 
@@ -504,7 +506,7 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.50){
 
   metarast <- raster(ImPath)
   # updated raster package: do not use brick with 2D raster
-  if (nbands(metarast)>1){
+  if (raster::nbands(metarast)>1){
     rasterInfo <- raster::brick(ImPath)
   } else{
     rasterInfo <- metarast
@@ -634,7 +636,7 @@ get_BB_from_Vector <- function(path_raster,path_vector,Buffer = 0){
 #' @param MaxRAM numeric.
 #'
 #' @importFrom matlab ones
-#' @import raster
+#' @importFrom raster raster brick nbands ncell
 #' @importFrom mmand erode
 #' @importFrom data.table data.table rbindlist setorder
 #' @importFrom matrixStats rowAnys
@@ -649,9 +651,9 @@ get_BB_from_Vector <- function(path_raster,path_vector,Buffer = 0){
 
 get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Per_Partition, kernel=NULL,MaxRAM = 0.5) {
 
-  metarast <- raster(ImPath)
+  metarast <- raster::raster(ImPath)
   # updated raster package: do not use brick with 2D raster
-  if (nbands(metarast)>1){
+  if (raster::nbands(metarast)>1){
     rasterInfo <- raster::brick(ImPath)
   } else{
     rasterInfo <- metarast
@@ -661,7 +663,7 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Pe
   rdim <- dim(rasterInfo)
   nlines <- rdim[1]
   nsamples <- rdim[2]
-  nbpix <- ncell(rasterInfo)
+  nbpix <- raster::ncell(rasterInfo)
   # 1- Exclude masked pixels from random subset
   # Read Mask
   if ((!MaskPath == "") & (!MaskPath == FALSE)) {
@@ -673,7 +675,7 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Pe
   if(is.matrix(kernel)){
     # erode mask with kernel, to keep valid central pixels and neighbours
     mask = matlab::padarray(mask, c(1,1), padval=0, direction='both')
-    mask = erode(mask, (kernel!=0)*1)
+    mask = mmand::erode(mask, (kernel!=0)*1)
     mask = mask[2:(nrow(mask)-1), 2:(ncol(mask)-1)]
   }
 
@@ -700,13 +702,13 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Pe
     coordPixK = list()
     mesh=matlab::meshgrid(-(ncol(kernel)%/%2):(ncol(kernel)%/%2), -(nrow(kernel)%/%2):(nrow(kernel)%/%2))
     for(p in which(kernel!=0)){
-      coordPixK[[p]] = data.table(row = Row+mesh$y[p], col = Column+mesh$x[p], id=1:length(Row))
+      coordPixK[[p]] = data.table::data.table(row = Row+mesh$y[p], col = Column+mesh$x[p], id=1:length(Row))
     }
-    coordPix = rbindlist(coordPixK, idcol='Kind')
+    coordPix = data.table::rbindlist(coordPixK, idcol='Kind')
     # Order along coordPix$id for further use in noise, mnf
     setorder(coordPix, 'id')
   }else{
-    coordPix = data.table(row = Row, col = Column, id = 1:length(Row))
+    coordPix = data.table::data.table(row = Row, col = Column, id = 1:length(Row))
   }
   # sort based on .bil dim order, i.e. band.x.y or band.col.row
   # TODO: sorting may not be necessary anymore, neither unique coordinates
@@ -812,7 +814,7 @@ get_image_bands <- function(Spectral_Bands, wavelength) {
 #' @return list. vector_coordinates and vector_ID for each element in the vector file
 #' @importFrom tools file_path_sans_ext
 #' @importFrom rgdal readOGR
-#' @import raster
+#' @importFrom raster compareCRS
 #' @export
 
 get_polygonCoord_from_Shp <- function(path_SHP,path_Raster,IDshp=NULL){
@@ -859,11 +861,13 @@ ind2sub <- function(Raster, Image_Index) {
   return(my_list)
 }
 
-# convert image coordinates from index to X-Y
-# image coordinates are given as index = (ID.col-1) * total.lines + ID.row
-#
-# @param Raster image raster object
-# @param Image_Index coordinates corresponding to the raster
+#' convert image coordinates from index to X-Y
+#' image coordinates are given as index = (ID.col-1) * total.lines + ID.row
+#'
+#' @param Raster raster obj. image raster object
+#' @param Image_Index numeric. coordinates corresponding to the raster
+#' @return list. list of columns and rows corresponding to index number
+#' @export
 ind2sub2 <- function(Raster, Image_Index) {
   r <- ((Image_Index - 1) %% Raster@nrows) + 1
   c <- floor((Image_Index - 1) / Raster@nrows) + 1
@@ -881,8 +885,8 @@ ind2sub2 <- function(Raster, Image_Index) {
 #' @importFrom stats IQR quantile
 #' @export
 IQR_outliers <- function(DistVal,weightIRQ = 1.5){
-  iqr <- IQR(DistVal, na.rm=TRUE)
-  range_IQR <- c(quantile(DistVal, 0.25,na.rm=TRUE),quantile(DistVal, 0.75,na.rm=TRUE))
+  iqr <- stats::IQR(DistVal, na.rm=TRUE)
+  range_IQR <- c(stats::quantile(DistVal, 0.25,na.rm=TRUE),stats::quantile(DistVal, 0.75,na.rm=TRUE))
   outlier_IQR <- c(range_IQR[1]-weightIRQ*iqr,range_IQR[2]+weightIRQ*iqr)
   return(outlier_IQR)
 }
@@ -895,6 +899,7 @@ IQR_outliers <- function(DistVal,weightIRQ = 1.5){
 #'
 #' @return rank of all spectral bands of interest in the image and corresponding wavelength
 #' @importFrom matlab padarray
+#' @importFrom utils tail
 #' @export
 
 mean_filter <- function(Image, SizeFilt,NA_remove = FALSE) {
@@ -914,7 +919,7 @@ mean_filter <- function(Image, SizeFilt,NA_remove = FALSE) {
     for (i in (SizeFilt + 1):(nbi + SizeFilt)) {
       for (j in 1:((2 * SizeFilt) + 1)) {
         # create a 2D matrix
-        Mat2D[, spl[[j]]] <- matrix(E[(i - SizeFilt):(i + SizeFilt), (spl[[j]][1]):(tail(spl[[j]], n = 1) + 2 * SizeFilt)], nrow = ((2 * SizeFilt) + 1)^2)
+        Mat2D[, spl[[j]]] <- matrix(E[(i - SizeFilt):(i + SizeFilt), (spl[[j]][1]):(utils::tail(spl[[j]], n = 1) + 2 * SizeFilt)], nrow = ((2 * SizeFilt) + 1)^2)
       }
       ImageSmooth_tmp[(i - SizeFilt), ] <- colMeans(Mat2D, na.rm = TRUE)
     }

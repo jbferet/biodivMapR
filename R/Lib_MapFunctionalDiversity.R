@@ -94,7 +94,7 @@ map_functional_div <- function(Original_Image_File,Functional_File = FALSE,
 #' @importFrom future plan multiprocess sequential
 #' @importFrom future.apply future_lapply
 #' @importFrom stats sd
-#' @importFrom raster brick values
+#' @importFrom raster brick values nbands
 compute_Functional_metrics <- function(Functional_File, Functional_Map_Path, Selected_Features,
                                        window_size, MinSun, nbCPU = FALSE, MaxRAM = FALSE) {
 
