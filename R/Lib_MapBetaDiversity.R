@@ -332,7 +332,7 @@ compute_beta_metrics <- function(ClusterMap_Path, MinSun, Nb_Units_Ordin, nb_par
     Beta_Ordination_sel <- compute_NMDS(MatBCdist)
     PCname <- 'NMDS'
   } else if (scaling == "PCO") {
-    BetaPCO <- pco(MatBCdist, k = 3)
+    BetaPCO <- labdsv::pco(MatBCdist, k = 3)
     Beta_Ordination_sel <- BetaPCO$points
     PCname <- 'PCoA'
   }
