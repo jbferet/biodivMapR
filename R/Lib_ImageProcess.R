@@ -636,7 +636,7 @@ get_BB_from_Vector <- function(path_raster,path_vector,Buffer = 0){
 #' @param MaxRAM numeric.
 #'
 #' @importFrom matlab ones
-#' @importFrom raster raster brick nbands ncell
+#' @importFrom raster raster brick nbands ncell values
 #' @importFrom mmand erode
 #' @importFrom data.table data.table rbindlist setorder
 #' @importFrom matrixStats rowAnys
@@ -667,7 +667,7 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Pe
   # 1- Exclude masked pixels from random subset
   # Read Mask
   if ((!MaskPath == "") & (!MaskPath == FALSE)) {
-    mask <- matrix(t(raster(MaskPath)),ncol= nsamples,nrow = nlines)
+    mask <- matrix(t(raster::values(raster::raster(MaskPath))),ncol= nsamples,nrow = nlines)
   } else {
     mask <- array(1, dim = c(nlines, nsamples))
   }
