@@ -556,6 +556,7 @@ define_pixels_per_iter <- function(ImNames, nb_partitions) {
 #'
 #' @return Sel_PC
 #' @importFrom utils file.edit
+#' @importFrom tools file_path_sans_ext
 #' @export
 select_PCA_components <- function(Input_Image_File, Output_Dir, PCA_Files, TypePCA = "SPCA", File_Open = FALSE) {
   message("")
@@ -563,9 +564,9 @@ select_PCA_components <- function(Input_Image_File, Output_Dir, PCA_Files, TypeP
   message("Please check following PCA file:")
   print(PCA_Files)
   message("*********************************************************")
-  Image_Name <- strsplit(basename(Input_Image_File), "\\.")[[1]][1]
+  Image_Name <- file_path_sans_ext(basename(Input_Image_File))
   Output_Dir_Full <- file.path(Output_Dir, Image_Name, TypePCA)
-  Sel_PC <- file.path(Output_Dir_Full, "PCA/Selected_Components.txt")
+  Sel_PC <- file.path(Output_Dir_Full, "PCA","Selected_Components.txt")
   message("list the principal components that will be used to estimate biodiversity in the file")
   message("")
   print(Sel_PC)
