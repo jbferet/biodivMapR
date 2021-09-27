@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.8.0</span>
       </span>
     </div>
 
@@ -105,7 +105,31 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/biodivMapR_1.html">Converting a raster file to the proper file format</a>
+      <a href="../articles/biodivMapR_1.html">Prepare your data</a>
+    </li>
+    <li>
+      <a href="../articles/biodivMapR_2.html">Set parameters for biodivMapR</a>
+    </li>
+    <li>
+      <a href="../articles/biodivMapR_3.html">Perform spatial &amp; spectral filtering</a>
+    </li>
+    <li>
+      <a href="../articles/biodivMapR_4.html">PCA &amp; Dimensionality reduction</a>
+    </li>
+    <li>
+      <a href="../articles/biodivMapR_5.html">Spectral species mapping</a>
+    </li>
+    <li>
+      <a href="../articles/biodivMapR_6.html">alpha and beta diversity maps</a>
+    </li>
+    <li>
+      <a href="../articles/biodivMapR_7.html">Functional Diversity</a>
+    </li>
+    <li>
+      <a href="../articles/biodivMapR_8.html">How to perform validation?</a>
+    </li>
+    <li>
+      <a href="../articles/biodivMapR_9.html">Compute diversity from user-defined set of layers</a>
     </li>
   </ul>
 </li>
@@ -168,6 +192,19 @@ given spectral band and R at the following bands</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="ENVI_type2bytes.html">ENVI_type2bytes()</a></code> </p>
+        </td>
+        <td><p>get information corresponding to data type defined in ENVI</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="IQR_outliers.html">IQR_outliers()</a></code> </p>
+        </td>
+        <td><p>This function computes interquartile range (IQR) criterion, which can be used
+as a criterion for outlier detection</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="Write_Big_Image.html">Write_Big_Image()</a></code> </p>
         </td>
         <td><p>write an image which size is &gt; 2**31-1</p></td>
@@ -181,9 +218,33 @@ given spectral band and R at the following bands</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="ZipFile.html">ZipFile()</a></code> </p>
+        </td>
+        <td><p>Zips an image file</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="apply_continuum_removal.html">apply_continuum_removal()</a></code> </p>
         </td>
         <td><p>prepares data to run multithreaded continuum removal</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="build_image_from_list.html">build_image_from_list()</a></code> </p>
+        </td>
+        <td><p>rebuilds full image from list of subsets</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="center_reduce.html">center_reduce()</a></code> </p>
+        </td>
+        <td><p>center and reduce data matrix based on known mean and SD</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="change_resolution_HDR.html">change_resolution_HDR()</a></code> </p>
+        </td>
+        <td><p>change resolution in a HDR file</p></td>
       </tr><tr>
         
         <td>
@@ -238,6 +299,12 @@ corresponding to a polygon</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="create_hdr.html">create_hdr()</a></code> </p>
+        </td>
+        <td><p>create a hdr file for a raster</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="create_mask_from_threshold.html">create_mask_from_threshold()</a></code> </p>
         </td>
         <td><p>create a mask based on NDVI, Green reflectance and NIR reflectance
@@ -254,15 +321,39 @@ NIR (min) threshold eliminates shadows
       </tr><tr>
         
         <td>
+          <p><code><a href="define_output_subdir.html">define_output_subdir()</a></code> </p>
+        </td>
+        <td><p>define output directory and subdirectory and create it if necessary</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="diversity_from_plots.html">diversity_from_plots()</a></code> </p>
         </td>
         <td><p>gets alpha diversity indicators from plot</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="exclude_spectral_domains.html">exclude_spectral_domains()</a></code> </p>
+        </td>
+        <td><p>define Water Vapor bands based on spectral smapling of original image</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="extract.big_raster.html">extract.big_raster()</a></code> </p>
         </td>
         <td><p>Extract bands of sparse pixels in image data cube</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="extract_pixels.html">extract_pixels()</a></code> </p>
+        </td>
+        <td><p>extracts sample points from binary image file</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="extract_samples_from_image.html">extract_samples_from_image()</a></code> </p>
+        </td>
+        <td><p>extracts pixels from image based on their coordinates</p></td>
       </tr><tr>
         
         <td>
@@ -273,6 +364,24 @@ NIR (min) threshold eliminates shadows
 - negative values may occur, so a +100 value is applied to avoid negative
 - possibly remaining negative values are set to 0
 - constant spectra are eliminated</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_BB.html">get_BB()</a></code> </p>
+        </td>
+        <td><p>This function gets coordinates of a bounding box defined by a vector (optional) and a raster</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_BB_from_Vector.html">get_BB_from_Vector()</a></code> </p>
+        </td>
+        <td><p>This gets bounding box corresponding to a vector from a raster (UL, UR, LL, LR corners)</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_BB_from_fullImage.html">get_BB_from_fullImage()</a></code> </p>
+        </td>
+        <td><p>This function gets extreme coordinates of a bounding box corresponding to a full image</p></td>
       </tr><tr>
         
         <td>
@@ -291,6 +400,19 @@ NIR (min) threshold eliminates shadows
           <p><code><a href="get_random_subset_from_image.html">get_random_subset_from_image()</a></code> </p>
         </td>
         <td><p>extract random subset of pixels from an image</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ind2sub.html">ind2sub()</a></code> </p>
+        </td>
+        <td><p>convert image coordinates from index to X-Y</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ind2sub2.html">ind2sub2()</a></code> </p>
+        </td>
+        <td><p>convert image coordinates from index to X-Y
+image coordinates are given as index = (ID.col-1) * total.lines + ID.row</p></td>
       </tr><tr>
         
         <td>
@@ -321,6 +443,12 @@ NIR (min) threshold eliminates shadows
           <p><code><a href="map_spectral_species.html">map_spectral_species()</a></code> </p>
         </td>
         <td><p>maps spectral species based on PCA file computed previously</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="mean_filter.html">mean_filter()</a></code> </p>
+        </td>
+        <td><p>applies mean filter to an image</p></td>
       </tr><tr>
         
         <td>
@@ -362,9 +490,53 @@ or applies the transformation based on a previously defined min and max</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="read_BIL_image_subset.html">read_BIL_image_subset()</a></code> </p>
+        </td>
+        <td><p>reads subset of an ENVI BIL image</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="read_ENVI_header.html">read_ENVI_header()</a></code> </p>
         </td>
         <td><p>Reads ENVI hdr file</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="read_ListRasters.html">read_ListRasters()</a></code> </p>
+        </td>
+        <td><p>This function produces a raster stack which can be directly processed with
+biodivMapR to produce spectral diversity maps.
+Input variables can be spectral indices, biophysical variables...</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="read_bin_subset.html">read_bin_subset()</a></code> </p>
+        </td>
+        <td><p>reads a subset from a binary image</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="read_image_bands.html">read_image_bands()</a></code> </p>
+        </td>
+        <td><p>read specific image bands from image</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="read_image_subset.html">read_image_subset()</a></code> </p>
+        </td>
+        <td><p>reads subset of lines from an image</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="revert_resolution_HDR.html">revert_resolution_HDR()</a></code> </p>
+        </td>
+        <td><p>revert resolution in a HDR file</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="rm_invariant_bands.html">rm_invariant_bands()</a></code> </p>
+        </td>
+        <td><p>remove constant bands</p></td>
       </tr><tr>
         
         <td>
@@ -374,15 +546,63 @@ or applies the transformation based on a previously defined min and max</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="split_image.html">split_image()</a></code> </p>
+        </td>
+        <td><p>defines the number of pieces resulting from image split</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="split_line.html">split_line()</a></code> </p>
         </td>
         <td><p>ENVI functions</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="split_pixel_samples.html">split_pixel_samples()</a></code> </p>
+        </td>
+        <td><p>splits a set of pixels to be sampled in an image based on number of lines, not number of samples</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="sub2ind.html">sub2ind()</a></code> </p>
+        </td>
+        <td><p>convert image coordinates from X-Y to index</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="update_shademask.html">update_shademask()</a></code> </p>
+        </td>
+        <td><p>updates an existing mask</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="where_to_read.html">where_to_read()</a></code> </p>
+        </td>
+        <td><p>defines which byte should be read for each part of an image split in nbPieces</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="where_to_read_kernel.html">where_to_read_kernel()</a></code> </p>
+        </td>
+        <td><p>defines which byte should be read for each part of an image split in nbPieces</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="where_to_write_kernel.html">where_to_write_kernel()</a></code> </p>
+        </td>
+        <td><p>defines which byte should be written for each part of an image split in nbPieces</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="write_ENVI_header.html">write_ENVI_header()</a></code> </p>
         </td>
         <td><p>writes ENVI hdr file</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="write_StarsStack.html">write_StarsStack()</a></code> </p>
+        </td>
+        <td><p>This function writes a stars object into a raster file</p></td>
       </tr><tr>
         
         <td>

@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Converting a raster file to the proper file format • biodivMapR</title>
+<title>Prepare your data • biodivMapR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Converting a raster file to the proper file format">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Prepare your data">
 <meta property="og:description" content="biodivMapR">
 <meta property="og:image" content="/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.8.0</span>
       </span>
     </div>
 
@@ -64,7 +64,31 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/biodivMapR_1.html">Converting a raster file to the proper file format</a>
+      <a href="../articles/biodivMapR_1.html">Prepare your data</a>
+    </li>
+    <li>
+      <a href="../articles/biodivMapR_2.html">Set parameters for biodivMapR</a>
+    </li>
+    <li>
+      <a href="../articles/biodivMapR_3.html">Perform spatial &amp; spectral filtering</a>
+    </li>
+    <li>
+      <a href="../articles/biodivMapR_4.html">PCA &amp; Dimensionality reduction</a>
+    </li>
+    <li>
+      <a href="../articles/biodivMapR_5.html">Spectral species mapping</a>
+    </li>
+    <li>
+      <a href="../articles/biodivMapR_6.html">alpha and beta diversity maps</a>
+    </li>
+    <li>
+      <a href="../articles/biodivMapR_7.html">Functional Diversity</a>
+    </li>
+    <li>
+      <a href="../articles/biodivMapR_8.html">How to perform validation?</a>
+    </li>
+    <li>
+      <a href="../articles/biodivMapR_9.html">Compute diversity from user-defined set of layers</a>
     </li>
   </ul>
 </li>
@@ -92,10 +116,10 @@
       </header><script src="biodivMapR_1_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Converting a raster file to the proper file format</h1>
+      <h1 data-toc-skip>Prepare your data</h1>
                         <h4 class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
             
-            <h4 class="date">2021-08-07</h4>
+            <h4 class="date">2021-09-27</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR_1.Rmd"><code>vignettes/biodivMapR_1.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_1.Rmd</code></div>
@@ -104,86 +128,122 @@
 
     
     
-<p style="color:red">
-<strong>if you are running version 1.3.0 or more recent version of <strong>biodivMapR</strong> this tutorial is not needed</strong>
-</p>
-<p><strong>biodivMapR</strong> was expecting a specific raster file format as input file before version 1.3.0.</p>
-<ul>
-<li>Raster files were expected to be raw flat-binary files. They should not contain any header, which are stored in a separate .hdr file. Hence format such as TIFF are not accepted.</li>
-<li>This binary file should be written following a <a href="https://www.harrisgeospatial.com/docs/enviimagefiles.html" title="BIL definition">Band-interleaved-by-line storage format</a>.</li>
-<li>This file should have either <code>.bil</code> file extension, or no file extension.</li>
-<li>The header file should be named the same as the binary image file, but with <code>.hdr</code> file extension, and should be located in the same directory.</li>
-<li>the header file should be an ASCII file and follow the <a href="https://www.harrisgeospatial.com/docs/ENVIHeaderFiles.html" title="HDR description"><strong>ENVI file format</strong></a>.</li>
-</ul>
-<p>A function is dedicated to conversion of a raster file into appropriate image format, named <code>raster2BIL</code>. This function is relatively straightforward to run, but users should make sure prerequisites are met before running the function.</p>
-<div id="how-to-produce-raster-data-with-proper-format-using-raster2bil" class="section level1">
-<h1 class="hasAnchor">
-<a href="#how-to-produce-raster-data-with-proper-format-using-raster2bil" class="anchor"></a>How to produce raster data with proper format using <code>raster2BIL</code>
-</h1>
-<p><code>raster2BIL</code> can be run as follows:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jbferet/biodivMapR">biodivMapR</a></span><span class="op">)</span>
-<span class="co"># define input variables for raster2BIL:</span>
-<span class="co"># full path or relative path for the raster file to convert</span>
-<span class="va">Path_Raster_File</span> <span class="op">&lt;-</span> <span class="st">'Where/is/your/raster/file/?'</span>
-<span class="co"># you also need to define a template for the .hdr file corresponding to your sensor. </span>
-<span class="co"># locate the install directory for biodivMapR</span>
-<span class="co"># system.file(package = "biodivMapR")`</span>
-<span class="co"># and write a file with description corresponding to your image (in terms of spectral bands, band name, etc)</span>
-<span class="va">Name_Template_HDR</span> <span class="op">&lt;-</span> <span class="st">'Name_of_hdr_template'</span>
-<span class="co"># you may want to convert reflectance from [0-1] real32 values to [0-10000] integer16</span>
-<span class="co"># see explanation below</span>
-<span class="va">Convert_Integer</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span>
-<span class="va">Multiplying_Factor</span> <span class="op">&lt;-</span> <span class="fl">10000</span>
-<span class="va">Multiplying_Factor_Last</span> <span class="op">&lt;-</span> <span class="fl">1.0</span>
-
-<span class="va">Input_Image_File</span>  <span class="op">=</span> <span class="fu"><a href="../reference/raster2BIL.html">raster2BIL</a></span><span class="op">(</span>Raster_Path <span class="op">=</span> <span class="va">Path_Raster_File</span>,
-                               Sensor <span class="op">=</span> <span class="va">Name_Template_HDR</span>,
-                               Output_Dir <span class="op">=</span> <span class="va">Path_Output_Directory</span>,
-                               Convert_Integer <span class="op">=</span> <span class="va">Convert_Integer</span>,
-                               Multiplying_Factor <span class="op">=</span> <span class="va">Multiplying_Factor</span>,
-                               Multiplying_Factor_Last<span class="op">=</span><span class="va">Multiplying_Factor_Last</span>,
-                               Mask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
-<div id="input-variables" class="section level2">
-<h2 class="hasAnchor">
-<a href="#input-variables" class="anchor"></a>Input variables</h2>
-<p>The following information is accepted as input information:</p>
-<ul>
-<li>
-<code>Raster_Path</code>: a string containing the full path for the raster to be converted.</li>
-<li>
-<code>Sensor</code>: a string containing the name of the sensor, which should actually be linked to a template for the corresponding header file.</li>
-<li>
-<code>Output_Dir</code> [optional]: a string defining the path for the output directory where converted file will be stored.</li>
-<li>
-<code>Convert_Integer</code> [optional]: a boolean stating if the raster data should be converted into integer</li>
-<li>
-<code>Multiplying_Factor</code> [optional]: a multiplying factor for the raster data. This is useful when converting real reflectance values between 0 and 1 into integer between 0 and 10000. Set <code>Multiplying_Factor =10000</code> in this case.</li>
-<li>
-<code>Multiplying_Factor_Last</code> [optional]: a multiplying factor for last band. This option is useful only if working with dry vegetation acquired with Sentinel-2 images, in order to artifically increase the reflectance of the B12 band (SWIR 2, centered at 2200 nm), so that SWIR 1 band remains below the convex hull defined during Continuum removal. <strong>You do not need to use this option most of the time, unless you want to enhance teh sensitivity to different types of dry vegetation</strong>.</li>
-<li>
-<code>Mask</code> [optional]: a boolean stating if the raster data corresponds to a mask (TRUE) or not (FALSE). If it is a mask, masked pixels should have a value of <code>0</code>, and pixels to keep for the analysis should have a value of <code>1</code>. raster2BIL converts image information into unsigned 8 bits integer.</li>
-</ul>
-<p>Please note that i) the coordinate system and minimal metadata (spatial resolution, geographic information…) are expected to be provided in the original image or image + header defined in <code>Raster_Path</code> if user want them to be included in the final image products.</p>
-<ol start="2" style="list-style-type: lower-roman">
-<li><p><code>Sensor</code> should refer to the name of a <code>.hdr</code> file stored in the installation directory of <code>biodivMapR</code> Please type <code><a href="https://rdrr.io/r/base/system.file.html">system.file(package = "biodivMapR")</a></code> in order to get the location of the install directory and create a proper <code>.hdr</code> file to be stored in <code>extdata/HDR/</code>, containing proper spectral bands <strong>defined in nanometers</strong> if using optical data and using <code>perform_radiometric_filtering</code> and/or <code>Continuum_Removal = TRUE</code> in your process. Make sure that the <strong>spectral bands in the binary file are stored with wavelengths following ascending order</strong>.</p></li>
-<li><p><code>Convert_Integer=TRUE</code> saves 50% space if original image is stored in real values (32 bits per value). However, user need to make sure hat their original data are compatible with conversion: if reflectance values are stored as real value between 0 and 1, the final image file will be unusable, unless proper multiplying factor is applied to the full image data (for example <code>Multiplying_Factor =10000</code>). Sentinel-2 reflectance data downloaded from ESA hub are stored as integer (16 bits) values between 0 and 10 000 instead of real (32 bits) values between 0 and 1, so integer conversion is unnecessary.</p></li>
-</ol>
+<p><code>biodivMapR</code> produces (spectral) diversity maps based on (optical) images. The first step is then to have access to such image. Many possibilities exist to access Sentinel-2 data. The R package <a href="https://sen2r.ranghetti.info/"><code>sen2r</code></a> is a good option to access Sentinel-2 data if you want to develop a full workflow with R.</p>
+<div id="data-requirements-to-run-biodivmapr" class="section level3">
+<h3 class="hasAnchor">
+<a href="#data-requirements-to-run-biodivmapr" class="anchor"></a>Data requirements to run <code>biodivMapR</code>
+</h3>
+<p><code>biodivMapR</code> requires raster data as input, written as image stacks (one file including all spectral bands / dimensions used for the analysis). If optical data is processed, then <strong>the spectral bands should be provided in the header file</strong>, in order to allow computation of the continuum removal over the full spectrum. If Continuum_Removal is set to <strong>FALSE</strong>, then the spectral bands are not required.</p>
 </div>
-<div id="output-variable" class="section level2">
+<div id="download-a-sentinel-2-image-sample" class="section level2">
 <h2 class="hasAnchor">
-<a href="#output-variable" class="anchor"></a>output variable</h2>
-<p><code>raster2BIL</code> returns a string containing the full path for the raster once converted.</p>
-<p>You can directly use this output variable as input for the next steps of the process.</p>
+<a href="#download-a-sentinel-2-image-sample" class="anchor"></a>Download a Sentinel-2 image sample</h2>
+<p>In the chunk of code hereafter, an image subset is downloaded from a gitlab repository. The image is an ENVI raster including :</p>
+<ul>
+<li><p>A binary file (which has no extension here).</p></li>
+<li><p>A header file (with <strong>.hdr</strong> extension).</p></li>
+</ul>
+<p>The header file is a text file including all necessary metadata which can be read with a text editor. It includes image dimensions, projection, and the name and <strong>central wavelength for each spectral band</strong>.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># load biodivMapR and useful libraries </span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jbferet/biodivMapR">biodivMapR</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">utils</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/stars/">stars</a></span><span class="op">)</span>
+<span class="co"># url for the S2 subset</span>
+<span class="va">url</span> <span class="op">&lt;-</span> <span class="st">'https://gitlab.com/jbferet/myshareddata/-/raw/master/biodivMapR_S2_Sample/RASTER/S2A_T33NUD_20180104_Subset'</span>
+<span class="co"># create a temporary directory (choose your own data directory)</span>
+<span class="va">tmpdir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempdir</a></span><span class="op">(</span><span class="op">)</span>
+<span class="co"># name your binary raster with the same name as the online file</span>
+<span class="va">NameRaster</span> <span class="op">&lt;-</span> <span class="st">'S2A_T33NUD_20180104_Subset'</span>
+<span class="va">destfile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">tmpdir</span>,<span class="va">NameRaster</span>,fsep <span class="op">=</span> <span class="st">'\\'</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">url</span>, destfile <span class="op">=</span> <span class="va">destfile</span>, method <span class="op">=</span> <span class="st">'auto'</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span>, mode <span class="op">=</span> <span class="st">"wb"</span><span class="op">)</span>
+
+<span class="co"># url for the S2 subset header</span>
+<span class="va">urlhdr</span> <span class="op">&lt;-</span>  <span class="st">'https://gitlab.com/jbferet/myshareddata/-/raw/master/biodivMapR_S2_Sample/RASTER/S2A_T33NUD_20180104_Subset.hdr'</span>
+<span class="co"># name your raster HDR with the same name as the binary raster, with .hdr extension</span>
+<span class="va">destfile_HDR</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_HDR_name.html">get_HDR_name</a></span><span class="op">(</span><span class="va">destfile</span>,showWarnings <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">urlhdr</span>, destfile <span class="op">=</span> <span class="va">destfile_HDR</span>, method <span class="op">=</span> <span class="st">'auto'</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span>, mode <span class="op">=</span> <span class="st">"w"</span><span class="op">)</span></code></pre></div>
+<p>The subset is obtained from tile T33NUD, acquired by Sentinel-2A satellite in 2018/01/04 over Cameroon.</p>
+<p align="center">
+<img width="50%" height="50%" src="../man/figures/01_RGB_S2A_T33NUD_20180104_Subset.png"></p>
+<p>Once the image is downloaded, it can be processed with <code>biodivMapR</code>.</p>
+<div id="add-a-header-file-to-tiff-images" class="section level3">
+<h3 class="hasAnchor">
+<a href="#add-a-header-file-to-tiff-images" class="anchor"></a>Add a header file to Tiff images</h3>
+<p>This example illustrates how to produce a proper HDR file for Sentinel-2 images when no header is paired with the main raster file.</p>
+<p>This is the case of most GeoTiff raster images, for example.</p>
+<p>To illustrate the procedure, let’s produce a GeoTiff image from the ENVI raster downloaded in the previous step.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># read ENVI file with stars</span>
+<span class="va">Stars_S2</span> <span class="op">&lt;-</span> <span class="fu">stars</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/stars/reference/read_stars.html">read_stars</a></span><span class="op">(</span><span class="va">destfile</span>, along <span class="op">=</span> <span class="st">'band'</span>,proxy <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="co"># write it as a tiff image</span>
+<span class="co"># create a specific directory for the tiff image and name your raster</span>
+<span class="va">desttiff</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">tmpdir</span>,<span class="st">'TIFF'</span>,fsep <span class="op">=</span> <span class="st">'\\'</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="va">desttiff</span>,showWarnings <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="va">destfiletiff</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">desttiff</span>,<span class="st">'S2_Subset.tif'</span>,fsep <span class="op">=</span> <span class="st">'\\'</span><span class="op">)</span>
+<span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/stars/reference/write_stars.html">write_stars</a></span><span class="op">(</span><span class="va">Stars_S2</span>, dsn<span class="op">=</span><span class="va">destfiletiff</span>, driver <span class="op">=</span>  <span class="st">'GTiff'</span>, type<span class="op">=</span><span class="st">'Int16'</span><span class="op">)</span></code></pre></div>
+<p>Then, let’s produce a header file for this GeoTiff image.</p>
+<p>In order to simplify the process if you are using <strong>Sentinel-2</strong>, <strong>Landsat-7</strong>, or <strong>WorldView</strong>: a <a href="'https://github.com/jbferet/biodivMapR/blob/master/inst/extdata/HDR'" target="_blank"><code>.hdr</code> template</a> is available. This <code>.hdr</code> template is valid for L2A level images, so make sure the spectral bands in your image correspond to the spectral bands identified in the raster file (name and rank).</p>
+<p>The bands in the GeoTiff raster are expected to be written as follows:</p>
+<ul>
+<li>
+<p><strong>Sentinel-2</strong> (possibility to differentiate <strong>Sentinel-2A</strong> and <strong>Sentinel-2B</strong>)</p>
+<p>** band names = {band 02, band 03, band 04, band 05, band 06, band 07, band 08, band 08A, band 11, band 12}.</p>
+<p>** wavelength = {496.6, 560.0, 664.5, 703.9, 740.2, 782.5, 835.1, 864.8, 1613.7, 2202.4}.</p>
+<p>** bandwidth = {98, 45, 38, 19, 18, 28, 145, 33, 143, 242}.</p>
+</li>
+<li>
+<p><strong>Landsat-7</strong></p>
+<p>** band names = {B01, B02, B03, B04, B05, B07}</p>
+<p>** wavelength = {485.0, 560.0, 660.5, 835.0, 1650.0, 2220.0}</p>
+</li>
+<li>
+<p><strong>WorldView</strong></p>
+<p>** band names = {Coastal, Blue, Green, Yellow, Red, Red Edge, NIR1, NIR2}</p>
+<p>** wavelength = { 425.000, 480.000, 545.000, 605.000, 660.000, 725.000, 832.500, 950.000}</p>
+</li>
+</ul>
+<p><strong>If spectral bands in your raster image differ from these aforementioned, please properly define these spectral bands.</strong></p>
+<p><strong>Keep in mind that the bands should be ranked in ascending order (in terms of central wavelength).</strong></p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># read ENVI file with stars</span>
+<span class="fu"><a href="../reference/create_hdr.html">create_hdr</a></span><span class="op">(</span>ImPath <span class="op">=</span> <span class="va">destfiletiff</span>, Sensor <span class="op">=</span> <span class="st">'SENTINEL_2A'</span>, 
+           SpectralBands <span class="op">=</span> <span class="cn">NULL</span>, BandName <span class="op">=</span> <span class="cn">NULL</span>, WLunits <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+<p>You can also produce a header file with your own parameters corresponding to the raster data.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># read ENVI file with stars</span>
+<span class="va">BandName</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'band_02'</span>, <span class="st">'band 03'</span>, <span class="st">'band_04'</span>, <span class="st">'band_05'</span>, <span class="st">'band_06'</span>, 
+               <span class="st">'band_07'</span>, <span class="st">'band_08'</span>, <span class="st">'band_08A'</span>, <span class="st">'band_11'</span>, <span class="st">'band_12'</span><span class="op">)</span>
+<span class="va">SpectralBands</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">496.6</span>, <span class="fl">560.0</span>, <span class="fl">664.5</span>, <span class="fl">703.9</span>, <span class="fl">740.2</span>, 
+                   <span class="fl">782.5</span>, <span class="fl">835.1</span>, <span class="fl">864.8</span>, <span class="fl">1613.7</span>, <span class="fl">2202.4</span><span class="op">)</span>
+<span class="va">WLunits</span> <span class="op">&lt;-</span> <span class="st">'Nanometers'</span>
+<span class="fu"><a href="../reference/create_hdr.html">create_hdr</a></span><span class="op">(</span>ImPath <span class="op">=</span> <span class="va">destfiletiff</span>, Sensor <span class="op">=</span> <span class="st">'MyOwnSensor'</span>, 
+           SpectralBands <span class="op">=</span> <span class="va">SpectralBands</span>,BandName <span class="op">=</span> <span class="va">BandName</span>, WLunits <span class="op">=</span> <span class="va">WLunits</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="download-vector-files-used-for-validation" class="section level3">
+<h3 class="hasAnchor">
+<a href="#download-vector-files-used-for-validation" class="anchor"></a>Download vector files used for ‘validation’</h3>
+<p>A set of vector files is downloaded here, corresponding to circular plots identified in the raster. It will be used in the final step of the tutorial (<a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_8.html" target="_blank"><strong>How to perform validation?</strong></a>.).</p>
+<p>The following code allows downloading the zipfile containing the vector data, and unzipping it in the same directory as the one including the raster data.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># library</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-lib/zip#readme">zip</a></span><span class="op">)</span>
+<span class="co"># name zip file including plots located on the tile</span>
+<span class="va">destzip</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">tmpdir</span>,<span class="st">'S2A_T33NUD_Plots.zip'</span>,fsep <span class="op">=</span> <span class="st">'\\'</span><span class="op">)</span>
+<span class="co"># url for the zip file</span>
+<span class="va">url</span> <span class="op">&lt;-</span> <span class="st">'https://gitlab.com/jbferet/myshareddata/-/raw/master/biodivMapR_S2_Sample/VECTOR/S2A_T33NUD_Plots.zip'</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">url</span>, destfile <span class="op">=</span> <span class="va">destzip</span><span class="op">)</span>
+<span class="va">destunz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">tmpdir</span>,<span class="st">'S2A_T33NUD_Plots'</span>,fsep <span class="op">=</span> <span class="st">'\\'</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/zip/man/unzip.html">unzip</a></span><span class="op">(</span>zipfile <span class="op">=</span> <span class="va">destzip</span>,exdir <span class="op">=</span> <span class="va">destunz</span><span class="op">)</span></code></pre></div>
+<p><br><br></p>
+<p>Now that the necessary data is downloaded, we can start the <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_2.html" target="_blank">tutorial</a>.</p>
 </div>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
-    </nav>
-</div>
+      </div>
 
 </div>
 
