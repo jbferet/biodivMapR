@@ -176,23 +176,25 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
   return(my_list)
 }
 
-# perform filtering based on extreme values PCA identified through PCA
+#' perform filtering based on extreme values PCA identified through PCA
+#'
+#' @param Input_Image_File character. Path of the image to be processed
+#' @param HDR character. Path of the header file corresponding to the image to be processed
+#' @param Input_Mask_File character. Path of the mask raster corresponding to the image (keeps pixels = 1)
+#' @param Shade_Update character. Path of the updated mask raster corresponding to the image (keeps pixels = 1)
+#' @param Spectral list. spectral information from data
+#' @param Continuum_Removal boolean. set TRUE if continuum removal should be applied
+#' @param PCA_model dataframe. general parameters of the PCA
+#' @param PCsel numeric. PCs used to filter out extreme values
+#' @param TypePCA character. Set to PCA, SPCA or MNF
+#' @param nbCPU numeric. number of CPUs to be used in parallel
+#' @param MaxRAM numeric. indicator of RAM to be used to read image file
 #
-# @param Input_Image_File character. Path of the image to be processed
-# @param HDR character. Path of the header file corresponding to the image to be processed
-# @param Input_Mask_File character. Path of the mask raster corresponding to the image (keeps pixels = 1)
-# @param Shade_Update character. Path of the updated mask raster corresponding to the image (keeps pixels = 1)
-# @param Spectral list. spectral information from data
-# @param Continuum_Removal boolean. set TRUE if continuum removal should be applied
-# @param PCA_model dataframe. general parameters of the PCA
-# @param PCsel numeric. PCs used to filter out extreme values
-# @param TypePCA character. Set to PCA, SPCA or MNF
-# @param nbCPU numeric. number of CPUs to be used in parallel
-# @param MaxRAM numeric. indicator of RAM to be used to read image file
-#
-# @return Shade_Update = updated shade mask
-# ' @importFrom stats sd
-# ' @importFrom matlab ones
+#' @return Shade_Update = updated shade mask
+#' @importFrom stats sd
+#' @importFrom matlab ones
+#' @export
+
 filter_PCA <- function(Input_Image_File, HDR, Input_Mask_File, Shade_Update,
                        Spectral, Continuum_Removal, PCA_model, PCsel, TypePCA,
                        nbCPU = 1, MaxRAM = 0.25) {
@@ -460,33 +462,37 @@ write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_mo
   return(invisible())
 }
 
-# Function to perform PCA on a matrix
-#
-# @param X matrix to apply PCA on
-# @param type PCA (no rescale) or SPCA (rescale)
-#
-# @return list of PCA parameters (PCs from X, mean, eigenvectors and values)
+#' Function to perform PCA on a matrix
+#'
+#' @param X matrix to apply PCA on
+#' @param type PCA (no rescale) or SPCA (rescale)
+#'
+#' @return list of PCA parameters (PCs from X, mean, eigenvectors and values)
 #' @importFrom stats prcomp
+#' @export
+
 pca <- function(X, type) {
   p <- ncol(X)
   if (type == "SPCA") {
-    modPCA <- prcomp(X, scale = TRUE)
+    modPCA <- stats::prcomp(X, scale = TRUE)
 
   } else if (type == "PCA") {
-    modPCA <- prcomp(X, scale = FALSE)
+    modPCA <- stats::prcomp(X, scale = FALSE)
 
   }
 
   return(modPCA)
 }
 
-# defines the number of pixels per iteration based on a trade-off between image size and sample size per iteration
-#
-# @param ImNames Path and name of the images to be processed
-# @param nb_partitions number of iterations peformed to average diversity indices
-#
-# @return Pix_Per_Partition number of pixels per iteration
-define_pixels_per_iter <- function(ImNames, nb_partitions = nb_partitions) {
+#' defines the number of pixels per iteration based on a trade-off between image size and sample size per iteration
+#'
+#' @param ImNames Path and name of the images to be processed
+#' @param nb_partitions number of iterations peformed to average diversity indices
+#'
+#' @return Pix_Per_Partition number of pixels per iteration
+#' @export
+
+define_pixels_per_iter <- function(ImNames, nb_partitions) {
   Input_Image_File <- ImNames$Input.Image
   Input_Mask_File <- ImNames$Mask_list
   # define dimensions of the image
@@ -577,7 +583,7 @@ select_PCA_components <- function(Input_Image_File, Output_Dir, PCA_Files, TypeP
     # } else {
     #   file.edit(Sel_PC, title=basename(Sel_PC))
     # }
-    file.edit(Sel_PC, title=basename(Sel_PC))
+    utils::file.edit(Sel_PC, title=basename(Sel_PC))
   }
   message("*********************************************************")
   message("")
@@ -622,7 +628,7 @@ minmax <- function(x, mode = "define", MinX = FALSE, MaxX = FALSE) {
 # i.e. coordPix[1, ] corresponds to X[1, ], coordPix[2, ] corresponds to X[2, ], ...
 noise <- function(X, coordPix=NULL){
   if(is.null(coordPix)){
-    if(ndims(X)!=3)
+    if(matlab::ndims(X)!=3)
       stop('X is expected to be a 3D array: y,x,band for row,col,depth.')
     Xdim = dim(X)
     # Shift x/y difference
@@ -690,21 +696,21 @@ mnf <- function(X, coordPix=NULL, retx=TRUE){
     stop('X has more than 3 dimensions.')
 
   nz <- noise(X, coordPix)
-  Xdim = dim(X)
+  Xdim <- dim(X)
 
   if(is.null(coordPix) && length(dim(X))>2){
-    X = matrix(X[1:(Xdim[1]-1), 1:(Xdim[2]-1),], nrow = Xdim[1]*Xdim[2])
-    nz = matrix(nz, nrow = Xdim[1]*Xdim[2])
+    X <- matrix(X[1:(Xdim[1]-1), 1:(Xdim[2]-1),], nrow = Xdim[1]*Xdim[2])
+    nz <- matrix(nz, nrow = Xdim[1]*Xdim[2])
   }
 
   Xc = scale(X, center = T, scale = F)
 
-  covNoise = cov(nz)
-  covXc = cov(Xc)
-  eig = eigen(solve(covNoise)%*%covXc)
+  covNoise <- stats::cov(nz)
+  covXc <- stats::cov(Xc)
+  eig <- eigen(solve(covNoise)%*%covXc)
   colnames(eig$vectors) = paste0('PC', 1:ncol(eig$vectors))
-  modMNF = list(sdev = sqrt(eig$values), rotation = eig$vectors,
-                center = colMeans(X), scale = FALSE)
+  modMNF <- list(sdev = sqrt(eig$values), rotation = eig$vectors,
+                 center = colMeans(X), scale = FALSE)
   attr(modMNF, 'class') <- 'prcomp'
   #   eig_pairs = tofsims:::EigenDecompose(covXc, covNoise, 1, nrow(covNoise))
   #   vord = order(Re(eig_pairs$eigval), decreasing = T)

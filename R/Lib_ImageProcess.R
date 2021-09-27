@@ -176,10 +176,11 @@ rm_invariant_bands <- function(DataMatrix, Spectral) {
 #' @param TypePCA character. Type of PCA (PCA, SPCA, NLPCA...)
 #'
 #' @return path of the output directory
+#' @importFrom tools file_path_sans_ext
 #' @export
 
 define_output_directory <- function(Output_Dir, ImPath, TypePCA) {
-  Image_Name <- strsplit(basename(ImPath), "\\.")[[1]][1]
+  Image_Name <- file_path_sans_ext(basename(ImPath))
   Output_Dir <- file.path(Output_Dir, Image_Name, TypePCA)
   dir.create(Output_Dir, showWarnings = FALSE, recursive = TRUE)
   return(Output_Dir)
@@ -193,6 +194,7 @@ define_output_directory <- function(Output_Dir, ImPath, TypePCA) {
 #' @param Sub character. subdirectory
 #'
 #' @return path of the output directory
+#' @importFrom tools file_path_sans_ext
 #' @export
 
 define_output_subdir <- function(Output_Dir, ImPath, TypePCA, Sub) {
@@ -200,7 +202,7 @@ define_output_subdir <- function(Output_Dir, ImPath, TypePCA, Sub) {
     message('Please provide input image file')
     stop()
   }
-  Image_Name <- strsplit(basename(ImPath), "\\.")[[1]][1]
+  Image_Name <- file_path_sans_ext(basename(ImPath))
   Output_Dir <- file.path(Output_Dir, Image_Name, TypePCA, Sub)
   dir.create(Output_Dir, showWarnings = FALSE, recursive = TRUE)
   return(Output_Dir)
@@ -1039,7 +1041,7 @@ read_ENVI_header <- function(HDRpath) {
 #' @param ImBand Bands to be read
 #'
 #' @return Image_Subset information corresponding to ImBand
-#' @import stars
+#' @importFrom raster raster
 
 read_image_bands <- function(ImPath, HDR, ImBand) {
   # first get image format
@@ -1052,7 +1054,7 @@ read_image_bands <- function(ImPath, HDR, ImBand) {
   i <- 0
   for (band in ImBand){
     i <- i+1
-    bndtmp = t(matrix(raster(ImPath, band = ImBand[i]),nrow = HDR$samples,ncol = HDR$lines))
+    bndtmp = t(matrix(raster::raster(ImPath, band = ImBand[i]),nrow = HDR$samples,ncol = HDR$lines))
     Image_Subset[,,i] <- array(bndtmp,c(ipix,jpix,1))
   }
   return(Image_Subset)

@@ -23,11 +23,11 @@ knitr::opts_chunk$set(
 
 The full radiometric filtering can be peformed with a unique function, including: 
 
-* NDVI thresholding
+* **NDVI filtering**: allows filtering to eliminate non-vegetated pixels. Nothing fancy so you may need to deal with mixed pixels... `NDVI_Thresh` defines the minimum NDVI value to be kept. By default, the NDVI is computed based on the NIR spectral band closest to 835nm, and the RED spectral band closest to 700nm. Which makes it closer to a RedEdge NDVI. These values can be adjusted as input variables for `perform_radiometric_filtering`. 
+* **NIR filtering**: allows filtering of shadows and pixels with very low signal. `NIR_Thresh` defines the minimum NIR value to be kept. By default, the NIR spectral band closest to 835nm is used. This value can be adjusted as input variables for `perform_radiometric_filtering`. 
 
-* NIR thresholding
+* **BLUE filtering**: allows filtering of clouds, based on the hypothesis that atmospheric scattering will lead to higher reflectance in the blue domain. `Blue_Thresh` defines the maximum Blue reflectance to be kept. By default, the Blue spectral band closest to 480nm is used. This value can be adjusted as input variables for `perform_radiometric_filtering`. 
 
-* Blue thresholding
 
 The spectral bands corresponding to the Blue, Green and NIR spectral bands can be defined as optional parameters. 
 

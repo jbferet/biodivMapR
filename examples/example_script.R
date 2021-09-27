@@ -29,13 +29,14 @@
 rm(list=ls(all=TRUE));gc()
 # load biodivMapR and useful libraries
 library(biodivMapR)
-library(utils)
-library(stars)
-library(zip)
 library(labdsv)
-library(rgdal)
 library(tools)
 library(ggplot2)
+library(gridExtra)
+# library(utils)
+# library(stars)
+# library(zip)
+# library(rgdal)
 
 # ===============================================================================
 # url for the S2 subset
@@ -45,7 +46,7 @@ Datadir <- 'biodivMapR_Example/01_DATA'
 dir.create(path = Datadir,recursive = T,showWarnings = F)
 # name your binary raster with the same name as the online file
 NameRaster <- 'S2A_T33NUD_20180104_Subset'
-destfile <- file.path(Datadir,NameRaster,fsep = '\\')
+destfile <- file.path(Datadir,NameRaster)
 download.file(url = url, destfile = destfile, method = 'auto', quiet = FALSE, mode = "wb")
 
 # ===============================================================================
@@ -58,11 +59,11 @@ download.file(url = urlhdr, destfile = destfile_HDR, method = 'auto', quiet = FA
 # ===============================================================================
 # url for the vector files corresponding to different vegetation types
 # name zip file including plots located on the tile
-destzip <- file.path(Datadir,'S2A_T33NUD_Plots.zip',fsep = '\\')
+destzip <- file.path(Datadir,'S2A_T33NUD_Plots.zip')
 # url for the zip file
 url <- 'https://gitlab.com/jbferet/myshareddata/-/raw/master/biodivMapR_S2_Sample/VECTOR/S2A_T33NUD_Plots.zip'
 download.file(url = url, destfile = destzip)
-destunz <- file.path(Datadir,'S2A_T33NUD_Plots',fsep = '\\')
+destunz <- file.path(Datadir,'S2A_T33NUD_Plots')
 unzip(zipfile = destzip,exdir = destunz)
 
 
@@ -180,7 +181,7 @@ map_functional_div(Original_Image_File = Input_Image_File, Functional_File = PCA
 ## https://jbferet.github.io/biodivMapR/articles/biodivMapR_8.html            ##
 ################################################################################
 # location of the directory where shapefiles used for validation are saved
-VectorDir <- '../01_DATA/S2A_T33NUD_Plots'
+VectorDir <- destunz
 # list vector data
 Path_Vector <- list_shp(VectorDir)
 Name_Vector <- tools::file_path_sans_ext(basename(Path_Vector))
@@ -221,7 +222,7 @@ write.table(BC_mean, file = paste(Path_Results,"BrayCurtis.csv",sep=''),
 
 # apply ordination using PCoA (same as done for map_beta_div)
 MatBCdist <- as.dist(BC_mean, diag = FALSE, upper = FALSE)
-BetaPCO <- pco(MatBCdist, k = 3)
+BetaPCO <- labdsv::pco(MatBCdist, k = 3)
 
 # assign a type of vegetation to each plot, assuming that the type of vegetation
 # is defined by the name of the shapefile
@@ -229,7 +230,7 @@ nbSamples <- shpName <- c()
 for (i in 1:length(Path_Vector)){
   shp <- Path_Vector[i]
   nbSamples[i] <- length(rgdal::readOGR(shp,verbose = FALSE))
-  shpName[i] <- file_path_sans_ext(basename(shp))
+  shpName[i] <- tools::file_path_sans_ext(basename(shp))
 }
 
 Type_Vegetation = c()
@@ -244,27 +245,34 @@ Results <- data.frame('vgtype'=Type_Vegetation,'pco1'= BetaPCO$points[,1],'pco2'
                       'shannon'=Shannon_RS,'FRic' = FRic, 'FEve' = FEve, 'FDiv' = FDiv)
 
 # plot field data in the PCoA space, with size corresponding to shannon index
-ggplot(Results, aes(x=pco1, y=pco2, color=vgtype,size=shannon)) +
+g1 <-ggplot (Results, aes (x=pco1, y=pco2, color=vgtype,size=shannon)) + 
   geom_point(alpha=0.6) +
   scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
-filename = file.path(Path_Results,'BetaDiversity_PcoA1_vs_PcoA2.png')
-ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
-       scale = 1, width = 6, height = 4, units = "in",
-       dpi = 600, limitsize = TRUE)
 
-ggplot(Results, aes(x=pco1, y=pco3, color=vgtype,size=shannon)) +
+g2 <-ggplot (Results, aes (x=pco1, y=pco3, color=vgtype,size=shannon)) + 
   geom_point(alpha=0.6) +
   scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
-filename = file.path(Path_Results,'BetaDiversity_PcoA1_vs_PcoA3.png')
-ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
-       scale = 1, width = 6, height = 4, units = "in",
-       dpi = 600, limitsize = TRUE)
 
-ggplot(Results, aes(x=pco2, y=pco3, color=vgtype,size=shannon)) +
+g3 <-ggplot (Results, aes (x=pco2, y=pco3, color=vgtype,size=shannon)) + 
   geom_point(alpha=0.6) +
   scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
-filename = file.path(Path_Results,'BetaDiversity_PcoA2_vs_PcoA3.png')
-ggsave(filename, plot = last_plot(), device = 'png', path = NULL,
-       scale = 1, width = 6, height = 4, units = "in",
-       dpi = 600, limitsize = TRUE)
 
+#extract legend
+#https://github.com/hadley/ggplot2/wiki/Share-a-legend-between-two-ggplot2-graphs
+get_legend <- function(a.gplot){
+  tmp <- ggplot_gtable(ggplot_build(a.gplot))
+  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend <- tmp$grobs[[leg]]
+  return(legend)
+}
+
+legend <- get_legend(g3)
+gAll <- grid.arrange(arrangeGrob(g1 + theme(legend.position="none"),
+                                 g2 + theme(legend.position="none"),
+                                 g3 + theme(legend.position="none"),
+                                 nrow=1),legend,nrow=2,heights=c(5, 4))
+
+filename <- file.path(Path_Results,'BetaDiversity_PcoA1_vs_PcoA2_vs_PcoA3.png')
+ggsave(filename, plot = gAll, device = 'png', path = NULL,
+       scale = 1, width = 12, height = 7, units = "in",
+       dpi = 600, limitsize = TRUE)

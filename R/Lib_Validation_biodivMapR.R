@@ -19,12 +19,13 @@
 #' @param Raster_Functional character. path for the raster file used to compute functional diversity
 #' @param Selected_Features numeric. selected features for Raster_Functional. use all features if set to FALSE
 #' @param Name_Plot character. Name of the plots defined in the shapefiles
+#'
 #' @return alpha and beta diversity metrics
 #' @importFrom raster raster projection compareCRS
 #' @importFrom rgdal readOGR
 #' @importFrom geometry convhulln
 #' @importFrom emstreeR ComputeMST
-#' @import tools
+#' @importFrom tools file_path_sans_ext
 #' @export
 diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
                                 Raster_Functional = FALSE, Selected_Features = FALSE,
@@ -59,7 +60,7 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
     File.Vector.reproject <- paste(Dir.Vector.reproject,'/',Name.Vector[[ip]],'.shp','sep'='')
 
     if (file.exists(paste(tools::file_path_sans_ext(File.Vector),'.shp',sep=''))){
-      Plot <- readOGR(Dir.Vector,Name.Vector[[ip]],verbose = FALSE)
+      Plot <- rgdal::readOGR(Dir.Vector,Name.Vector[[ip]],verbose = FALSE)
       # check if vector and rasters are in the same referential
       # if not, convert vector file
       if (!raster::compareCRS(raster(Raster_SpectralSpecies), Plot)){
@@ -177,7 +178,7 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
         nbPix_Sunlit <- dim(ij)[1]
         PCsun <- nbPix_Sunlit / nrow(ExtractIm)
         if (nbPix_Sunlit>Selected_Features){
-          FunctionalDiversity$FRic[ip] <- 100*convhulln(ij, output.options = 'FA')$vol
+          FunctionalDiversity$FRic[ip] <- 100*geometry::convhulln(ij, output.options = 'FA')$vol
         } else {
           FunctionalDiversity$FRic[ip] <- 0
           message(paste('FRic cannot be computed from',Name_Plot[ip]))
@@ -191,7 +192,7 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
           # FDivmap[ii,jj] <- 100*sum(sqrt(rowSums((t(t(ij) )^2))))/nbPix_Sunlit
           # 3- Functional Evenness
           # euclidean minimum spanning tree
-          FunctionalDiversity$FEve[ip] <- 100*sum(ComputeMST(ij,verbose = FALSE)$distance)/nbPix_Sunlit
+          FunctionalDiversity$FEve[ip] <- 100*sum(emstreeR::ComputeMST(ij,verbose = FALSE)$distance)/nbPix_Sunlit
         } else {
           FunctionalDiversity$FDiv[ip] <- 0
           FunctionalDiversity$FEve[ip] <- 0
@@ -260,45 +261,52 @@ list_shp <- function(x){
   return(List.Shp)
 }
 
-# reprojects a vector file and saves it
-# @param Initial.File path for a shapefile to be reprojected
-# @param Projection projection to be applied to Initial.File
-# @param Reprojected.File path for the reprojected shapefile
-# @return None
+#' reprojects a vector file and saves it
+#' @param Initial.File path for a shapefile to be reprojected
+#' @param Projection projection to be applied to Initial.File
+#' @param Reprojected.File path for the reprojected shapefile
+#'
+#' @return None
 #' @importFrom rgdal readOGR writeOGR
 #' @importFrom sp spTransform
-#' @import tools
+#' @importFrom raster projection
+#' @importFrom tools file_path_sans_ext
+#' @export
 reproject_vector <-  function(Initial.File,Projection,Reprojected.File){
 
   Shp.Path <- dirname(Initial.File)
   Shp.Name <- tools::file_path_sans_ext(basename(Initial.File))
-  Vect.Init <- readOGR(Shp.Path,Shp.Name,verbose = FALSE)
-  Proj.init <- projection(Vect.Init)
+  Vect.Init <- rgdal::readOGR(Shp.Path,Shp.Name,verbose = FALSE)
+  Proj.init <- raster::projection(Vect.Init)
 
   if (!Proj.init==Projection){
     Shp.Path <- dirname(Reprojected.File)
     Shp.Name <- tools::file_path_sans_ext(basename(Reprojected.File))
-    Vect.reproj <- spTransform(Vect.Init, Projection)
-    writeOGR(obj = Vect.reproj, dsn = Shp.Path,layer = Shp.Name, driver="ESRI Shapefile",overwrite_layer = TRUE) #also you were missing the driver argument
+    Vect.reproj <- sp::spTransform(Vect.Init, Projection)
+    rgdal::writeOGR(obj = Vect.reproj, dsn = Shp.Path,layer = Shp.Name, driver="ESRI Shapefile",overwrite_layer = TRUE) #also you were missing the driver argument
   }
   return(invisible())
 }
 
-# Extracts pixels coordinates from raster corresponding to an area defined by a vector
-# @param Path.Raster path for the raster file. !! BIL expected
-# @param Path.Vector path for the vector file. !! SHP expected
-# @return ColRow list of coordinates of pixels corresponding to each polygon in shp
+#' Extracts pixels coordinates from raster corresponding to an area defined by a vector
+#' @param Path.Raster path for the raster file. !! BIL expected
+#' @param Path.Vector path for the vector file. !! SHP expected
+#'
+#' @return ColRow list of coordinates of pixels corresponding to each polygon in shp
 #' @importFrom rgdal readOGR
-#' @import tools
+#' @importFrom tools file_path_sans_ext
+#' @importFrom raster raster cellFromPolygon
+#' @export
+
 extract_pixels_coordinates = function(Path.Raster,Path.Vector){
   # read vector file
-  Shp.Path <- dirname(Path.Vector)
-  Shp.Name <- tools::file_path_sans_ext(basename(Path.Vector))
-  Shp.Crop <- readOGR(Shp.Path,Shp.Name)
+  Shp_Path <- dirname(Path.Vector)
+  Shp_Name <- tools::file_path_sans_ext(basename(Path.Vector))
+  Shp_Crop <- rgdal::readOGR(Shp_Path,Shp_Name)
   # read raster info
-  Raster <- raster(Path.Raster, band = 1)
+  Raster <- raster::raster(Path.Raster, band = 1)
   # extract pixel coordinates from raster based on vector
-  XY <- raster::cellFromPolygon (Raster,Shp.Crop)
+  XY <- raster::cellFromPolygon (Raster,Shp_Crop)
   # for each polygon in the
   ColRow <- list()
   for (i in 1:length(XY)){
@@ -307,13 +315,17 @@ extract_pixels_coordinates = function(Path.Raster,Path.Vector){
   return(ColRow)
 }
 
-# Extracts pixels coordinates from raster corresponding to an area defined by a vector
-# @param Path.Raster path for the raster file. !! BIL expected
-# @param OGR.Vector  OGR for the vector file obtained from readOGR
-# @return ColRow list of coordinates of pixels corresponding to each polygon in shp
+#' Extracts pixels coordinates from raster corresponding to an area defined by a vector
+#' @param Path.Raster path for the raster file. !! BIL expected
+#' @param OGR.Vector  OGR for the vector file obtained from readOGR
+#'
+#' @return ColRow list of coordinates of pixels corresponding to each polygon in shp
+#' @importFrom raster raster cellFromXY
+#' @export
+
 extract_pixels_coordinates.From.OGR = function(Path.Raster,OGR.Vector){
   # read raster info
-  Raster <- raster(Path.Raster, band = 1)
+  Raster <- raster::raster(Path.Raster, band = 1)
   # for each polygon or point in the shapefile
   ColRow <- list()
   # extract pixel coordinates from raster based on vector
@@ -330,30 +342,31 @@ extract_pixels_coordinates.From.OGR = function(Path.Raster,OGR.Vector){
   return(ColRow)
 }
 
-# Computes alpha diversity metrics from distribution
-# @param Distrib distribution of clusters
-# @return Richness, Fisher, Shannon, Simpson
+#' Computes alpha diversity metrics from distribution
+#' @param Distrib distribution of clusters
+#'
+#' @return Richness, Fisher, Shannon, Simpson
+#' @importFrom vegan specnumber diversity
+#' @export
+
 get_alpha_metrics = function(Distrib){
   RichnessPlot <- vegan::specnumber(Distrib, MARGIN = 1)        # species richness
-  # if (length(Distrib)>1){
-  #   fisherPlot    = fisher.alpha(Distrib, MARGIN = 1)      # fisher's alpha
-  # } else {
-  #   fisherPlot    = 0
-  # }
   FisherPlot <- 0
   ShannonPlot <- vegan::diversity(Distrib, index = "shannon", MARGIN = 1, base = exp(1)) # shannon's alpha
   SimpsonPlot <- vegan::diversity(Distrib, index = "simpson", MARGIN = 1, base = exp(1))
   return(list("Richness" = RichnessPlot,"fisher"=FisherPlot,"Shannon"=ShannonPlot,"Simpson"=SimpsonPlot))
 }
-# build a vector file from raster footprint
-# borrowed from https://johnbaumgartner.wordpress.com/2012/07/26/getting-rasters-into-shape-from-r/
-# @param x path for a raster or raster object
-# @param outshape path for a vector to be written
-# @param gdalformat
-# @param pypath
-# @param readpoly
-# @param quiet
-# @return NULL
+
+#' build a vector file from raster footprint
+#' borrowed from https://johnbaumgartner.wordpress.com/2012/07/26/getting-rasters-into-shape-from-r/
+#' @param x path for a raster or raster object
+#' @param outshape path for a vector to be written
+#' @param gdalformat character. gdal format for shapefile
+#' @param pypath character. path for python
+#' @param readpoly boolean. should polygons be read once produced?
+#' @param quiet boolean. set T to avoid verbose
+#'
+#' @return NULL
 #' @importFrom rgdal readOGR
 #' @importFrom raster writeRaster
 #' @importFrom methods is
@@ -378,7 +391,7 @@ gdal_polygonizeR = function(x, outshape=NULL, gdalformat = 'ESRI Shapefile',
     #                             sep='.')[f.exists])), call.=FALSE)
   } else outshape <- tempfile()
   if (is(x, 'Raster')) {
-    writeRaster(x, {f <- tempfile(fileext='.tif')})
+    raster::writeRaster(x, {f <- tempfile(fileext='.tif')})
     rastpath <- normalizePath(f)
   } else if (is.character(x)) {
     rastpath <- normalizePath(x)
@@ -389,7 +402,7 @@ gdal_polygonizeR = function(x, outshape=NULL, gdalformat = 'ESRI Shapefile',
                                     pypath, rastpath, gdalformat, outshape)))
   }
   if (readpoly==TRUE) {
-    shp <- readOGR(dirname(outshape), layer = basename(outshape), verbose=!quiet)
+    shp <- rgdal::readOGR(dirname(outshape), layer = basename(outshape), verbose=!quiet)
     return(shp)
   }
   return(NULL)
