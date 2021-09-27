@@ -286,6 +286,14 @@ expecting a matrix of spectral species (n pixels x p repetitions)</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="compute_spectral_species.html">compute_spectral_species()</a></code> </p>
+        </td>
+        <td><p>this function reads PCA file and defines the spectral species for each pixel
+based on the set of cluster centroids defined for each iteration
+applies kmeans --&gt; closest cluster corresponds to the "spectral species"</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="compute_spectral_species_FieldPlots.html">compute_spectral_species_FieldPlots()</a></code> </p>
         </td>
         <td><p>compute spectral species for a subset of pixels provided in a list, each element
@@ -327,6 +335,12 @@ NIR (min) threshold eliminates shadows
       </tr><tr>
         
         <td>
+          <p><code><a href="define_pixels_per_iter.html">define_pixels_per_iter()</a></code> </p>
+        </td>
+        <td><p>defines the number of pixels per iteration based on a trade-off between image size and sample size per iteration</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="diversity_from_plots.html">diversity_from_plots()</a></code> </p>
         </td>
         <td><p>gets alpha diversity indicators from plot</p></td>
@@ -351,9 +365,27 @@ NIR (min) threshold eliminates shadows
       </tr><tr>
         
         <td>
+          <p><code><a href="extract_pixels_coordinates.From.OGR.html">extract_pixels_coordinates.From.OGR()</a></code> </p>
+        </td>
+        <td><p>Extracts pixels coordinates from raster corresponding to an area defined by a vector</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="extract_pixels_coordinates.html">extract_pixels_coordinates()</a></code> </p>
+        </td>
+        <td><p>Extracts pixels coordinates from raster corresponding to an area defined by a vector</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="extract_samples_from_image.html">extract_samples_from_image()</a></code> </p>
         </td>
         <td><p>extracts pixels from image based on their coordinates</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="filter_PCA.html">filter_PCA()</a></code> </p>
+        </td>
+        <td><p>perform filtering based on extreme values PCA identified through PCA</p></td>
       </tr><tr>
         
         <td>
@@ -364,6 +396,13 @@ NIR (min) threshold eliminates shadows
 - negative values may occur, so a +100 value is applied to avoid negative
 - possibly remaining negative values are set to 0
 - constant spectra are eliminated</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="gdal_polygonizeR.html">gdal_polygonizeR()</a></code> </p>
+        </td>
+        <td><p>build a vector file from raster footprint
+borrowed from https://johnbaumgartner.wordpress.com/2012/07/26/getting-rasters-into-shape-from-r/</p></td>
       </tr><tr>
         
         <td>
@@ -391,6 +430,12 @@ NIR (min) threshold eliminates shadows
       </tr><tr>
         
         <td>
+          <p><code><a href="get_alpha_metrics.html">get_alpha_metrics()</a></code> </p>
+        </td>
+        <td><p>Computes alpha diversity metrics from distribution</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="get_polygonCoord_from_Shp.html">get_polygonCoord_from_Shp()</a></code> </p>
         </td>
         <td><p>extract coordinates of the footprint of elements of a shapefile in a raster</p></td>
@@ -413,6 +458,12 @@ NIR (min) threshold eliminates shadows
         </td>
         <td><p>convert image coordinates from index to X-Y
 image coordinates are given as index = (ID.col-1) * total.lines + ID.row</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="init_kmeans.html">init_kmeans()</a></code> </p>
+        </td>
+        <td><p>computes k-means from nb_partitions subsets taken from dataPCA</p></td>
       </tr><tr>
         
         <td>
@@ -472,6 +523,12 @@ or applies the transformation based on a previously defined min and max</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="pca.html">pca()</a></code> </p>
+        </td>
+        <td><p>Function to perform PCA on a matrix</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="perform_PCA.html">perform_PCA()</a></code> </p>
         </td>
         <td><p>Performs PCA for all images and create PCA file with either all or a selection of PCs</p></td>
@@ -525,6 +582,12 @@ Input variables can be spectral indices, biophysical variables...</p></td>
           <p><code><a href="read_image_subset.html">read_image_subset()</a></code> </p>
         </td>
         <td><p>reads subset of lines from an image</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="reproject_vector.html">reproject_vector()</a></code> </p>
+        </td>
+        <td><p>reprojects a vector file and saves it</p></td>
       </tr><tr>
         
         <td>

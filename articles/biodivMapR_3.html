@@ -133,9 +133,9 @@
 <a href="#produce-a-vegetation-cloud-shade-mask" class="anchor"></a>Produce a vegetation / cloud / shade mask</h3>
 <p>The full radiometric filtering can be peformed with a unique function, including:</p>
 <ul>
-<li><p>NDVI thresholding</p></li>
-<li><p>NIR thresholding</p></li>
-<li><p>Blue thresholding</p></li>
+<li><p><strong>NDVI filtering</strong>: allows filtering to eliminate non-vegetated pixels. Nothing fancy so you may need to deal with mixed pixels… <code>NDVI_Thresh</code> defines the minimum NDVI value to be kept. By default, the NDVI is computed based on the NIR spectral band closest to 835nm, and the RED spectral band closest to 700nm. Which makes it closer to a RedEdge NDVI. These values can be adjusted as input variables for <code>perform_radiometric_filtering</code>.</p></li>
+<li><p><strong>NIR filtering</strong>: allows filtering of shadows and pixels with very low signal. <code>NIR_Thresh</code> defines the minimum NIR value to be kept. By default, the NIR spectral band closest to 835nm is used. This value can be adjusted as input variables for <code>perform_radiometric_filtering</code>.</p></li>
+<li><p><strong>BLUE filtering</strong>: allows filtering of clouds, based on the hypothesis that atmospheric scattering will lead to higher reflectance in the blue domain. <code>Blue_Thresh</code> defines the maximum Blue reflectance to be kept. By default, the Blue spectral band closest to 480nm is used. This value can be adjusted as input variables for <code>perform_radiometric_filtering</code>.</p></li>
 </ul>
 <p>The spectral bands corresponding to the Blue, Green and NIR spectral bands can be defined as optional parameters.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
