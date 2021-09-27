@@ -22,8 +22,8 @@
 #' @param Mask boolean is the file a mask file with 0s and 1s only?
 #'
 #' @return Output_Path path for the image converted into ENVI BIL format
-#' @import raster
-#' @import tools
+#' @importFrom raster brick writeRaster
+#' @importFrom tools file_path_sans_ext
 #' @export
 raster2BIL <- function(Raster_Path, Sensor = "unknown", Output_Dir = FALSE, Convert_Integer = TRUE,
                        Multiplying_Factor = 1, Multiplying_Factor_Last = 1, Mask = FALSE) {
@@ -45,7 +45,7 @@ raster2BIL <- function(Raster_Path, Sensor = "unknown", Output_Dir = FALSE, Conv
 
   # apply multiplying factors
   message("reading initial file")
-  Output_Img <- Multiplying_Factor * brick(Raster_Path)
+  Output_Img <- Multiplying_Factor * raster::brick(Raster_Path)
   Last_Band_Name <- Output_Img@data@names[length(Output_Img@data@names)]
   Output_Img[[Last_Band_Name]] <- Multiplying_Factor_Last * Output_Img[[Last_Band_Name]]
 
