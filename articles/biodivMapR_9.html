@@ -119,7 +119,7 @@
       <h1 data-toc-skip>Compute diversity from user-defined set of layers</h1>
                         <h4 class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
             
-            <h4 class="date">2021-09-27</h4>
+            <h4 class="date">2021-09-30</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR_9.Rmd"><code>vignettes/biodivMapR_9.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_9.Rmd</code></div>
@@ -172,7 +172,8 @@
 
 <span class="co"># [1] "ARI1" "ARI2" "ARVI" "BAI" "BAIS2" "CHL_RE" "CRI1" "CRI2" "EVI" "EVI2" "GRVI1" "GNDVI" "IRECI" </span>
 <span class="co"># [14] "LAI_SAVI" "MCARI" "mNDVI705" "MSAVI2" "MSI" "mSR705" "MTCI" "nBR_RAW" "NDI_45" "NDII" "NDVI" "NDVI_G" "NDVI705" </span>
-<span class="co"># [27] "NDWI1" "NDWI2" "PSRI" "PSRI_NIR" "RE_NDVI" "RE_NDWI" "S2REP" "SAVI" "SIPI" "SR" "CR_SWIR" </span></code></pre></div>
+<span class="co"># [27] "NDWI1" "NDWI2" "PSRI" "PSRI_NIR" "RE_NDVI" "RE_NDWI" "S2REP" "SAVI" "SIPI" "SR" "CR_SWIR" </span>
+ </code></pre></div>
 <p><code>ReflFactor</code> is the multiplicative factor applied on the reflectance data. Here Sentinel-2 are distributed in Int16 value types, meaning that the original reflectance was multiplied by 10000. The function then conveerts to standard reflectance values prior to computation of spectral index.</p>
 <ul>
 <li><p>if <code>StackOut=T</code>: a stack of the spectral indices is directly returned in <code>Spectral_Indices$SpectralIndices</code>.</p></li>
