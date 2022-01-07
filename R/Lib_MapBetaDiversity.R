@@ -31,8 +31,9 @@
 #' @param ClassifMap character. If FALSE, perform standard biodivMapR based on SpectralSpecies.
 #'                              else corresponds to path for a classification map.
 #'
-#' @return None
+#' @return PCoA_model
 #' @export
+
 map_beta_div <- function(Input_Image_File=FALSE, Output_Dir='', window_size=10,
                          TypePCA = "SPCA", nb_partitions = 20,nbclusters = 50,
                          Nb_Units_Ordin = 2000, MinSun = 0.25,
@@ -88,7 +89,9 @@ map_beta_div <- function(Input_Image_File=FALSE, Output_Dir='', window_size=10,
   write_raster(Image = Beta$BetaDiversity, HDR = Beta$HDR, ImagePath = Beta.Path,
                window_size = window_size, FullRes = FullRes, LowRes = TRUE,
                SmoothImage = FALSE)
-  return(invisible())
+
+  PCoA_model <- Beta$PCoA_model
+  return(PCoA_model)
 }
 
 #' computes NMDS
@@ -100,6 +103,8 @@ map_beta_div <- function(Input_Image_File=FALSE, Output_Dir='', window_size=10,
 #' @importFrom future.apply future_lapply
 #' @importFrom ecodist nmds
 #' @importFrom utils find
+#' @export
+
 compute_NMDS <- function(MatBCdist) {
   nbiterNMDS <- 4
   if (Sys.info()["sysname"] == "Windows") {
@@ -129,21 +134,23 @@ compute_NMDS <- function(MatBCdist) {
   return(BetaNMDS_sel)
 }
 
-# identifies ordination coordinates based on nearest neighbors
-#
-# @param Beta_Ordination_sel ordination
-# @param SSD_Path ath for spectral species distribution file
-# @param Sample_Sel Samples selected during ordination
-# @param coordTotSort coordinates of sunlit spatial units
-# @param nb_partitions number of k-means then averaged
-# @param nbclusters number of clusters
-# @param pcelim number of CPUs available
-# @param nbCPU number of CPUs available
-#
-# @return Ordination_est coordinates of each spatial unit in ordination space
+#' identifies ordination coordinates based on nearest neighbors
+#'
+#' @param Beta_Ordination_sel ordination
+#' @param SSD_Path ath for spectral species distribution file
+#' @param Sample_Sel Samples selected during ordination
+#' @param coordTotSort coordinates of sunlit spatial units
+#' @param nb_partitions number of k-means then averaged
+#' @param nbclusters number of clusters
+#' @param pcelim number of CPUs available
+#' @param nbCPU number of CPUs available
+#'
+#' @return Ordination_est coordinates of each spatial unit in ordination space
 #' @importFrom snow splitRows
 #' @importFrom future plan multiprocess sequential
 #' @importFrom future.apply future_lapply
+#' @export
+
 ordination_to_NN <- function(Beta_Ordination_sel, SSD_Path, Sample_Sel, coordTotSort, nb_partitions, nbclusters, pcelim, nbCPU = FALSE) {
   nb_Sunlit <- dim(coordTotSort)[1]
   # define number of samples to be sampled each time during paralle processing
@@ -281,7 +288,9 @@ compute_BETA_FromPlots <- function(SpectralSpecies_Plots,nbclusters,pcelim = 0.0
 # @return
 #' @importFrom labdsv pco
 #' @importFrom stats as.dist
-compute_beta_metrics <- function(ClusterMap_Path, MinSun, Nb_Units_Ordin, nb_partitions, nbclusters, pcelim, scaling = "PCO", nbCPU = FALSE, MaxRAM = FALSE) {
+compute_beta_metrics <- function(ClusterMap_Path, MinSun, Nb_Units_Ordin, nb_partitions,
+                                 nbclusters, pcelim, scaling = "PCO", nbCPU = FALSE,
+                                 MaxRAM = FALSE) {
   # Define path for images to be used
   SSD_Path <- paste(ClusterMap_Path, "_Distribution", sep = "")
   ImPathSunlit <- paste(ClusterMap_Path, "_Distribution_Sunlit", sep = "")
@@ -328,6 +337,7 @@ compute_beta_metrics <- function(ClusterMap_Path, MinSun, Nb_Units_Ordin, nb_par
   # parallel computing of Ordination can be run on 2 cores on Windows.
   # core management seems better on linux --> 4 cores possible
   MatBCdist <- as.dist(MatBC, diag = FALSE, upper = FALSE)
+  BetaPCO <- NULL
   if (scaling == "NMDS") {
     Beta_Ordination_sel <- compute_NMDS(MatBCdist)
     PCname <- 'NMDS'
@@ -367,7 +377,8 @@ compute_beta_metrics <- function(ClusterMap_Path, MinSun, Nb_Units_Ordin, nb_par
 
   rm(list = list[-which(list == "BetaDiversityRGB" | list == "Select_Sunlit" | list == "HDR_Beta")])
   gc()
-  my_list <- list("BetaDiversity" = BetaDiversityRGB, "Select_Sunlit" = Select_Sunlit, "HDR" = HDR_Beta)
+  my_list <- list("BetaDiversity" = BetaDiversityRGB, "Select_Sunlit" = Select_Sunlit,
+                  "PCoA_model" = BetaPCO, "HDR" = HDR_Beta)
   return(my_list)
 }
 

@@ -158,7 +158,7 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
     Nb_PCs <- NbPCs_To_Keep
   }
   PCA_model$Nb_PCs <- Nb_PCs
-  PCA_model$x <- NULL
+  # PCA_model$x <- NULL
   # CREATE PCA FILE CONTAINING ONLY SELECTED PCs
   print("Apply PCA model to the whole image")
   Output_Dir_PCA <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "PCA")

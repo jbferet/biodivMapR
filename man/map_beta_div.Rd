@@ -57,7 +57,7 @@ map_beta_div(
 else corresponds to path for a classification map.}
 }
 \value{
-None
+PCoA_model
 }
 \description{
 maps beta diversity indicator based on spectral species distribution

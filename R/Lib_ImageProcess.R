@@ -281,6 +281,7 @@ ENVI_type2bytes <- function(HDR) {
 #'
 #' @return bands corresponding to atmospheric water absorption domain
 #' @export
+
 exclude_spectral_domains <- function(ImPath, Excluded_WL = FALSE) {
   # definition of water vapor absorption
   if (is.null(Excluded_WL)){
@@ -342,6 +343,7 @@ exclude_spectral_domains <- function(ImPath, Excluded_WL = FALSE) {
 #'
 #' @return samples from image subset corresponding to coordPix_List
 #' @export
+
 extract_pixels <- function(coordPix_List, ImPath, HDR) {
   coordPix_List <- matrix(coordPix_List, ncol = 2)
   Sample_Sel <- matrix(0, nrow = nrow(coordPix_List), ncol = HDR$bands)
@@ -555,6 +557,7 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.50){
 #'
 #' @return BB_XYcoords list. Coordinates (in pixels) of the upper/lower right/left corners of bounding box
 #' @export
+
 get_BB <- function(path_raster,path_vector=NULL,Buffer = 0){
 
   if (!is.null(path_vector)){
@@ -575,6 +578,7 @@ get_BB <- function(path_raster,path_vector=NULL,Buffer = 0){
 #' @return BB_XYcoords list. Coordinates (in pixels) of the upper/lower right/left corners of bounding box
 #' @importFrom raster raster
 #' @export
+
 get_BB_from_fullImage <- function(path_raster){
   # get raster coordinates corresponding to Full image
   rasterobj <- raster::raster(path_raster)
@@ -599,6 +603,7 @@ get_BB_from_fullImage <- function(path_raster){
 #' @importFrom raster projection extract extent raster
 #' @importFrom methods as
 #' @export
+
 get_BB_from_Vector <- function(path_raster,path_vector,Buffer = 0){
 
   Raster <- raster::raster(path_raster)
@@ -747,10 +752,12 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Pe
   return(my_list)
 }
 
-# does the system work with little endians or big endians?
+#' does the system work with little endians or big endians?
 #
-# @return ByteOrder
+#' @return ByteOrder
 #' @import tools
+#' @export
+
 get_byte_order <- function() {
   if (.Platform$endian == "little") {
     ByteOrder <- 0
@@ -768,6 +775,7 @@ get_byte_order <- function() {
 #' @return corresponding hdr
 #' @import tools
 #' @export
+
 get_HDR_name <- function(ImPath,showWarnings=TRUE) {
   if (file_ext(ImPath) == "") {
     ImPathHDR <- paste(ImPath, ".hdr", sep = "")
@@ -788,12 +796,14 @@ get_HDR_name <- function(ImPath,showWarnings=TRUE) {
   return(ImPathHDR)
 }
 
-# gets rank of spectral bands in an image
-#
-# @param Spectral_Bands wavelength (nm) of the spectral bands to be found
-# @param wavelength wavelength (nm) of all wavelengths in the image
-#
-# @return rank of all spectral bands of interest in the image and corresponding wavelength
+#' gets rank of spectral bands in an image
+#'
+#' @param Spectral_Bands wavelength (nm) of the spectral bands to be found
+#' @param wavelength wavelength (nm) of all wavelengths in the image
+#'
+#' @return rank of all spectral bands of interest in the image and corresponding wavelength
+#' and distance to wavelength
+#' @export
 
 get_image_bands <- function(Spectral_Bands, wavelength) {
   ImBand <- c()
@@ -870,6 +880,7 @@ ind2sub <- function(Raster, Image_Index) {
 #' @param Image_Index numeric. coordinates corresponding to the raster
 #' @return list. list of columns and rows corresponding to index number
 #' @export
+
 ind2sub2 <- function(Raster, Image_Index) {
   r <- ((Image_Index - 1) %% Raster@nrows) + 1
   c <- floor((Image_Index - 1) / Raster@nrows) + 1
@@ -886,6 +897,7 @@ ind2sub2 <- function(Raster, Image_Index) {
 #' @return outlier_IQR numeric. band numbers of original sensor corresponding to S2
 #' @importFrom stats IQR quantile
 #' @export
+
 IQR_outliers <- function(DistVal,weightIRQ = 1.5){
   iqr <- stats::IQR(DistVal, na.rm=TRUE)
   range_IQR <- c(stats::quantile(DistVal, 0.25,na.rm=TRUE),stats::quantile(DistVal, 0.75,na.rm=TRUE))
@@ -1042,6 +1054,7 @@ read_ENVI_header <- function(HDRpath) {
 #'
 #' @return Image_Subset information corresponding to ImBand
 #' @importFrom raster raster
+#' @export
 
 read_image_bands <- function(ImPath, HDR, ImBand) {
   # first get image format
@@ -1151,6 +1164,7 @@ read_BIL_image_subset <- function(ImPath, HDR, Byte_Start, lenBin, nbLines, Imag
 #' @importFrom stars read_stars
 #' @importFrom sf st_bbox st_read st_crop
 #' @export
+
 read_ListRasters <- function(ListRasters, path_vector = NULL,
                              resampling = 1, interpolation = 'bilinear'){
   # get bounding box corresponding to footprint of image or image subset
@@ -1175,6 +1189,36 @@ read_ListRasters <- function(ListRasters, path_vector = NULL,
   return(StarsObj)
 }
 
+#' Check spectral band units and convert from nanometer to micrometer or from
+#' micrometer to nanometer
+#'
+#' @param HDR list. header file for a raster
+#' @param Spectral_Bands numeric. spectral band of interest.
+#'
+#' @return Image numeric. full size in 3 dimensions
+#' @export
+
+spectral_band_unit <- function(HDR,Spectral_Bands){
+  # distance between expected bands defining red, blue and NIR info and available band from sensor
+  Dist2Band <- 25
+  # in case micrometers
+  if (!is.null(HDR$`wavelength units`)){
+    if (max(HDR$wavelength)<100 | HDR$`wavelength units` == "micrometers"){
+      Spectral_Bands <- 0.001*Spectral_Bands
+      Dist2Band <- 0.001*Dist2Band
+    }
+  } else if (is.null(HDR$`wavelength units`)){
+    message('wavelength units not provided in the header of the image')
+    if (max(HDR$wavelength)<100){
+      message('assuming wavelengths are expressed in micrometers')
+      Spectral_Bands <- 0.001*Spectral_Bands
+      Dist2Band <- 0.001*Dist2Band
+    } else {
+      message('assuming wavelengths are expressed in nanometers')
+    }
+  }
+  return(Spectral_Bands)
+}
 
 
 #' ENVI functions
@@ -1304,6 +1348,68 @@ update_shademask <- function(MaskPath, HDR, Mask, MaskPath_Update) {
   HDRpath <- paste(MaskPath_Update, ".hdr", sep = "")
   write_ENVI_header(HDR_Update, HDRpath)
   return(MaskPath_Update)
+}
+
+#' This function identify plots from a shapefile matching with a raster footprint
+#'
+#' @param PathVect character. path for input vector file
+#' @param PathRaster character. path for a raster file
+#' @param buffer numeric. buffer to be applied around the original points/polygons, in meters
+#' @param PathVectOut character. path for output vector file
+#' @param WriteShp boolean. Set TRUE to write file
+#'
+#' @return vectSP list. OGR object corresponding to final vector data
+#' @importFrom tools file_ext file_path_sans_ext
+#' @importFrom rgdal readOGR writeOGR
+#' @importFrom raster projection
+#' @importFrom sf st_read
+#' @importFrom methods as
+#' @importFrom sp spTransform
+#' @export
+
+VectorInRasterFootprint <- function(PathVect, PathRaster, buffer=NULL, PathVectOut=NULL, WriteShp = TRUE){
+
+  DirVect <- dirname(PathVect)
+  # shapefile extension
+  fileext <- file_ext(basename(PathVect))
+  if (fileext=='shp'){
+    NameVect <- file_path_sans_ext(basename(PathVect))
+    VectOGR <- rgdal::readOGR(dsn = DirVect,
+                              layer = NameVect, verbose = FALSE)
+  } else if (fileext=='kml'){
+    VectOGR <- rgdal::readOGR(PathVect, verbose = FALSE)
+  }
+  # get projection vector
+  VectOGR_proj <- raster::projection(VectOGR)
+  # get projection raster
+  RastOGR_proj <- raster::projection(raster(PathRaster))
+  # reproject if not same projection
+  if (!VectOGR_proj==RastOGR_proj){
+    VectOGR <- sp::spTransform(VectOGR, RastOGR_proj)
+  }
+  # identify and select plots included in the raster
+  XY <- extract_pixels_coordinates.From.OGR(PathRaster,VectOGR)
+  nbVects <- length(VectOGR)
+  plotsinraster <- which(!is.na(XY[[1]]$col))
+  namePlots <- VectOGR$ID[plotsinraster]
+  vectSF <- st_read(PathVect)[plotsinraster,]
+  vectSP <- as(vectSF, "Spatial")
+  if (is.null(buffer)){
+    buffer <- 0
+  }
+  if (buffer>0){
+    vectSP <- rgeos::gBuffer(spgeom = vectSP,
+                             width = buffer,
+                             byid = TRUE)
+  }
+  # save polygons in a shapefile
+  if (WriteShp==TRUE){
+    if (is.null(PathVectOut)){
+      PathVectOut <- paste(file_path_sans_ext(PathVect),'_buffer',sep = '')
+    }
+    rgdal::writeOGR(obj = vectSP, dsn = dirname(PathVectOut),layer = basename(PathVectOut), driver="ESRI Shapefile",overwrite_layer = TRUE)
+  }
+  return(vectSP)
 }
 
 #' defines which byte should be read for each part of an image split in nbPieces
@@ -1516,6 +1622,7 @@ Write_Image_NativeRes <- function(Image,ImagePath,HDR,window_size){
 #' @param SmoothImage boolean. set TRUE if you want smooting filter applied to resulting diversity rasters
 #
 #' @return None
+#' @export
 
 write_raster <- function(Image, HDR, ImagePath, window_size, FullRes = TRUE, LowRes = FALSE,SmoothImage = FALSE) {
 
@@ -1570,6 +1677,7 @@ write_raster <- function(Image, HDR, ImagePath, window_size, FullRes = TRUE, Low
 #'
 #' @return None
 #' @export
+
 write_StarsStack <- function(StarsObj, dsn, BandNames=NULL, datatype='Float32'){
 
   write_stars(StarsObj, dsn=dsn,driver =  "EHdr",type=datatype)
@@ -1638,6 +1746,7 @@ split_image <- function(HDR, LimitSizeGb = FALSE) {
 #'
 #' @return updated HDR information
 #' @export
+
 revert_resolution_HDR <- function(HDR, window_size) {
   MapInfo <- strsplit(HDR$`map info`, split = ",")
   MapInfo[[1]][6] <- as.numeric(MapInfo[[1]][6]) / window_size
@@ -1651,6 +1760,7 @@ revert_resolution_HDR <- function(HDR, window_size) {
 #' @param ImagePath character. path for the image
 #' @return None
 #' @export
+
 ZipFile <- function(ImagePath) {
 
 
