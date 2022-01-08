@@ -48,6 +48,10 @@ Suggests:
     knitr,
     rmarkdown,
     testthat (>= 2.0.0)
+Remotes: 
+	github::allanvc/emstreeR,
+	gitlab::jbferet/prospect,
+	gitlab::jbferet/prosail
 VignetteBuilder: knitr
 URL: https://github.com/jbferet/biodivMapR
 BugReports: https://github.com/jbferet/biodivMapR/issues

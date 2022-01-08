@@ -242,6 +242,8 @@ Get_FunctionalMetrics_From_Traits <- function(ReadWrite, Functional_File, Select
 #' @return list of functional diversity metrics corresponding to image chunk
 #' @importFrom geometry convhulln
 #' @importFrom emstreeR ComputeMST
+#' @export
+
 compute_FUNCT <- function(Image_Chunk, window_size, MinSun) {
   nbi <- floor(dim(Image_Chunk)[1] / window_size)
   nbj <- floor(dim(Image_Chunk)[2] / window_size)
@@ -266,7 +268,7 @@ compute_FUNCT <- function(Image_Chunk, window_size, MinSun) {
         # compute functional metrics
         # 1- Functional Richness
         # convex hull using geometry
-        FRicmap[ii,jj] <- 100*convhulln(ij, output.options = 'FA')$vol
+        FRicmap[ii,jj] <- 100*geometry::convhulln(ij, output.options = 'FA')$vol
         # 2- Functional Divergence
         # mean distance from centroid
         Centroid <- colMeans(ij)
@@ -274,7 +276,7 @@ compute_FUNCT <- function(Image_Chunk, window_size, MinSun) {
         # FDivmap[ii,jj] <- 100*sum(sqrt(rowSums((t(t(ij) )^2))))/nbPix_Sunlit
         # 3- Functional Evenness
         # euclidean minimum spanning tree
-        FEvemap[ii,jj] <- 100*sum(ComputeMST(ij,verbose = FALSE)$distance)/nbPix_Sunlit
+        FEvemap[ii,jj] <- 100*sum(emstreeR::ComputeMST(ij,verbose = FALSE)$distance)/nbPix_Sunlit
       } else {
         FRicmap[ii,jj] <- NA
         FDivmap[ii,jj] <- NA
