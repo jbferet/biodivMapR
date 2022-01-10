@@ -31,6 +31,8 @@ Imports:
     matrixStats,
     methods,
     mmand,
+    prospect,
+    prosail,
     raster,
     rgdal,
     R.utils,

@@ -375,7 +375,8 @@ compute_beta_metrics <- function(ClusterMap_Path, MinSun, Nb_Units_Ordin, nb_par
   PCs <- paste(PCs, collapse = ", ")
   HDR_Beta$`band names` <- PCs
 
-  rm(list = list[-which(list == "BetaDiversityRGB" | list == "Select_Sunlit" | list == "HDR_Beta")])
+  rm(list = list[-which(list == "BetaDiversityRGB" | list == "Select_Sunlit" |
+                          list == "HDR_Beta" | list == "BetaPCO")])
   gc()
   my_list <- list("BetaDiversity" = BetaDiversityRGB, "Select_Sunlit" = Select_Sunlit,
                   "PCoA_model" = BetaPCO, "HDR" = HDR_Beta)
