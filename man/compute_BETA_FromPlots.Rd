@@ -12,7 +12,7 @@ compute_BETA_FromPlots(SpectralSpecies_Plots, nbclusters, pcelim = 0.02)
 
 \item{nbclusters}{numeric. number of clusters}
 
-\item{pcelim}{minimum contribution of spectral species to estimation of diversity
+\item{pcelim}{numeric. Minimum contribution (in %) required for a spectral species
 each spectral species with a proprtion < pcelim is eliminated before computation of diversity}
 }
 \value{

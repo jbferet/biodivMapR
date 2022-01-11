@@ -13,13 +13,14 @@ map_beta_div(
   nbclusters = 50,
   Nb_Units_Ordin = 2000,
   MinSun = 0.25,
-  pcelim = 0.02,
+  pcelim = 0,
   scaling = "PCO",
   FullRes = TRUE,
   LowRes = FALSE,
   nbCPU = 1,
   MaxRAM = 0.25,
-  ClassifMap = FALSE
+  ClassifMap = FALSE,
+  dimMDS = 3
 )
 }
 \arguments{
@@ -41,9 +42,9 @@ map_beta_div(
 
 \item{MinSun}{numeric. Minimum proportion of sunlit pixels required to consider plot.}
 
-\item{pcelim}{numeric. Minimum contribution (in \%) required for a spectral species}
+\item{pcelim}{numeric. Minimum contribution in percent required for a spectral species.}
 
-\item{scaling}{character. "PCO" or "NMDS".}
+\item{scaling}{character. PCO or NMDS}
 
 \item{FullRes}{boolean.}
 
@@ -55,6 +56,8 @@ map_beta_div(
 
 \item{ClassifMap}{character. If FALSE, perform standard biodivMapR based on SpectralSpecies.
 else corresponds to path for a classification map.}
+
+\item{dimMDS}{numeric. number of dimensions for the scaling.}
 }
 \value{
 PCoA_model

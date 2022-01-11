@@ -4,10 +4,12 @@
 \alias{compute_NMDS}
 \title{computes NMDS}
 \usage{
-compute_NMDS(MatBCdist)
+compute_NMDS(MatBCdist, dimMDS = 3)
 }
 \arguments{
 \item{MatBCdist}{BC dissimilarity matrix}
+
+\item{dimMDS}{numeric. number of dimensions of the NMDS}
 }
 \value{
 BetaNMDS_sel

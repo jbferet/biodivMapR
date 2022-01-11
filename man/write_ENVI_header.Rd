@@ -7,12 +7,12 @@
 write_ENVI_header(HDR, HDRpath)
 }
 \arguments{
-\item{HDR}{content to be written}
+\item{HDR}{list. content to be written}
 
-\item{HDRpath}{Path of the hdr file}
+\item{HDRpath}{character. Path of the hdr file}
 }
 \value{
-
+None
 }
 \description{
 writes ENVI hdr file
