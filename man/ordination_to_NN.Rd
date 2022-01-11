@@ -2,7 +2,7 @@
 % Please edit documentation in R/Lib_MapBetaDiversity.R
 \name{ordination_to_NN}
 \alias{ordination_to_NN}
-\title{identifies ordination coordinates based on nearest neighbors}
+\title{Identifies ordination coordinates based on nearest neighbors}
 \usage{
 ordination_to_NN(
   Beta_Ordination_sel,
@@ -12,29 +12,29 @@ ordination_to_NN(
   nb_partitions,
   nbclusters,
   pcelim,
-  nbCPU = FALSE
+  nbCPU = 1
 )
 }
 \arguments{
-\item{Beta_Ordination_sel}{ordination}
+\item{Beta_Ordination_sel}{ordination of dissimilarity matrix for a selection of spatial units}
 
-\item{SSD_Path}{ath for spectral species distribution file}
+\item{SSD_Path}{character. path for spectral species distribution file}
 
-\item{Sample_Sel}{Samples selected during ordination}
+\item{Sample_Sel}{numeric. Samples selected during ordination}
 
-\item{coordTotSort}{coordinates of sunlit spatial units}
+\item{coordTotSort}{numeric. coordinates of sunlit spatial units}
 
 \item{nb_partitions}{number of k-means then averaged}
 
 \item{nbclusters}{number of clusters}
 
-\item{pcelim}{number of CPUs available}
+\item{pcelim}{numeric. Minimum contribution in percent required for a spectral species}
 
-\item{nbCPU}{number of CPUs available}
+\item{nbCPU}{numeric. number of CPUs available}
 }
 \value{
 Ordination_est coordinates of each spatial unit in ordination space
 }
 \description{
-identifies ordination coordinates based on nearest neighbors
+Identifies ordination coordinates based on nearest neighbors
 }

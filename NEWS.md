@@ -1,3 +1,14 @@
+# biodivMapR v1.9.0
+
+## Changes
+- Added dimMDS defining number of dimensions to run PCoA for beta diversity
+- exported functions from beta library
+- updated documentation
+
+## Fixes
+- corrected weighted distance from nearest neighbors: assign exact coordinates of a sample when dissimilarity = 0
+- temporary: discarded evenness from functional diversity as it uses emstreeR and requires binding to mlpack
+
 # biodivMapR v1.8.0
 
 ## Changes
