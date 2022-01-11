@@ -1,16 +1,16 @@
 pandoc: 2.7.3
-pkgdown: 1.6.1
+pkgdown: 2.0.1
 pkgdown_sha: ~
 articles:
   biodivMapR: biodivMapR.html
-  biodivMapR_1: biodivMapR_1.html
-  biodivMapR_2: biodivMapR_2.html
-  biodivMapR_3: biodivMapR_3.html
-  biodivMapR_4: biodivMapR_4.html
-  biodivMapR_5: biodivMapR_5.html
-  biodivMapR_6: biodivMapR_6.html
-  biodivMapR_7: biodivMapR_7.html
-  biodivMapR_8: biodivMapR_8.html
-  biodivMapR_9: biodivMapR_9.html
-last_built: 2021-09-30T13:41Z
+  biodivMapR_01: biodivMapR_01.html
+  biodivMapR_02: biodivMapR_02.html
+  biodivMapR_03: biodivMapR_03.html
+  biodivMapR_04: biodivMapR_04.html
+  biodivMapR_05: biodivMapR_05.html
+  biodivMapR_06: biodivMapR_06.html
+  biodivMapR_07: biodivMapR_07.html
+  biodivMapR_08: biodivMapR_08.html
+  biodivMapR_09: biodivMapR_09.html
+last_built: 2022-01-11T16:17Z
 

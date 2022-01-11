@@ -26,6 +26,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -38,18 +40,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.8.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../articles/biodivMapR.html">Get started</a>
 </li>
@@ -64,31 +60,31 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/biodivMapR_1.html">Prepare your data</a>
+      <a href="../articles/biodivMapR_01.html">Prepare your data</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_2.html">Set parameters for biodivMapR</a>
+      <a href="../articles/biodivMapR_02.html">Set parameters for biodivMapR</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_3.html">Perform spatial &amp; spectral filtering</a>
+      <a href="../articles/biodivMapR_03.html">Perform spatial &amp; spectral filtering</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_4.html">PCA &amp; Dimensionality reduction</a>
+      <a href="../articles/biodivMapR_04.html">PCA &amp; Dimensionality reduction</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_5.html">Spectral species mapping</a>
+      <a href="../articles/biodivMapR_05.html">Spectral species mapping</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_6.html">alpha and beta diversity maps</a>
+      <a href="../articles/biodivMapR_06.html">alpha and beta diversity maps</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_7.html">Functional Diversity</a>
+      <a href="../articles/biodivMapR_07.html">Functional Diversity</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_8.html">How to perform validation?</a>
+      <a href="../articles/biodivMapR_08.html">How to perform validation?</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_9.html">Compute diversity from user-defined set of layers</a>
+      <a href="../articles/biodivMapR_09.html">Compute diversity from user-defined set of layers</a>
     </li>
   </ul>
 </li>
@@ -98,7 +94,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/jbferet/biodivMapR/">
+  <a href="https://github.com/jbferet/biodivMapR/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -113,30 +109,30 @@
 
       
 
-      </header><script src="biodivMapR_4_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="biodivMapR_04_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>PCA &amp; Dimensionality reduction</h1>
-                        <h4 class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
+                        <h4 data-toc-skip class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
             
-            <h4 class="date">2021-09-30</h4>
+            <h4 data-toc-skip class="date">2022-01-11</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR_4.Rmd"><code>vignettes/biodivMapR_4.Rmd</code></a></small>
-      <div class="hidden name"><code>biodivMapR_4.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_04.Rmd" class="external-link"><code>vignettes/biodivMapR_04.Rmd</code></a></small>
+      <div class="hidden name"><code>biodivMapR_04.Rmd</code></div>
 
     </div>
 
     
     
-<div id="data-transformation" class="section level3">
-<h3 class="hasAnchor">
-<a href="#data-transformation" class="anchor"></a>Data transformation</h3>
+<div class="section level3">
+<h3 id="data-transformation">Data transformation<a class="anchor" aria-label="anchor" href="#data-transformation"></a>
+</h3>
 <p>The function <code>perform_PCA</code> allows for application of PCA (or SPCA or MNF), and automatically accounts for the mask.</p>
 <p>It results in a PCA file written in the output directory (full path defined in <code>PCA_Output$PCA_Files</code>).</p>
 <p>A set of additional information, including the PCA model obtained, an additional spectral filter (useful if some spectral bands with no information are still not masked).</p>
 <p>The additional PCA filtering is performed during this stage.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="st">"PERFORM DIMENSIONALITY REDUCTION"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"PERFORM DIMENSIONALITY REDUCTION"</span><span class="op">)</span>
 <span class="va">PCA_Output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/perform_PCA.html">perform_PCA</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Input_Mask_File <span class="op">=</span> <span class="va">Input_Mask_File</span>,
                           Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>, FilterPCA<span class="op">=</span><span class="va">FilterPCA</span>,
                           nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>, Continuum_Removal <span class="op">=</span> <span class="va">Continuum_Removal</span><span class="op">)</span>
@@ -149,12 +145,12 @@
 <span class="co"># path for the updated mask</span>
 <span class="va">Input_Mask_File</span> <span class="op">&lt;-</span> <span class="va">PCA_Output</span><span class="op">$</span><span class="va">MaskPath</span></code></pre></div>
 </div>
-<div id="component-selection-for-dimensionality-reduction" class="section level3">
-<h3 class="hasAnchor">
-<a href="#component-selection-for-dimensionality-reduction" class="anchor"></a>Component selection for dimensionality reduction</h3>
+<div class="section level3">
+<h3 id="component-selection-for-dimensionality-reduction">Component selection for dimensionality reduction<a class="anchor" aria-label="anchor" href="#component-selection-for-dimensionality-reduction"></a>
+</h3>
 <p>The dimensionality reduction is performed to select the most interesting spectral information relative to spectral diversity and remove spatial noise and sensor artefacts. The resulting transformed raster (PCA, SPCA or MNF) is then stored in a binary file in the <code>Output_Dir</code> directory, which in our case corresponds to <code>RESULTS/S2A_T33NUD_20180104_Subset/SPCA/PCA/OutputPCA_8_PCs</code></p>
 <p>This raster file can be displayed using QGIS or any GIS / image processing software. Here, the PCs corresponding to our image look like this:</p>
-<p><img align="left" width="50%" height="50%" src="../man/figures/PCs_1234.png"><img align="right" width="50%" height="50%" src="../man/figures/PCs_5678.png"></p>
+<p><img align="left" width="50%" height="50%" src="../reference/figures/PCs_1234.png"><img align="right" width="50%" height="50%" src="../reference/figures/PCs_5678.png"></p>
 <p>User then needs to select components based on visual interpretation. This component selection is saved in a <code>.txt</code> file located in the same directory as the raster file.</p>
 <p>The file is automatically created and ready to edit with function <code>select_PCA_components</code>. This file expects one component selected to be written per line.</p>
 <p>The main goal of PC selection is to discard PCs showing no relevant information corresponding to vegetation, or including artifacts possibly explained by sensor properties. It is somehow a subjective process, and we are currently working on automatic selection of these components.</p>
@@ -165,14 +161,13 @@
                                 Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, PCA_Files <span class="op">=</span> <span class="va">PCA_Files</span>,
                                 TypePCA <span class="op">=</span> <span class="va">TypePCA</span>, File_Open <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p>For this example, PCA bands 1, 2, 5, 6 and 8 can be kept if writing the following lines in file <code>Selected_Components.txt</code> opened for edition (do not forget carriage return after last value):</p>
-<pre><code>1
-2
-5
-6
-8
-</code></pre>
+<pre><code><span class="fl">1</span>
+<span class="fl">2</span>
+<span class="fl">5</span>
+<span class="fl">6</span>
+<span class="fl">8</span></code></pre>
 <p>PC#3 and PC#7 were discarded as the main patterns observed for these components did not correspond to vegetation patterns. As a rule of thumb, between 2 and 6 selected PCs are usually sufficient to catch the main diversity patterns, but this selection strongly depends on the conditions of acquisition, the type of sensor, and the complexity of the vegetation being observed.</p>
-<p>The computation of the spectral species can then be performed in the <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_5.html" target="_blank">next step</a>.</p>
+<p>The computation of the spectral species can then be performed in the <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_5.html" target="_blank" class="external-link">next step</a>.</p>
 </div>
   </div>
 
@@ -185,11 +180,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Jean-Baptiste Feret, Florian de Boissieu.</p>
+  <p></p>
+<p>Developed by Jean-Baptiste Feret, Florian de Boissieu.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -197,6 +194,8 @@
 
   
 
+
+  
 
   </body>
 </html>
