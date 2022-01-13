@@ -57,4 +57,4 @@ Excluded_WL <- rbind(Excluded_WL, c(1780, 2040))
 
 <br/><br/>
 
-The PCA transformation and dimensional reduction are performed in the [next step](https://jbferet.github.io/biodivMapR/articles/biodivMapR_4.html){target="_blank"}.
+The PCA transformation and dimensional reduction are performed in the [next step](https://jbferet.github.io/biodivMapR/articles/biodivMapR_04.html){target="_blank"}.

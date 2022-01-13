@@ -35,4 +35,4 @@ map_functional_div(Original_Image_File = Input_Image_File, Functional_File = PCA
                    window_size = window_size, nbCPU = nbCPU, MaxRAM = MaxRAM,TypePCA = TypePCA)
 ```
 
-These diversity metrics can also be computed directly from plots defined as polygons in the extent of the rasters. This step is key for validation, and is explained in the [next step](https://jbferet.github.io/biodivMapR/articles/biodivMapR_8.html){target="_blank"}.
+These diversity metrics can also be computed directly from plots defined as polygons in the extent of the rasters. This step is key for validation, and is explained in the [next step](https://jbferet.github.io/biodivMapR/articles/biodivMapR_08.html){target="_blank"}.

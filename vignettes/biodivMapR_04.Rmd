@@ -85,4 +85,4 @@ For this example, PCA bands 1, 2, 5, 6 and 8 can be kept if writing the followin
 PC#3 and PC#7 were discarded as the main patterns observed for these components did not correspond to vegetation patterns. As a rule of thumb, between 2 and 6 selected PCs are usually sufficient to catch the main diversity patterns, but this selection strongly depends on the conditions of acquisition, the type of sensor, and the complexity of the vegetation being observed.
 
 
-The computation of the spectral species can then be performed in the [next step](https://jbferet.github.io/biodivMapR/articles/biodivMapR_5.html){target="_blank"}.
+The computation of the spectral species can then be performed in the [next step](https://jbferet.github.io/biodivMapR/articles/biodivMapR_05.html){target="_blank"}.
