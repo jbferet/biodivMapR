@@ -45,4 +45,4 @@ Kmeans_info$SpectralSpecies
 
 $\alpha$ and $\beta$ diversity maps can then be computed based on this `SpectralSpecies` raster.
 
-The computation of $\alpha$ and $\beta$ diversity maps is performed in the [next step](https://jbferet.github.io/biodivMapR/articles/biodivMapR_6.html){target="_blank"}.
+The computation of $\alpha$ and $\beta$ diversity maps is performed in the [next step](https://jbferet.github.io/biodivMapR/articles/biodivMapR_06.html){target="_blank"}.

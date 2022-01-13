@@ -145,7 +145,7 @@ create_hdr(ImPath = destfiletiff, Sensor = 'MyOwnSensor',
 
 ### Download vector files used for 'validation'
 
-A set of vector files is downloaded here, corresponding to circular plots identified in the raster. It will be used in the final step of the tutorial ([__How to perform validation?__](https://jbferet.github.io/biodivMapR/articles/biodivMapR_8.html){target="_blank"}.).
+A set of vector files is downloaded here, corresponding to circular plots identified in the raster. It will be used in the final step of the tutorial ([__How to perform validation?__](https://jbferet.github.io/biodivMapR/articles/biodivMapR_08.html){target="_blank"}.).
 
 The following code allows downloading the zipfile containing the vector data, and unzipping it in the same directory as the one including the raster data.
 
@@ -163,4 +163,4 @@ unzip(zipfile = destzip,exdir = destunz)
 
 <br/><br/>
 
-Now that the necessary data is downloaded, we can start the [tutorial](https://jbferet.github.io/biodivMapR/articles/biodivMapR_2.html){target="_blank"}.
+Now that the necessary data is downloaded, we can start the [tutorial](https://jbferet.github.io/biodivMapR/articles/biodivMapR_02.html){target="_blank"}.

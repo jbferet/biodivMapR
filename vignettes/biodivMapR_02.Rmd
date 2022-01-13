@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 ```
 
 
-The image is [ready to process](https://jbferet.github.io/biodivMapR/articles/biodivMapR_1.html){target="_blank"}, parameter setting for `biodivMapR` can start. 
+The image is [ready to process](https://jbferet.github.io/biodivMapR/articles/biodivMapR_01.html){target="_blank"}, parameter setting for `biodivMapR` can start. 
 
 
 ### Image to be processed
@@ -167,4 +167,4 @@ nbclusters <- 50
 
 <br/><br/>
 
-Once parameterization has been set, the image processing can start, first with an optional [radiometric filtering](https://jbferet.github.io/biodivMapR/articles/biodivMapR_3.html){target="_blank"}.
+Once parameterization has been set, the image processing can start, first with an optional [radiometric filtering](https://jbferet.github.io/biodivMapR/articles/biodivMapR_03.html){target="_blank"}.

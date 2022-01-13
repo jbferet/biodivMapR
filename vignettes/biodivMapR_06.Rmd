@@ -64,4 +64,4 @@ __RGB representation of Sentinel-2 image.__
 Alternative diversity indices corresponding to functional diversity indices can also be computed. These do not require computation of the spectral species. They only require the PCA file or any stacked file. 
 
 
-The computation of teh functional diversity metrics is introduced in the [next step](https://jbferet.github.io/biodivMapR/articles/biodivMapR_7.html){target="_blank"}.
+The computation of teh functional diversity metrics is introduced in the [next step](https://jbferet.github.io/biodivMapR/articles/biodivMapR_07.html){target="_blank"}.

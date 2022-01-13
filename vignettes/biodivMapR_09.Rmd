@@ -32,7 +32,7 @@ The computation of spectral indices can be performed with the package `prosail`.
 
 ### Load additional libraries and prepare data for computation
 
-Here, the path for the image to be processed is assumed to be defined in the `destfile` variable defined [previously](https://jbferet.github.io/biodivMapR/articles/biodivMapR_1.html){target="_blank"}.
+Here, the path for the image to be processed is assumed to be defined in the `destfile` variable defined [previously](https://jbferet.github.io/biodivMapR/articles/biodivMapR_01.html){target="_blank"}.
 
 We will first read it with the `raster` package, and get the central wavelength corresponding to each spectral band in the file from the __header file__, which is critical for the automated computation of spectral indices. 
 
@@ -167,7 +167,7 @@ write_StarsStack(StarsObj = StarsObj, dsn = Path_StackIndices, Bands=Sel_Indices
 
 ```{r Parameterize biodivMapR}
 # see additional information here
-# https://jbferet.github.io/biodivMapR/articles/biodivMapR_2.html
+# https://jbferet.github.io/biodivMapR/articles/biodivMapR_02.html
 
 # Define path for original image file to be processed
 Input_SIstack_File <- Path_StackIndices
@@ -192,7 +192,7 @@ Pix_Per_Partition <- round(0.1*NbPix/nb_partitions)
 ### Perform Spectral species mapping
 
 ```{r Perform Spectral species mapping}
-# https://jbferet.github.io/biodivMapR/articles/biodivMapR_5.html
+# https://jbferet.github.io/biodivMapR/articles/biodivMapR_05.html
 print("MAP SPECTRAL SPECIES")
 # select all spectral indices
 SelectedPCs <- seq(1,dim(raster::stack(Input_SIstack_File))[3])
@@ -205,7 +205,7 @@ Kmeans_info <- map_spectral_species(Input_Image_File = Input_SIstack_File, Outpu
 ### Map diversity indices
 
 ```{r Map diversity indices}
-# https://jbferet.github.io/biodivMapR/articles/biodivMapR_6.html
+# https://jbferet.github.io/biodivMapR/articles/biodivMapR_06.html
 print("MAP ALPHA DIVERSITY")
 Index_Alpha <- c('Shannon')
 map_alpha_div(Input_Image_File = Input_SIstack_File, Output_Dir = Output_Dir, TypePCA = TypePCA,
@@ -227,4 +227,4 @@ map_functional_div(Original_Image_File = Input_SIstack_File, Functional_File = I
 
 ### Perform validation based on a vectorized plot network
 
-The same procedure as in the [previous tutorial](https://jbferet.github.io/biodivMapR/articles/biodivMapR_8.html){target="_blank"} can be applied.
+The same procedure as in the [previous tutorial](https://jbferet.github.io/biodivMapR/articles/biodivMapR_08.html){target="_blank"} can be applied.

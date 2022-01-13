@@ -44,7 +44,7 @@ Below is the typical flow chart of the computation of diversity maps with __biod
 <img align="bottom" width="100%" height="100%" src="../man/figures/Figure1_FlowChart_biodivMapR_Process_600DPI.png">
 
 
-[Please check the full tutorial pages to get instructions, data and code examples to run `biodivMapR`](https://jbferet.github.io/biodivMapR/articles/biodivMapR_1.html){target="_blank"} can be applied.
+[Please check the full tutorial pages to get instructions, data and code examples to run `biodivMapR`](https://jbferet.github.io/biodivMapR/articles/biodivMapR_01.html){target="_blank"} can be applied.
 
 
 <!-- ## Partitioning of spectral diversity into $\alpha$ and $\beta$ components -->
