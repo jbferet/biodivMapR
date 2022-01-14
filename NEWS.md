@@ -1,3 +1,8 @@
+# biodivMapR v1.9.1
+
+## Fixes
+- fixed error occuring when using custom classification map instead of spectral species map
+
 # biodivMapR v1.9.0
 
 ## Changes

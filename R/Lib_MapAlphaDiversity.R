@@ -61,7 +61,10 @@ map_alpha_div <- function(Input_Image_File=FALSE, Output_Dir='', window_size=10,
       # save classification map in proper format in output directory
       # if not expected file format for Spectral Species map
       driver <- attr(rgdal::GDALinfo(ClassifMap,returnStats = FALSE), 'driver')
-      if (!driver=='ENVI'){
+      df <- unique(attr(rgdal::GDALinfo(ClassifMap,returnStats = FALSE),"df")$GDType)
+      if (driver=='ENVI' & df =='Int16'){
+        Spectral_Species_Path <- ClassifMap
+      } else {
         if (Input_Image_File==FALSE){
           Input_Image_File <- tools::file_path_sans_ext(basename(ClassifMap))
         }
@@ -69,6 +72,10 @@ map_alpha_div <- function(Input_Image_File=FALSE, Output_Dir='', window_size=10,
         Spectral_Species_Path <- file.path(Output_Dir_SS, "UserClassification")
         if (! file.exists(Spectral_Species_Path)){
           stars::write_stars(ClassifRaster, Spectral_Species_Path, driver =  "ENVI",type='Int16')
+        } else {
+          message("This already existing classification map will be used")
+          print(Spectral_Species_Path)
+          message("Please delete it and re-run if you updated classification since last run")
         }
       }
     }
@@ -191,7 +198,8 @@ compute_ALPHA_FromPlot <- function(SpectralSpecies_Plot,pcelim = 0.02){
 #' @importFrom future plan multiprocess sequential
 #' @importFrom future.apply future_lapply
 #' @importFrom stats sd
-compute_alpha_metrics <- function(Spectral_Species_Path, window_size, nbclusters, MinSun, pcelim, nbCPU = FALSE, MaxRAM = FALSE, Index_Alpha = "Shannon") {
+compute_alpha_metrics <- function(Spectral_Species_Path, window_size, nbclusters,
+                                  MinSun, pcelim, nbCPU = FALSE, MaxRAM = FALSE, Index_Alpha = "Shannon") {
   ##      read SpectralSpecies file and write distribution per spatial unit   ##
   SS_HDR <- get_HDR_name(Spectral_Species_Path)
   HDR_SS <- read_ENVI_header(SS_HDR)
