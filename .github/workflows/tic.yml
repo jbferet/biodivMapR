@@ -42,8 +42,6 @@ jobs:
       SDKROOT: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
       # use GITHUB_TOKEN from GitHub to workaround rate limits in {remotes}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      # avoid problems with terra dependencies when building terra from source
-      R_REMOTES_UPGRADE: never
 
     steps:
       - uses: actions/checkout@v2.3.4
@@ -102,7 +100,10 @@ jobs:
 
       - name: "[Stage] [macOS] Install system libs for terra"
         if: runner.os == 'macOS' && matrix.config.pkgdown != ''
-        run: Rscript -e "install.packages('terra')"
+        run: |
+            rm '/usr/local/bin/gfortran'
+            brew install pkg-config gdal proj geos
+            Rscript -e "install.packages('terra', type='binary')"
 
       - name: "[Stage] Install"
         if: matrix.config.os != 'macOS-latest' || matrix.config.r != 'devel'
