@@ -115,7 +115,7 @@
       <h1 data-toc-skip>Compute diversity from user-defined set of layers</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2022-01-11</h4>
+            <h4 data-toc-skip class="date">2022-01-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_09.Rmd" class="external-link"><code>vignettes/biodivMapR_09.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_09.Rmd</code></div>
@@ -134,7 +134,7 @@
 <div class="section level3">
 <h3 id="load-additional-libraries-and-prepare-data-for-computation">Load additional libraries and prepare data for computation<a class="anchor" aria-label="anchor" href="#load-additional-libraries-and-prepare-data-for-computation"></a>
 </h3>
-<p>Here, the path for the image to be processed is assumed to be defined in the <code>destfile</code> variable defined <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_1.html" target="_blank" class="external-link">previously</a>.</p>
+<p>Here, the path for the image to be processed is assumed to be defined in the <code>destfile</code> variable defined <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_01.html" target="_blank" class="external-link">previously</a>.</p>
 <p>We will first read it with the <code>raster</code> package, and get the central wavelength corresponding to each spectral band in the file from the <strong>header file</strong>, which is critical for the automated computation of spectral indices.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">prosail</span><span class="op">)</span> <span class="co"># https://jbferet.gitlab.io/prosail/</span>
@@ -247,7 +247,7 @@
 </h3>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># see additional information here</span>
-<span class="co"># https://jbferet.github.io/biodivMapR/articles/biodivMapR_2.html</span>
+<span class="co"># https://jbferet.github.io/biodivMapR/articles/biodivMapR_02.html</span>
 
 <span class="co"># Define path for original image file to be processed</span>
 <span class="va">Input_SIstack_File</span> <span class="op">&lt;-</span> <span class="va">Path_StackIndices</span>
@@ -272,7 +272,7 @@
 <h3 id="perform-spectral-species-mapping">Perform Spectral species mapping<a class="anchor" aria-label="anchor" href="#perform-spectral-species-mapping"></a>
 </h3>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># https://jbferet.github.io/biodivMapR/articles/biodivMapR_5.html</span>
+<code class="sourceCode R"><span class="co"># https://jbferet.github.io/biodivMapR/articles/biodivMapR_05.html</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"MAP SPECTRAL SPECIES"</span><span class="op">)</span>
 <span class="co"># select all spectral indices</span>
 <span class="va">SelectedPCs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fu"><a href="https://rdrr.io/pkg/raster/man/dimensions.html" class="external-link">dim</a></span><span class="op">(</span><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html" class="external-link">stack</a></span><span class="op">(</span><span class="va">Input_SIstack_File</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span>
@@ -285,7 +285,7 @@
 <h3 id="map-diversity-indices">Map diversity indices<a class="anchor" aria-label="anchor" href="#map-diversity-indices"></a>
 </h3>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># https://jbferet.github.io/biodivMapR/articles/biodivMapR_6.html</span>
+<code class="sourceCode R"><span class="co"># https://jbferet.github.io/biodivMapR/articles/biodivMapR_06.html</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"MAP ALPHA DIVERSITY"</span><span class="op">)</span>
 <span class="va">Index_Alpha</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Shannon'</span><span class="op">)</span>
 <span class="fu"><a href="../reference/map_alpha_div.html">map_alpha_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_SIstack_File</span>, Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,
@@ -307,7 +307,7 @@
 <div class="section level3">
 <h3 id="perform-validation-based-on-a-vectorized-plot-network">Perform validation based on a vectorized plot network<a class="anchor" aria-label="anchor" href="#perform-validation-based-on-a-vectorized-plot-network"></a>
 </h3>
-<p>The same procedure as in the <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_8.html" target="_blank" class="external-link">previous tutorial</a> can be applied.</p>
+<p>The same procedure as in the <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_08.html" target="_blank" class="external-link">previous tutorial</a> can be applied.</p>
 </div>
 </div>
   </div>
@@ -329,7 +329,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
