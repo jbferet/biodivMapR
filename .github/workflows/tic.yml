@@ -100,7 +100,7 @@ jobs:
 
       - name: "[Stage] [macOS] Install system libs for terra"
         if: runner.os == 'macOS' && matrix.config.pkgdown != ''
-        run: brew install pkg-config gdal
+        run: |brew install pkg-config gdal proj
 
       - name: "[Stage] Install"
         if: matrix.config.os != 'macOS-latest' || matrix.config.r != 'devel'
