@@ -99,7 +99,7 @@ jobs:
         run: sudo apt install libharfbuzz-dev libfribidi-dev
 
       - name: "[Stage] [macOS] Install system libs for terra"
-        if: runner.os == 'macOS' && matrix.config.pkgdown != ''
+        if: runner.os == 'macOS'
         run: |
             # from https://github.com/r-spatial/sf/blob/main/.github/workflows/tic.yml
             # maybe not necessary anymore as package terra is installed from binary
