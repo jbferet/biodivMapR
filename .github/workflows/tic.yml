@@ -43,7 +43,7 @@ jobs:
       # use GITHUB_TOKEN from GitHub to workaround rate limits in {remotes}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       # avoid problems with terra dependencies when building terra from source
-      R_REMOTES_UPGRADE: false
+      R_REMOTES_UPGRADE: never
 
     steps:
       - uses: actions/checkout@v2.3.4
