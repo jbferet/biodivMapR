@@ -62,7 +62,10 @@ map_alpha_div <- function(Input_Image_File=FALSE, Output_Dir='', window_size=10,
       # if not expected file format for Spectral Species map
       driver <- attr(rgdal::GDALinfo(ClassifMap,returnStats = FALSE), 'driver')
       df <- unique(attr(rgdal::GDALinfo(ClassifMap,returnStats = FALSE),"df")$GDType)
-      if (driver=='ENVI' & df =='Int16'){
+      if (driver=='ENVI' & df =='Byte'){
+        if (Input_Image_File==FALSE){
+          Input_Image_File <- tools::file_path_sans_ext(basename(ClassifMap))
+        }
         Spectral_Species_Path <- ClassifMap
       } else {
         if (Input_Image_File==FALSE){
@@ -71,7 +74,7 @@ map_alpha_div <- function(Input_Image_File=FALSE, Output_Dir='', window_size=10,
         Output_Dir_SS <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "UserClassification")
         Spectral_Species_Path <- file.path(Output_Dir_SS, "UserClassification")
         if (! file.exists(Spectral_Species_Path)){
-          stars::write_stars(ClassifRaster, Spectral_Species_Path, driver =  "ENVI",type='Int16')
+          stars::write_stars(ClassifRaster, Spectral_Species_Path, driver =  "ENVI",type='Byte')
         } else {
           message("This already existing classification map will be used")
           print(Spectral_Species_Path)

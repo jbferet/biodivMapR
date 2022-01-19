@@ -1,3 +1,8 @@
+# biodivMapR v1.9.2
+
+## Fixes
+- fixed data type of spectral species derived from supervised classification and output directories for alpha and beta diversity
+
 # biodivMapR v1.9.1
 
 ## Fixes
