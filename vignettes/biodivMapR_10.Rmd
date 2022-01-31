@@ -85,12 +85,12 @@ Once opened in QGIS, the image should look like this:
 
 <p>
   <img align="left" width="49%" height="49%" src="../man/figures/Lautaret/FP_001.JPG">
-  <img align="right" width="49%" height="49%" src="../man/figures/Lautaret/FP_002.JPG">
+  <img align="right" width="49%" height="49%" src="../man/figures/Lautaret/FP_002.jpg">
 </p>
 
 <p>
   <img align="left" width="49%" height="49%" src="../man/figures/Lautaret/V_001.JPG">
-  <img align="right" width="49%" height="49%" src="../man/figures/Lautaret/V_002.JPG">
+  <img align="right" width="49%" height="49%" src="../man/figures/Lautaret/V_002.jpg">
 </p>
 
 <p>
