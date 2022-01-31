@@ -71,10 +71,10 @@ Once opened in QGIS, the image should look like this:
 </p>
 
 
-* <span style="color:red"> *FG : open subalpine grasslands dominated by Festuca violacea, mostly found on south-facing steep slopes* </span>.
-* <span style="color:yellow"> *FP : tall subalpine grasslands dominated by Patzkea paniculata (syn. Festuca paniculata), mostly found on south-facing gentle slopes with deep soil* </span>.
-* <span style="color:orange"> *SC : sparsely vegetated grasslands dominated by Sesleria caerulea on south-facing, debris-covered slopes* </span>.
-* <span style="color:blue"> *V: low stature heaths dominated by Vaccinium uliginosum and Vaccinium myrtillus, mostly found on north-facing slopes* </span>.
+* <span style=color:red;background-color:#999999> *FG : open subalpine grasslands dominated by Festuca violacea, mostly found on south-facing steep slopes* </span>.
+* <span style=color:yellow;background-color:#999999> *FP : tall subalpine grasslands dominated by Patzkea paniculata (syn. Festuca paniculata), mostly found on south-facing gentle slopes with deep soil* </span>.
+* <span style=color:orange;background-color:#999999> *SC : sparsely vegetated grasslands dominated by Sesleria caerulea on south-facing, debris-covered slopes* </span>.
+* <span style=color:blue;background-color:#999999> *V: low stature heaths dominated by Vaccinium uliginosum and Vaccinium myrtillus, mostly found on north-facing slopes* </span>.
 
 
 <p align="center">
@@ -84,18 +84,18 @@ Once opened in QGIS, the image should look like this:
 
 
 <p>
-  <img align="left" width="48%" height="48%" src="../man/figures/Lautaret/FP_001.JPG" alt = "FP1">
-  <img align="right" width="48%" height="48%" src="../man/figures/Lautaret/FP_002.JPG" alt = "FP2">
+  <img align="left" width="49%" height="49%" src="../man/figures/Lautaret/FP_001.JPG">
+  <img align="right" width="49%" height="49%" src="../man/figures/Lautaret/FP_002.JPG">
 </p>
 
 <p>
-  <img align="left" width="48%" height="48%" src="../man/figures/Lautaret/V_001.JPG" alt = "V1">
-  <img align="right" width="48%" height="48%" src="../man/figures/Lautaret/V_002.JPG" alt = "V2">
+  <img align="left" width="49%" height="49%" src="../man/figures/Lautaret/V_001.JPG">
+  <img align="right" width="49%" height="49%" src="../man/figures/Lautaret/V_002.JPG">
 </p>
 
 <p>
-  <img align="left" width="48%" height="48%" src="../man/figures/Lautaret/FV_001.JPG" alt = "FV1">
-  <img align="right" width="48%" height="48%" src="../man/figures/Lautaret/S_001.JPG" alt = "S1">
+  <img align="left" width="49%" height="49%" src="../man/figures/Lautaret/FV_001.JPG">
+  <img align="right" width="49%" height="49%" src="../man/figures/Lautaret/S_001.JPG">
 </p>
 
 
