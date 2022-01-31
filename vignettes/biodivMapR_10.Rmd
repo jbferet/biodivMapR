@@ -82,21 +82,33 @@ Once opened in QGIS, the image should look like this:
   <em>Overview of the site</em>
 </p>
 
+<table>
+  <tr>
+    <th>Illustration of FP type</th>
+    <th>Illustration of FP type</th>
+  </tr>  
+  <tr>
+    <td> <img src="../man/figures/Lautaret/FP_001.JPG" alt="Drawing" style="width: 100%;"/> </td>
+    <td> <img src="../man/figures/Lautaret/FP_002.jpg" alt="Drawing" style="width: 100%;"/> </td>
+  </tr>
+  <tr>
+    <th>Illustration of V type</th>
+    <th>Illustration of V type</th>
+  </tr>
+  <tr>
+    <td> <img src="../man/figures/Lautaret/V_001.JPG" alt="Drawing" style="width: 100%;"/> </td>
+    <td> <img src="../man/figures/Lautaret/V_002.jpg" alt="Drawing" style="width: 100%;"/> </td>
+  </tr>
+  <tr>
+    <th>Illustration of FV type</th>
+    <th>Illustration of S type</th>
+  </tr>
+  <tr>
+    <td> <img src="../man/figures/Lautaret/FV_001.JPG" alt="Drawing" style="width: 100%;"/> </td>
+    <td> <img src="../man/figures/Lautaret/S_001.JPG" alt="Drawing" style="width: 100%;"/> </td>
+  </tr>
+</table>
 
-<p>
-  <img align="left" width="48%" height="48%" src="../man/figures/Lautaret/FP_001.JPG">
-  <img align="right" width="48%" height="48%" src="../man/figures/Lautaret/FP_002.jpg">
-</p>
-
-<p>
-  <img align="left" width="48%" height="48%" src="../man/figures/Lautaret/V_001.JPG">
-  <img align="right" width="48%" height="48%" src="../man/figures/Lautaret/V_002.jpg">
-</p>
-
-<p>
-  <img align="left" width="48%" height="48%" src="../man/figures/Lautaret/FV_001.JPG">
-  <img align="right" width="48%" height="48%" src="../man/figures/Lautaret/S_001.JPG">
-</p>
 
 
 
