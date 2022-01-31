@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
   comment = "#>",
   eval=FALSE
 )
+options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
 $\alpha$ and $\beta$ diversity maps are based on the `SpectralSpecies` raster.

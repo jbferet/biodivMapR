@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
   comment = "#>",
   eval=FALSE
 )
+options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
 The following code performs computation of $\alpha$ and $\beta$ diversity from field plots and extracts the corresponding diversity indices from previouly computed `SpectralSpecies` raster in order to perform validation.

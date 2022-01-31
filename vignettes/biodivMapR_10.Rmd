@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
   comment = "#>",
   eval=FALSE
 )
+options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
 This tutorial illustrates how to run `biodivMapR` in order to map spectral diversity based on a set of spectral indices.
@@ -83,18 +84,18 @@ Once opened in QGIS, the image should look like this:
 
 
 <p>
-  <img align="left" width="48%" height="48%" src="../man/figures/Lautaret/FP_001.JPG" alt = "FP1" title = "FP1">
-  <img align="right" width="48%" height="48%" src="../man/figures/Lautaret/FP_002.JPG" alt = "FP2" title = "FP2">
+  <img align="left" width="48%" height="48%" src="../man/figures/Lautaret/FP_001.JPG" alt = "FP1">
+  <img align="right" width="48%" height="48%" src="../man/figures/Lautaret/FP_002.JPG" alt = "FP2">
 </p>
 
 <p>
-  <img align="left" width="48%" height="48%" src="../man/figures/Lautaret/V_001.JPG" alt = "FP1" title = "FP1">
-  <img align="right" width="48%" height="48%" src="../man/figures/Lautaret/V_002.JPG" alt = "FP2" title = "FP2">
+  <img align="left" width="48%" height="48%" src="../man/figures/Lautaret/V_001.JPG" alt = "V1">
+  <img align="right" width="48%" height="48%" src="../man/figures/Lautaret/V_002.JPG" alt = "V2">
 </p>
 
 <p>
-  <img align="left" width="48%" height="48%" src="../man/figures/Lautaret/FV_001.JPG" alt = "FP1" title = "FP1">
-  <img align="right" width="48%" height="48%" src="../man/figures/Lautaret/S_001.JPG" alt = "FP2" title = "FP2">
+  <img align="left" width="48%" height="48%" src="../man/figures/Lautaret/FV_001.JPG" alt = "FV1">
+  <img align="right" width="48%" height="48%" src="../man/figures/Lautaret/S_001.JPG" alt = "S1">
 </p>
 
 
