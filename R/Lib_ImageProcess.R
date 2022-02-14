@@ -537,7 +537,11 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.50){
     driver <- attr(rgdal::GDALinfo(ImPath,returnStats = FALSE), 'driver')
     values <- read_stars(ImPath, RasterIO =list(nXSize=nXSize, nYOff=rr[1], nYSize=nYSize),proxy = FALSE, driver=driver)[[1]]
     values <- matrix(values, nrow=nYSize*nXSize)
-    res <- cbind(rc$sampleIndex, values[ipix_stars, ])
+    if (length(ipix_stars)>1){
+      res <- cbind(rc$sampleIndex, values[ipix_stars, ])
+    } else {
+      res <- cbind(rc$sampleIndex, matrix(values[ipix_stars, ],nrow = 1))
+    }
     rm('values')
     gc()
     return(res)
@@ -851,7 +855,7 @@ get_polygonCoord_from_Shp <- function(path_SHP,path_Raster,IDshp=NULL){
   vector_ID <- c()
   for (elem in 1:length(vector_coordinates)){
     if (!is.null(IDshp)){
-      vector_ID <- c(vector_ID,Plot[[IDshp]])
+      vector_ID <- c(vector_ID,as.character(Plot[[IDshp]]))
     } else {
       vector_ID <- c(vector_ID,'No ID Available')
     }
