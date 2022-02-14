@@ -171,17 +171,23 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
         ExtractIm <- extract.big_raster(Raster_Functional, XY[[ip]])
         if (!Selected_Features[1]==FALSE){
           ExtractIm <- ExtractIm[,Selected_Features]
+        } else {
+          Selected_Features <- seq(1,ncol(ExtractIm))
         }
         ij <- ExtractIm
         # keep non zero values
         ij <- matrix(ij[which(!is.na(ij[,1])),], ncol = ncol(ExtractIm))
         nbPix_Sunlit <- dim(ij)[1]
         PCsun <- nbPix_Sunlit / nrow(ExtractIm)
-        if (nbPix_Sunlit>Selected_Features){
+        if (nbPix_Sunlit>length(Selected_Features)){
           FunctionalDiversity$FRic[ip] <- 100*geometry::convhulln(ij, output.options = 'FA')$vol
         } else {
           FunctionalDiversity$FRic[ip] <- 0
-          message(paste('FRic cannot be computed from',Name_Plot[ip]))
+          if (!Name_Plot==FALSE){
+            message(paste('FRic cannot be computed from',Name_Plot[ip]))
+          } else {
+            message(paste('FRic cannot be computed from polygon #',ip))
+          }
           message('Minimum number of pixel required to compute convex hull must be > nb selected features')
         }
         if (nbPix_Sunlit>1){
