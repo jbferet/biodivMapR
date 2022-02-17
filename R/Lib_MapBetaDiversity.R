@@ -173,16 +173,23 @@ ordination_to_NN <- function(Beta_Ordination_sel, SSD_Path, Sample_Sel, coordTot
   id.sub <- splitRows(as.matrix(seq(1, nb_Sunlit, by = 1), ncol = 1), ncl = nb.sub)
   # compute ordination coordinates from each subpart
   Nb_Units_Ordin <- dim(Sample_Sel)[1]
-  plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
-  Schedule_Per_Thread <- ceiling(nb.sub / nbCPU)
-  OutPut <- future_lapply(id.sub,
-    FUN = ordination_parallel, coordTotSort = coordTotSort, SSD_Path = SSD_Path,
-    Sample_Sel = Sample_Sel, Beta_Ordination_sel = Beta_Ordination_sel, Nb_Units_Ordin = Nb_Units_Ordin,
-    nb_partitions = nb_partitions, nbclusters = nbclusters, pcelim = pcelim,
-    future.scheduling = Schedule_Per_Thread,
-    future.packages = c("vegan", "dissUtils", "R.utils", "tools", "snow", "matlab")
-  )
-  plan(sequential)
+  if (nbCPU>1){
+    plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
+    Schedule_Per_Thread <- ceiling(nb.sub / nbCPU)
+    OutPut <- future_lapply(id.sub,
+                            FUN = ordination_parallel, coordTotSort = coordTotSort, SSD_Path = SSD_Path,
+                            Sample_Sel = Sample_Sel, Beta_Ordination_sel = Beta_Ordination_sel, Nb_Units_Ordin = Nb_Units_Ordin,
+                            nb_partitions = nb_partitions, nbclusters = nbclusters, pcelim = pcelim,
+                            future.scheduling = Schedule_Per_Thread,
+                            future.packages = c("vegan", "dissUtils", "R.utils", "tools", "snow", "matlab")
+    )
+    plan(sequential)
+  } else {
+    OutPut <- lapply(id.sub, FUN = ordination_parallel, coordTotSort = coordTotSort,
+                     SSD_Path = SSD_Path, Sample_Sel = Sample_Sel,
+                     Beta_Ordination_sel = Beta_Ordination_sel, Nb_Units_Ordin = Nb_Units_Ordin,
+                     nb_partitions = nb_partitions, nbclusters = nbclusters, pcelim = pcelim)
+  }
   Ordination_est <- do.call("rbind", OutPut)
   gc()
   return(Ordination_est)

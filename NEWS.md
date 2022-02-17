@@ -1,3 +1,8 @@
+# biodivMapR v1.9.3
+
+## Fixes
+- uses future_lapply only if more than one CPU requested, otherwise use standard lapply
+
 # biodivMapR v1.9.2
 
 ## Fixes
