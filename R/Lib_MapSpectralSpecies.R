@@ -206,12 +206,18 @@ init_kmeans <- function(dataPCA, Pix_Per_Partition, nb_partitions, nbclusters, n
     dataPCA <- center_reduce(dataPCA, m0, d0)
     # get the dimensions of the images, and the number of subimages to process
     dataPCA <- split(as.data.frame(dataPCA), rep(1:nb_partitions, each = Pix_Per_Partition))
-    # multiprocess kmeans clustering
-    plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
-    Schedule_Per_Thread <- ceiling(length(dataPCA) / nbCPU)
-    res <- future_lapply(dataPCA, FUN = kmeans, centers = nbclusters, iter.max = 50, nstart = 10,
-                         algorithm = c("Hartigan-Wong"), future.scheduling = Schedule_Per_Thread)
-    plan(sequential)
+
+    if (nbCPU>1){
+      # multiprocess kmeans clustering
+      plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
+      Schedule_Per_Thread <- ceiling(length(dataPCA) / nbCPU)
+      res <- future_lapply(dataPCA, FUN = kmeans, centers = nbclusters, iter.max = 50, nstart = 10,
+                           algorithm = c("Hartigan-Wong"), future.scheduling = Schedule_Per_Thread)
+      plan(sequential)
+    } else {
+      res <- lapply(dataPCA, FUN = kmeans, centers = nbclusters, iter.max = 50, nstart = 10,
+                           algorithm = c("Hartigan-Wong"))
+    }
     Centroids <- list(nb_partitions)
     for (i in (1:nb_partitions)) {
       Centroids[[i]] <- res[[i]]$centers
@@ -348,11 +354,18 @@ compute_spectral_species <- function(PCA_Path, Input_Mask_File, Spectral_Species
   if (length(keepShade) > 0) {
     nbSubsets <- ceiling(length(keepShade) / nbSamples_Per_Rdist)
     PCA_Chunk <- snow::splitRows(PCA_Chunk, nbSubsets)
+    if (nbCPU>1){
+      plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
+      Schedule_Per_Thread <- ceiling(nbSubsets / nbCPU)
+      res <- future_lapply(PCA_Chunk, FUN = RdistList, CentroidsArray = CentroidsArray,
+                           nbClusters = nrow(Kmeans_info$Centroids[[1]]),
+                           nb_partitions = nb_partitions, future.scheduling = Schedule_Per_Thread)
+      plan(sequential)
+    } else {
+      res <- lapply(PCA_Chunk, FUN = RdistList, CentroidsArray = CentroidsArray,
+                    nbClusters = nrow(Kmeans_info$Centroids[[1]]), nb_partitions = nb_partitions)
+    }
 
-    plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
-    Schedule_Per_Thread <- ceiling(nbSubsets / nbCPU)
-    res <- future_lapply(PCA_Chunk, FUN = RdistList, CentroidsArray = CentroidsArray, nbClusters = nrow(Kmeans_info$Centroids[[1]]), nb_partitions = nb_partitions, future.scheduling = Schedule_Per_Thread)
-    plan(sequential)
     res <- do.call("rbind", res)
     Nearest_Cluster[keepShade, ] <- res
     rm(res)

@@ -282,16 +282,25 @@ compute_alpha_metrics <- function(Spectral_Species_Path, window_size, nbclusters
   Sunlit_Format <- ENVI_type2bytes(HDR_Sunlit)
 
   # multiprocess of spectral species distribution and alpha diversity metrics
-  plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
-  Schedule_Per_Thread <- ceiling(nbPieces_Min / nbCPU)
-  ALPHA <- future_lapply(ReadWrite,
-    FUN = convert_PCA_to_SSD, Spectral_Species_Path = Spectral_Species_Path,
-    HDR_SS = HDR_SS, HDR_SSD = HDR_SSD, SS_Format = SS_Format, SSD_Format = SSD_Format,
-    ImgFormat = ImgFormat, window_size = window_size, nbclusters = nbclusters, MinSun = MinSun,
-    pcelim = pcelim, Index_Alpha = Index_Alpha, SSD_Path = SSD_Path, Sunlit_Path = Sunlit_Path,
-    Sunlit_Format = Sunlit_Format, future.scheduling = Schedule_Per_Thread
-  )
-  plan(sequential)
+  if (nbCPU>1){
+    plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
+    Schedule_Per_Thread <- ceiling(nbPieces_Min / nbCPU)
+    ALPHA <- future_lapply(ReadWrite,
+                           FUN = convert_PCA_to_SSD, Spectral_Species_Path = Spectral_Species_Path,
+                           HDR_SS = HDR_SS, HDR_SSD = HDR_SSD, SS_Format = SS_Format, SSD_Format = SSD_Format,
+                           ImgFormat = ImgFormat, window_size = window_size, nbclusters = nbclusters, MinSun = MinSun,
+                           pcelim = pcelim, Index_Alpha = Index_Alpha, SSD_Path = SSD_Path, Sunlit_Path = Sunlit_Path,
+                           Sunlit_Format = Sunlit_Format, future.scheduling = Schedule_Per_Thread
+    )
+    plan(sequential)
+  } else {
+    ALPHA <- lapply(ReadWrite, FUN = convert_PCA_to_SSD, Spectral_Species_Path = Spectral_Species_Path,
+                    HDR_SS = HDR_SS, HDR_SSD = HDR_SSD, SS_Format = SS_Format, SSD_Format = SSD_Format,
+                    ImgFormat = ImgFormat, window_size = window_size, nbclusters = nbclusters, MinSun = MinSun,
+                    pcelim = pcelim, Index_Alpha = Index_Alpha, SSD_Path = SSD_Path, Sunlit_Path = Sunlit_Path,
+                    Sunlit_Format = Sunlit_Format)
+  }
+
   # create ful map from chunks
   Shannon_Mean_Chunk <- Fisher_Mean_Chunk <- Simpson_Mean_Chunk <- list()
   Shannon_SD_Chunk <- Fisher_SD_Chunk <- Simpson_SD_Chunk <- list()
