@@ -249,7 +249,7 @@ Get_FunctionalMetrics_From_Traits <- function(ReadWrite, Functional_File, Select
 #'
 #' @return list of functional diversity metrics corresponding to image chunk
 #' @importFrom geometry convhulln
-# @importFrom emstreeR ComputeMST
+#' @importFrom emstreeR ComputeMST
 #' @export
 
 compute_FUNCT <- function(Image_Chunk, window_size, MinSun) {
@@ -285,8 +285,8 @@ compute_FUNCT <- function(Image_Chunk, window_size, MinSun) {
         # 3- Functional Evenness
         # euclidean minimum spanning tree
         # 20220112: wait for update of emstreeR and integration of mlpack
-        # FEvemap[ii,jj] <- 100*sum(emstreeR::ComputeMST(ij,verbose = FALSE)$distance)/nbPix_Sunlit
-        FEvemap[ii,jj] <- NA*FDivmap[ii,jj]
+        # FEvemap[ii,jj] <- NA*FDivmap[ii,jj]
+        FEvemap[ii,jj] <- 100*sum(emstreeR::ComputeMST(ij,verbose = FALSE)$distance)/nbPix_Sunlit
       } else {
         FRicmap[ii,jj] <- NA
         FDivmap[ii,jj] <- NA
