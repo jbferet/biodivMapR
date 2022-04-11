@@ -24,7 +24,7 @@
 #' @importFrom raster raster projection compareCRS
 #' @importFrom rgdal readOGR
 #' @importFrom geometry convhulln
-# @importFrom emstreeR ComputeMST
+#' @importFrom emstreeR ComputeMST
 #' @importFrom tools file_path_sans_ext
 #' @export
 diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
@@ -199,8 +199,8 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
           # 3- Functional Evenness
           # euclidean minimum spanning tree
           # 20220112: wait for update of emstreeR and integration of mlpack
-          # FunctionalDiversity$FEve[ip] <- 100*sum(emstreeR::ComputeMST(ij,verbose = FALSE)$distance)/nbPix_Sunlit
-          FunctionalDiversity$FEve[ip] <- 0
+          # FunctionalDiversity$FEve[ip] <- 0
+          FunctionalDiversity$FEve[ip] <- 100*sum(emstreeR::ComputeMST(ij,verbose = FALSE)$distance)/nbPix_Sunlit
         } else {
           FunctionalDiversity$FDiv[ip] <- 0
           FunctionalDiversity$FEve[ip] <- 0

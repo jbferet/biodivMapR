@@ -1,3 +1,8 @@
+# biodivMapR v1.9.4
+
+## Fixes
+- re-integrate package emstreeR (previously removed from CRAN) used to compute functional divergence
+
 # biodivMapR v1.9.3
 
 ## Fixes
