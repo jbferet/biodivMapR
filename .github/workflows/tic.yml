@@ -90,6 +90,10 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install libgit2
 
+      - name: "[Stage] [macOS] Install rgdal"
+        if: runner.os == 'macOS'
+        run: sudo apt install gdal-bin proj-bin libgdal-dev libproj-dev
+
       - name: "[Stage] [macOS] Install system libs for pkgdown"
         if: runner.os == 'macOS' && matrix.config.pkgdown != ''
         run: brew install harfbuzz fribidi
