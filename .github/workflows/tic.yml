@@ -90,6 +90,16 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install libgit2
 
+#      - name: "[Stage] [macOS] Install rgdal"
+#        if: runner.os == 'macOS'
+#        run: brew install gdal-bin proj-bin libgdal-dev libproj-dev
+
+      - name: Install binary dependencies
+        if: runner.os == 'macOS'
+        run: |
+          remotes::install_deps(dependencies = TRUE, type="binary")
+        shell: Rscript {0}
+
       - name: "[Stage] [macOS] Install system libs for pkgdown"
         if: runner.os == 'macOS' && matrix.config.pkgdown != ''
         run: brew install harfbuzz fribidi
