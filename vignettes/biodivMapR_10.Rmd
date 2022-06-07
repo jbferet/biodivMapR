@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
   comment = "#>",
   eval=FALSE
 )
+options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
 This tutorial illustrates how to run `biodivMapR` in order to map spectral diversity based on a set of spectral indices.
