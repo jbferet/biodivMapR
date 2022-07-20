@@ -38,7 +38,7 @@
 map_beta_div <- function(Input_Image_File=FALSE, Output_Dir='', window_size=10,
                          TypePCA = 'SPCA', nb_partitions = 20,nbclusters = 50,
                          Nb_Units_Ordin = 2000, MinSun = 0.25,
-                         pcelim = 0.00, scaling = 'PCO', FullRes = TRUE,
+                         pcelim = 0.02, scaling = 'PCO', FullRes = TRUE,
                          LowRes = FALSE, nbCPU = 1, MaxRAM = 0.25,
                          ClassifMap = FALSE, dimMDS=3) {
 

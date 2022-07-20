@@ -10,7 +10,8 @@ diversity_from_plots(
   nbclusters = 50,
   Raster_Functional = FALSE,
   Selected_Features = FALSE,
-  Name_Plot = FALSE
+  Name_Plot = FALSE,
+  pcelim = 0.02
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ diversity_from_plots(
 \item{Selected_Features}{numeric. selected features for Raster_Functional. use all features if set to FALSE}
 
 \item{Name_Plot}{character. Name of the plots defined in the shapefiles}
+
+\item{pcelim}{numeric. Discard spectral species when contribution is < pcelim (between 0 and 1)}
 }
 \value{
 alpha and beta diversity metrics

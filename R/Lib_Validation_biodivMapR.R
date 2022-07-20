@@ -19,6 +19,7 @@
 #' @param Raster_Functional character. path for the raster file used to compute functional diversity
 #' @param Selected_Features numeric. selected features for Raster_Functional. use all features if set to FALSE
 #' @param Name_Plot character. Name of the plots defined in the shapefiles
+#' @param pcelim numeric. Discard spectral species when contribution is < pcelim (between 0 and 1)
 #'
 #' @return alpha and beta diversity metrics
 #' @importFrom raster raster projection compareCRS
@@ -29,7 +30,7 @@
 #' @export
 diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
                                 Raster_Functional = FALSE, Selected_Features = FALSE,
-                                Name_Plot = FALSE){
+                                Name_Plot = FALSE, pcelim = 0.02){
 
   # get hdr from Raster_SpectralSpecies
   HDR <- read_ENVI_header(paste(Raster_SpectralSpecies,'.hdr',sep=''))
@@ -106,7 +107,7 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
       Pixel.Inventory <- list()
       Richness.tmp <- Shannon.tmp <- Fisher.tmp <- Simpson.tmp <- vector(length = nbRepetitions)
       # eliminate spectral species contributing to less than pcelim percent of the total valid pixels
-      pcelim <- 0.02
+      # pcelim <- 0.02
       for (i in 1:nbRepetitions){
         if (nbRepetitions ==1){
           Distritab <- table(ExtractIm)
@@ -114,15 +115,19 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
           Distritab <- table(ExtractIm[,i])
         }
         Pixel.Inventory[[i]] <- as.data.frame(Distritab)
+        # fix 2022/07/20: first discard shaded pixels before application of pcelim
+        if (length(which(Pixel.Inventory[[i]]$Var1==0))==1){
+          Pixel.Inventory[[i]] <- Pixel.Inventory[[i]][-which(Pixel.Inventory[[i]]$Var1==0),]
+        }
         SumPix <- sum(Pixel.Inventory[[i]]$Freq)
         ThreshElim <- pcelim*SumPix
         ElimZeros <- which(Pixel.Inventory[[i]]$Freq<ThreshElim)
         if (length(ElimZeros)>=1){
           Pixel.Inventory[[i]] <- Pixel.Inventory[[i]][-ElimZeros,]
         }
-        if (length(which(Pixel.Inventory[[i]]$Var1==0))==1){
-          Pixel.Inventory[[i]] <- Pixel.Inventory[[i]][-which(Pixel.Inventory[[i]]$Var1==0),]
-        }
+        # if (length(which(Pixel.Inventory[[i]]$Var1==0))==1){
+        #   Pixel.Inventory[[i]] <- Pixel.Inventory[[i]][-which(Pixel.Inventory[[i]]$Var1==0),]
+        # }
         Alpha <- get_alpha_metrics(Pixel.Inventory[[i]]$Freq)
         # Alpha diversity
         Richness.tmp[i] <- as.numeric(Alpha$Richness)
