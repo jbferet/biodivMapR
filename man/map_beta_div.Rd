@@ -13,7 +13,7 @@ map_beta_div(
   nbclusters = 50,
   Nb_Units_Ordin = 2000,
   MinSun = 0.25,
-  pcelim = 0,
+  pcelim = 0.02,
   scaling = "PCO",
   FullRes = TRUE,
   LowRes = FALSE,

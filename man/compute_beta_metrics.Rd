@@ -38,9 +38,6 @@ compute_beta_metrics(
 
 \item{dimMDS}{numeric. number of dimensions for the scaling.}
 }
-\value{
-
-}
 \description{
 computes beta diversity metrics
 }
