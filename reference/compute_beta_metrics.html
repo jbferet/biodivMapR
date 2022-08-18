@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.6</span>
       </span>
     </div>
 
@@ -93,47 +93,62 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">compute_beta_metrics</span><span class="op">(</span>
-  <span class="va">ClusterMap_Path</span>,
-  <span class="va">MinSun</span>,
-  <span class="va">Nb_Units_Ordin</span>,
-  <span class="va">nb_partitions</span>,
-  <span class="va">nbclusters</span>,
-  <span class="va">pcelim</span>,
-  scaling <span class="op">=</span> <span class="st">"PCO"</span>,
-  nbCPU <span class="op">=</span> <span class="cn">FALSE</span>,
-  MaxRAM <span class="op">=</span> <span class="cn">FALSE</span>,
-  dimMDS <span class="op">=</span> <span class="fl">3</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">compute_beta_metrics</span><span class="op">(</span></span>
+<span>  <span class="va">ClusterMap_Path</span>,</span>
+<span>  <span class="va">MinSun</span>,</span>
+<span>  <span class="va">Nb_Units_Ordin</span>,</span>
+<span>  <span class="va">nb_partitions</span>,</span>
+<span>  <span class="va">nbclusters</span>,</span>
+<span>  <span class="va">pcelim</span>,</span>
+<span>  scaling <span class="op">=</span> <span class="st">"PCO"</span>,</span>
+<span>  nbCPU <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  MaxRAM <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  dimMDS <span class="op">=</span> <span class="fl">3</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>ClusterMap_Path</dt>
 <dd><p>character. File containing spectral species or classes from prior classification</p></dd>
+
+
 <dt>MinSun</dt>
 <dd><p>numeric. minimum proportion of sunlit pixels required to consider plot</p></dd>
+
+
 <dt>Nb_Units_Ordin</dt>
 <dd><p>numeric. maximum number of spatial units to be processed in Ordination</p></dd>
+
+
 <dt>nb_partitions</dt>
 <dd><p>numeric. number of iterations</p></dd>
+
+
 <dt>nbclusters</dt>
 <dd><p>numeric. number of clusters defined in k-Means</p></dd>
+
+
 <dt>pcelim</dt>
 <dd><p>numeric. Minimum contribution in percents required for a spectral species</p></dd>
+
+
 <dt>scaling</dt>
 <dd><p>character. scaling method, PCO or NMDS</p></dd>
+
+
 <dt>nbCPU</dt>
 <dd><p>numeric. Number of CPUs to use in parallel.</p></dd>
+
+
 <dt>MaxRAM</dt>
 <dd><p>numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.</p></dd>
+
+
 <dt>dimMDS</dt>
 <dd><p>numeric. number of dimensions for the scaling.</p></dd>
+
 </dl></div>
-    <div id="value">
-    <h2>Value</h2>
-    
-    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -147,7 +162,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

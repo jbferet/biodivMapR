@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.6</span>
       </span>
     </div>
 
@@ -93,37 +93,52 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">raster2BIL</span><span class="op">(</span>
-  <span class="va">Raster_Path</span>,
-  Sensor <span class="op">=</span> <span class="st">"unknown"</span>,
-  Output_Dir <span class="op">=</span> <span class="cn">FALSE</span>,
-  Convert_Integer <span class="op">=</span> <span class="cn">TRUE</span>,
-  Multiplying_Factor <span class="op">=</span> <span class="fl">1</span>,
-  Multiplying_Factor_Last <span class="op">=</span> <span class="fl">1</span>,
-  Mask <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">raster2BIL</span><span class="op">(</span></span>
+<span>  <span class="va">Raster_Path</span>,</span>
+<span>  Sensor <span class="op">=</span> <span class="st">"unknown"</span>,</span>
+<span>  Output_Dir <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  Convert_Integer <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  Multiplying_Factor <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  Multiplying_Factor_Last <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  Mask <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>Raster_Path</dt>
 <dd><p>character. Full path for the raster to be converted</p></dd>
+
+
 <dt>Sensor</dt>
 <dd><p>character. Name of the sensor. a .hdr template for the sensor should be provided in extdata/HDR</p></dd>
+
+
 <dt>Output_Dir</dt>
 <dd><p>character. Path to output directory.</p></dd>
+
+
 <dt>Convert_Integer</dt>
 <dd><p>boolean. Should data be converted into integer ?</p></dd>
+
+
 <dt>Multiplying_Factor</dt>
 <dd><p>numeric. Multiplying factor (eg convert real reflectance values between 0 and 1 into integer between 0 and 10000).</p></dd>
+
+
 <dt>Multiplying_Factor_Last</dt>
 <dd><p>numeric. Multiplying factor for last band.</p></dd>
+
+
 <dt>Mask</dt>
 <dd><p>boolean is the file a mask file with 0s and 1s only?</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Output_Path path for the image converted into ENVI BIL format</p>
+    
+
+<p>Output_Path path for the image converted into ENVI BIL format</p>
     </div>
 
   </div>
@@ -138,7 +153,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

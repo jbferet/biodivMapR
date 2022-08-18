@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.6</span>
       </span>
     </div>
 
@@ -118,7 +118,7 @@
       <h1 data-toc-skip>Perform spatial &amp; spectral filtering</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2022-06-07</h4>
+            <h4 data-toc-skip class="date">2022-08-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_03.Rmd" class="external-link"><code>vignettes/biodivMapR_03.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_03.Rmd</code></div>
@@ -138,11 +138,11 @@
 </ul>
 <p>The spectral bands corresponding to the Blue, Green and NIR spectral bands can be defined as optional parameters.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"PERFORM RADIOMETRIC FILTERING"</span><span class="op">)</span>
-<span class="va">Input_Mask_File</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/perform_radiometric_filtering.html">perform_radiometric_filtering</a></span><span class="op">(</span>Image_Path <span class="op">=</span> <span class="va">Input_Image_File</span>, Mask_Path <span class="op">=</span> <span class="va">Input_Mask_File</span>,
-                                                 Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,
-                                                 NDVI_Thresh <span class="op">=</span> <span class="va">NDVI_Thresh</span>, Blue_Thresh <span class="op">=</span> <span class="va">Blue_Thresh</span>,
-                                                 NIR_Thresh <span class="op">=</span> <span class="va">NIR_Thresh</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"PERFORM RADIOMETRIC FILTERING"</span><span class="op">)</span></span>
+<span><span class="va">Input_Mask_File</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/perform_radiometric_filtering.html">perform_radiometric_filtering</a></span><span class="op">(</span>Image_Path <span class="op">=</span> <span class="va">Input_Image_File</span>, Mask_Path <span class="op">=</span> <span class="va">Input_Mask_File</span>,</span>
+<span>                                                 Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
+<span>                                                 NDVI_Thresh <span class="op">=</span> <span class="va">NDVI_Thresh</span>, Blue_Thresh <span class="op">=</span> <span class="va">Blue_Thresh</span>,</span>
+<span>                                                 NIR_Thresh <span class="op">=</span> <span class="va">NIR_Thresh</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="produce-a-spectral-filter">Produce a spectral filter<a class="anchor" aria-label="anchor" href="#produce-a-spectral-filter"></a>
@@ -151,10 +151,10 @@
 <p>By default, the spectral domains corresponding to atmospheric water absorption are masked.</p>
 <p>However, these spectral domains can be extended, or included with the variable <code>Excluded_WL</code>, which is an input variable for the function <code>perform_PCA</code>. The default values are the following for the spectral domains to exclude (in nanometers):</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">Excluded_WL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">400</span><span class="op">)</span>
-<span class="va">Excluded_WL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">Excluded_WL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">895</span>, <span class="fl">1005</span><span class="op">)</span><span class="op">)</span>
-<span class="va">Excluded_WL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">Excluded_WL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1180</span>, <span class="fl">1480</span><span class="op">)</span><span class="op">)</span>
-<span class="va">Excluded_WL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">Excluded_WL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1780</span>, <span class="fl">2040</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">Excluded_WL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">400</span><span class="op">)</span></span>
+<span><span class="va">Excluded_WL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">Excluded_WL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">895</span>, <span class="fl">1005</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">Excluded_WL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">Excluded_WL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1180</span>, <span class="fl">1480</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">Excluded_WL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">Excluded_WL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1780</span>, <span class="fl">2040</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><br><br></p>
 <p>The PCA transformation and dimensional reduction are performed in the <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_04.html" target="_blank" class="external-link">next step</a>.</p>
 </div>
@@ -175,7 +175,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.6</span>
       </span>
     </div>
 
@@ -118,7 +118,7 @@
       <h1 data-toc-skip>Spectral species mapping</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2022-06-07</h4>
+            <h4 data-toc-skip class="date">2022-08-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_05.Rmd" class="external-link"><code>vignettes/biodivMapR_05.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_05.Rmd</code></div>
@@ -130,15 +130,15 @@
 <p>The first step towards <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity mapping corresponds to the computation of a <code>SpectralSpecies</code> map, which identifies the cluster (‘spectral species’) assigned to each pixel in the image, after k-means clustering is performed. Most of the input parameters are obtained when running <code>perform_PCA</code>.</p>
 <p>Info about K-means clustering and the path for the spectral species file can be obtained as outputs.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"MAP SPECTRAL SPECIES"</span><span class="op">)</span>
-<span class="va">Kmeans_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/map_spectral_species.html">map_spectral_species</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>,
-                                    PCA_Files <span class="op">=</span> <span class="va">PCA_Files</span>, Input_Mask_File <span class="op">=</span> <span class="va">Input_Mask_File</span>,
-                                    Pix_Per_Partition <span class="op">=</span> <span class="va">Pix_Per_Partition</span>, nb_partitions <span class="op">=</span> <span class="va">nb_partitions</span>,
-                                    nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>, nbclusters <span class="op">=</span> <span class="va">nbclusters</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"MAP SPECTRAL SPECIES"</span><span class="op">)</span></span>
+<span><span class="va">Kmeans_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/map_spectral_species.html">map_spectral_species</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>,</span>
+<span>                                    PCA_Files <span class="op">=</span> <span class="va">PCA_Files</span>, Input_Mask_File <span class="op">=</span> <span class="va">Input_Mask_File</span>,</span>
+<span>                                    Pix_Per_Partition <span class="op">=</span> <span class="va">Pix_Per_Partition</span>, nb_partitions <span class="op">=</span> <span class="va">nb_partitions</span>,</span>
+<span>                                    nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>, nbclusters <span class="op">=</span> <span class="va">nbclusters</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span><span class="op">)</span></span></code></pre></div>
 <p>SpectralSpecies is then stored in a raster file located here:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">Kmeans_info</span><span class="op">$</span><span class="va">SpectralSpecies</span>
-<span class="st">'RESULTS/S2A_T33NUD_20180104_Subset/SPCA/SpectralSpecies'</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">Kmeans_info</span><span class="op">$</span><span class="va">SpectralSpecies</span></span>
+<span><span class="st">'RESULTS/S2A_T33NUD_20180104_Subset/SPCA/SpectralSpecies'</span></span></code></pre></div>
 <p><span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps can then be computed based on this <code>SpectralSpecies</code> raster.</p>
 <p>The computation of <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps is performed in the <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_06.html" target="_blank" class="external-link">next step</a>.</p>
   </div>
@@ -158,7 +158,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.6</span>
       </span>
     </div>
 
@@ -93,31 +93,42 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">VectorInRasterFootprint</span><span class="op">(</span>
-  <span class="va">PathVect</span>,
-  <span class="va">PathRaster</span>,
-  buffer <span class="op">=</span> <span class="cn">NULL</span>,
-  PathVectOut <span class="op">=</span> <span class="cn">NULL</span>,
-  WriteShp <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">VectorInRasterFootprint</span><span class="op">(</span></span>
+<span>  <span class="va">PathVect</span>,</span>
+<span>  <span class="va">PathRaster</span>,</span>
+<span>  buffer <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  PathVectOut <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  WriteShp <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>PathVect</dt>
 <dd><p>character. path for input vector file</p></dd>
+
+
 <dt>PathRaster</dt>
 <dd><p>character. path for a raster file</p></dd>
+
+
 <dt>buffer</dt>
 <dd><p>numeric. buffer to be applied around the original points/polygons, in meters</p></dd>
+
+
 <dt>PathVectOut</dt>
 <dd><p>character. path for output vector file</p></dd>
+
+
 <dt>WriteShp</dt>
 <dd><p>boolean. Set TRUE to write file</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>vectSP list. OGR object corresponding to final vector data</p>
+    
+
+<p>vectSP list. OGR object corresponding to final vector data</p>
     </div>
 
   </div>
@@ -132,7 +143,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.6</span>
       </span>
     </div>
 
@@ -93,23 +93,30 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">extract.big_raster</span><span class="op">(</span><span class="va">ImPath</span>, <span class="va">rowcol</span>, MaxRAM <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">extract.big_raster</span><span class="op">(</span><span class="va">ImPath</span>, <span class="va">rowcol</span>, MaxRAM <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>ImPath</dt>
 <dd><p>character. Path to the image cube</p></dd>
+
+
 <dt>rowcol</dt>
 <dd><p>matrix or data.frame with two columns: row, col.
 If columns are not named, 1st=row, 2nd=col.</p></dd>
+
+
 <dt>MaxRAM</dt>
 <dd><p>numeric. Maximum memory use at block reading.
 It constrains the maximum number rows of a block</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>matrix. Rows are corresponding to the samples, columns are the bands.</p>
+    
+
+<p>matrix. Rows are corresponding to the samples, columns are the bands.</p>
     </div>
 
   </div>
@@ -124,7 +131,7 @@ It constrains the maximum number rows of a block</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

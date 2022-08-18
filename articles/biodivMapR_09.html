@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.6</span>
       </span>
     </div>
 
@@ -118,7 +118,7 @@
       <h1 data-toc-skip>Compute diversity from user-defined set of layers</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2022-06-07</h4>
+            <h4 data-toc-skip class="date">2022-08-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_09.Rmd" class="external-link"><code>vignettes/biodivMapR_09.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_09.Rmd</code></div>
@@ -140,17 +140,17 @@
 <p>Here, the path for the image to be processed is assumed to be defined in the <code>destfile</code> variable defined <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_01.html" target="_blank" class="external-link">previously</a>.</p>
 <p>We will first read it with the <code>raster</code> package, and get the central wavelength corresponding to each spectral band in the file from the <strong>header file</strong>, which is critical for the automated computation of spectral indices.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">prosail</span><span class="op">)</span> <span class="co"># https://jbferet.gitlab.io/prosail/</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">preprocS2</span><span class="op">)</span> <span class="co"># https://jbferet.gitlab.io/preprocs2/</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/stars/" class="external-link">stars</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span>
-<span class="co"># path (absolute or relative) for the image to process</span>
-<span class="va">Input_Image_File</span> <span class="op">&lt;-</span> <span class="va">destfile</span>
-<span class="va">NameRaster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">Input_Image_File</span><span class="op">)</span>
-<span class="co"># path (absolute or relative) for the image to process</span>
-<span class="va">ImBrick</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/brick.html" class="external-link">brick</a></span><span class="op">(</span><span class="va">Input_Image_File</span><span class="op">)</span>
-<span class="va">HDR</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_ENVI_header.html">read_ENVI_header</a></span><span class="op">(</span><span class="fu"><a href="../reference/get_HDR_name.html">get_HDR_name</a></span><span class="op">(</span><span class="va">Input_Image_File</span><span class="op">)</span><span class="op">)</span>
-<span class="va">SensorBands</span> <span class="op">&lt;-</span> <span class="va">HDR</span><span class="op">$</span><span class="va">wavelength</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">prosail</span><span class="op">)</span> <span class="co"># https://jbferet.gitlab.io/prosail/</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">preprocS2</span><span class="op">)</span> <span class="co"># https://jbferet.gitlab.io/preprocs2/</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/stars/" class="external-link">stars</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span></span>
+<span><span class="co"># path (absolute or relative) for the image to process</span></span>
+<span><span class="va">Input_Image_File</span> <span class="op">&lt;-</span> <span class="va">destfile</span></span>
+<span><span class="va">NameRaster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">Input_Image_File</span><span class="op">)</span></span>
+<span><span class="co"># path (absolute or relative) for the image to process</span></span>
+<span><span class="va">ImBrick</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/brick.html" class="external-link">brick</a></span><span class="op">(</span><span class="va">Input_Image_File</span><span class="op">)</span></span>
+<span><span class="va">HDR</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_ENVI_header.html">read_ENVI_header</a></span><span class="op">(</span><span class="fu"><a href="../reference/get_HDR_name.html">get_HDR_name</a></span><span class="op">(</span><span class="va">Input_Image_File</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">SensorBands</span> <span class="op">&lt;-</span> <span class="va">HDR</span><span class="op">$</span><span class="va">wavelength</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="computation-of-spectral-indices-pre-defined-in-prosail">Computation of spectral indices pre-defined in <code>prosail</code><a class="anchor" aria-label="anchor" href="#computation-of-spectral-indices-pre-defined-in-prosail"></a>
@@ -160,18 +160,18 @@
 <p>You can check the expression used to compute them <a href="https://gitlab.com/jbferet/prosail/-/blob/master/R/Lib_SpectralIndices.R" target="_blank" class="external-link">here</a>.</p>
 <p>To obtain the list of spectral indices, and to compute a set of spectral indices from this list, please proceed as follows:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># First define a list of spectral indices</span>
-<span class="va">Sel_Indices</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'mNDVI705'</span>,<span class="st">'CR_SWIR'</span>,<span class="st">'LAI_SAVI'</span><span class="op">)</span>
-<span class="co"># then compute the spectral indices</span>
-<span class="va">Spectral_Indices</span> <span class="op">&lt;-</span> <span class="fu">ComputeSpectralIndices_Raster</span><span class="op">(</span><span class="va">ImBrick</span>, <span class="va">SensorBands</span>, Sel_Indices<span class="op">=</span><span class="va">Sel_Indices</span>, 
-                                                  StackOut<span class="op">=</span><span class="cn">T</span>,ReflFactor <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span>
-<span class="co"># get the name of all spectral indices available</span>
-<span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">Spectral_Indices</span><span class="op">$</span><span class="va">listIndices</span><span class="op">)</span>
-
-<span class="co"># [1] "ARI1" "ARI2" "ARVI" "BAI" "BAIS2" "CHL_RE" "CRI1" "CRI2" "EVI" "EVI2" "GRVI1" "GNDVI" "IRECI" </span>
-<span class="co"># [14] "LAI_SAVI" "MCARI" "mNDVI705" "MSAVI2" "MSI" "mSR705" "MTCI" "nBR_RAW" "NDI_45" "NDII" "NDVI" "NDVI_G" "NDVI705" </span>
-<span class="co"># [27] "NDWI1" "NDWI2" "PSRI" "PSRI_NIR" "RE_NDVI" "RE_NDWI" "S2REP" "SAVI" "SIPI" "SR" "CR_SWIR" </span>
- </code></pre></div>
+<code class="sourceCode R"><span><span class="co"># First define a list of spectral indices</span></span>
+<span><span class="va">Sel_Indices</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'mNDVI705'</span>,<span class="st">'CR_SWIR'</span>,<span class="st">'LAI_SAVI'</span><span class="op">)</span></span>
+<span><span class="co"># then compute the spectral indices</span></span>
+<span><span class="va">Spectral_Indices</span> <span class="op">&lt;-</span> <span class="fu">ComputeSpectralIndices_Raster</span><span class="op">(</span><span class="va">ImBrick</span>, <span class="va">SensorBands</span>, Sel_Indices<span class="op">=</span><span class="va">Sel_Indices</span>, </span>
+<span>                                                  StackOut<span class="op">=</span><span class="cn">T</span>,ReflFactor <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span></span>
+<span><span class="co"># get the name of all spectral indices available</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">Spectral_Indices</span><span class="op">$</span><span class="va">listIndices</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># [1] "ARI1" "ARI2" "ARVI" "BAI" "BAIS2" "CHL_RE" "CRI1" "CRI2" "EVI" "EVI2" "GRVI1" "GNDVI" "IRECI" </span></span>
+<span><span class="co"># [14] "LAI_SAVI" "MCARI" "mNDVI705" "MSAVI2" "MSI" "mSR705" "MTCI" "nBR_RAW" "NDI_45" "NDII" "NDVI" "NDVI_G" "NDVI705" </span></span>
+<span><span class="co"># [27] "NDWI1" "NDWI2" "PSRI" "PSRI_NIR" "RE_NDVI" "RE_NDWI" "S2REP" "SAVI" "SIPI" "SR" "CR_SWIR" </span></span>
+<span> </span></code></pre></div>
 <p><code>ReflFactor</code> is the multiplicative factor applied on the reflectance data. Here Sentinel-2 are distributed in Int16 value types, meaning that the original reflectance was multiplied by 10000. The function then conveerts to standard reflectance values prior to computation of spectral index.</p>
 <ul>
 <li><p>if <code>StackOut=T</code>: a stack of the spectral indices is directly returned in <code>Spectral_Indices$SpectralIndices</code>.</p></li>
@@ -184,24 +184,24 @@
 <p>You may want to be able to compute your own spectral index, if interested in a specific spectral index which is not in the list of pre-defined indices, or if using a sensor which is not Sentinel-2.</p>
 <p>The function <code>ComputeSpectralIndices_fromExpression</code> allows this flexibility, if the spectral index can be expressed as a sufficiently simple expression. Here is an illustration of the computation of the NDVI using this function:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># 1- Define the expression corresponding to the spectral index</span>
-<span class="va">Expression_NDVI</span> <span class="op">&lt;-</span> <span class="st">'(B2-B1)/(B2+B1)'</span>
-<span class="co"># 2- Define the spectral bands corresponding to bands in the spectral index, identified as BXX, with XX the number of the band</span>
-<span class="va">Bands_NDVI</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">Bands_NDVI</span><span class="op">[[</span><span class="st">'B1'</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">665</span>
-<span class="va">Bands_NDVI</span><span class="op">[[</span><span class="st">'B2'</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">835</span>
-<span class="co"># 3- Compute the spectral indices</span>
-<span class="va">NDVI</span> <span class="op">&lt;-</span> <span class="fu">ComputeSpectralIndices_fromExpression</span><span class="op">(</span>Refl <span class="op">=</span> <span class="va">ImBrick</span>, SensorBands <span class="op">=</span> <span class="va">SensorBands</span>, 
-                                               ExpressIndex <span class="op">=</span> <span class="va">Expression_NDVI</span>, listBands <span class="op">=</span> <span class="va">Bands_NDVI</span>, 
-                                               ReflFactor<span class="op">=</span><span class="fl">10000</span>, NameIndex <span class="op">=</span> <span class="st">'NDVI'</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># 1- Define the expression corresponding to the spectral index</span></span>
+<span><span class="va">Expression_NDVI</span> <span class="op">&lt;-</span> <span class="st">'(B2-B1)/(B2+B1)'</span></span>
+<span><span class="co"># 2- Define the spectral bands corresponding to bands in the spectral index, identified as BXX, with XX the number of the band</span></span>
+<span><span class="va">Bands_NDVI</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">Bands_NDVI</span><span class="op">[[</span><span class="st">'B1'</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">665</span></span>
+<span><span class="va">Bands_NDVI</span><span class="op">[[</span><span class="st">'B2'</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">835</span></span>
+<span><span class="co"># 3- Compute the spectral indices</span></span>
+<span><span class="va">NDVI</span> <span class="op">&lt;-</span> <span class="fu">ComputeSpectralIndices_fromExpression</span><span class="op">(</span>Refl <span class="op">=</span> <span class="va">ImBrick</span>, SensorBands <span class="op">=</span> <span class="va">SensorBands</span>, </span>
+<span>                                               ExpressIndex <span class="op">=</span> <span class="va">Expression_NDVI</span>, listBands <span class="op">=</span> <span class="va">Bands_NDVI</span>, </span>
+<span>                                               ReflFactor<span class="op">=</span><span class="fl">10000</span>, NameIndex <span class="op">=</span> <span class="st">'NDVI'</span><span class="op">)</span></span></code></pre></div>
 <p>The same results should be obtained as when using pre-defined NDVI, with a correlation of 1.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># First define a list of spectral indices</span>
-<span class="va">Index</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'NDVI'</span><span class="op">)</span>
-<span class="co"># then compute the spectral indices</span>
-<span class="va">NDVI_Precomp</span> <span class="op">&lt;-</span> <span class="fu">ComputeSpectralIndices_Raster</span><span class="op">(</span><span class="va">ImBrick</span>, <span class="va">SensorBands</span>, Sel_Indices<span class="op">=</span><span class="va">Index</span>, 
-                                                  StackOut<span class="op">=</span><span class="cn">F</span>,ReflFactor <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/stats/cor.test.html" class="external-link">cor.test</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getValues.html" class="external-link">values</a></span><span class="op">(</span><span class="va">NDVI</span><span class="op">)</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getValues.html" class="external-link">values</a></span><span class="op">(</span><span class="va">NDVI_Precomp</span><span class="op">$</span><span class="va">SpectralIndices</span><span class="op">$</span><span class="va">NDVI</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># First define a list of spectral indices</span></span>
+<span><span class="va">Index</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'NDVI'</span><span class="op">)</span></span>
+<span><span class="co"># then compute the spectral indices</span></span>
+<span><span class="va">NDVI_Precomp</span> <span class="op">&lt;-</span> <span class="fu">ComputeSpectralIndices_Raster</span><span class="op">(</span><span class="va">ImBrick</span>, <span class="va">SensorBands</span>, Sel_Indices<span class="op">=</span><span class="va">Index</span>, </span>
+<span>                                                  StackOut<span class="op">=</span><span class="cn">F</span>,ReflFactor <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/cor.test.html" class="external-link">cor.test</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">NDVI</span><span class="op">)</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">NDVI_Precomp</span><span class="op">$</span><span class="va">SpectralIndices</span><span class="op">$</span><span class="va">NDVI</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -215,31 +215,31 @@
 <h3 id="mask-data-from-spectral-indices-and-apply-the-mask-on-spectral-indices">Mask data from spectral indices and apply the mask on spectral indices<a class="anchor" aria-label="anchor" href="#mask-data-from-spectral-indices-and-apply-the-mask-on-spectral-indices"></a>
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># initialize mask</span>
-<span class="va">Mask</span> <span class="op">&lt;-</span> <span class="fl">0</span><span class="op">*</span><span class="va">Spectral_Indices</span><span class="op">$</span><span class="va">SpectralIndices</span><span class="op">$</span><span class="va">mNDVI705</span><span class="op">+</span><span class="fl">1</span>
-<span class="co"># remove outliers from spectral indices</span>
-<span class="kw">for</span> <span class="op">(</span><span class="va">idx</span> <span class="kw">in</span> <span class="va">Sel_Indices</span><span class="op">)</span><span class="op">{</span>
-  <span class="va">rast</span> <span class="op">&lt;-</span> <span class="va">Spectral_Indices</span><span class="op">$</span><span class="va">SpectralIndices</span><span class="op">[[</span><span class="va">idx</span><span class="op">]</span><span class="op">]</span>
-  <span class="va">IQRminmax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/IQR_outliers.html">IQR_outliers</a></span><span class="op">(</span>DistVal <span class="op">=</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getValues.html" class="external-link">values</a></span><span class="op">(</span><span class="va">rast</span><span class="op">)</span>,weightIRQ <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
-  <span class="va">Mask</span><span class="op">[</span><span class="va">rast</span><span class="op">&lt;</span><span class="va">IQRminmax</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">|</span> <span class="va">rast</span><span class="op">&gt;</span><span class="va">IQRminmax</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span>
-<span class="op">}</span>
-<span class="co"># apply mask on stack and convert as stars object</span>
-<span class="va">StarsObj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_as_stars.html" class="external-link">st_as_stars</a></span><span class="op">(</span><span class="va">Spectral_Indices</span><span class="op">$</span><span class="va">SpectralIndices</span><span class="op">*</span><span class="va">Mask</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># initialize mask</span></span>
+<span><span class="va">Mask</span> <span class="op">&lt;-</span> <span class="fl">0</span><span class="op">*</span><span class="va">Spectral_Indices</span><span class="op">$</span><span class="va">SpectralIndices</span><span class="op">$</span><span class="va">mNDVI705</span><span class="op">+</span><span class="fl">1</span></span>
+<span><span class="co"># remove outliers from spectral indices</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">idx</span> <span class="kw">in</span> <span class="va">Sel_Indices</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">rast</span> <span class="op">&lt;-</span> <span class="va">Spectral_Indices</span><span class="op">$</span><span class="va">SpectralIndices</span><span class="op">[[</span><span class="va">idx</span><span class="op">]</span><span class="op">]</span></span>
+<span>  <span class="va">IQRminmax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/IQR_outliers.html">IQR_outliers</a></span><span class="op">(</span>DistVal <span class="op">=</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">rast</span><span class="op">)</span>,weightIRQ <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span>  <span class="va">Mask</span><span class="op">[</span><span class="va">rast</span><span class="op">&lt;</span><span class="va">IQRminmax</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">|</span> <span class="va">rast</span><span class="op">&gt;</span><span class="va">IQRminmax</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co"># apply mask on stack and convert as stars object</span></span>
+<span><span class="va">StarsObj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_as_stars.html" class="external-link">st_as_stars</a></span><span class="op">(</span><span class="va">Spectral_Indices</span><span class="op">$</span><span class="va">SpectralIndices</span><span class="op">*</span><span class="va">Mask</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="save-mask-file-and-spectral-indices-as-raster-stack">Save Mask file and spectral indices as raster stack<a class="anchor" aria-label="anchor" href="#save-mask-file-and-spectral-indices-as-raster-stack"></a>
 </h3>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># define path where to store spectral indices (same as root path for biodivMapR output directory)</span>
-<span class="va">NameStack</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">NameRaster</span>,<span class="st">'_StackIndices'</span>,sep <span class="op">=</span> <span class="st">''</span><span class="op">)</span>
-<span class="va">PathIndices</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">Output_Dir</span>,<span class="va">NameStack</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">PathIndices</span>,recursive <span class="op">=</span> <span class="cn">T</span>,showWarnings <span class="op">=</span> <span class="cn">F</span><span class="op">)</span>
-<span class="co"># save mask in raster file</span>
-<span class="va">Input_Mask_File</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">PathIndices</span>,<span class="st">'Mask'</span><span class="op">)</span>
-<span class="fu">stars</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/stars/reference/write_stars.html" class="external-link">write_stars</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_as_stars.html" class="external-link">st_as_stars</a></span><span class="op">(</span><span class="va">Mask</span><span class="op">)</span>, dsn<span class="op">=</span><span class="va">Input_Mask_File</span>, driver <span class="op">=</span>  <span class="st">"ENVI"</span>,type<span class="op">=</span><span class="st">'Byte'</span><span class="op">)</span>
-<span class="co"># save Stack of spectral indices in raster file with spectral indices defining band names</span>
-<span class="va">Path_StackIndices</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">PathIndices</span>,<span class="va">NameStack</span><span class="op">)</span>
-<span class="fu"><a href="../reference/write_StarsStack.html">write_StarsStack</a></span><span class="op">(</span>StarsObj <span class="op">=</span> <span class="va">StarsObj</span>, dsn <span class="op">=</span> <span class="va">Path_StackIndices</span>, Bands<span class="op">=</span><span class="va">Sel_Indices</span>, datatype<span class="op">=</span><span class="st">'Float32'</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># define path where to store spectral indices (same as root path for biodivMapR output directory)</span></span>
+<span><span class="va">NameStack</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">NameRaster</span>,<span class="st">'_StackIndices'</span>,sep <span class="op">=</span> <span class="st">''</span><span class="op">)</span></span>
+<span><span class="va">PathIndices</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">Output_Dir</span>,<span class="va">NameStack</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">PathIndices</span>,recursive <span class="op">=</span> <span class="cn">T</span>,showWarnings <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span>
+<span><span class="co"># save mask in raster file</span></span>
+<span><span class="va">Input_Mask_File</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">PathIndices</span>,<span class="st">'Mask'</span><span class="op">)</span></span>
+<span><span class="fu">stars</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/stars/reference/write_stars.html" class="external-link">write_stars</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_as_stars.html" class="external-link">st_as_stars</a></span><span class="op">(</span><span class="va">Mask</span><span class="op">)</span>, dsn<span class="op">=</span><span class="va">Input_Mask_File</span>, driver <span class="op">=</span>  <span class="st">"ENVI"</span>,type<span class="op">=</span><span class="st">'Byte'</span><span class="op">)</span></span>
+<span><span class="co"># save Stack of spectral indices in raster file with spectral indices defining band names</span></span>
+<span><span class="va">Path_StackIndices</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">PathIndices</span>,<span class="va">NameStack</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/write_StarsStack.html">write_StarsStack</a></span><span class="op">(</span>StarsObj <span class="op">=</span> <span class="va">StarsObj</span>, dsn <span class="op">=</span> <span class="va">Path_StackIndices</span>, Bands<span class="op">=</span><span class="va">Sel_Indices</span>, datatype<span class="op">=</span><span class="st">'Float32'</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -249,63 +249,63 @@
 <h3 id="set-parameters-for-biodivmapr">Set parameters for biodivMapR<a class="anchor" aria-label="anchor" href="#set-parameters-for-biodivmapr"></a>
 </h3>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># see additional information here</span>
-<span class="co"># https://jbferet.github.io/biodivMapR/articles/biodivMapR_02.html</span>
-
-<span class="co"># Define path for original image file to be processed</span>
-<span class="va">Input_SIstack_File</span> <span class="op">&lt;-</span> <span class="va">Path_StackIndices</span>
-<span class="co"># trick to define the same directory as PathIndices defined in previous chunk</span>
-<span class="va">TypePCA</span> <span class="op">&lt;-</span> <span class="st">'noPCA'</span>
-<span class="co"># Define path for master output directory where files produced during the process are saved </span>
-<span class="va">Output_Dir</span> <span class="op">&lt;-</span> <span class="st">'../RESULTS'</span>
-<span class="co"># window size forcomputation of spectral diversity</span>
-<span class="va">window_size</span> <span class="op">&lt;-</span> <span class="fl">10</span>
-<span class="co"># computational parameters</span>
-<span class="va">nbCPU</span> <span class="op">&lt;-</span> <span class="fl">4</span>
-<span class="va">MaxRAM</span> <span class="op">&lt;-</span> <span class="fl">0.5</span>
-<span class="co"># number of clusters (spectral species)</span>
-<span class="va">nbclusters</span> <span class="op">&lt;-</span> <span class="fl">50</span>
-
-<span class="co"># use 10% of image to sample pixels and partition it in 20 runs of kmeans</span>
-<span class="va">NbPix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">Mask</span><span class="op">[</span>,,,<span class="fl">1</span><span class="op">]</span>,na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
-<span class="va">nb_partitions</span> <span class="op">&lt;-</span> <span class="fl">20</span>
-<span class="va">Pix_Per_Partition</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">*</span><span class="va">NbPix</span><span class="op">/</span><span class="va">nb_partitions</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># see additional information here</span></span>
+<span><span class="co"># https://jbferet.github.io/biodivMapR/articles/biodivMapR_02.html</span></span>
+<span></span>
+<span><span class="co"># Define path for original image file to be processed</span></span>
+<span><span class="va">Input_SIstack_File</span> <span class="op">&lt;-</span> <span class="va">Path_StackIndices</span></span>
+<span><span class="co"># trick to define the same directory as PathIndices defined in previous chunk</span></span>
+<span><span class="va">TypePCA</span> <span class="op">&lt;-</span> <span class="st">'noPCA'</span></span>
+<span><span class="co"># Define path for master output directory where files produced during the process are saved </span></span>
+<span><span class="va">Output_Dir</span> <span class="op">&lt;-</span> <span class="st">'../RESULTS'</span></span>
+<span><span class="co"># window size forcomputation of spectral diversity</span></span>
+<span><span class="va">window_size</span> <span class="op">&lt;-</span> <span class="fl">10</span></span>
+<span><span class="co"># computational parameters</span></span>
+<span><span class="va">nbCPU</span> <span class="op">&lt;-</span> <span class="fl">4</span></span>
+<span><span class="va">MaxRAM</span> <span class="op">&lt;-</span> <span class="fl">0.5</span></span>
+<span><span class="co"># number of clusters (spectral species)</span></span>
+<span><span class="va">nbclusters</span> <span class="op">&lt;-</span> <span class="fl">50</span></span>
+<span></span>
+<span><span class="co"># use 10% of image to sample pixels and partition it in 20 runs of kmeans</span></span>
+<span><span class="va">NbPix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">Mask</span><span class="op">[</span>,,,<span class="fl">1</span><span class="op">]</span>,na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span><span class="va">nb_partitions</span> <span class="op">&lt;-</span> <span class="fl">20</span></span>
+<span><span class="va">Pix_Per_Partition</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">*</span><span class="va">NbPix</span><span class="op">/</span><span class="va">nb_partitions</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="perform-spectral-species-mapping">Perform Spectral species mapping<a class="anchor" aria-label="anchor" href="#perform-spectral-species-mapping"></a>
 </h3>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># https://jbferet.github.io/biodivMapR/articles/biodivMapR_05.html</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"MAP SPECTRAL SPECIES"</span><span class="op">)</span>
-<span class="co"># select all spectral indices</span>
-<span class="va">SelectedPCs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fu"><a href="https://rdrr.io/pkg/raster/man/dimensions.html" class="external-link">dim</a></span><span class="op">(</span><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html" class="external-link">stack</a></span><span class="op">(</span><span class="va">Input_SIstack_File</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span>
-<span class="va">Kmeans_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/map_spectral_species.html">map_spectral_species</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_SIstack_File</span>, Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, SelectedPCs <span class="op">=</span> <span class="va">SelectedPCs</span>,
-                                    PCA_Files <span class="op">=</span> <span class="va">Input_SIstack_File</span>, Input_Mask_File <span class="op">=</span> <span class="va">Input_Mask_File</span>,
-                                    Pix_Per_Partition <span class="op">=</span> <span class="va">Pix_Per_Partition</span>, nb_partitions <span class="op">=</span> <span class="va">nb_partitions</span>,
-                                    nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>, nbclusters <span class="op">=</span> <span class="va">nbclusters</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># https://jbferet.github.io/biodivMapR/articles/biodivMapR_05.html</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"MAP SPECTRAL SPECIES"</span><span class="op">)</span></span>
+<span><span class="co"># select all spectral indices</span></span>
+<span><span class="va">SelectedPCs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html" class="external-link">stack</a></span><span class="op">(</span><span class="va">Input_SIstack_File</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">Kmeans_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/map_spectral_species.html">map_spectral_species</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_SIstack_File</span>, Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, SelectedPCs <span class="op">=</span> <span class="va">SelectedPCs</span>,</span>
+<span>                                    PCA_Files <span class="op">=</span> <span class="va">Input_SIstack_File</span>, Input_Mask_File <span class="op">=</span> <span class="va">Input_Mask_File</span>,</span>
+<span>                                    Pix_Per_Partition <span class="op">=</span> <span class="va">Pix_Per_Partition</span>, nb_partitions <span class="op">=</span> <span class="va">nb_partitions</span>,</span>
+<span>                                    nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>, nbclusters <span class="op">=</span> <span class="va">nbclusters</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="map-diversity-indices">Map diversity indices<a class="anchor" aria-label="anchor" href="#map-diversity-indices"></a>
 </h3>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># https://jbferet.github.io/biodivMapR/articles/biodivMapR_06.html</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"MAP ALPHA DIVERSITY"</span><span class="op">)</span>
-<span class="va">Index_Alpha</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Shannon'</span><span class="op">)</span>
-<span class="fu"><a href="../reference/map_alpha_div.html">map_alpha_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_SIstack_File</span>, Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,
-              window_size <span class="op">=</span> <span class="va">window_size</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,
-              Index_Alpha <span class="op">=</span> <span class="va">Index_Alpha</span>, nbclusters <span class="op">=</span> <span class="va">nbclusters</span>,LowRes <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"MAP BETA DIVERSITY"</span><span class="op">)</span>
-<span class="fu"><a href="../reference/map_beta_div.html">map_beta_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_SIstack_File</span>, Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,
-             window_size <span class="op">=</span> <span class="va">window_size</span>, nb_partitions<span class="op">=</span><span class="va">nb_partitions</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,
-             nbclusters <span class="op">=</span> <span class="va">nbclusters</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"MAP FUNCTIONAL DIVERSITY"</span><span class="op">)</span>
-<span class="co"># https://jbferet.github.io/biodivMapR/articles/biodivMapR_7.html</span>
-<span class="co"># Villeger et al, 2008 https://doi.org/10.1890/07-1206.1</span>
-<span class="fu"><a href="../reference/map_functional_div.html">map_functional_div</a></span><span class="op">(</span>Original_Image_File <span class="op">=</span> <span class="va">Input_SIstack_File</span>, Functional_File <span class="op">=</span> <span class="va">Input_SIstack_File</span>,
-                   Selected_Features <span class="op">=</span> <span class="va">SelectedPCs</span>, Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>,
-                   window_size <span class="op">=</span> <span class="va">window_size</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,TypePCA <span class="op">=</span> <span class="va">TypePCA</span>, LowRes <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># https://jbferet.github.io/biodivMapR/articles/biodivMapR_06.html</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"MAP ALPHA DIVERSITY"</span><span class="op">)</span></span>
+<span><span class="va">Index_Alpha</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Shannon'</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/map_alpha_div.html">map_alpha_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_SIstack_File</span>, Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
+<span>              window_size <span class="op">=</span> <span class="va">window_size</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,</span>
+<span>              Index_Alpha <span class="op">=</span> <span class="va">Index_Alpha</span>, nbclusters <span class="op">=</span> <span class="va">nbclusters</span>,LowRes <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"MAP BETA DIVERSITY"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/map_beta_div.html">map_beta_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_SIstack_File</span>, Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
+<span>             window_size <span class="op">=</span> <span class="va">window_size</span>, nb_partitions<span class="op">=</span><span class="va">nb_partitions</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,</span>
+<span>             nbclusters <span class="op">=</span> <span class="va">nbclusters</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"MAP FUNCTIONAL DIVERSITY"</span><span class="op">)</span></span>
+<span><span class="co"># https://jbferet.github.io/biodivMapR/articles/biodivMapR_7.html</span></span>
+<span><span class="co"># Villeger et al, 2008 https://doi.org/10.1890/07-1206.1</span></span>
+<span><span class="fu"><a href="../reference/map_functional_div.html">map_functional_div</a></span><span class="op">(</span>Original_Image_File <span class="op">=</span> <span class="va">Input_SIstack_File</span>, Functional_File <span class="op">=</span> <span class="va">Input_SIstack_File</span>,</span>
+<span>                   Selected_Features <span class="op">=</span> <span class="va">SelectedPCs</span>, Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>,</span>
+<span>                   window_size <span class="op">=</span> <span class="va">window_size</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,TypePCA <span class="op">=</span> <span class="va">TypePCA</span>, LowRes <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="perform-validation-based-on-a-vectorized-plot-network">Perform validation based on a vectorized plot network<a class="anchor" aria-label="anchor" href="#perform-validation-based-on-a-vectorized-plot-network"></a>
@@ -332,7 +332,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.6</span>
       </span>
     </div>
 
@@ -93,67 +93,100 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">map_beta_div</span><span class="op">(</span>
-  Input_Image_File <span class="op">=</span> <span class="cn">FALSE</span>,
-  Output_Dir <span class="op">=</span> <span class="st">""</span>,
-  window_size <span class="op">=</span> <span class="fl">10</span>,
-  TypePCA <span class="op">=</span> <span class="st">"SPCA"</span>,
-  nb_partitions <span class="op">=</span> <span class="fl">20</span>,
-  nbclusters <span class="op">=</span> <span class="fl">50</span>,
-  Nb_Units_Ordin <span class="op">=</span> <span class="fl">2000</span>,
-  MinSun <span class="op">=</span> <span class="fl">0.25</span>,
-  pcelim <span class="op">=</span> <span class="fl">0</span>,
-  scaling <span class="op">=</span> <span class="st">"PCO"</span>,
-  FullRes <span class="op">=</span> <span class="cn">TRUE</span>,
-  LowRes <span class="op">=</span> <span class="cn">FALSE</span>,
-  nbCPU <span class="op">=</span> <span class="fl">1</span>,
-  MaxRAM <span class="op">=</span> <span class="fl">0.25</span>,
-  ClassifMap <span class="op">=</span> <span class="cn">FALSE</span>,
-  dimMDS <span class="op">=</span> <span class="fl">3</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">map_beta_div</span><span class="op">(</span></span>
+<span>  Input_Image_File <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  Output_Dir <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  window_size <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  TypePCA <span class="op">=</span> <span class="st">"SPCA"</span>,</span>
+<span>  nb_partitions <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  nbclusters <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>  Nb_Units_Ordin <span class="op">=</span> <span class="fl">2000</span>,</span>
+<span>  MinSun <span class="op">=</span> <span class="fl">0.25</span>,</span>
+<span>  pcelim <span class="op">=</span> <span class="fl">0.02</span>,</span>
+<span>  scaling <span class="op">=</span> <span class="st">"PCO"</span>,</span>
+<span>  FullRes <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  LowRes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  nbCPU <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  MaxRAM <span class="op">=</span> <span class="fl">0.25</span>,</span>
+<span>  ClassifMap <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  dimMDS <span class="op">=</span> <span class="fl">3</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>Input_Image_File</dt>
 <dd><p>character. Path and name of the image to be processed.</p></dd>
+
+
 <dt>Output_Dir</dt>
 <dd><p>character. Output directory.</p></dd>
+
+
 <dt>window_size</dt>
 <dd><p>numeric. Dimensions of the spatial unit.</p></dd>
+
+
 <dt>TypePCA</dt>
 <dd><p>character. Type of PCA (PCA, SPCA, NLPCA...).</p></dd>
+
+
 <dt>nb_partitions</dt>
 <dd><p>numeric. Number of partitions (repetitions) to be computed then averaged.</p></dd>
+
+
 <dt>nbclusters</dt>
 <dd><p>numeric. Number of clusters defined in k-Means.</p></dd>
+
+
 <dt>Nb_Units_Ordin</dt>
 <dd><p>numeric. Maximum number of spatial units to be processed in NMDS.
 --&gt; 1000 will be fast but may not capture important patterns if large area
 --&gt; 4000 will be slow but may show better ability to capture landscape patterns</p></dd>
+
+
 <dt>MinSun</dt>
 <dd><p>numeric. Minimum proportion of sunlit pixels required to consider plot.</p></dd>
+
+
 <dt>pcelim</dt>
 <dd><p>numeric. Minimum contribution in percent required for a spectral species.</p></dd>
+
+
 <dt>scaling</dt>
 <dd><p>character. PCO or NMDS</p></dd>
+
+
 <dt>FullRes</dt>
 <dd><p>boolean.</p></dd>
+
+
 <dt>LowRes</dt>
 <dd><p>boolean.</p></dd>
+
+
 <dt>nbCPU</dt>
 <dd><p>numeric. Number of CPUs to use in parallel.</p></dd>
+
+
 <dt>MaxRAM</dt>
 <dd><p>numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.</p></dd>
+
+
 <dt>ClassifMap</dt>
 <dd><p>character. If FALSE, perform standard biodivMapR based on SpectralSpecies.
 else corresponds to path for a classification map.</p></dd>
+
+
 <dt>dimMDS</dt>
 <dd><p>numeric. number of dimensions for the scaling.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>PCoA_model</p>
+    
+
+<p>PCoA_model</p>
     </div>
 
   </div>
@@ -168,7 +201,7 @@ else corresponds to path for a classification map.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

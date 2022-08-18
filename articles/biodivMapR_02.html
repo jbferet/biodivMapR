@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.6</span>
       </span>
     </div>
 
@@ -118,7 +118,7 @@
       <h1 data-toc-skip>Set parameters for biodivMapR</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2022-06-07</h4>
+            <h4 data-toc-skip class="date">2022-08-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_02.Rmd" class="external-link"><code>vignettes/biodivMapR_02.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_02.Rmd</code></div>
@@ -134,7 +134,7 @@
 <p>First, let’s define the (absolute or relative) path to the image file to be processed.</p>
 <p>Here we are using the image downloaded during the first step of the tutorial. The raster file systematically needs to pair with a <strong>.hdr</strong> file which will be automatically identified.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">Input_Image_File</span> <span class="op">&lt;-</span> <span class="va">destfile</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">Input_Image_File</span> <span class="op">&lt;-</span> <span class="va">destfile</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="mask-corresponding-to-the-image">Mask corresponding to the image<a class="anchor" aria-label="anchor" href="#mask-corresponding-to-the-image"></a>
@@ -149,8 +149,8 @@
 </ul>
 <p>If possible, the mask should be written in ENVI HDR format, with 1 band and values coded in integer 8bits.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Set to FALSE if no mask available</span>
-<span class="va">Input_Mask_File</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Set to FALSE if no mask available</span></span>
+<span><span class="va">Input_Mask_File</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="definition-of-an-output-directory">Definition of an output directory<a class="anchor" aria-label="anchor" href="#definition-of-an-output-directory"></a>
@@ -160,7 +160,7 @@
 <p>A sub directory named after the name of the image processed is automatically created in this main output directory, in order to facilitate identification of the results corresponding to a given image.</p>
 <p>If the same image is processed with different parameter settings, some files may be overwritten.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">Output_Dir</span> <span class="op">&lt;-</span> <span class="st">'../RESULTS'</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">Output_Dir</span> <span class="op">&lt;-</span> <span class="st">'../RESULTS'</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="radiometric-filterings">Radiometric filterings<a class="anchor" aria-label="anchor" href="#radiometric-filterings"></a>
@@ -173,9 +173,9 @@
 </ul>
 <p>__These radiometric filters are very basic filters and should not replace algorthms dedicated to the detection of cloud/shade/non-vegetated pixels.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">NDVI_Thresh</span> <span class="op">&lt;-</span> <span class="fl">0.5</span>
-<span class="va">Blue_Thresh</span> <span class="op">&lt;-</span> <span class="fl">500</span>
-<span class="va">NIR_Thresh</span> <span class="op">&lt;-</span> <span class="fl">1500</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">NDVI_Thresh</span> <span class="op">&lt;-</span> <span class="fl">0.5</span></span>
+<span><span class="va">Blue_Thresh</span> <span class="op">&lt;-</span> <span class="fl">500</span></span>
+<span><span class="va">NIR_Thresh</span> <span class="op">&lt;-</span> <span class="fl">1500</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="normalization-of-reflectance-data">Normalization of reflectance data<a class="anchor" aria-label="anchor" href="#normalization-of-reflectance-data"></a>
@@ -183,7 +183,7 @@
 <p><strong>Continuum Removal</strong>, a normalization procedure, is available when working with reflectance data. This procedure eliminates multiplicative effects, and proved to be relatively efficient in decreasing the effect of changes in illumination within individual tree crowns, when using high spatial resolution imaging spectroscopy over tropical forests.</p>
 <p><strong>Continuum Removal</strong> is recommended when processing high spatial resolution (spatial resolutionc <span class="math inline">\(\leq\)</span> 10 m) multi and hyperspectral data.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">Continuum_Removal</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">Continuum_Removal</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="transformation-of-reflectance-and-dimensionality-reduction">Transformation of reflectance and dimensionality reduction<a class="anchor" aria-label="anchor" href="#transformation-of-reflectance-and-dimensionality-reduction"></a>
@@ -196,7 +196,7 @@
 </ul>
 <p>These transformations will be followed by component selection in order to perform dimensionality reduction.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">TypePCA</span> <span class="op">&lt;-</span> <span class="st">'SPCA'</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">TypePCA</span> <span class="op">&lt;-</span> <span class="st">'SPCA'</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="filtering-outliers-in-pca">Filtering outliers in PCA<a class="anchor" aria-label="anchor" href="#filtering-outliers-in-pca"></a>
@@ -204,10 +204,10 @@
 <p>An additional filtering step can be performed, based on the detection of outliers in components of the PCA. This strategy is computationally more demanding and significantly longer. However, this outlier detection may be useful to mask pixels including residual effect of atmosphere, or outliers which may not be relevant to include in the process of computation of spectral variation.</p>
 <p>This PCA filtering can be performed by setting a unique parameter, <code>FilterPCA</code>, to <code>TRUE</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># PCA FILTERING:        Set to TRUE if you want second filtering based on PCA outliers to be processed.</span>
-<span class="co"># Slower process</span>
-<span class="co"># Automatically set to FALSE if TypePCA     = 'MNF'</span>
-<span class="va">FilterPCA</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># PCA FILTERING:        Set to TRUE if you want second filtering based on PCA outliers to be processed.</span></span>
+<span><span class="co"># Slower process</span></span>
+<span><span class="co"># Automatically set to FALSE if TypePCA     = 'MNF'</span></span>
+<span><span class="va">FilterPCA</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="definition-of-window-size-for-computation-of-spectral-diversity">Definition of window size for computation of spectral diversity<a class="anchor" aria-label="anchor" href="#definition-of-window-size-for-computation-of-spectral-diversity"></a>
@@ -218,7 +218,7 @@
 <p>In forested ecosystems, window size between 0.25 and 4 ha usually match with ground data and correspond to a fair compromise. However, this would need to be adapted to specific situations.</p>
 <p>If the value of window_size is too low, this will result in low number of pixels per spatial unit, hence limited range of variation of diversity in the image.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">window_size</span> <span class="op">&lt;-</span> <span class="fl">10</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">window_size</span> <span class="op">&lt;-</span> <span class="fl">10</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="optimization-of-computational-resource">Optimization of computational resource<a class="anchor" aria-label="anchor" href="#optimization-of-computational-resource"></a>
@@ -229,8 +229,8 @@
 <li><p><code>MaxRAM</code> corresponds to the maximum size of file chunk of loaded in the RAM when processing the image. <strong>WARNING</strong>: this does not corresponds to the maximum amount of RAM needed for data processing. Once a chunk of file is written, its processing may require several time this amount of RAM to perfom different processing steps. <code>MaxRAM &lt;- 0.5</code> is reasonable when processing a 2Gb raster on a personal computer with 16Gb RAM. However, larger values of <code>MaxRAM</code> may rapidly require larger amount of RAM.</p></li>
 </ul>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">nbCPU</span> <span class="op">&lt;-</span> <span class="fl">4</span>
-<span class="va">MaxRAM</span> <span class="op">&lt;-</span> <span class="fl">0.5</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">nbCPU</span> <span class="op">&lt;-</span> <span class="fl">4</span></span>
+<span><span class="va">MaxRAM</span> <span class="op">&lt;-</span> <span class="fl">0.5</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="number-of-spectral-species">Number of spectral species<a class="anchor" aria-label="anchor" href="#number-of-spectral-species"></a>
@@ -238,7 +238,7 @@
 <p>The main spectral diversity metrics computed by <code>biodivMapR</code> are based on a clustering of normalized &amp; dimensionality reduced image. Following this clustering, a cluster ID is assigned to each pixel, corresponding to the <strong>‘spectral species’</strong> defined in the original publication.</p>
 <p>The number of clusters is defined by the value of <code>nbclusters</code>.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">nbclusters</span> <span class="op">&lt;-</span> <span class="fl">50</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">nbclusters</span> <span class="op">&lt;-</span> <span class="fl">50</span></span></code></pre></div>
 <p><br><br></p>
 <p>Once parameterization has been set, the image processing can start, first with an optional <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_03.html" target="_blank" class="external-link">radiometric filtering</a>.</p>
 </div>
@@ -259,7 +259,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

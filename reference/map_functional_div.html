@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.6</span>
       </span>
     </div>
 
@@ -93,56 +93,83 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">map_functional_div</span><span class="op">(</span>
-  <span class="va">Original_Image_File</span>,
-  Functional_File <span class="op">=</span> <span class="cn">FALSE</span>,
-  Selected_Features <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">Output_Dir</span>,
-  <span class="va">window_size</span>,
-  TypePCA <span class="op">=</span> <span class="st">"SPCA"</span>,
-  MinSun <span class="op">=</span> <span class="fl">0.25</span>,
-  FullRes <span class="op">=</span> <span class="cn">TRUE</span>,
-  LowRes <span class="op">=</span> <span class="cn">FALSE</span>,
-  MapSTD <span class="op">=</span> <span class="cn">FALSE</span>,
-  nbCPU <span class="op">=</span> <span class="cn">FALSE</span>,
-  MaxRAM <span class="op">=</span> <span class="cn">FALSE</span>,
-  SmoothImage <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">map_functional_div</span><span class="op">(</span></span>
+<span>  <span class="va">Original_Image_File</span>,</span>
+<span>  Functional_File <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  Selected_Features <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">Output_Dir</span>,</span>
+<span>  <span class="va">window_size</span>,</span>
+<span>  TypePCA <span class="op">=</span> <span class="st">"SPCA"</span>,</span>
+<span>  MinSun <span class="op">=</span> <span class="fl">0.25</span>,</span>
+<span>  FullRes <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  LowRes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  MapSTD <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  nbCPU <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  MaxRAM <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  SmoothImage <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>Original_Image_File</dt>
 <dd><p>character. Path and name of the original input image for biodivMapR.</p></dd>
+
+
 <dt>Functional_File</dt>
 <dd><p>character. Path and name of the image processed to be used to compute functional diversity
 --&gt; can be PCA file with. if FALSE: using Original_Image_File</p></dd>
+
+
 <dt>Selected_Features</dt>
 <dd><p>numeric. Contains features to be used from Input_Image_File. using all if FALSE</p></dd>
+
+
 <dt>Output_Dir</dt>
 <dd><p>character. Output directory.</p></dd>
+
+
 <dt>window_size</dt>
 <dd><p>numeric. Size of spatial units (in pixels) to compute diversity.</p></dd>
+
+
 <dt>TypePCA</dt>
 <dd><p>character. Type of PCA (PCA, SPCA, NLPCA...).</p></dd>
+
+
 <dt>MinSun</dt>
 <dd><p>numeric. Minimum proportion of sunlit pixels required to consider plot.</p></dd>
+
+
 <dt>FullRes</dt>
 <dd><p>boolean. Full resolution.</p></dd>
+
+
 <dt>LowRes</dt>
 <dd><p>boolean. Low resolution.</p></dd>
+
+
 <dt>MapSTD</dt>
 <dd><p>boolean. map of standard deviation of the alpha diversity map (over repetitions)</p></dd>
+
+
 <dt>nbCPU</dt>
 <dd><p>numeric. Number of CPUs to use in parallel.</p></dd>
+
+
 <dt>MaxRAM</dt>
 <dd><p>numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.</p></dd>
+
+
 <dt>SmoothImage</dt>
 <dd><p>boolean. set TRUE if you want smooting filter applied to resulting diversity rasters</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>None</p>
+    
+
+<p>None</p>
     </div>
 
   </div>
@@ -157,7 +184,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

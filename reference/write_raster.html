@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.6</span>
       </span>
     </div>
 
@@ -93,37 +93,52 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">write_raster</span><span class="op">(</span>
-  <span class="va">Image</span>,
-  <span class="va">HDR</span>,
-  <span class="va">ImagePath</span>,
-  <span class="va">window_size</span>,
-  FullRes <span class="op">=</span> <span class="cn">TRUE</span>,
-  LowRes <span class="op">=</span> <span class="cn">FALSE</span>,
-  SmoothImage <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">write_raster</span><span class="op">(</span></span>
+<span>  <span class="va">Image</span>,</span>
+<span>  <span class="va">HDR</span>,</span>
+<span>  <span class="va">ImagePath</span>,</span>
+<span>  <span class="va">window_size</span>,</span>
+<span>  FullRes <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  LowRes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  SmoothImage <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>Image</dt>
 <dd><p>numeric. matrix or array of image to be written</p></dd>
+
+
 <dt>HDR</dt>
 <dd><p>hdr template</p></dd>
+
+
 <dt>ImagePath</dt>
 <dd><p>path of image file to be written</p></dd>
+
+
 <dt>window_size</dt>
 <dd><p>spatial units use dto compute diversiy (in pixels)</p></dd>
+
+
 <dt>FullRes</dt>
 <dd><p>should full resolution image be written (original pixel size)</p></dd>
+
+
 <dt>LowRes</dt>
 <dd><p>should low resolution image be written (one value per spatial unit)</p></dd>
+
+
 <dt>SmoothImage</dt>
 <dd><p>boolean. set TRUE if you want smooting filter applied to resulting diversity rasters</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>None</p>
+    
+
+<p>None</p>
     </div>
 
   </div>
@@ -138,7 +153,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

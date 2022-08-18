@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.6</span>
       </span>
     </div>
 
@@ -118,7 +118,7 @@
       <h1 data-toc-skip>Functional Diversity</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2022-06-07</h4>
+            <h4 data-toc-skip class="date">2022-08-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_07.Rmd" class="external-link"><code>vignettes/biodivMapR_07.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_07.Rmd</code></div>
@@ -129,16 +129,16 @@
     
 <p>The functional diversity metrics (Richness, Evenness, Divergence) can be computed directly after dimensionality reduction. Here, we assume that each selected component correspond to a trait value (each trait is scaled over the full image), and each pixel corresponds to a species/individual (no clustering is performed, so one pixel from an individual spatial unit is seen as a different species).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">################################################################################</span>
-<span class="co">##              MAP FUNCTIONAL DIVERSITY METRICS FRic, FEve, FDiv             ##</span>
-<span class="co">##          (Villeger et al, 2008 https://doi.org/10.1890/07-1206.1)          ##</span>
-<span class="co">################################################################################</span>
-<span class="co">## read selected features from dimensionality reduction</span>
-<span class="va">Selected_Features</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span><span class="va">Sel_PC</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>
-<span class="co">## path for selected components</span>
-<span class="fu"><a href="../reference/map_functional_div.html">map_functional_div</a></span><span class="op">(</span>Original_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Functional_File <span class="op">=</span> <span class="va">PCA_Files</span>,
-                   Selected_Features <span class="op">=</span> <span class="va">Selected_Features</span>, Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>,
-                   window_size <span class="op">=</span> <span class="va">window_size</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,TypePCA <span class="op">=</span> <span class="va">TypePCA</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">################################################################################</span></span>
+<span><span class="co">##              MAP FUNCTIONAL DIVERSITY METRICS FRic, FEve, FDiv             ##</span></span>
+<span><span class="co">##          (Villeger et al, 2008 https://doi.org/10.1890/07-1206.1)          ##</span></span>
+<span><span class="co">################################################################################</span></span>
+<span><span class="co">## read selected features from dimensionality reduction</span></span>
+<span><span class="va">Selected_Features</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span><span class="va">Sel_PC</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="co">## path for selected components</span></span>
+<span><span class="fu"><a href="../reference/map_functional_div.html">map_functional_div</a></span><span class="op">(</span>Original_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Functional_File <span class="op">=</span> <span class="va">PCA_Files</span>,</span>
+<span>                   Selected_Features <span class="op">=</span> <span class="va">Selected_Features</span>, Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>,</span>
+<span>                   window_size <span class="op">=</span> <span class="va">window_size</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,TypePCA <span class="op">=</span> <span class="va">TypePCA</span><span class="op">)</span></span></code></pre></div>
 <p>These diversity metrics can also be computed directly from plots defined as polygons in the extent of the rasters. This step is key for validation, and is explained in the <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_08.html" target="_blank" class="external-link">next step</a>.</p>
   </div>
 
@@ -157,7 +157,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

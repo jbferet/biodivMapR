@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.6</span>
       </span>
     </div>
 
@@ -93,49 +93,72 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">perform_PCA</span><span class="op">(</span>
-  <span class="va">Input_Image_File</span>,
-  <span class="va">Input_Mask_File</span>,
-  <span class="va">Output_Dir</span>,
-  Continuum_Removal <span class="op">=</span> <span class="cn">TRUE</span>,
-  TypePCA <span class="op">=</span> <span class="st">"SPCA"</span>,
-  NbPCs_To_Keep <span class="op">=</span> <span class="fl">30</span>,
-  FilterPCA <span class="op">=</span> <span class="cn">FALSE</span>,
-  Excluded_WL <span class="op">=</span> <span class="cn">FALSE</span>,
-  nb_partitions <span class="op">=</span> <span class="fl">20</span>,
-  nbCPU <span class="op">=</span> <span class="fl">1</span>,
-  MaxRAM <span class="op">=</span> <span class="fl">0.25</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">perform_PCA</span><span class="op">(</span></span>
+<span>  <span class="va">Input_Image_File</span>,</span>
+<span>  <span class="va">Input_Mask_File</span>,</span>
+<span>  <span class="va">Output_Dir</span>,</span>
+<span>  Continuum_Removal <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  TypePCA <span class="op">=</span> <span class="st">"SPCA"</span>,</span>
+<span>  NbPCs_To_Keep <span class="op">=</span> <span class="fl">30</span>,</span>
+<span>  FilterPCA <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  Excluded_WL <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  nb_partitions <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  nbCPU <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  MaxRAM <span class="op">=</span> <span class="fl">0.25</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>Input_Image_File</dt>
 <dd><p>character. Path of the image to be processed</p></dd>
+
+
 <dt>Input_Mask_File</dt>
 <dd><p>character. Path of the mask corresponding to the image</p></dd>
+
+
 <dt>Output_Dir</dt>
 <dd><p>character. Path for output directory</p></dd>
+
+
 <dt>Continuum_Removal</dt>
 <dd><p>boolean. Set to TRUE if continuum removal should be applied</p></dd>
+
+
 <dt>TypePCA</dt>
 <dd><p>character. Type of PCA: choose either "PCA" or "SPCA"</p></dd>
+
+
 <dt>NbPCs_To_Keep</dt>
 <dd><p>numeric. number of components to ke saved in the PCA file. default = 30 if set to FALSE (or nb PC if &lt;30)</p></dd>
+
+
 <dt>FilterPCA</dt>
 <dd><p>boolean. Set to TRUE if 2nd filtering based on PCA is required</p></dd>
+
+
 <dt>Excluded_WL</dt>
 <dd><p>numeric. Water Vapor Absorption domains (in nanometers, min and max WL). Can also be used to exclude spectific domains. dims = N x 2 (N = number of domains to be eliminated)</p></dd>
+
+
 <dt>nb_partitions</dt>
 <dd><p>numeric. Number of repetitions to estimate diversity from the raster (averaging repetitions).</p></dd>
+
+
 <dt>nbCPU</dt>
 <dd><p>numeric. Number fo CPUs in use.</p></dd>
+
+
 <dt>MaxRAM</dt>
 <dd><p>numeric. Maximum size of chunk in GB to limit RAM allocation when reading image file.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>list of paths corresponding to resulting PCA files</p>
+    
+
+<p>list of paths corresponding to resulting PCA files</p>
     </div>
 
   </div>
@@ -150,7 +173,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

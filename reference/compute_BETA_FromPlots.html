@@ -20,7 +20,7 @@ expecting a matrix of spectral species (n pixels x p repetitions)"><meta propert
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.6</span>
       </span>
     </div>
 
@@ -98,22 +98,29 @@ expecting a matrix of spectral species (n pixels x p repetitions)</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">compute_BETA_FromPlots</span><span class="op">(</span><span class="va">SpectralSpecies_Plots</span>, <span class="va">nbclusters</span>, pcelim <span class="op">=</span> <span class="fl">0.02</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">compute_BETA_FromPlots</span><span class="op">(</span><span class="va">SpectralSpecies_Plots</span>, <span class="va">nbclusters</span>, pcelim <span class="op">=</span> <span class="fl">0.02</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>SpectralSpecies_Plots</dt>
 <dd><p>list. list of matrices of spectral species corresponding to plots</p></dd>
+
+
 <dt>nbclusters</dt>
 <dd><p>numeric. number of clusters</p></dd>
+
+
 <dt>pcelim</dt>
 <dd><p>numeric. Minimum contribution (in <!-- %) required for a spectral species -->
 each spectral species with a proprtion &lt; pcelim is eliminated before computation of diversity</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Mean bray curtis dissimilarity matrix for all plots, and individual BC matrices corresponding to each repetitions</p>
+    
+
+<p>Mean bray curtis dissimilarity matrix for all plots, and individual BC matrices corresponding to each repetitions</p>
     </div>
 
   </div>
@@ -128,7 +135,7 @@ each spectral species with a proprtion &lt; pcelim is eliminated before computat
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>
