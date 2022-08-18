@@ -1,3 +1,16 @@
+# biodivMapR v1.9.6
+
+## Fixes
+- install package dissUtils directly from github ('cran/dissUtils') as it was removed from official CRAN repo
+
+# biodivMapR v1.9.5
+
+## Fixes
+- discard marginal spectral species based on number of sunlit pixels, instead of total number of pixels considered (window size or plot used for validation)
+
+## Changes
+- harmonize default value for pcelim
+
 # biodivMapR v1.9.4
 
 ## Fixes
