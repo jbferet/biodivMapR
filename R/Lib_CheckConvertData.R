@@ -117,7 +117,7 @@ raster2BIL <- function(Raster_Path, Sensor = "unknown", Output_Dir = FALSE, Conv
   }
 
   if (!Sensor == "unknown") {
-    HDR_Temp_Path <- system.file("extdata", "HDR", paste0(Sensor, ".hdr"), package = "biodivMapR")
+      HDR_Temp_Path <- system.file("extdata", "HDR", paste0(Sensor, ".hdr"), package = "biodivMapR")
     if (file.exists(HDR_Temp_Path)) {
       message("reading header template corresponding to the sensor located here:")
       print(HDR_Temp_Path)
