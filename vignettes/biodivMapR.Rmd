@@ -30,7 +30,7 @@ This tutorial aims at describing the processing workflow and providing a script 
     * preprocessing and processing options
     
 * Computation of the diversity maps. This includes several diversity metrics which can be computed independently:
-    * $\alpha$ and $\beta$ diversity maps as defined in [Feret & Asner (2014)](https://doi.org/10.1890/13-1824.1 "Feret&Asner2014") and [Feret & de Boissieu (2019)]( https://doi.org/10.1111/2041-210X.13310 "Feret&deBoissieu2014")
+    * $\alpha$ and $\beta$ diversity maps as defined in [Feret & Asner (2014)](https://doi.org/10.1890/13-1824.1 "Feret&Asner2014") and [Feret & de Boissieu (2019)]( https://doi.org/10.1111/2041-210X.13310 "Feret&deBoissieu2019")
     * Functional diversity maps, including Richnes, Evenness and Divergence as defined in [Villeger et al. (2008)](https://doi.org/10.1890/07-1206.1 "Villeger2008")
     <!-- * Partitioning of spectral diversity into $\alpha$ and $\beta$ components following an adaptation of the method proposed by [Laliberte et al. (2020)](https://doi.org/10.1111/ele.13429 "Laliberte2020") -->
     

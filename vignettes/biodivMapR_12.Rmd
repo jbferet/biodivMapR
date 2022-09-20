@@ -1,0 +1,129 @@
+---
+title: "PROGYSAT#2: Run biodivMapR on S2 reflectance data"
+author: "Jean-Baptiste Féret"
+date: "`r Sys.Date()`"
+output:
+  html_vignette:
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{PROGYSAT#2}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval=FALSE
+)
+options(rmarkdown.html_vignette.check_title = FALSE)
+```
+
+This tutorial illustrates how to compute spectral diversity indices from Sentinel-2 images acquired over Suriname territory using `biodivMapR`.
+
+There are several possibilities to run biodivMapR. This tutorial describes the standard application, which processes directly reflectance data following the workflow described in [Féret & de Boissieu (2019)]( https://doi.org/10.1111/2041-210X.13310 "Feret&deBoissieu2019").
+
+
+### Set data path and parameters for biodivMapR
+
+```{r set_parms}
+# libraries used in this script
+library(biodivMapR)
+
+# define data location
+Input_Image_File <- '../03_RESULTS/L2A_T21NYF_A018869_20201016T141050/L2A_T21NYF_A018869_20201016T141050_Refl'
+Input_Mask_File <- '../03_RESULTS/L2A_T21NYF_A018869_20201016T141050/CloudMask_Binary'
+biodivMapR_Dir <- '../03_RESULTS/biodivMapR'
+dir.create(path = biodivMapR_Dir,showWarnings = FALSE,recursive = TRUE)
+
+# set parameters
+Continuum_Removal <- TRUE
+NDVI_Thresh <- 0.5
+Blue_Thresh <- 500
+NIR_Thresh <- 1500
+TypePCA <- 'SPCA'
+FilterPCA <- FALSE
+window_size <- 10
+nbCPU <- 4
+MaxRAM <- 0.1
+nbclusters <- 50
+
+```
+
+
+### Perform radiometric filtering
+
+`biodivMapR` intends to compute spectral diversity metrics from vegetated surfaces, and use it as a proxy for biological diversity, following the spectral variation hypothesis. The introduction of pixels unrelated to surfaces of interest (e.g. clouds, shade and more generally non vegetated pixels) may strongly increase the spectral variations, resulting in decreasing contribution of vegetation to these variations, and limiting the capacity to differentiate among vegetation types/species during the next processes.
+For this reason, a very basic radiometric filtering based on blue band (detection of clouds and atmospheric scattering), NIR band (detection of shaded vegetation) and NDVI thresholding (detection of non vegetated pixels) is performed with the function `perform_radiometric_filtering`.
+
+```{r radiometric_filtering}
+
+Input_Mask_File <- perform_radiometric_filtering(Image_Path = Input_Image_File, 
+                                                 Mask_Path = Input_Mask_File,
+                                                 Output_Dir = biodivMapR_Dir, TypePCA = TypePCA,
+                                                 NDVI_Thresh = NDVI_Thresh, Blue_Thresh = Blue_Thresh,
+                                                 NIR_Thresh = NIR_Thresh)
+
+
+```
+
+### Perform dimensionality reduction & select components
+
+Once radiometric thresholding is done, a dimensionality reduction is performed, based on the computation of principal component anaysis (PCA) or standardized PCA (SPCA), with the function `perform_PCA`. The components from the resulting spectral transformation are then visually selected in order to discard those containing noise or artifacts, and selecting those showing patterns related to vegetation types. 
+
+```{r dimensionality_reduction}
+PCA_Output <- perform_PCA(Input_Image_File = Input_Image_File, Input_Mask_File = Input_Mask_File,
+                          Output_Dir = biodivMapR_Dir, TypePCA = TypePCA, FilterPCA=FilterPCA,
+                          nbCPU = nbCPU, MaxRAM = MaxRAM, Continuum_Removal = Continuum_Removal)
+# path of the raster resulting from dimensionality reduction
+PCA_Files <- PCA_Output$PCA_Files
+# number of pixels used for each partition used for k-means clustering
+Pix_Per_Partition <- PCA_Output$Pix_Per_Partition
+# number of partitions used for k-means clustering
+nb_partitions <- PCA_Output$nb_partitions
+# path for the updated mask
+Input_Mask_File <- PCA_Output$MaskPath
+
+# Select components from the PCA/SPCA/MNF raster
+# Sel_PC = path of the file where selected components are stored
+Sel_PC <- select_PCA_components(Input_Image_File = Input_Image_File,
+                                Output_Dir = biodivMapR_Dir, PCA_Files = PCA_Files,
+                                TypePCA = TypePCA, File_Open = TRUE)
+```
+
+### Map Spectral species
+
+The spectral species are then defined based on the selected components. These spectral species result from the application of a K-Means clustering of the selected components. The number of clusters may impact the resuulting diversity maps. Therefore, in the perspective of operational application, the optimization of the number of clusters based on ground information is critical. 
+
+```{r map_spectral_species}
+Kmeans_info <- map_spectral_species(Input_Image_File = Input_Image_File, 
+                                    Output_Dir = biodivMapR_Dir,
+                                    PCA_Files = PCA_Files, Input_Mask_File = Input_Mask_File,
+                                    Pix_Per_Partition = Pix_Per_Partition, 
+                                    nb_partitions = nb_partitions,
+                                    nbCPU = nbCPU, MaxRAM = MaxRAM, nbclusters = nbclusters, 
+                                    TypePCA = TypePCA)
+
+```
+
+### Map alpha diversity
+
+Alpha diversity maps can then be computed from the spectral species distribution. 
+```{r alpha_diversity}
+Index_Alpha <- c('Shannon')
+map_alpha_div(Input_Image_File = Input_Image_File, Output_Dir = biodivMapR_Dir, TypePCA = TypePCA,
+              window_size = window_size, nbCPU = nbCPU, MaxRAM = MaxRAM,
+              Index_Alpha = Index_Alpha, nbclusters = nbclusters,FullRes = T, LowRes = T)
+```
+
+### Map beta diversity
+
+Beta diversity maps can then be computed from the spectral species distribution. 
+
+```{r beta_diversity}
+map_beta_div(Input_Image_File = Input_Image_File, Output_Dir = biodivMapR_Dir, TypePCA = TypePCA,
+             window_size = window_size, nb_partitions=nb_partitions, nbCPU = nbCPU, 
+             MaxRAM = MaxRAM, nbclusters = nbclusters, FullRes = T, LowRes = T)
+```
+

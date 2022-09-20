@@ -38,6 +38,9 @@ compute_beta_metrics(
 
 \item{dimMDS}{numeric. number of dimensions for the scaling.}
 }
+\value{
+my_list a list of information including results of 3 dimensional ordination with PCoA, PCoA model, map of sunlit windows
+}
 \description{
 computes beta diversity metrics
 }

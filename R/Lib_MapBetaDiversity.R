@@ -294,8 +294,6 @@ compute_BETA_FromPlots <- function(SpectralSpecies_Plots,nbclusters,pcelim = 0.0
   return(beta)
 }
 
-
-
 #' computes beta diversity metrics
 #'
 #' @param ClusterMap_Path character. File containing spectral species or classes from prior classification
@@ -309,7 +307,7 @@ compute_BETA_FromPlots <- function(SpectralSpecies_Plots,nbclusters,pcelim = 0.0
 #' @param MaxRAM numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.
 #' @param dimMDS numeric. number of dimensions for the scaling.
 #'
-#' @return
+#' @return my_list a list of information including results of 3 dimensional ordination with PCoA, PCoA model, map of sunlit windows
 #' @importFrom labdsv pco
 #' @importFrom stats as.dist
 #' @export

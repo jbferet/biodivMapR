@@ -1,3 +1,8 @@
+# biodivMapR v1.9.6.1
+
+## Addition
+- added tutorials for the PROGYSAT workshop
+
 # biodivMapR v1.9.6
 
 ## Fixes
