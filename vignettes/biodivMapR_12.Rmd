@@ -24,7 +24,7 @@ This tutorial illustrates how to compute spectral diversity indices from Sentine
 
 There are several possibilities to run biodivMapR. This tutorial describes the standard application, which processes directly reflectance data following the workflow described in [Féret & de Boissieu (2019)]( https://doi.org/10.1111/2041-210X.13310 "Feret&deBoissieu2019").
 
-This tutorial assumes that Sentinel-2 data collectiondonwload and preparation was performed as described in the [previous tutorial](https://jbferet.github.io/biodivMapR/articles/biodivMapR_11.html).
+This tutorial assumes that Sentinel-2 data collection download and preparation was performed as described in the [previous tutorial](https://jbferet.github.io/biodivMapR/articles/biodivMapR_11.html).
 
 ### Set data path and parameters for biodivMapR
 
@@ -67,7 +67,7 @@ Input_Mask_File <- perform_radiometric_filtering(Image_Path = Input_Image_File,
 
 ### Perform dimensionality reduction & select components
 
-Once radiometric thresholding is done, a dimensionality reduction is performed, based on the computation of principal component anaysis (PCA) or standardized PCA (SPCA), with the function `perform_PCA`. The components from the resulting spectral transformation are then visually selected in order to discard those containing noise or artifacts, and selecting those showing patterns related to vegetation types. 
+Once radiometric thresholding is done, a dimensionality reduction is performed, based on the computation of Principal Component Analysis (PCA) or standardized PCA (SPCA), with the function `perform_PCA`. The components from the resulting spectral transformation are then visually selected in order to discard those containing noise or artifacts, and selecting those showing patterns related to vegetation types. 
 
 ```{r dimensionality_reduction}
 PCA_Output <- perform_PCA(Input_Image_File = Input_Image_File, Input_Mask_File = Input_Mask_File,
@@ -124,7 +124,7 @@ Beta diversity is based on a 2-steps (or 3-steps depending on image size) proces
 
 - The Bray-Curtis dissimilarity is computed between each pair of windows (defined by window_size) in the image
 
-- Then an ordination technique (default is Principal Coordinate Analysis, PCoA) is applied on the dissimilarity matrix to transform it into a lower dimension space (3-dimensions is default value), and a 3-bands raster image is produced from the coordinates of each window in this 3D space. 
+- Then an ordination technique (default is Principal Coordinate Analysis, [PCoA](https://towardsdatascience.com/principal-coordinates-analysis-cc9a572ce6c)) is applied on the dissimilarity matrix to transform it into a lower dimension space (3-dimensions is default value), and a 3-bands raster image is produced from the coordinates of each window in this 3D space. 
 
 - The explicit computation of the matrix becomes unmanageable for large amount of windows: in this case, the dissimilarity matrix is computed on a random subset of windows, followed by PCoA on this subset matrix. Then the dissimilarity between each window and this random subset is computed, and the coordinates of each window in this PCoA space is defined based on a weighted nearest neighbors rule.
 
