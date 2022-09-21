@@ -127,7 +127,7 @@
       <h1 data-toc-skip>PROGYSAT#1: download S2 data</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste Féret</h4>
             
-            <h4 data-toc-skip class="date">2022-09-20</h4>
+            <h4 data-toc-skip class="date">2022-09-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_11.Rmd" class="external-link"><code>vignettes/biodivMapR_11.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_11.Rmd</code></div>
@@ -138,17 +138,28 @@
     
 <p>This tutorial illustrates how to download and preprocess Sentinel-2 data for the application of <code>biodivMapR</code> in order to map spectral diversity over a site in Suriname.</p>
 <p>This first step is based on the R package <a href="https://jbferet.gitlab.io/preprocS2/index.html" class="external-link"><code>preprocS2</code></a>, which needs to be installed, along with additional packages such as <a href="https://sen2r.ranghetti.info/" class="external-link"><code>sen2r</code></a></p>
-<p>This includes: - S2 data download based on a spatial footprint - atmospheric correction of S2 images to produce L2A images with Sen2Cor - cropping, stacking and writing the reflectance raster corresponding to th espatial footprint, as well as the corresponding cloud mask</p>
+<p>This includes:</p>
+<ul>
+<li><p>S2 data download based on a spatial footprint</p></li>
+<li><p>atmospheric correction of S2 images to produce L2A images with Sen2Cor</p></li>
+<li><p>cropping, stacking and writing the reflectance raster corresponding to the spatial footprint, as well as the corresponding cloud mask</p></li>
+</ul>
 <div class="section level3">
 <h3 id="define-structure-for-data-r-scripts-and-results">Define structure for data, R scripts and results<a class="anchor" aria-label="anchor" href="#define-structure-for-data-r-scripts-and-results"></a>
 </h3>
-<p>In order to organize this tutorial, I will assume that the file structure is defined as follows: - <code>01_DATA</code>: a directory including original vector and raster files (Sentinel-2 data products level L1C and L2A before further process) - <code>02_PROGRAMS</code>: where all r scripts should be located. Here, all R scripts provided in this tutorial will assume that you set your working directory <code>02_PROGRAMS</code> - <code>03_RESULTS</code>: all files resulting from the application of the R scripts on the data located in <code>01_DATA</code>, or in this same <code>03_RESULTS</code> directory</p>
+<p>This tutorial will assume that the file structure is defined as follows:</p>
+<ul>
+<li><p><code>01_DATA</code>: a directory including original vector and raster files: Sentinel-2 data products level L1C and L2A before further process (full tile)</p></li>
+<li><p><code>02_PROGRAMS</code>: a directory including all r scripts should be located. All R scripts provided in this tutorial will assume that this is your working directory</p></li>
+<li><p><code>03_RESULTS</code>: a directory including files resulting from the application of the R scripts on the data located in <code>01_DATA</code>, or in this same <code>03_RESULTS</code> directory</p></li>
+</ul>
 </div>
 <div class="section level3">
 <h3 id="download-a-vector-file-corresponding-to-the-spatial-footprint-of-the-study-area">Download a vector file corresponding to the spatial footprint of the study area<a class="anchor" aria-label="anchor" href="#download-a-vector-file-corresponding-to-the-spatial-footprint-of-the-study-area"></a>
 </h3>
-<p>You can use QGIS or Google Earth to define the spatial footprint. Here, we drew a rectangular polygon over a forested area in the Eastern part of the Brokopondo reservoir in Suriname.</p>
-<p>We first download the kml file corresponding to our study area and save it in the <code>01_DATA</code> directory.</p>
+<p>You can use QGIS, Google Earth, or any relevant GIS or R package to define the spatial footprint of your area of interest. Save it as kml file or shapefile in <code>01_DATA</code>.</p>
+<p>Here, we drew a rectangular polygon over a forested area in the Eastern part of the Brokopondo reservoir in Suriname.</p>
+<p>First, let’s download the kml file corresponding to our area of interest from my gitlab repository, and save it locally in the <code>01_DATA</code> directory.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># define data directory</span></span>
 <span><span class="va">Path_Data</span> <span class="op">&lt;-</span> <span class="st">'../01_DATA'</span></span>
@@ -164,8 +175,8 @@
 </h3>
 <p>Then, we use <a href="https://apps.sentinel-hub.com/eo-browser/?zoom=11&amp;lat=4.7602&amp;lng=-54.92889&amp;themeId=DEFAULT-THEME&amp;visualizationUrl=https%3A%2F%2Fservices.sentinel-hub.com%2Fogc%2Fwms%2Fbd86bcc0-f318-402b-a145-015f85b9427e&amp;datasetId=S2L2A&amp;fromTime=2020-10-16T00%3A00%3A00.000Z&amp;toTime=2020-10-16T23%3A59%3A59.999Z&amp;layerId=1_TRUE_COLOR&amp;demSource3D=%22MAPZEN%22" class="external-link">Sentinel-hub</a> in order to identify an acquisition corresponding to our requirement.</p>
 <p>Once the S2 tile and the date of acquisition are identified, we can proceed to the image download. Here, the selected acquisition is from October 16th, 2020.</p>
-<p>We then used the R package <a href="https://jbferet.gitlab.io/preprocS2/index.html" class="external-link"><code>preprocS2</code></a> in order to download the corresponding Sentinel-2 SAFE archive. Here, level-2A images (atmospherically corrected with Sen2Cor) are not available, and only L1C images can be downloaded from <a href="https://scihub.copernicus.eu" class="external-link">SciHub</a>.</p>
-<p>the function <code>get_S2_L2A_Image</code> allows to automatically download S2 images and perform atmospheric corrections with Sen2Cor if needed.</p>
+<p>We use the R package <a href="https://jbferet.gitlab.io/preprocS2/index.html" class="external-link"><code>preprocS2</code></a> to download the corresponding Sentinel-2 SAFE archive. Here, level-2A images (i.e. atmospherically corrected with Sen2Cor) are not available, and only Level-1C images can be downloaded from the <a href="https://scihub.copernicus.eu" class="external-link">Copernicus Hub</a>.</p>
+<p>The function <code>get_S2_L2A_Image</code> allows to automatically download S2 images (from copernicus Hub, Google Cloud or Google Earth Engine when properly parameterized) and to perform atmospheric corrections with Sen2Cor if only L1C data is available.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">################################################################################</span></span>
 <span><span class="co">## S2 download &amp; atmospheric correction using preprocS2</span></span>
@@ -190,7 +201,7 @@
 <h3 id="save-cropped-stacked-boa-reflectance-and-corresponding-cloud-mask">Save cropped &amp; stacked BOA reflectance and corresponding cloud mask<a class="anchor" aria-label="anchor" href="#save-cropped-stacked-boa-reflectance-and-corresponding-cloud-mask"></a>
 </h3>
 <p>Sentinel-2 products are made available in the <a href="https://sentinels.copernicus.eu/web/sentinel/user-guides/sentinel-2-msi/data-formats" class="external-link">SAFE</a> format, including image data in JPEG2000 format, quality indicators (e.g. defective pixels mask), auxiliary data and metadata.</p>
-<p>The <code>preprocS2</code> function <code>extract_from_S2_L2A</code> aims at extracting all information required for further processing, including reflectance data, cloud mask and metadata. It also crops S2 data following a spatial extent defined by <code>path_vector</code>, and it harmonizes the spatial resolution to either 20 meters, or 10 meters using user defined interpolation (bilinear as default).</p>
+<p>The <code>preprocS2</code> function <code>extract_from_S2_L2A</code> aims at extracting all information required for further processing, including reflectance data, cloud mask and metadata, and rearrange it in a more user-friendly fashion (personal opinion). It also crops S2 data following a spatial extent defined by <code>path_vector</code>, and it harmonizes the spatial resolution to either 20 meters, or 10 meters using user defined interpolation (bilinear as default, change it with the input variable <code>interpolation</code> set to the method of your choice available in GDAL).</p>
 <p>If the vector file and the raster data do not share the same projection, the vector file is also reprojected to avoid possible errors in future processings.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">################################################################################</span></span>
@@ -242,7 +253,12 @@
 <span>                               datatype <span class="op">=</span> <span class="st">'Int16'</span>, </span>
 <span>                               MTD <span class="op">=</span> <span class="va">S2obj</span><span class="op">$</span><span class="va">S2_Bands</span><span class="op">$</span><span class="va">metadata</span>, </span>
 <span>                               MTD_MSI <span class="op">=</span> <span class="va">S2obj</span><span class="op">$</span><span class="va">S2_Bands</span><span class="op">$</span><span class="va">metadata_MSI</span><span class="op">)</span></span></code></pre></div>
-<p>Once S2 acquisition and corresponding cloud mask are downloaded and written on your disk, you can then run <code>biodivMapR</code></p>
+<p>Once S2 acquisition and corresponding cloud mask are downloaded and written on your disk, you can then run <code>biodivMapR</code> using the modality of your choice:</p>
+<ul>
+<li><p>you can run <code>biodivMapR</code> in <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_12.html" class="external-link">standard mode</a> using directly the raster corresponding to BOA reflectance data, and applying the original workflow: radiometric filtering -&gt; spectral transformation &amp; component selection -&gt; spectral species mapping -&gt; diversity mapping</p></li>
+<li><p>you can run <code>biodivMapR</code> in <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_13.html" class="external-link">custom mode</a> using user-defined custom layers, such as spectral indices, biophysical variables, or a combination of relevant features derived from multiple sensors for a customized workflow: [optional radiometric filtering -&gt; optional spectral transformation &amp; component selection -&gt; ] spectral species mapping -&gt; diversity mapping. Then, the selection of the relevant features used to compute remotely sensed variability is at the user’s discretion</p></li>
+</ul>
+<p>directly the raster corresponding to BOA reflectance data, and applying the original workflow: radiometric filtering -&gt; spectral transformation &amp; component selection -&gt; spectral species mapping -&gt; diversity mapping</p>
 </div>
   </div>
 

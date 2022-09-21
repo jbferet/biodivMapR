@@ -127,7 +127,7 @@
       <h1 data-toc-skip>PROGYSAT#2: Run biodivMapR on S2 reflectance data</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste Féret</h4>
             
-            <h4 data-toc-skip class="date">2022-09-20</h4>
+            <h4 data-toc-skip class="date">2022-09-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_12.Rmd" class="external-link"><code>vignettes/biodivMapR_12.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_12.Rmd</code></div>
@@ -138,6 +138,7 @@
     
 <p>This tutorial illustrates how to compute spectral diversity indices from Sentinel-2 images acquired over Suriname territory using <code>biodivMapR</code>.</p>
 <p>There are several possibilities to run biodivMapR. This tutorial describes the standard application, which processes directly reflectance data following the workflow described in <a href="https://doi.org/10.1111/2041-210X.13310" title="Feret&amp;deBoissieu2019" class="external-link">Féret &amp; de Boissieu (2019)</a>.</p>
+<p>This tutorial assumes that Sentinel-2 data collectiondonwload and preparation was performed as described in the <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_11.html" class="external-link">previous tutorial</a>.</p>
 <div class="section level3">
 <h3 id="set-data-path-and-parameters-for-biodivmapr">Set data path and parameters for biodivMapR<a class="anchor" aria-label="anchor" href="#set-data-path-and-parameters-for-biodivmapr"></a>
 </h3>
@@ -152,16 +153,16 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">biodivMapR_Dir</span>,showWarnings <span class="op">=</span> <span class="cn">FALSE</span>,recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># set parameters</span></span>
-<span><span class="va">Continuum_Removal</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></span>
-<span><span class="va">NDVI_Thresh</span> <span class="op">&lt;-</span> <span class="fl">0.5</span></span>
-<span><span class="va">Blue_Thresh</span> <span class="op">&lt;-</span> <span class="fl">500</span></span>
-<span><span class="va">NIR_Thresh</span> <span class="op">&lt;-</span> <span class="fl">1500</span></span>
-<span><span class="va">TypePCA</span> <span class="op">&lt;-</span> <span class="st">'SPCA'</span></span>
-<span><span class="va">FilterPCA</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span></span>
-<span><span class="va">window_size</span> <span class="op">&lt;-</span> <span class="fl">10</span></span>
-<span><span class="va">nbCPU</span> <span class="op">&lt;-</span> <span class="fl">4</span></span>
-<span><span class="va">MaxRAM</span> <span class="op">&lt;-</span> <span class="fl">0.1</span></span>
-<span><span class="va">nbclusters</span> <span class="op">&lt;-</span> <span class="fl">50</span></span></code></pre></div>
+<span><span class="va">Continuum_Removal</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span> <span class="co"># relevant only when using continuous spectral data</span></span>
+<span><span class="va">NDVI_Thresh</span> <span class="op">&lt;-</span> <span class="fl">0.5</span>        <span class="co"># radiometric filter: all pixels with NDVI &lt; NDVI_Thresh are masked</span></span>
+<span><span class="va">Blue_Thresh</span> <span class="op">&lt;-</span> <span class="fl">500</span>        <span class="co"># radiometric filter: all pixels with reflectance at B02 (Blue) &gt; Blue_Thresh are masked</span></span>
+<span><span class="va">NIR_Thresh</span> <span class="op">&lt;-</span> <span class="fl">1500</span>        <span class="co"># radiometric filter: all pixels with reflectance at B08 (NIR) &lt; NIR_Thresh are masked</span></span>
+<span><span class="va">TypePCA</span> <span class="op">&lt;-</span> <span class="st">'SPCA'</span>         <span class="co"># choose between PPCA, standardized PCA, or MNF (relevant with imaging spectroscopy, not Sentinel-2)</span></span>
+<span><span class="va">FilterPCA</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span>        <span class="co"># additional filter to clean data from outliers after spectral transformation with PCA or SPCA. !! increases processing time</span></span>
+<span><span class="va">window_size</span> <span class="op">&lt;-</span> <span class="fl">10</span>         <span class="co"># what is the window size to compute spectral diversity metrics? here, 10 x 10 pixels window corresponds to 1 ha, which is appropriate for forested areas</span></span>
+<span><span class="va">nbclusters</span> <span class="op">&lt;-</span> <span class="fl">50</span>          <span class="co"># How many spectral species will be defined when applying k-means? ideally this is adjusted and optimized based on field data. 50 clusters is a trade-off</span></span>
+<span><span class="va">nbCPU</span> <span class="op">&lt;-</span> <span class="fl">4</span>                <span class="co"># adjust depending on your computer</span></span>
+<span><span class="va">MaxRAM</span> <span class="op">&lt;-</span> <span class="fl">0.1</span>             <span class="co"># adjust depending on your computer</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="perform-radiometric-filtering">Perform radiometric filtering<a class="anchor" aria-label="anchor" href="#perform-radiometric-filtering"></a>
@@ -201,7 +202,7 @@
 <div class="section level3">
 <h3 id="map-spectral-species">Map Spectral species<a class="anchor" aria-label="anchor" href="#map-spectral-species"></a>
 </h3>
-<p>The spectral species are then defined based on the selected components. These spectral species result from the application of a K-Means clustering of the selected components. The number of clusters may impact the resuulting diversity maps. Therefore, in the perspective of operational application, the optimization of the number of clusters based on ground information is critical.</p>
+<p>The spectral species are then defined based on the selected components. These spectral species result from the application of a K-Means clustering of the selected components. The number of clusters may impact the resulting diversity maps. Therefore, in the perspective of operational application, the optimization of the number of clusters based on ground information is critical.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Kmeans_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/map_spectral_species.html">map_spectral_species</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, </span>
 <span>                                    Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>,</span>
@@ -215,6 +216,7 @@
 <h3 id="map-alpha-diversity">Map alpha diversity<a class="anchor" aria-label="anchor" href="#map-alpha-diversity"></a>
 </h3>
 <p>Alpha diversity maps can then be computed from the spectral species distribution.</p>
+<p>Several alpha diversity metrics are available (currently Richness, Shannon, Simpson).</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Index_Alpha</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Shannon'</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/map_alpha_div.html">map_alpha_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
@@ -225,6 +227,12 @@
 <h3 id="map-beta-diversity">Map beta diversity<a class="anchor" aria-label="anchor" href="#map-beta-diversity"></a>
 </h3>
 <p>Beta diversity maps can then be computed from the spectral species distribution.</p>
+<p>Beta diversity is based on a 2-steps (or 3-steps depending on image size) process:</p>
+<ul>
+<li><p>The Bray-Curtis dissimilarity is computed between each pair of windows (defined by window_size) in the image</p></li>
+<li><p>Then an ordination technique (default is Principal Coordinate Analysis, PCoA) is applied on the dissimilarity matrix to transform it into a lower dimension space (3-dimensions is default value), and a 3-bands raster image is produced from the coordinates of each window in this 3D space.</p></li>
+<li><p>The explicit computation of the matrix becomes unmanageable for large amount of windows: in this case, the dissimilarity matrix is computed on a random subset of windows, followed by PCoA on this subset matrix. Then the dissimilarity between each window and this random subset is computed, and the coordinates of each window in this PCoA space is defined based on a weighted nearest neighbors rule.</p></li>
+</ul>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/map_beta_div.html">map_beta_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
 <span>             window_size <span class="op">=</span> <span class="va">window_size</span>, nb_partitions<span class="op">=</span><span class="va">nb_partitions</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, </span>
