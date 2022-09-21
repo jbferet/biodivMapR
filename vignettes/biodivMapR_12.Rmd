@@ -24,6 +24,7 @@ This tutorial illustrates how to compute spectral diversity indices from Sentine
 
 There are several possibilities to run biodivMapR. This tutorial describes the standard application, which processes directly reflectance data following the workflow described in [Féret & de Boissieu (2019)]( https://doi.org/10.1111/2041-210X.13310 "Feret&deBoissieu2019").
 
+This tutorial assumes that Sentinel-2 data collectiondonwload and preparation was performed as described in the [previous tutorial](https://jbferet.github.io/biodivMapR/articles/biodivMapR_11.html).
 
 ### Set data path and parameters for biodivMapR
 
@@ -38,19 +39,17 @@ biodivMapR_Dir <- '../03_RESULTS/biodivMapR'
 dir.create(path = biodivMapR_Dir,showWarnings = FALSE,recursive = TRUE)
 
 # set parameters
-Continuum_Removal <- TRUE
-NDVI_Thresh <- 0.5
-Blue_Thresh <- 500
-NIR_Thresh <- 1500
-TypePCA <- 'SPCA'
-FilterPCA <- FALSE
-window_size <- 10
-nbCPU <- 4
-MaxRAM <- 0.1
-nbclusters <- 50
-
+Continuum_Removal <- TRUE # relevant only when using continuous spectral data
+NDVI_Thresh <- 0.5        # radiometric filter: all pixels with NDVI < NDVI_Thresh are masked
+Blue_Thresh <- 500        # radiometric filter: all pixels with reflectance at B02 (Blue) > Blue_Thresh are masked
+NIR_Thresh <- 1500        # radiometric filter: all pixels with reflectance at B08 (NIR) < NIR_Thresh are masked
+TypePCA <- 'SPCA'         # choose between PPCA, standardized PCA, or MNF (relevant with imaging spectroscopy, not Sentinel-2)
+FilterPCA <- FALSE        # additional filter to clean data from outliers after spectral transformation with PCA or SPCA. !! increases processing time
+window_size <- 10         # what is the window size to compute spectral diversity metrics? here, 10 x 10 pixels window corresponds to 1 ha, which is appropriate for forested areas
+nbclusters <- 50          # How many spectral species will be defined when applying k-means? ideally this is adjusted and optimized based on field data. 50 clusters is a trade-off
+nbCPU <- 4                # adjust depending on your computer
+MaxRAM <- 0.1             # adjust depending on your computer
 ```
-
 
 ### Perform radiometric filtering
 
@@ -64,8 +63,6 @@ Input_Mask_File <- perform_radiometric_filtering(Image_Path = Input_Image_File,
                                                  Output_Dir = biodivMapR_Dir, TypePCA = TypePCA,
                                                  NDVI_Thresh = NDVI_Thresh, Blue_Thresh = Blue_Thresh,
                                                  NIR_Thresh = NIR_Thresh)
-
-
 ```
 
 ### Perform dimensionality reduction & select components
@@ -94,7 +91,7 @@ Sel_PC <- select_PCA_components(Input_Image_File = Input_Image_File,
 
 ### Map Spectral species
 
-The spectral species are then defined based on the selected components. These spectral species result from the application of a K-Means clustering of the selected components. The number of clusters may impact the resuulting diversity maps. Therefore, in the perspective of operational application, the optimization of the number of clusters based on ground information is critical. 
+The spectral species are then defined based on the selected components. These spectral species result from the application of a K-Means clustering of the selected components. The number of clusters may impact the resulting diversity maps. Therefore, in the perspective of operational application, the optimization of the number of clusters based on ground information is critical. 
 
 ```{r map_spectral_species}
 Kmeans_info <- map_spectral_species(Input_Image_File = Input_Image_File, 
@@ -104,12 +101,14 @@ Kmeans_info <- map_spectral_species(Input_Image_File = Input_Image_File,
                                     nb_partitions = nb_partitions,
                                     nbCPU = nbCPU, MaxRAM = MaxRAM, nbclusters = nbclusters, 
                                     TypePCA = TypePCA)
-
 ```
 
 ### Map alpha diversity
 
 Alpha diversity maps can then be computed from the spectral species distribution. 
+
+Several alpha diversity metrics are available (currently Richness, Shannon, Simpson). 
+
 ```{r alpha_diversity}
 Index_Alpha <- c('Shannon')
 map_alpha_div(Input_Image_File = Input_Image_File, Output_Dir = biodivMapR_Dir, TypePCA = TypePCA,
@@ -120,6 +119,14 @@ map_alpha_div(Input_Image_File = Input_Image_File, Output_Dir = biodivMapR_Dir, 
 ### Map beta diversity
 
 Beta diversity maps can then be computed from the spectral species distribution. 
+
+Beta diversity is based on a 2-steps (or 3-steps depending on image size) process: 
+
+- The Bray-Curtis dissimilarity is computed between each pair of windows (defined by window_size) in the image
+
+- Then an ordination technique (default is Principal Coordinate Analysis, PCoA) is applied on the dissimilarity matrix to transform it into a lower dimension space (3-dimensions is default value), and a 3-bands raster image is produced from the coordinates of each window in this 3D space. 
+
+- The explicit computation of the matrix becomes unmanageable for large amount of windows: in this case, the dissimilarity matrix is computed on a random subset of windows, followed by PCoA on this subset matrix. Then the dissimilarity between each window and this random subset is computed, and the coordinates of each window in this PCoA space is defined based on a weighted nearest neighbors rule.
 
 ```{r beta_diversity}
 map_beta_div(Input_Image_File = Input_Image_File, Output_Dir = biodivMapR_Dir, TypePCA = TypePCA,
