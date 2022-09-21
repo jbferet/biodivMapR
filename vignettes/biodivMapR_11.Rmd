@@ -26,24 +26,32 @@ This tutorial illustrates how to download and preprocess Sentinel-2 data for the
 This first step is based on the R package [`preprocS2`](https://jbferet.gitlab.io/preprocS2/index.html), which needs to be installed, along with additional packages such as [`sen2r`](https://sen2r.ranghetti.info/)
 
 This includes: 
+
 - S2 data download based on a spatial footprint
+
 - atmospheric correction of S2 images to produce L2A images with Sen2Cor
-- cropping, stacking and writing the reflectance raster corresponding to th espatial footprint, as well as the corresponding cloud mask
+
+- cropping, stacking and writing the reflectance raster corresponding to the spatial footprint, as well as the corresponding cloud mask
 
 
 ### Define structure for data, R scripts and results
 
-In order to organize this tutorial, I will assume that the file structure is defined as follows: 
-- `01_DATA`: a directory including original vector and raster files (Sentinel-2 data products level L1C and L2A before further process)
-- `02_PROGRAMS`: where all r scripts should be located. Here, all R scripts provided in this tutorial will assume that you set your working directory `02_PROGRAMS`
-- `03_RESULTS`: all files resulting from the application of the R scripts on the data located in `01_DATA`, or in this same `03_RESULTS` directory
+This tutorial will assume that the file structure is defined as follows: 
+
+- `01_DATA`: a directory including original vector and raster files: Sentinel-2 data products level L1C and L2A before further process (full tile)
+
+- `02_PROGRAMS`: a directory including all r scripts should be located. All R scripts provided in this tutorial will assume that this is your working directory
+
+- `03_RESULTS`: a directory including files resulting from the application of the R scripts on the data located in `01_DATA`, or in this same `03_RESULTS` directory
 
 
 ### Download a vector file corresponding to the spatial footprint of the study area
 
-You can use QGIS or Google Earth to define the spatial footprint. Here, we drew a rectangular polygon over a forested area in the Eastern part of the Brokopondo reservoir in Suriname.
+You can use QGIS, Google Earth, or any relevant GIS or R package to define the spatial footprint of your area of interest. Save it as kml file or shapefile in `01_DATA`. 
 
-We first download the kml file corresponding to our study area and save it in the `01_DATA` directory.
+Here, we drew a rectangular polygon over a forested area in the Eastern part of the Brokopondo reservoir in Suriname.
+
+First, let's download the kml file corresponding to our area of interest from my gitlab repository, and save it locally in the `01_DATA` directory.
 
 ```{r download_vector_data}
 # define data directory
@@ -62,10 +70,9 @@ Then, we use [Sentinel-hub](https://apps.sentinel-hub.com/eo-browser/?zoom=11&la
 
 Once the S2 tile and the date of acquisition are identified, we can proceed to the image download. Here, the selected acquisition is from October 16th, 2020. 
 
-We then used the R package [`preprocS2`](https://jbferet.gitlab.io/preprocS2/index.html) in order to download the corresponding Sentinel-2 SAFE archive. Here, level-2A images (atmospherically corrected with Sen2Cor) are not available, and only L1C images can be downloaded from [SciHub](https://scihub.copernicus.eu).
+We use the R package [`preprocS2`](https://jbferet.gitlab.io/preprocS2/index.html) to download the corresponding Sentinel-2 SAFE archive. Here, level-2A images (i.e. atmospherically corrected with Sen2Cor) are not available, and only Level-1C images can be downloaded from the [Copernicus Hub](https://scihub.copernicus.eu).
 
-the function `get_S2_L2A_Image` allows to automatically download S2 images and perform atmospheric corrections with Sen2Cor if needed. 
-
+The function `get_S2_L2A_Image` allows to automatically download S2 images (from copernicus Hub, Google Cloud or Google Earth Engine when properly parameterized) and to perform atmospheric corrections with Sen2Cor if only L1C data is available.
 
 ```{r download_S2_image}
 ################################################################################
@@ -94,7 +101,7 @@ Path_S2 <- get_S2_L2A_Image(l2a_path = DirWrite,
 
 Sentinel-2 products are made available in the [SAFE](https://sentinels.copernicus.eu/web/sentinel/user-guides/sentinel-2-msi/data-formats) format, including image data in JPEG2000 format, quality indicators (e.g. defective pixels mask), auxiliary data and metadata. 
 
-The `preprocS2` function `extract_from_S2_L2A` aims at extracting all information required for further processing, including reflectance data, cloud mask and metadata. It also crops S2 data following a spatial extent defined by `path_vector`, and it harmonizes the spatial resolution to either 20 meters, or 10 meters using user defined interpolation (bilinear as default).
+The `preprocS2` function `extract_from_S2_L2A` aims at extracting all information required for further processing, including reflectance data, cloud mask and metadata, and rearrange it in a more user-friendly fashion (personal opinion). It also crops S2 data following a spatial extent defined by `path_vector`, and it harmonizes the spatial resolution to either 20 meters, or 10 meters using user defined interpolation (bilinear as default, change it with the input variable `interpolation` set to the method of your choice available in GDAL).
 
 If the vector file and the raster data do not share the same projection, the vector file is also reprojected to avoid possible errors in future processings. 
 
@@ -123,8 +130,6 @@ S2obj <- preprocS2::extract_from_S2_L2A(Path_dir_S2 = Path_S2,
 # location as the original file)
 path_vector <- S2obj$path_vector
 ```
-
-
 
 A stars object is obtained as output from `extract_from_S2_L2A`. This is a proxy stars object, in order to handle large rasters. This stars object includes the reflectance data and corresponding cloud mask.
 
@@ -155,8 +160,13 @@ preprocS2::save_reflectance_s2(S2_stars = S2obj$S2_Stack,
                                datatype = 'Int16', 
                                MTD = S2obj$S2_Bands$metadata, 
                                MTD_MSI = S2obj$S2_Bands$metadata_MSI)
-
-
 ```
 
-Once S2 acquisition and corresponding cloud mask are downloaded and written on your disk, you can then run `biodivMapR`
+Once S2 acquisition and corresponding cloud mask are downloaded and written on your disk, you can then run `biodivMapR` using the modality of your choice: 
+
+- you can run `biodivMapR` in [standard mode](https://jbferet.github.io/biodivMapR/articles/biodivMapR_12.html) using directly the raster corresponding to BOA reflectance data, and applying the original workflow: radiometric filtering -> spectral transformation & component selection -> spectral species mapping -> diversity mapping
+
+- you can run `biodivMapR` in [custom mode](https://jbferet.github.io/biodivMapR/articles/biodivMapR_13.html) using user-defined custom layers, such as spectral indices, biophysical variables, or a combination of relevant features derived from multiple sensors for a customized workflow: [optional radiometric filtering -> optional spectral transformation & component selection -> ] spectral species mapping -> diversity mapping. Then, the selection of the relevant features used to compute remotely sensed variability is at the user's discretion
+
+directly the raster corresponding to BOA reflectance data, and applying the original workflow: radiometric filtering -> spectral transformation & component selection -> spectral species mapping -> diversity mapping
+

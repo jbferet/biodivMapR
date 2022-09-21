@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
-This tutorial illustrates an alternative approach to compute spectral diversity with `biodivMapR`, This approach uses a selection of spectral indices instead of reflectance data. If these spectral indices are appropriately selected in order to ensure minimum intercorrelation, they can be used directly for the computation of the spectral species, bypassing the preprocessing and dimensionality reduction with PCA. 
+This tutorial illustrates an alternative approach to compute spectral diversity with `biodivMapR`, This approach uses a selection of spectral indices instead of reflectance data, as described in the [standard mode](https://jbferet.github.io/biodivMapR/articles/biodivMapR_12.html). If these spectral indices are appropriately selected in order to ensure minimum intercorrelation, they can be used directly for the computation of the spectral species, bypassing the preprocessing and dimensionality reduction with PCA. 
 
 The computation of the spectral indices is based on the R package [`spinR`](https://gitlab.com/jbferet/spinr), which needs to be installed first: 
 
@@ -28,7 +28,6 @@ The computation of the spectral indices is based on the R package [`spinR`](http
 devtools::install_gitlab('jbferet/spinR')
 library(spinR)
 ```
-
 
 ### Set data path and parameters for biodivMapR
 
@@ -143,7 +142,7 @@ write_StarsStack(StarsObj = StarsObj, dsn = Input_SI_File, BandNames =Sel_Indice
 
 ### Map Spectral species
 
-The spectral species are then defined based on the selected components. These spectral species result from the application of a K-Means clustering of the selected components. The number of clusters may impact the resuulting diversity maps. Therefore, in the perspective of operational application, the optimization of the number of clusters based on ground information is critical. 
+The spectral species are then defined based on the selected components. These spectral species result from the application of a K-Means clustering of the selected components. The number of clusters may impact the resulting diversity maps. Therefore, in the perspective of operational application, the optimization of the number of clusters based on ground information is critical. 
 
 ```{r map_spectral_species_SI}
 # use all spectral indices to compute diversity
@@ -158,7 +157,10 @@ Kmeans_info <- map_spectral_species(Input_Image_File = Input_Image_File, Output_
 
 ### Map alpha diversity
 
-Alpha diversity maps can then be computed from the spectral species distribution.
+Alpha diversity maps can then be computed from the spectral species distribution. 
+
+Several alpha diversity metrics are available (currently Richness, Shannon, Simpson). 
+
 ```{r alpha_diversity_SI}
 Index_Alpha <- c('Shannon')
 map_alpha_div(Input_Image_File = Input_Image_File, Output_Dir = biodivMapR_Dir, TypePCA = TypePCA,
@@ -169,6 +171,14 @@ map_alpha_div(Input_Image_File = Input_Image_File, Output_Dir = biodivMapR_Dir, 
 ### Map beta diversity
 
 Beta diversity maps can then be computed from the spectral species distribution. 
+
+Beta diversity is based on a 2-steps (or 3-steps depending on image size) process: 
+
+- The Bray-Curtis dissimilarity is computed between each pair of windows (defined by window_size) in the image
+
+- Then an ordination technique (default is Principal Coordinate Analysis, PCoA) is applied on the dissimilarity matrix to transform it into a lower dimension space (3-dimensions is default value), and a 3-bands raster image is produced from the coordinates of each window in this 3D space. 
+
+- The explicit computation of the matrix becomes unmanageable for large amount of windows: in this case, the dissimilarity matrix is computed on a random subset of windows, followed by PCoA on this subset matrix. Then the dissimilarity between each window and this random subset is computed, and the coordinates of each window in this PCoA space is defined based on a weighted nearest neighbors rule.
 
 ```{r beta_diversity_SI}
 map_beta_div(Input_Image_File = Input_Image_File, Output_Dir = biodivMapR_Dir, TypePCA = TypePCA,
