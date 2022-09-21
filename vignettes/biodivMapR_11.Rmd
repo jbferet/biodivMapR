@@ -61,7 +61,7 @@ dir.create(Path_Data,showWarnings = F, recursive = T)
 destkml <- file.path(Path_Data,'Suriname_Progysat_Workshop.kml',fsep = '\\')
 # url for the zip file
 url <- 'https://gitlab.com/jbferet/myshareddata/-/raw/master/PROGYSAT/01_DATA/Suriname_Progysat_Workshop.kml'
-download.file(url = url, destfile = destzip)
+download.file(url = url, destfile = destkml)
 ```
 
 ### Download Sentinel-2 data and perform atmospheric corrections with sen2Cor
@@ -72,7 +72,7 @@ Once the S2 tile and the date of acquisition are identified, we can proceed to t
 
 We use the R package [`preprocS2`](https://jbferet.gitlab.io/preprocS2/index.html) to download the corresponding Sentinel-2 SAFE archive. Here, level-2A images (i.e. atmospherically corrected with Sen2Cor) are not available, and only Level-1C images can be downloaded from the [Copernicus Hub](https://scihub.copernicus.eu).
 
-The function `get_S2_L2A_Image` allows to automatically download S2 images (from copernicus Hub, Google Cloud or Google Earth Engine when properly parameterized) and to perform atmospheric corrections with Sen2Cor if only L1C data is available.
+The function `get_S2_L2A_Image` allows to automatically download S2 images (from Copernicus Hub, Google Cloud or Google Earth Engine when properly parameterized) and to perform atmospheric corrections with Sen2Cor if only L1C data is available.
 
 ```{r download_S2_image}
 ################################################################################
