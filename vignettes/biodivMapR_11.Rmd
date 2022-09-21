@@ -166,7 +166,4 @@ Once S2 acquisition and corresponding cloud mask are downloaded and written on y
 
 - you can run `biodivMapR` in [standard mode](https://jbferet.github.io/biodivMapR/articles/biodivMapR_12.html) using directly the raster corresponding to BOA reflectance data, and applying the original workflow: radiometric filtering -> spectral transformation & component selection -> spectral species mapping -> diversity mapping
 
-- you can run `biodivMapR` in [custom mode](https://jbferet.github.io/biodivMapR/articles/biodivMapR_13.html) using user-defined custom layers, such as spectral indices, biophysical variables, or a combination of relevant features derived from multiple sensors for a customized workflow: [optional radiometric filtering -> optional spectral transformation & component selection -> ] spectral species mapping -> diversity mapping. Then, the selection of the relevant features used to compute remotely sensed variability is at the user's discretion
-
-directly the raster corresponding to BOA reflectance data, and applying the original workflow: radiometric filtering -> spectral transformation & component selection -> spectral species mapping -> diversity mapping
-
+- you can run `biodivMapR` in [custom mode](https://jbferet.github.io/biodivMapR/articles/biodivMapR_13.html) using user-defined custom layers, such as spectral indices, biophysical variables, or a combination of relevant features derived from multiple sensors for a customized workflow: [optional radiometric filtering -> optional spectral transformation & component selection -> ] spectral species mapping -> diversity mapping. Then, the selection of the relevant features used to compute remotely sensed variability is at the user's discretion.

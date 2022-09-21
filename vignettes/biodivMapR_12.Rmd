@@ -54,6 +54,7 @@ MaxRAM <- 0.1             # adjust depending on your computer
 ### Perform radiometric filtering
 
 `biodivMapR` intends to compute spectral diversity metrics from vegetated surfaces, and use it as a proxy for biological diversity, following the spectral variation hypothesis. The introduction of pixels unrelated to surfaces of interest (e.g. clouds, shade and more generally non vegetated pixels) may strongly increase the spectral variations, resulting in decreasing contribution of vegetation to these variations, and limiting the capacity to differentiate among vegetation types/species during the next processes.
+
 For this reason, a very basic radiometric filtering based on blue band (detection of clouds and atmospheric scattering), NIR band (detection of shaded vegetation) and NDVI thresholding (detection of non vegetated pixels) is performed with the function `perform_radiometric_filtering`.
 
 ```{r radiometric_filtering}
