@@ -138,7 +138,7 @@
     
 <p>This tutorial illustrates how to compute spectral diversity indices from Sentinel-2 images acquired over Suriname territory using <code>biodivMapR</code>.</p>
 <p>There are several possibilities to run biodivMapR. This tutorial describes the standard application, which processes directly reflectance data following the workflow described in <a href="https://doi.org/10.1111/2041-210X.13310" title="Feret&amp;deBoissieu2019" class="external-link">Féret &amp; de Boissieu (2019)</a>.</p>
-<p>This tutorial assumes that Sentinel-2 data collectiondonwload and preparation was performed as described in the <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_11.html" class="external-link">previous tutorial</a>.</p>
+<p>This tutorial assumes that Sentinel-2 data collection download and preparation was performed as described in the <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_11.html" class="external-link">previous tutorial</a>.</p>
 <div class="section level3">
 <h3 id="set-data-path-and-parameters-for-biodivmapr">Set data path and parameters for biodivMapR<a class="anchor" aria-label="anchor" href="#set-data-path-and-parameters-for-biodivmapr"></a>
 </h3>
@@ -179,7 +179,7 @@
 <div class="section level3">
 <h3 id="perform-dimensionality-reduction-select-components">Perform dimensionality reduction &amp; select components<a class="anchor" aria-label="anchor" href="#perform-dimensionality-reduction-select-components"></a>
 </h3>
-<p>Once radiometric thresholding is done, a dimensionality reduction is performed, based on the computation of principal component anaysis (PCA) or standardized PCA (SPCA), with the function <code>perform_PCA</code>. The components from the resulting spectral transformation are then visually selected in order to discard those containing noise or artifacts, and selecting those showing patterns related to vegetation types.</p>
+<p>Once radiometric thresholding is done, a dimensionality reduction is performed, based on the computation of Principal Component Analysis (PCA) or standardized PCA (SPCA), with the function <code>perform_PCA</code>. The components from the resulting spectral transformation are then visually selected in order to discard those containing noise or artifacts, and selecting those showing patterns related to vegetation types.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">PCA_Output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/perform_PCA.html">perform_PCA</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Input_Mask_File <span class="op">=</span> <span class="va">Input_Mask_File</span>,</span>
 <span>                          Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>, FilterPCA<span class="op">=</span><span class="va">FilterPCA</span>,</span>
@@ -230,7 +230,7 @@
 <p>Beta diversity is based on a 2-steps (or 3-steps depending on image size) process:</p>
 <ul>
 <li><p>The Bray-Curtis dissimilarity is computed between each pair of windows (defined by window_size) in the image</p></li>
-<li><p>Then an ordination technique (default is Principal Coordinate Analysis, PCoA) is applied on the dissimilarity matrix to transform it into a lower dimension space (3-dimensions is default value), and a 3-bands raster image is produced from the coordinates of each window in this 3D space.</p></li>
+<li><p>Then an ordination technique (default is Principal Coordinate Analysis, <a href="https://towardsdatascience.com/principal-coordinates-analysis-cc9a572ce6c" class="external-link">PCoA</a>) is applied on the dissimilarity matrix to transform it into a lower dimension space (3-dimensions is default value), and a 3-bands raster image is produced from the coordinates of each window in this 3D space.</p></li>
 <li><p>The explicit computation of the matrix becomes unmanageable for large amount of windows: in this case, the dissimilarity matrix is computed on a random subset of windows, followed by PCoA on this subset matrix. Then the dissimilarity between each window and this random subset is computed, and the coordinates of each window in this PCoA space is defined based on a weighted nearest neighbors rule.</p></li>
 </ul>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">

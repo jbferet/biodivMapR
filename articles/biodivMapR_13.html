@@ -272,7 +272,7 @@
 <p>Beta diversity is based on a 2-steps (or 3-steps depending on image size) process:</p>
 <ul>
 <li><p>The Bray-Curtis dissimilarity is computed between each pair of windows (defined by window_size) in the image</p></li>
-<li><p>Then an ordination technique (default is Principal Coordinate Analysis, PCoA) is applied on the dissimilarity matrix to transform it into a lower dimension space (3-dimensions is default value), and a 3-bands raster image is produced from the coordinates of each window in this 3D space.</p></li>
+<li><p>Then an ordination technique (default is Principal Coordinate Analysis, <a href="https://towardsdatascience.com/principal-coordinates-analysis-cc9a572ce6c" class="external-link">PCoA</a>) is applied on the dissimilarity matrix to transform it into a lower dimension space (3-dimensions is default value), and a 3-bands raster image is produced from the coordinates of each window in this 3D space.</p></li>
 <li><p>The explicit computation of the matrix becomes unmanageable for large amount of windows: in this case, the dissimilarity matrix is computed on a random subset of windows, followed by PCoA on this subset matrix. Then the dissimilarity between each window and this random subset is computed, and the coordinates of each window in this PCoA space is defined based on a weighted nearest neighbors rule.</p></li>
 </ul>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">

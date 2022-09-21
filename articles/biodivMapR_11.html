@@ -168,7 +168,7 @@
 <span><span class="va">destkml</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">Path_Data</span>,<span class="st">'Suriname_Progysat_Workshop.kml'</span>,fsep <span class="op">=</span> <span class="st">'\\'</span><span class="op">)</span></span>
 <span><span class="co"># url for the zip file</span></span>
 <span><span class="va">url</span> <span class="op">&lt;-</span> <span class="st">'https://gitlab.com/jbferet/myshareddata/-/raw/master/PROGYSAT/01_DATA/Suriname_Progysat_Workshop.kml'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">url</span>, destfile <span class="op">=</span> <span class="va">destzip</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">url</span>, destfile <span class="op">=</span> <span class="va">destkml</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="download-sentinel-2-data-and-perform-atmospheric-corrections-with-sen2cor">Download Sentinel-2 data and perform atmospheric corrections with sen2Cor<a class="anchor" aria-label="anchor" href="#download-sentinel-2-data-and-perform-atmospheric-corrections-with-sen2cor"></a>
@@ -176,7 +176,7 @@
 <p>Then, we use <a href="https://apps.sentinel-hub.com/eo-browser/?zoom=11&amp;lat=4.7602&amp;lng=-54.92889&amp;themeId=DEFAULT-THEME&amp;visualizationUrl=https%3A%2F%2Fservices.sentinel-hub.com%2Fogc%2Fwms%2Fbd86bcc0-f318-402b-a145-015f85b9427e&amp;datasetId=S2L2A&amp;fromTime=2020-10-16T00%3A00%3A00.000Z&amp;toTime=2020-10-16T23%3A59%3A59.999Z&amp;layerId=1_TRUE_COLOR&amp;demSource3D=%22MAPZEN%22" class="external-link">Sentinel-hub</a> in order to identify an acquisition corresponding to our requirement.</p>
 <p>Once the S2 tile and the date of acquisition are identified, we can proceed to the image download. Here, the selected acquisition is from October 16th, 2020.</p>
 <p>We use the R package <a href="https://jbferet.gitlab.io/preprocS2/index.html" class="external-link"><code>preprocS2</code></a> to download the corresponding Sentinel-2 SAFE archive. Here, level-2A images (i.e. atmospherically corrected with Sen2Cor) are not available, and only Level-1C images can be downloaded from the <a href="https://scihub.copernicus.eu" class="external-link">Copernicus Hub</a>.</p>
-<p>The function <code>get_S2_L2A_Image</code> allows to automatically download S2 images (from copernicus Hub, Google Cloud or Google Earth Engine when properly parameterized) and to perform atmospheric corrections with Sen2Cor if only L1C data is available.</p>
+<p>The function <code>get_S2_L2A_Image</code> allows to automatically download S2 images (from Copernicus Hub, Google Cloud or Google Earth Engine when properly parameterized) and to perform atmospheric corrections with Sen2Cor if only L1C data is available.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">################################################################################</span></span>
 <span><span class="co">## S2 download &amp; atmospheric correction using preprocS2</span></span>
