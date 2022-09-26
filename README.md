@@ -41,3 +41,7 @@ Féret, J.-B., de Boissieu, F., 2019. biodivMapR: an R package for α‐ and β�
 
 Féret, J.-B., Asner, G.P., 2014. Mapping tropical forest canopy diversity using high-fidelity imaging spectroscopy. Ecol. Appl. 24, 1289–1296. https://doi.org/10.1890/13-1824.1
 
+
+# 4 Acknowledgments / Fundings
+
+This research was supported by the Agence Nationale de la Recherche ([ANR](https://anr.fr/en/open-calls-and-preannouncements/), France) through the young researchers project **BioCop** (ANR-17-CE32-0001
