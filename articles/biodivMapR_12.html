@@ -176,6 +176,16 @@
 <span>                                                 Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
 <span>                                                 NDVI_Thresh <span class="op">=</span> <span class="va">NDVI_Thresh</span>, Blue_Thresh <span class="op">=</span> <span class="va">Blue_Thresh</span>,</span>
 <span>                                                 NIR_Thresh <span class="op">=</span> <span class="va">NIR_Thresh</span><span class="op">)</span></span></code></pre></div>
+<p>Once pixels are masked based on the radiometric filter combined with the cloud mask, the resulting image to process corresponds to this:</p>
+<p>
+ 
+</p>
+<center>
+<img align="bottom" width="100%" height="100%" src="https://gitlab.com/jbferet/myshareddata/-/raw/master/PROGYSAT/04_FIGURES/04_RGBafterMask.png">
+</center>
+<p>
+ 
+</p>
 </div>
 <div class="section level3">
 <h3 id="perform-dimensionality-reduction-select-components">Perform dimensionality reduction &amp; select components<a class="anchor" aria-label="anchor" href="#perform-dimensionality-reduction-select-components"></a>
@@ -199,6 +209,16 @@
 <span><span class="va">Sel_PC</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_PCA_components.html">select_PCA_components</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>,</span>
 <span>                                Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>, PCA_Files <span class="op">=</span> <span class="va">PCA_Files</span>,</span>
 <span>                                TypePCA <span class="op">=</span> <span class="va">TypePCA</span>, File_Open <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>Components are then selected in order to discard those showing artifacts or too much noise. Components 1, 4 and 5 are then selected, and the color composite obtained from these 3 components is displayed in the following figure:</p>
+<p>
+ 
+</p>
+<center>
+<img align="bottom" width="100%" height="100%" src="https://gitlab.com/jbferet/myshareddata/-/raw/master/PROGYSAT/04_FIGURES/05_PCA.png">
+</center>
+<p>
+ 
+</p>
 </div>
 <div class="section level3">
 <h3 id="map-spectral-species">Map Spectral species<a class="anchor" aria-label="anchor" href="#map-spectral-species"></a>
@@ -223,6 +243,16 @@
 <span><span class="fu"><a href="../reference/map_alpha_div.html">map_alpha_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
 <span>              window_size <span class="op">=</span> <span class="va">window_size</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,</span>
 <span>              Index_Alpha <span class="op">=</span> <span class="va">Index_Alpha</span>, nbclusters <span class="op">=</span> <span class="va">nbclusters</span>,FullRes <span class="op">=</span> <span class="cn">T</span>, LowRes <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+<p>The Shannon index obtained from this process is displayed in the following figure:</p>
+<p>
+ 
+</p>
+<center>
+<img align="bottom" width="100%" height="100%" src="https://gitlab.com/jbferet/myshareddata/-/raw/master/PROGYSAT/04_FIGURES/06_Shannon.png">
+</center>
+<p>
+ 
+</p>
 </div>
 <div class="section level3">
 <h3 id="map-beta-diversity">Map beta diversity<a class="anchor" aria-label="anchor" href="#map-beta-diversity"></a>
@@ -238,6 +268,16 @@
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/map_beta_div.html">map_beta_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
 <span>             window_size <span class="op">=</span> <span class="va">window_size</span>, nb_partitions<span class="op">=</span><span class="va">nb_partitions</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, </span>
 <span>             MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>, nbclusters <span class="op">=</span> <span class="va">nbclusters</span>, FullRes <span class="op">=</span> <span class="cn">T</span>, LowRes <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+<p>The beta diversity map obtained from this process is displayed in the following figure:</p>
+<p>
+ 
+</p>
+<center>
+<img align="bottom" width="100%" height="100%" src="https://gitlab.com/jbferet/myshareddata/-/raw/master/PROGYSAT/04_FIGURES/07_Beta.png">
+</center>
+<p>
+ 
+</p>
 </div>
   </div>
 
