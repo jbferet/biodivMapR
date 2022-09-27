@@ -65,7 +65,7 @@ download.file(url = url, destfile = destkml)
 ```
 
 
-test image
+The study area corresponding to the Eastern part of the **Brokopondo reservoir** is represented by the red square in the figure below. 
 
 <p>&nbsp;</p>
 <center>
@@ -78,7 +78,14 @@ test image
 
 Then, we use [Sentinel-hub](https://apps.sentinel-hub.com/eo-browser/?zoom=11&lat=4.7602&lng=-54.92889&themeId=DEFAULT-THEME&visualizationUrl=https%3A%2F%2Fservices.sentinel-hub.com%2Fogc%2Fwms%2Fbd86bcc0-f318-402b-a145-015f85b9427e&datasetId=S2L2A&fromTime=2020-10-16T00%3A00%3A00.000Z&toTime=2020-10-16T23%3A59%3A59.999Z&layerId=1_TRUE_COLOR&demSource3D=%22MAPZEN%22) in order to identify an acquisition corresponding to our requirement. 
 
-Once the S2 tile and the date of acquisition are identified, we can proceed to the image download. Here, the selected acquisition is from October 16th, 2020. 
+Once the S2 tile and the date of acquisition are identified, we can proceed to the image download. Here, the acquisition is from October 16th, 2020 showed was one of the cleanest image available from the Sentinel-2 archive.
+
+<p>&nbsp;</p>
+<center>
+  <img align="bottom" width="100%" height="100%" src="https://gitlab.com/jbferet/myshareddata/-/raw/master/PROGYSAT/04_FIGURES/02_SentinelHub.png">
+</center> 
+<p>&nbsp;</p>
+
 
 We use the R package [`preprocS2`](https://jbferet.gitlab.io/preprocS2/index.html) to download the corresponding Sentinel-2 SAFE archive. Here, level-2A images (i.e. atmospherically corrected with Sen2Cor) are not available, and only Level-1C images can be downloaded from the [Copernicus Hub](https://scihub.copernicus.eu).
 
@@ -171,6 +178,15 @@ preprocS2::save_reflectance_s2(S2_stars = S2obj$S2_Stack,
                                MTD = S2obj$S2_Bands$metadata, 
                                MTD_MSI = S2obj$S2_Bands$metadata_MSI)
 ```
+
+The cropped image and binary mask obtained from this preprocessing should correspond to the figure below: 
+
+<p>&nbsp;</p>
+<center>
+  <img align="bottom" width="100%" height="100%" src="https://gitlab.com/jbferet/myshareddata/-/raw/master/PROGYSAT/04_FIGURES/03_RGB.png">
+</center> 
+<p>&nbsp;</p>
+
 
 Once S2 acquisition and corresponding cloud mask are downloaded and written on your disk, you can then run `biodivMapR` using the modality of your choice: 
 
