@@ -44,4 +44,4 @@ Féret, J.-B., Asner, G.P., 2014. Mapping tropical forest canopy diversity using
 
 # 4 Acknowledgments / Fundings
 
-This research was supported by the Agence Nationale de la Recherche ([ANR](https://anr.fr/en/open-calls-and-preannouncements/), France) through the young researchers project **BioCop** (ANR-17-CE32-0001
+This research was supported by the Agence Nationale de la Recherche ([ANR](https://anr.fr/en/open-calls-and-preannouncements/), France) through the young researchers project **BioCop** (ANR-17-CE32-0001)
