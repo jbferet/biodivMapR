@@ -64,6 +64,16 @@ url <- 'https://gitlab.com/jbferet/myshareddata/-/raw/master/PROGYSAT/01_DATA/Su
 download.file(url = url, destfile = destkml)
 ```
 
+
+test image
+
+<p>&nbsp;</p>
+<center>
+  <img align="bottom" width="100%" height="100%" src="https://gitlab.com/jbferet/myshareddata/-/raw/master/PROGYSAT/04_FIGURES/01_StudySite.jpg">
+</center> 
+<p>&nbsp;</p>
+
+
 ### Download Sentinel-2 data and perform atmospheric corrections with sen2Cor
 
 Then, we use [Sentinel-hub](https://apps.sentinel-hub.com/eo-browser/?zoom=11&lat=4.7602&lng=-54.92889&themeId=DEFAULT-THEME&visualizationUrl=https%3A%2F%2Fservices.sentinel-hub.com%2Fogc%2Fwms%2Fbd86bcc0-f318-402b-a145-015f85b9427e&datasetId=S2L2A&fromTime=2020-10-16T00%3A00%3A00.000Z&toTime=2020-10-16T23%3A59%3A59.999Z&layerId=1_TRUE_COLOR&demSource3D=%22MAPZEN%22) in order to identify an acquisition corresponding to our requirement. 
