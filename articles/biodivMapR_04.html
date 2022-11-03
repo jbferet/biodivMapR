@@ -121,13 +121,14 @@
 
       
 
-      </header><script src="biodivMapR_04_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>PCA &amp; Dimensionality reduction</h1>
-                        <h4 data-toc-skip class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
+                        <h4 data-toc-skip class="author">Jean-Baptiste
+Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2022-09-27</h4>
+            <h4 data-toc-skip class="date">2022-11-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_04.Rmd" class="external-link"><code>vignettes/biodivMapR_04.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_04.Rmd</code></div>
@@ -139,9 +140,13 @@
 <div class="section level3">
 <h3 id="data-transformation">Data transformation<a class="anchor" aria-label="anchor" href="#data-transformation"></a>
 </h3>
-<p>The function <code>perform_PCA</code> allows for application of PCA (or SPCA or MNF), and automatically accounts for the mask.</p>
-<p>It results in a PCA file written in the output directory (full path defined in <code>PCA_Output$PCA_Files</code>).</p>
-<p>A set of additional information, including the PCA model obtained, an additional spectral filter (useful if some spectral bands with no information are still not masked).</p>
+<p>The function <code>perform_PCA</code> allows for application of PCA
+(or SPCA or MNF), and automatically accounts for the mask.</p>
+<p>It results in a PCA file written in the output directory (full path
+defined in <code>PCA_Output$PCA_Files</code>).</p>
+<p>A set of additional information, including the PCA model obtained, an
+additional spectral filter (useful if some spectral bands with no
+information are still not masked).</p>
 <p>The additional PCA filtering is performed during this stage.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"PERFORM DIMENSIONALITY REDUCTION"</span><span class="op">)</span></span>
@@ -160,26 +165,48 @@
 <div class="section level3">
 <h3 id="component-selection-for-dimensionality-reduction">Component selection for dimensionality reduction<a class="anchor" aria-label="anchor" href="#component-selection-for-dimensionality-reduction"></a>
 </h3>
-<p>The dimensionality reduction is performed to select the most interesting spectral information relative to spectral diversity and remove spatial noise and sensor artefacts. The resulting transformed raster (PCA, SPCA or MNF) is then stored in a binary file in the <code>Output_Dir</code> directory, which in our case corresponds to <code>RESULTS/S2A_T33NUD_20180104_Subset/SPCA/PCA/OutputPCA_8_PCs</code></p>
-<p>This raster file can be displayed using QGIS or any GIS / image processing software. Here, the PCs corresponding to our image look like this:</p>
+<p>The dimensionality reduction is performed to select the most
+interesting spectral information relative to spectral diversity and
+remove spatial noise and sensor artefacts. The resulting transformed
+raster (PCA, SPCA or MNF) is then stored in a binary file in the
+<code>Output_Dir</code> directory, which in our case corresponds to
+<code>RESULTS/S2A_T33NUD_20180104_Subset/SPCA/PCA/OutputPCA_8_PCs</code></p>
+<p>This raster file can be displayed using QGIS or any GIS / image
+processing software. Here, the PCs corresponding to our image look like
+this:</p>
 <p><img align="left" width="50%" height="50%" src="../reference/figures/PCs_1234.png"><img align="right" width="50%" height="50%" src="../reference/figures/PCs_5678.png"></p>
-<p>User then needs to select components based on visual interpretation. This component selection is saved in a <code>.txt</code> file located in the same directory as the raster file.</p>
-<p>The file is automatically created and ready to edit with function <code>select_PCA_components</code>. This file expects one component selected to be written per line.</p>
-<p>The main goal of PC selection is to discard PCs showing no relevant information corresponding to vegetation, or including artifacts possibly explained by sensor properties. It is somehow a subjective process, and we are currently working on automatic selection of these components.</p>
+<p>User then needs to select components based on visual interpretation.
+This component selection is saved in a <code>.txt</code> file located in
+the same directory as the raster file.</p>
+<p>The file is automatically created and ready to edit with function
+<code>select_PCA_components</code>. This file expects one component
+selected to be written per line.</p>
+<p>The main goal of PC selection is to discard PCs showing no relevant
+information corresponding to vegetation, or including artifacts possibly
+explained by sensor properties. It is somehow a subjective process, and
+we are currently working on automatic selection of these components.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Select components from the PCA/SPCA/MNF raster</span></span>
 <span><span class="co"># Sel_PC = path of the file where selected components are stored</span></span>
 <span><span class="va">Sel_PC</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_PCA_components.html">select_PCA_components</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>,</span>
 <span>                                Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, PCA_Files <span class="op">=</span> <span class="va">PCA_Files</span>,</span>
 <span>                                TypePCA <span class="op">=</span> <span class="va">TypePCA</span>, File_Open <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>For this example, PCA bands 1, 2, 5, 6 and 8 can be kept if writing the following lines in file <code>Selected_Components.txt</code> opened for edition (do not forget carriage return after last value):</p>
+<p>For this example, PCA bands 1, 2, 5, 6 and 8 can be kept if writing
+the following lines in file <code>Selected_Components.txt</code> opened
+for edition (do not forget carriage return after last value):</p>
 <pre><code><span><span class="fl">1</span></span>
 <span><span class="fl">2</span></span>
 <span><span class="fl">5</span></span>
 <span><span class="fl">6</span></span>
 <span><span class="fl">8</span></span></code></pre>
-<p>PC#3 and PC#7 were discarded as the main patterns observed for these components did not correspond to vegetation patterns. As a rule of thumb, between 2 and 6 selected PCs are usually sufficient to catch the main diversity patterns, but this selection strongly depends on the conditions of acquisition, the type of sensor, and the complexity of the vegetation being observed.</p>
-<p>The computation of the spectral species can then be performed in the <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_05.html" target="_blank" class="external-link">next step</a>.</p>
+<p>PC#3 and PC#7 were discarded as the main patterns observed for these
+components did not correspond to vegetation patterns. As a rule of
+thumb, between 2 and 6 selected PCs are usually sufficient to catch the
+main diversity patterns, but this selection strongly depends on the
+conditions of acquisition, the type of sensor, and the complexity of the
+vegetation being observed.</p>
+<p>The computation of the spectral species can then be performed in the
+<a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_05.html" target="_blank" class="external-link">next step</a>.</p>
 </div>
   </div>
 

@@ -121,13 +121,15 @@
 
       
 
-      </header><script src="biodivMapR_09_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Compute diversity from user-defined set of layers</h1>
-                        <h4 data-toc-skip class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
+      <h1 data-toc-skip>Compute diversity from user-defined set of
+layers</h1>
+                        <h4 data-toc-skip class="author">Jean-Baptiste
+Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2022-09-27</h4>
+            <h4 data-toc-skip class="date">2022-11-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_09.Rmd" class="external-link"><code>vignettes/biodivMapR_09.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_09.Rmd</code></div>
@@ -136,18 +138,30 @@
 
     
     
-<p>Users may want to compute diversity from a set of raster layers differing from reflectance data.</p>
-<p>This functionality allows for more flexible and faster application of <code>biodivMapR</code>, as all processings dedicated to the analysis of a multispectral/hyperspectral continuum (such as continuum removal, and possibly PCA if the variables supporting the analysis show minimum correlation).</p>
-<p>Here we will illustrate this functionality with the S2 subset used in the previous steps.</p>
+<p>Users may want to compute diversity from a set of raster layers
+differing from reflectance data.</p>
+<p>This functionality allows for more flexible and faster application of
+<code>biodivMapR</code>, as all processings dedicated to the analysis of
+a multispectral/hyperspectral continuum (such as continuum removal, and
+possibly PCA if the variables supporting the analysis show minimum
+correlation).</p>
+<p>Here we will illustrate this functionality with the S2 subset used in
+the previous steps.</p>
 <div class="section level2">
 <h2 id="computation-of-the-spectral-indices">Computation of the spectral indices<a class="anchor" aria-label="anchor" href="#computation-of-the-spectral-indices"></a>
 </h2>
-<p>The computation of spectral indices can be performed with the package <code>prosail</code>. Please refer to the <a href="https://jbferet.gitlab.io/prosail/index.html" class="external-link">homepage</a> and follow instructions for installation.</p>
+<p>The computation of spectral indices can be performed with the package
+<code>prosail</code>. Please refer to the <a href="https://jbferet.gitlab.io/prosail/index.html" class="external-link">homepage</a> and
+follow instructions for installation.</p>
 <div class="section level3">
 <h3 id="load-additional-libraries-and-prepare-data-for-computation">Load additional libraries and prepare data for computation<a class="anchor" aria-label="anchor" href="#load-additional-libraries-and-prepare-data-for-computation"></a>
 </h3>
-<p>Here, the path for the image to be processed is assumed to be defined in the <code>destfile</code> variable defined <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_01.html" target="_blank" class="external-link">previously</a>.</p>
-<p>We will first read it with the <code>raster</code> package, and get the central wavelength corresponding to each spectral band in the file from the <strong>header file</strong>, which is critical for the automated computation of spectral indices.</p>
+<p>Here, the path for the image to be processed is assumed to be defined
+in the <code>destfile</code> variable defined <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_01.html" target="_blank" class="external-link">previously</a>.</p>
+<p>We will first read it with the <code>raster</code> package, and get
+the central wavelength corresponding to each spectral band in the file
+from the <strong>header file</strong>, which is critical for the
+automated computation of spectral indices.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">prosail</span><span class="op">)</span> <span class="co"># https://jbferet.gitlab.io/prosail/</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">preprocS2</span><span class="op">)</span> <span class="co"># https://jbferet.gitlab.io/preprocs2/</span></span>
@@ -162,12 +176,18 @@
 <span><span class="va">SensorBands</span> <span class="op">&lt;-</span> <span class="va">HDR</span><span class="op">$</span><span class="va">wavelength</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="computation-of-spectral-indices-pre-defined-in-prosail">Computation of spectral indices pre-defined in <code>prosail</code><a class="anchor" aria-label="anchor" href="#computation-of-spectral-indices-pre-defined-in-prosail"></a>
+<h3 id="computation-of-spectral-indices-pre-defined-in-prosail">Computation of spectral indices pre-defined in
+<code>prosail</code><a class="anchor" aria-label="anchor" href="#computation-of-spectral-indices-pre-defined-in-prosail"></a>
 </h3>
-<p>A set of spectral indices specific to Sentinel-2 sensors is already available. If you are not using Sentinel-2 data, then the spctral indices will still be computed, but they will use the closest band available to the Sentinel-2 bands required.</p>
-<p><strong>There are over 35 spectral indices, some showing high redundancy with each others.</strong></p>
+<p>A set of spectral indices specific to Sentinel-2 sensors is already
+available. If you are not using Sentinel-2 data, then the spctral
+indices will still be computed, but they will use the closest band
+available to the Sentinel-2 bands required.</p>
+<p><strong>There are over 35 spectral indices, some showing high
+redundancy with each others.</strong></p>
 <p>You can check the expression used to compute them <a href="https://gitlab.com/jbferet/prosail/-/blob/master/R/Lib_SpectralIndices.R" target="_blank" class="external-link">here</a>.</p>
-<p>To obtain the list of spectral indices, and to compute a set of spectral indices from this list, please proceed as follows:</p>
+<p>To obtain the list of spectral indices, and to compute a set of
+spectral indices from this list, please proceed as follows:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># First define a list of spectral indices</span></span>
 <span><span class="va">Sel_Indices</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'mNDVI705'</span>,<span class="st">'CR_SWIR'</span>,<span class="st">'LAI_SAVI'</span><span class="op">)</span></span>
@@ -181,17 +201,32 @@
 <span><span class="co"># [14] "LAI_SAVI" "MCARI" "mNDVI705" "MSAVI2" "MSI" "mSR705" "MTCI" "nBR_RAW" "NDI_45" "NDII" "NDVI" "NDVI_G" "NDVI705" </span></span>
 <span><span class="co"># [27] "NDWI1" "NDWI2" "PSRI" "PSRI_NIR" "RE_NDVI" "RE_NDWI" "S2REP" "SAVI" "SIPI" "SR" "CR_SWIR" </span></span>
 <span> </span></code></pre></div>
-<p><code>ReflFactor</code> is the multiplicative factor applied on the reflectance data. Here Sentinel-2 are distributed in Int16 value types, meaning that the original reflectance was multiplied by 10000. The function then conveerts to standard reflectance values prior to computation of spectral index.</p>
+<p><code>ReflFactor</code> is the multiplicative factor applied on the
+reflectance data. Here Sentinel-2 are distributed in Int16 value types,
+meaning that the original reflectance was multiplied by 10000. The
+function then conveerts to standard reflectance values prior to
+computation of spectral index.</p>
 <ul>
-<li><p>if <code>StackOut=T</code>: a stack of the spectral indices is directly returned in <code>Spectral_Indices$SpectralIndices</code>.</p></li>
-<li><p>if <code>StackOut=F</code>: a single raster layer is returned for each spectral index, accessible in <code>Spectral_Indices$SpectralIndices$CR_SWIR</code> for example.</p></li>
+<li><p>if <code>StackOut=T</code>: a stack of the spectral indices is
+directly returned in
+<code>Spectral_Indices$SpectralIndices</code>.</p></li>
+<li><p>if <code>StackOut=F</code>: a single raster layer is returned for
+each spectral index, accessible in
+<code>Spectral_Indices$SpectralIndices$CR_SWIR</code> for
+example.</p></li>
 </ul>
 </div>
 <div class="section level3">
-<h3 id="computation-of-user-defined-spectral-indices-through-spectral-index-interpreter">Computation of user-defined spectral indices through spectral index interpreter<a class="anchor" aria-label="anchor" href="#computation-of-user-defined-spectral-indices-through-spectral-index-interpreter"></a>
+<h3 id="computation-of-user-defined-spectral-indices-through-spectral-index-interpreter">Computation of user-defined spectral indices through spectral index
+interpreter<a class="anchor" aria-label="anchor" href="#computation-of-user-defined-spectral-indices-through-spectral-index-interpreter"></a>
 </h3>
-<p>You may want to be able to compute your own spectral index, if interested in a specific spectral index which is not in the list of pre-defined indices, or if using a sensor which is not Sentinel-2.</p>
-<p>The function <code>ComputeSpectralIndices_fromExpression</code> allows this flexibility, if the spectral index can be expressed as a sufficiently simple expression. Here is an illustration of the computation of the NDVI using this function:</p>
+<p>You may want to be able to compute your own spectral index, if
+interested in a specific spectral index which is not in the list of
+pre-defined indices, or if using a sensor which is not Sentinel-2.</p>
+<p>The function <code>ComputeSpectralIndices_fromExpression</code>
+allows this flexibility, if the spectral index can be expressed as a
+sufficiently simple expression. Here is an illustration of the
+computation of the NDVI using this function:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># 1- Define the expression corresponding to the spectral index</span></span>
 <span><span class="va">Expression_NDVI</span> <span class="op">&lt;-</span> <span class="st">'(B2-B1)/(B2+B1)'</span></span>
@@ -203,7 +238,8 @@
 <span><span class="va">NDVI</span> <span class="op">&lt;-</span> <span class="fu">ComputeSpectralIndices_fromExpression</span><span class="op">(</span>Refl <span class="op">=</span> <span class="va">ImBrick</span>, SensorBands <span class="op">=</span> <span class="va">SensorBands</span>, </span>
 <span>                                               ExpressIndex <span class="op">=</span> <span class="va">Expression_NDVI</span>, listBands <span class="op">=</span> <span class="va">Bands_NDVI</span>, </span>
 <span>                                               ReflFactor<span class="op">=</span><span class="fl">10000</span>, NameIndex <span class="op">=</span> <span class="st">'NDVI'</span><span class="op">)</span></span></code></pre></div>
-<p>The same results should be obtained as when using pre-defined NDVI, with a correlation of 1.</p>
+<p>The same results should be obtained as when using pre-defined NDVI,
+with a correlation of 1.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># First define a list of spectral indices</span></span>
 <span><span class="va">Index</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'NDVI'</span><span class="op">)</span></span>
@@ -214,14 +250,24 @@
 </div>
 </div>
 <div class="section level2">
-<h2 id="stacking-and-writing-spectral-indices-in-format-expected-by-biodivmapr">Stacking and writing spectral indices in format expected by biodivMapR<a class="anchor" aria-label="anchor" href="#stacking-and-writing-spectral-indices-in-format-expected-by-biodivmapr"></a>
+<h2 id="stacking-and-writing-spectral-indices-in-format-expected-by-biodivmapr">Stacking and writing spectral indices in format expected by
+biodivMapR<a class="anchor" aria-label="anchor" href="#stacking-and-writing-spectral-indices-in-format-expected-by-biodivmapr"></a>
 </h2>
-<p>Once the spectral indices are computed, they will be written in <strong>ENVI format with <a href="https://bitbucket.org/hu-geomatics/enmap-box-idl/wiki/Data%20Format%20Definition" target="_blank" class="external-link">BIL interleaves</a></strong>.</p>
-<p>This file format is used as this image stack will directly replace the PCA file produced by biodivMapR.</p>
-<p>It may be necessary to apply a filter on these spectral indices in order to mask outliers, as these may strongly impact the spatial variability of the features to be used, and the corresponding diversity indices.</p>
-<p>Here we are suggesting a method based on interquartile range (IQR), but feel free to use your own method to mask unwanted data from your stack: you can use the mask produced from the function <code>perform_radiometric_filtering</code>, if using optical data.</p>
+<p>Once the spectral indices are computed, they will be written in
+<strong>ENVI format with <a href="https://bitbucket.org/hu-geomatics/enmap-box-idl/wiki/Data%20Format%20Definition" target="_blank" class="external-link">BIL interleaves</a></strong>.</p>
+<p>This file format is used as this image stack will directly replace
+the PCA file produced by biodivMapR.</p>
+<p>It may be necessary to apply a filter on these spectral indices in
+order to mask outliers, as these may strongly impact the spatial
+variability of the features to be used, and the corresponding diversity
+indices.</p>
+<p>Here we are suggesting a method based on interquartile range (IQR),
+but feel free to use your own method to mask unwanted data from your
+stack: you can use the mask produced from the function
+<code>perform_radiometric_filtering</code>, if using optical data.</p>
 <div class="section level3">
-<h3 id="mask-data-from-spectral-indices-and-apply-the-mask-on-spectral-indices">Mask data from spectral indices and apply the mask on spectral indices<a class="anchor" aria-label="anchor" href="#mask-data-from-spectral-indices-and-apply-the-mask-on-spectral-indices"></a>
+<h3 id="mask-data-from-spectral-indices-and-apply-the-mask-on-spectral-indices">Mask data from spectral indices and apply the mask on spectral
+indices<a class="anchor" aria-label="anchor" href="#mask-data-from-spectral-indices-and-apply-the-mask-on-spectral-indices"></a>
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># initialize mask</span></span>

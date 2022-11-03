@@ -121,13 +121,14 @@
 
       
 
-      </header><script src="biodivMapR_10_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Map diversity from Lautaret HS image</h1>
-                        <h4 data-toc-skip class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
+                        <h4 data-toc-skip class="author">Jean-Baptiste
+Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2022-09-27</h4>
+            <h4 data-toc-skip class="date">2022-11-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_10.Rmd" class="external-link"><code>vignettes/biodivMapR_10.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_10.Rmd</code></div>
@@ -136,19 +137,32 @@
 
     
     
-<p>This tutorial illustrates how to run <code>biodivMapR</code> in order to map spectral diversity based on a set of spectral indices.</p>
-<p>The study site (Roche Noire) is a high elevation watershed located next to the Lautaret pass (France, Hautes Alpes) in the south-western Alps. <a href="https://fr.wikipedia.org/wiki/Col_du_Lautaret#/maplink/1" class="external-link">N 45° 02′ 07″, E 6° 24′ 20″</a></p>
-<p>More information about the study area and data used for this illustration can be found in <a href="http://dx.doi.org/10.1098/rsbl.2014.0347" class="external-link">Pottier et al. (2014)</a>.</p>
+<p>This tutorial illustrates how to run <code>biodivMapR</code> in order
+to map spectral diversity based on a set of spectral indices.</p>
+<p>The study site (Roche Noire) is a high elevation watershed located
+next to the Lautaret pass (France, Hautes Alpes) in the south-western
+Alps. <a href="https://fr.wikipedia.org/wiki/Col_du_Lautaret#/maplink/1" class="external-link">N 45°
+02′ 07″, E 6° 24′ 20″</a></p>
+<p>More information about the study area and data used for this
+illustration can be found in <a href="http://dx.doi.org/10.1098/rsbl.2014.0347" class="external-link">Pottier et
+al. (2014)</a>.</p>
 <div class="section level2">
-<h2 id="download-imaging-spectroscopy-data-and-corresponding-ground-plots">Download imaging spectroscopy data and corresponding ground plots<a class="anchor" aria-label="anchor" href="#download-imaging-spectroscopy-data-and-corresponding-ground-plots"></a>
+<h2 id="download-imaging-spectroscopy-data-and-corresponding-ground-plots">Download imaging spectroscopy data and corresponding ground
+plots<a class="anchor" aria-label="anchor" href="#download-imaging-spectroscopy-data-and-corresponding-ground-plots"></a>
 </h2>
-<p>the image is available as a zip archive from a <a href="https://gitlab.com/jbferet/myshareddata/-/raw/master/Lautaret_HSI" class="external-link">gitlab repository</a>.</p>
-<p>The image is an ENVI raster acquired with the dual Airborne Imaging Spectroradiometer for Applications (AISA; Specim Ltd., Finland) on July 23rd, 2008, including :</p>
+<p>the image is available as a zip archive from a <a href="https://gitlab.com/jbferet/myshareddata/-/raw/master/Lautaret_HSI" class="external-link">gitlab
+repository</a>.</p>
+<p>The image is an ENVI raster acquired with the dual Airborne Imaging
+Spectroradiometer for Applications (AISA; Specim Ltd., Finland) on July
+23rd, 2008, including :</p>
 <ul>
 <li><p>A binary file (which has no extension here).</p></li>
 <li><p>A header file (with <strong>.hdr</strong> extension).</p></li>
 </ul>
-<p>The header file is a text file including all necessary metadata which can be read with a text editor. It includes image dimensions, projection, and the name and <strong>central wavelength for each spectral band</strong>.</p>
+<p>The header file is a text file including all necessary metadata which
+can be read with a text editor. It includes image dimensions,
+projection, and the name and <strong>central wavelength for each
+spectral band</strong>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># load biodivMapR and useful libraries </span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jbferet/biodivMapR" class="external-link">biodivMapR</a></span><span class="op">)</span></span>
@@ -176,13 +190,22 @@
 <img width="100%" height="100%" src="../reference/figures/10_HSI_Lautaret_Plots.png"></p>
 <ul>
 <li>
-<span style="color:red;background-color:#999999"> <em>FG : open subalpine grasslands dominated by Festuca violacea, mostly found on south-facing steep slopes</em> </span>.</li>
+<span style="color:red;background-color:#999999"> <em>FG : open
+subalpine grasslands dominated by Festuca violacea, mostly found on
+south-facing steep slopes</em> </span>.</li>
 <li>
-<span style="color:yellow;background-color:#999999"> <em>FP : tall subalpine grasslands dominated by Patzkea paniculata (syn. Festuca paniculata), mostly found on south-facing gentle slopes with deep soil</em> </span>.</li>
+<span style="color:yellow;background-color:#999999"> <em>FP : tall
+subalpine grasslands dominated by Patzkea paniculata (syn. Festuca
+paniculata), mostly found on south-facing gentle slopes with deep
+soil</em> </span>.</li>
 <li>
-<span style="color:orange;background-color:#999999"> <em>SC : sparsely vegetated grasslands dominated by Sesleria caerulea on south-facing, debris-covered slopes</em> </span>.</li>
+<span style="color:orange;background-color:#999999"> <em>SC :
+sparsely vegetated grasslands dominated by Sesleria caerulea on
+south-facing, debris-covered slopes</em> </span>.</li>
 <li>
-<span style="color:blue;background-color:#999999"> <em>V: low stature heaths dominated by Vaccinium uliginosum and Vaccinium myrtillus, mostly found on north-facing slopes</em> </span>.</li>
+<span style="color:blue;background-color:#999999"> <em>V: low
+stature heaths dominated by Vaccinium uliginosum and Vaccinium
+myrtillus, mostly found on north-facing slopes</em> </span>.</li>
 </ul>
 <p align="center">
 <img width="100%" height="100%" src="../reference/figures/Lautaret/overview_001.jpg"><em>Overview of the site</em>
@@ -241,11 +264,17 @@ Illustration of S type
 <div class="section level2">
 <h2 id="compute-spectral-indices-from-imaging-spectroscopy">Compute spectral indices from imaging spectroscopy<a class="anchor" aria-label="anchor" href="#compute-spectral-indices-from-imaging-spectroscopy"></a>
 </h2>
-<p>The computation of spectral indices can be performed with the package <code>prosail</code>. Please refer to the <a href="https://jbferet.gitlab.io/prosail/index.html" class="external-link">homepage</a> and follow instructions for installation.</p>
+<p>The computation of spectral indices can be performed with the package
+<code>prosail</code>. Please refer to the <a href="https://jbferet.gitlab.io/prosail/index.html" class="external-link">homepage</a> and
+follow instructions for installation.</p>
 <div class="section level3">
 <h3 id="load-additional-libraries-and-prepare-data-for-computation">Load additional libraries and prepare data for computation<a class="anchor" aria-label="anchor" href="#load-additional-libraries-and-prepare-data-for-computation"></a>
 </h3>
-<p>We will first read the imaging spectroscopy raster with the <code>raster</code> package. We will also get the central wavelength corresponding to each spectral band in the file from the <strong>header file</strong>, which is critical for the automated computation of spectral indices.</p>
+<p>We will first read the imaging spectroscopy raster with the
+<code>raster</code> package. We will also get the central wavelength
+corresponding to each spectral band in the file from the <strong>header
+file</strong>, which is critical for the automated computation of
+spectral indices.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">prosail</span><span class="op">)</span> <span class="co"># https://jbferet.gitlab.io/prosail/</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/stars/" class="external-link">stars</a></span><span class="op">)</span></span>
@@ -258,13 +287,23 @@ Illustration of S type
 <div class="section level3">
 <h3 id="computation-of-spectral-indices">Computation of spectral indices<a class="anchor" aria-label="anchor" href="#computation-of-spectral-indices"></a>
 </h3>
-<p>We select a set of spectral indices identified as relevant for the estimation of various vegetation traits.</p>
-<p>These spectral indices and the corresponding leaf traits are the following ones:</p>
-<p>** TCARI/OSAVI (<a href="https://doi.org/10.1016/S0034-4257(02)00018-4" class="external-link">Haboudane et al. (2002)</a>), which is supposed to be related to leaf chlorophyll content.</p>
-<p>** ND_LMA (<a href="https://doi.org/10.1016/j.rse.2008.06.005" class="external-link">le Maire et al. (2008)</a>), which is supposed to be related to Leaf Mass per Area (LMA).</p>
-<p>** CR_SWIR (Féret, 2020 - unpublished), which is supposed to be related to Equivalent Water Thickness (EWT).</p>
-<p>The NDVI is also computed in order to mask non vegetated pixels based on a simple tresholding.</p>
-<p>Here, we are using the function <code>ComputeSpectralIndices_fromExpression</code> to compute spectral indices based on an expression.</p>
+<p>We select a set of spectral indices identified as relevant for the
+estimation of various vegetation traits.</p>
+<p>These spectral indices and the corresponding leaf traits are the
+following ones:</p>
+<p>** TCARI/OSAVI (<a href="https://doi.org/10.1016/S0034-4257(02)00018-4" class="external-link">Haboudane et
+al. (2002)</a>), which is supposed to be related to leaf chlorophyll
+content.</p>
+<p>** ND_LMA (<a href="https://doi.org/10.1016/j.rse.2008.06.005" class="external-link">le
+Maire et al. (2008)</a>), which is supposed to be related to Leaf Mass
+per Area (LMA).</p>
+<p>** CR_SWIR (Féret, 2020 - unpublished), which is supposed to be
+related to Equivalent Water Thickness (EWT).</p>
+<p>The NDVI is also computed in order to mask non vegetated pixels based
+on a simple tresholding.</p>
+<p>Here, we are using the function
+<code>ComputeSpectralIndices_fromExpression</code> to compute spectral
+indices based on an expression.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ReflFactor</span> <span class="op">&lt;-</span> <span class="fl">10000</span> <span class="co"># using reflectance data coded in Int16 between 0 and 10000</span></span>
 <span></span>
@@ -345,7 +384,8 @@ Illustration of S type
 <span><span class="va">AUCminmax</span><span class="op">[[</span><span class="st">'target'</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">670</span></span>
 <span><span class="va">ANCB</span> <span class="op">&lt;-</span> <span class="va">ANCB</span><span class="op">/</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="fu">CR_WL</span><span class="op">(</span>Refl <span class="op">=</span> <span class="va">ImBrick</span>, SensorBands <span class="op">=</span> <span class="va">SensorBands</span>,</span>
 <span>                      CRbands <span class="op">=</span> <span class="va">AUCminmax</span>, ReflFactor<span class="op">=</span><span class="va">ReflFactor</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<p>Once computed, we we perform interquartile analysis on these spectral indices in order to mask outliers.</p>
+<p>Once computed, we we perform interquartile analysis on these spectral
+indices in order to mask outliers.</p>
 <p>Then we write these indices as individual raster files.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
@@ -368,11 +408,15 @@ Illustration of S type
 <span>  <span class="va">HDR</span><span class="op">$</span><span class="va">`band names`</span> <span class="op">&lt;-</span> <span class="va">SI</span></span>
 <span>  <span class="fu"><a href="../reference/write_ENVI_header.html">write_ENVI_header</a></span><span class="op">(</span>HDR <span class="op">=</span> <span class="va">HDR</span>,HDRpath <span class="op">=</span> <span class="fu"><a href="../reference/get_HDR_name.html">get_HDR_name</a></span><span class="op">(</span><span class="va">Index_Path</span><span class="op">[[</span><span class="va">SI</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>The following figure displays a color composition of three indices:</p>
+<p>The following figure displays a color composition of three
+indices:</p>
 <ul>
-<li><p><span style="color:red"> <em><strong>TCARI/OSAVI</strong></em> </span>.</p></li>
-<li><p><span style="color:green"> <em><strong>CR_SWIR</strong></em> </span>.</p></li>
-<li><p><span style="color:blue"> <em><strong>ANCB</strong></em> </span>.</p></li>
+<li><p><span style="color:red"> <em><strong>TCARI/OSAVI</strong></em>
+</span>.</p></li>
+<li><p><span style="color:green"> <em><strong>CR_SWIR</strong></em>
+</span>.</p></li>
+<li><p><span style="color:blue"> <em><strong>ANCB</strong></em>
+</span>.</p></li>
 </ul>
 <p align="center">
 <img width="100%" height="100%" src="../reference/figures/10_SpectralIndices_Lautaret.png"></p>
@@ -399,11 +443,14 @@ Illustration of S type
 </div>
 </div>
 <div class="section level2">
-<h2 id="stacking-and-writing-spectral-indices-in-format-expected-by-biodivmapr">Stacking and writing spectral indices in format expected by biodivMapR<a class="anchor" aria-label="anchor" href="#stacking-and-writing-spectral-indices-in-format-expected-by-biodivmapr"></a>
+<h2 id="stacking-and-writing-spectral-indices-in-format-expected-by-biodivmapr">Stacking and writing spectral indices in format expected by
+biodivMapR<a class="anchor" aria-label="anchor" href="#stacking-and-writing-spectral-indices-in-format-expected-by-biodivmapr"></a>
 </h2>
-<p>Once the spectral indices are computed, they will be stacked and written in <strong>ENVI format with <a href="https://bitbucket.org/hu-geomatics/enmap-box-idl/wiki/Data%20Format%20Definition" target="_blank" class="external-link">BIL interleaves</a></strong>.</p>
+<p>Once the spectral indices are computed, they will be stacked and
+written in <strong>ENVI format with <a href="https://bitbucket.org/hu-geomatics/enmap-box-idl/wiki/Data%20Format%20Definition" target="_blank" class="external-link">BIL interleaves</a></strong>.</p>
 <div class="section level3">
-<h3 id="mask-data-from-spectral-indices-and-apply-the-mask-on-spectral-indices">Mask data from spectral indices and apply the mask on spectral indices<a class="anchor" aria-label="anchor" href="#mask-data-from-spectral-indices-and-apply-the-mask-on-spectral-indices"></a>
+<h3 id="mask-data-from-spectral-indices-and-apply-the-mask-on-spectral-indices">Mask data from spectral indices and apply the mask on spectral
+indices<a class="anchor" aria-label="anchor" href="#mask-data-from-spectral-indices-and-apply-the-mask-on-spectral-indices"></a>
 </h3>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># stack spectral indices</span></span>
@@ -502,14 +549,17 @@ Illustration of S type
 <span><span class="co"># map_functional_div(Original_Image_File = Input_SIstack_File, Functional_File = Input_SIstack_File,</span></span>
 <span><span class="co">#                    Selected_Features = SelectedPCs, Output_Dir = Output_Dir,</span></span>
 <span><span class="co">#                    window_size = window_size, nbCPU = nbCPU, MaxRAM = MaxRAM,TypePCA = TypePCA, LowRes = T)</span></span></code></pre></div>
-<p>The map corresponding to beta-diversity (based on a principal coordinate analysis applied to Bray Curts dissimilarity matrix) is displayed hereafter:</p>
+<p>The map corresponding to beta-diversity (based on a principal
+coordinate analysis applied to Bray Curts dissimilarity matrix) is
+displayed hereafter:</p>
 <p align="center">
 <img width="100%" height="100%" src="../reference/figures/10_Beta_Lautaret.png"></p>
 </div>
 <div class="section level3">
 <h3 id="perform-validation-based-on-a-vectorized-plot-network">Perform validation based on a vectorized plot network<a class="anchor" aria-label="anchor" href="#perform-validation-based-on-a-vectorized-plot-network"></a>
 </h3>
-<p>First, the zip file containing the shapefile with field plots needs to be downloaded from the repository and unzipped.</p>
+<p>First, the zip file containing the shapefile with field plots needs
+to be downloaded from the repository and unzipped.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># url for the zip file containing imaging spectroscopy data</span></span>
 <span><span class="va">url</span> <span class="op">&lt;-</span> <span class="st">'https://gitlab.com/jbferet/myshareddata/-/raw/master/Lautaret_HSI/ROCHENOIRE_PLOTS.zip'</span></span>
@@ -634,7 +684,9 @@ Illustration of S type
 <p>The resulting figures are displayed below.</p>
 <p align="center">
 <img width="100%" height="100%" src="../reference/figures/10_Lautaret_BetaDiversity_PcoA1_vs_PcoA2_vs_PcoA3.png"></p>
-<p>This data acquisition was initiated and supported by the European <a href="https://cordis.europa.eu/project/id/36866" class="external-link">ECOCHANGE project</a> (GOCE-CT-2007-036866) and the Swiss National Science Foundation (<a href="https://p3.snf.ch/Project-125145" class="external-link">BIOASSEMBLE</a>, 31003A-125145).</p>
+<p>This data acquisition was initiated and supported by the European <a href="https://cordis.europa.eu/project/id/36866" class="external-link">ECOCHANGE project</a>
+(GOCE-CT-2007-036866) and the Swiss National Science Foundation (<a href="https://p3.snf.ch/Project-125145" class="external-link">BIOASSEMBLE</a>,
+31003A-125145).</p>
 </div>
 </div>
   </div>

@@ -121,13 +121,14 @@
 
       
 
-      </header><script src="biodivMapR_03_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Perform spatial &amp; spectral filtering</h1>
-                        <h4 data-toc-skip class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
+                        <h4 data-toc-skip class="author">Jean-Baptiste
+Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2022-09-27</h4>
+            <h4 data-toc-skip class="date">2022-11-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_03.Rmd" class="external-link"><code>vignettes/biodivMapR_03.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_03.Rmd</code></div>
@@ -139,13 +140,30 @@
 <div class="section level3">
 <h3 id="produce-a-vegetation-cloud-shade-mask">Produce a vegetation / cloud / shade mask<a class="anchor" aria-label="anchor" href="#produce-a-vegetation-cloud-shade-mask"></a>
 </h3>
-<p>The full radiometric filtering can be peformed with a unique function, including:</p>
+<p>The full radiometric filtering can be peformed with a unique
+function, including:</p>
 <ul>
-<li><p><strong>NDVI filtering</strong>: allows filtering to eliminate non-vegetated pixels. Nothing fancy so you may need to deal with mixed pixels… <code>NDVI_Thresh</code> defines the minimum NDVI value to be kept. By default, the NDVI is computed based on the NIR spectral band closest to 835nm, and the RED spectral band closest to 700nm. Which makes it closer to a RedEdge NDVI. These values can be adjusted as input variables for <code>perform_radiometric_filtering</code>.</p></li>
-<li><p><strong>NIR filtering</strong>: allows filtering of shadows and pixels with very low signal. <code>NIR_Thresh</code> defines the minimum NIR value to be kept. By default, the NIR spectral band closest to 835nm is used. This value can be adjusted as input variables for <code>perform_radiometric_filtering</code>.</p></li>
-<li><p><strong>BLUE filtering</strong>: allows filtering of clouds, based on the hypothesis that atmospheric scattering will lead to higher reflectance in the blue domain. <code>Blue_Thresh</code> defines the maximum Blue reflectance to be kept. By default, the Blue spectral band closest to 480nm is used. This value can be adjusted as input variables for <code>perform_radiometric_filtering</code>.</p></li>
+<li><p><strong>NDVI filtering</strong>: allows filtering to eliminate
+non-vegetated pixels. Nothing fancy so you may need to deal with mixed
+pixels… <code>NDVI_Thresh</code> defines the minimum NDVI value to be
+kept. By default, the NDVI is computed based on the NIR spectral band
+closest to 835nm, and the RED spectral band closest to 700nm. Which
+makes it closer to a RedEdge NDVI. These values can be adjusted as input
+variables for <code>perform_radiometric_filtering</code>.</p></li>
+<li><p><strong>NIR filtering</strong>: allows filtering of shadows and
+pixels with very low signal. <code>NIR_Thresh</code> defines the minimum
+NIR value to be kept. By default, the NIR spectral band closest to 835nm
+is used. This value can be adjusted as input variables for
+<code>perform_radiometric_filtering</code>.</p></li>
+<li><p><strong>BLUE filtering</strong>: allows filtering of clouds,
+based on the hypothesis that atmospheric scattering will lead to higher
+reflectance in the blue domain. <code>Blue_Thresh</code> defines the
+maximum Blue reflectance to be kept. By default, the Blue spectral band
+closest to 480nm is used. This value can be adjusted as input variables
+for <code>perform_radiometric_filtering</code>.</p></li>
 </ul>
-<p>The spectral bands corresponding to the Blue, Green and NIR spectral bands can be defined as optional parameters.</p>
+<p>The spectral bands corresponding to the Blue, Green and NIR spectral
+bands can be defined as optional parameters.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"PERFORM RADIOMETRIC FILTERING"</span><span class="op">)</span></span>
 <span><span class="va">Input_Mask_File</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/perform_radiometric_filtering.html">perform_radiometric_filtering</a></span><span class="op">(</span>Image_Path <span class="op">=</span> <span class="va">Input_Image_File</span>, Mask_Path <span class="op">=</span> <span class="va">Input_Mask_File</span>,</span>
@@ -156,16 +174,23 @@
 <div class="section level3">
 <h3 id="produce-a-spectral-filter">Produce a spectral filter<a class="anchor" aria-label="anchor" href="#produce-a-spectral-filter"></a>
 </h3>
-<p>Spectral bands or spectral domains can be discarded during the process. This is particularly useful when spectral domains with high SNR are includd in the image.</p>
-<p>By default, the spectral domains corresponding to atmospheric water absorption are masked.</p>
-<p>However, these spectral domains can be extended, or included with the variable <code>Excluded_WL</code>, which is an input variable for the function <code>perform_PCA</code>. The default values are the following for the spectral domains to exclude (in nanometers):</p>
+<p>Spectral bands or spectral domains can be discarded during the
+process. This is particularly useful when spectral domains with high SNR
+are includd in the image.</p>
+<p>By default, the spectral domains corresponding to atmospheric water
+absorption are masked.</p>
+<p>However, these spectral domains can be extended, or included with the
+variable <code>Excluded_WL</code>, which is an input variable for the
+function <code>perform_PCA</code>. The default values are the following
+for the spectral domains to exclude (in nanometers):</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Excluded_WL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">400</span><span class="op">)</span></span>
 <span><span class="va">Excluded_WL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">Excluded_WL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">895</span>, <span class="fl">1005</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">Excluded_WL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">Excluded_WL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1180</span>, <span class="fl">1480</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">Excluded_WL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">Excluded_WL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1780</span>, <span class="fl">2040</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><br><br></p>
-<p>The PCA transformation and dimensional reduction are performed in the <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_04.html" target="_blank" class="external-link">next step</a>.</p>
+<p>The PCA transformation and dimensional reduction are performed in the
+<a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_04.html" target="_blank" class="external-link">next step</a>.</p>
 </div>
   </div>
 

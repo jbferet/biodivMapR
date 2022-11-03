@@ -121,13 +121,14 @@
 
       
 
-      </header><script src="biodivMapR_06_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>alpha and beta diversity maps</h1>
-                        <h4 data-toc-skip class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
+                        <h4 data-toc-skip class="author">Jean-Baptiste
+Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2022-09-27</h4>
+            <h4 data-toc-skip class="date">2022-11-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_06.Rmd" class="external-link"><code>vignettes/biodivMapR_06.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_06.Rmd</code></div>
@@ -136,8 +137,11 @@
 
     
     
-<p><span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps are based on the <code>SpectralSpecies</code> raster.</p>
-<p>The code to compute <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps from this file is as follows:</p>
+<p><span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps are based on the
+<code>SpectralSpecies</code> raster.</p>
+<p>The code to compute <span class="math inline">\(\alpha\)</span> and
+<span class="math inline">\(\beta\)</span> diversity maps from this file
+is as follows:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"MAP ALPHA DIVERSITY"</span><span class="op">)</span></span>
 <span><span class="co"># Index.Alpha   = c('Shannon','Simpson')</span></span>
@@ -150,18 +154,25 @@
 <span><span class="fu"><a href="../reference/map_beta_div.html">map_beta_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
 <span>             window_size <span class="op">=</span> <span class="va">window_size</span>, nb_partitions<span class="op">=</span><span class="va">nb_partitions</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,</span>
 <span>             nbclusters <span class="op">=</span> <span class="va">nbclusters</span><span class="op">)</span></span></code></pre></div>
-<p><span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps are then stored in raster files located here:</p>
+<p><span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps are then stored in
+raster files located here:</p>
 <p><code>RESULTS/S2A_T33NUD_20180104_Subset/SPCA/ALPHA</code></p>
 <p>and here:</p>
 <p><code>RESULTS/S2A_T33NUD_20180104_Subset/SPCA/BETA</code></p>
-<p>Different types of rasters can be produced (full resolution or resolution defined with <code>window_size</code>). Users are invited to refer to the documentation for more options.</p>
+<p>Different types of rasters can be produced (full resolution or
+resolution defined with <code>window_size</code>). Users are invited to
+refer to the documentation for more options.</p>
 <p>Here, processing our example leads to the following <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps:</p>
 <p>
 <img align="left" width="33%" height="33%" src="../reference/figures/01_RGB_S2A_T33NUD_20180104_Subset.png"><img align="right" width="66%" height="66%" src="../reference/figures/03_AlphaBeta.png"></p>
 <p><strong>RGB representation of Sentinel-2 image.</strong></p>
 <p></p>
-<p>Alternative diversity indices corresponding to functional diversity indices can also be computed. These do not require computation of the spectral species. They only require the PCA file or any stacked file.</p>
-<p>The computation of teh functional diversity metrics is introduced in the <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_07.html" target="_blank" class="external-link">next step</a>.</p>
+<p>Alternative diversity indices corresponding to functional diversity
+indices can also be computed. These do not require computation of the
+spectral species. They only require the PCA file or any stacked
+file.</p>
+<p>The computation of teh functional diversity metrics is introduced in
+the <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_07.html" target="_blank" class="external-link">next step</a>.</p>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

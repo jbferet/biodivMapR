@@ -121,13 +121,15 @@
 
       
 
-      </header><script src="biodivMapR_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Produce diversity maps from optical images with biodivMapR</h1>
-                        <h4 data-toc-skip class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
+      <h1 data-toc-skip>Produce diversity maps from optical images with
+biodivMapR</h1>
+                        <h4 data-toc-skip class="author">Jean-Baptiste
+Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2022-09-27</h4>
+            <h4 data-toc-skip class="date">2022-11-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR.Rmd" class="external-link"><code>vignettes/biodivMapR.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR.Rmd</code></div>
@@ -136,7 +138,10 @@
 
     
     
-<p>This tutorial aims at describing the processing workflow and providing a script aiming at producing diversity maps on a Sentinel-2 subset image acquired over the Cameroonese forest. The workflow is divided into three steps:</p>
+<p>This tutorial aims at describing the processing workflow and
+providing a script aiming at producing diversity maps on a Sentinel-2
+subset image acquired over the Cameroonese forest. The workflow is
+divided into three steps:</p>
 <ul>
 <li>
 <p>Definition of the processing parameters:</p>
@@ -147,21 +152,32 @@
 </ul>
 </li>
 <li>
-<p>Computation of the diversity maps. This includes several diversity metrics which can be computed independently:</p>
+<p>Computation of the diversity maps. This includes several
+diversity metrics which can be computed independently:</p>
 <ul>
 <li>
 <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps as defined in <a href="https://doi.org/10.1890/13-1824.1" title="Feret&amp;Asner2014" class="external-link">Feret &amp; Asner (2014)</a> and <a href="https://doi.org/10.1111/2041-210X.13310" title="Feret&amp;deBoissieu2019" class="external-link">Feret &amp; de Boissieu (2019)</a>
 </li>
-<li>Functional diversity maps, including Richnes, Evenness and Divergence as defined in <a href="https://doi.org/10.1890/07-1206.1" title="Villeger2008" class="external-link">Villeger et al. (2008)</a> <!-- * Partitioning of spectral diversity into $\alpha$ and $\beta$ components following an adaptation of the method proposed by [Laliberte et al. (2020)](https://doi.org/10.1111/ele.13429 "Laliberte2020") -->
+<li>Functional diversity maps, including Richnes, Evenness and
+Divergence as defined in <a href="https://doi.org/10.1890/07-1206.1" title="Villeger2008" class="external-link">Villeger et al. (2008)</a>
+<!-- * Partitioning of spectral diversity into $\alpha$ and $\beta$ components following an adaptation of the method proposed by [Laliberte et al. (2020)](https://doi.org/10.1111/ele.13429 "Laliberte2020") -->
 </li>
 </ul>
 </li>
-<li><p>Validation of the resulting diversity metrics if field plots measurements are available</p></li>
+<li><p>Validation of the resulting diversity metrics if field plots
+measurements are available</p></li>
 </ul>
-<p>The computation of the diversity maps is based on a certain number of prepocessing steps including: * Spectral normalization with continuum removal (relevant if woring with multi or hypersepctral images) * dimensionality reduction based on PCA, SPCA or MNF and component selection</p>
-<p>Below is the typical flow chart of the computation of diversity maps with <strong>biodivMapR</strong> :</p>
+<p>The computation of the diversity maps is based on a certain number of
+prepocessing steps including: * Spectral normalization with continuum
+removal (relevant if woring with multi or hypersepctral images) *
+dimensionality reduction based on PCA, SPCA or MNF and component
+selection</p>
+<p>Below is the typical flow chart of the computation of diversity maps
+with <strong>biodivMapR</strong> :</p>
 <p><img align="bottom" width="100%" height="100%" src="../reference/figures/Figure1_FlowChart_biodivMapR_Process_600DPI.png"></p>
-<p><a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_01.html" target="_blank" class="external-link">Please check the full tutorial pages to get instructions, data and code examples to run <code>biodivMapR</code></a> can be applied.</p>
+<p><a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_01.html" target="_blank" class="external-link">Please check the full tutorial pages to get
+instructions, data and code examples to run <code>biodivMapR</code></a>
+can be applied.</p>
 <!-- ## Partitioning of spectral diversity into $\alpha$ and $\beta$ components -->
 <!-- The partitioning of spectral diversity is based on the `specdiv` function provided by [Etienne Laliberte on Github](https://github.com/elaliberte/specdiv "specdiv"). The original method does not use the exact same normalization, and only the framework starting from component selection is used here. Future versions will include the full original framework.  -->
 <!-- ```{r Partitioning spectral diversity} -->

@@ -121,13 +121,14 @@
 
       
 
-      </header><script src="biodivMapR_02_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Set parameters for biodivMapR</h1>
-                        <h4 data-toc-skip class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
+                        <h4 data-toc-skip class="author">Jean-Baptiste
+Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2022-09-27</h4>
+            <h4 data-toc-skip class="date">2022-11-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_02.Rmd" class="external-link"><code>vignettes/biodivMapR_02.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_02.Rmd</code></div>
@@ -136,27 +137,36 @@
 
     
     
-<p>The image is <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_01.html" target="_blank" class="external-link">ready to process</a>, parameter setting for <code>biodivMapR</code> can start.</p>
+<p>The image is <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_01.html" target="_blank" class="external-link">ready to process</a>, parameter setting for
+<code>biodivMapR</code> can start.</p>
 <div class="section level3">
 <h3 id="image-to-be-processed">Image to be processed<a class="anchor" aria-label="anchor" href="#image-to-be-processed"></a>
 </h3>
-<p>First, let’s define the (absolute or relative) path to the image file to be processed.</p>
-<p>Here we are using the image downloaded during the first step of the tutorial. The raster file systematically needs to pair with a <strong>.hdr</strong> file which will be automatically identified.</p>
+<p>First, let’s define the (absolute or relative) path to the image file
+to be processed.</p>
+<p>Here we are using the image downloaded during the first step of the
+tutorial. The raster file systematically needs to pair with a
+<strong>.hdr</strong> file which will be automatically identified.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Input_Image_File</span> <span class="op">&lt;-</span> <span class="va">destfile</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="mask-corresponding-to-the-image">Mask corresponding to the image<a class="anchor" aria-label="anchor" href="#mask-corresponding-to-the-image"></a>
 </h3>
-<p>It is possible to provide a mask file at this first stage of the process, in order take advantage of cloud detection or any other preprocessing step, and to target specific/valid areas.</p>
-<p>This mask file is introduced the same way as the image, by providing the absolute or relative path to the raster file.</p>
-<p>The mask is expected to be the same spatial dimensions and extent as the raster file to process (columns and lines)</p>
+<p>It is possible to provide a mask file at this first stage of the
+process, in order take advantage of cloud detection or any other
+preprocessing step, and to target specific/valid areas.</p>
+<p>This mask file is introduced the same way as the image, by providing
+the absolute or relative path to the raster file.</p>
+<p>The mask is expected to be the same spatial dimensions and extent as
+the raster file to process (columns and lines)</p>
 <p>Expected values in the mask:</p>
 <ul>
 <li><p>0 = pixel is masked</p></li>
 <li><p>1 = pixel is selected</p></li>
 </ul>
-<p>If possible, the mask should be written in ENVI HDR format, with 1 band and values coded in integer 8bits.</p>
+<p>If possible, the mask should be written in ENVI HDR format, with 1
+band and values coded in integer 8bits.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Set to FALSE if no mask available</span></span>
 <span><span class="va">Input_Mask_File</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span></span></code></pre></div>
@@ -164,23 +174,38 @@
 <div class="section level3">
 <h3 id="definition-of-an-output-directory">Definition of an output directory<a class="anchor" aria-label="anchor" href="#definition-of-an-output-directory"></a>
 </h3>
-<p>Various files will be computed and written on the disk during the process.</p>
-<p>These files will be written in a directory structure created within a main output directory</p>
-<p>A sub directory named after the name of the image processed is automatically created in this main output directory, in order to facilitate identification of the results corresponding to a given image.</p>
-<p>If the same image is processed with different parameter settings, some files may be overwritten.</p>
+<p>Various files will be computed and written on the disk during the
+process.</p>
+<p>These files will be written in a directory structure created within a
+main output directory</p>
+<p>A sub directory named after the name of the image processed is
+automatically created in this main output directory, in order to
+facilitate identification of the results corresponding to a given
+image.</p>
+<p>If the same image is processed with different parameter settings,
+some files may be overwritten.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Output_Dir</span> <span class="op">&lt;-</span> <span class="st">'../RESULTS'</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="radiometric-filterings">Radiometric filterings<a class="anchor" aria-label="anchor" href="#radiometric-filterings"></a>
 </h3>
-<p>If no mask file is available with the image to process, it is possible to perform basic radiometric filterings:</p>
+<p>If no mask file is available with the image to process, it is
+possible to perform basic radiometric filterings:</p>
 <ul>
-<li><p><strong>Elimination of non vegetated pixels</strong>: the mask can be updated based on NDVI thresholding. Pixels with NDVI lower than this threshold are masked.</p></li>
-<li><p><strong>Elimination of residual clouds</strong>: : the mask can be updated based on NDVI thresholding. Pixels with reflectance in blue domain higher than this threshold are masked</p></li>
-<li><p><strong>Elimination of shaded areas</strong>: the mask can be updated based on NIR thresholding. Pixels with reflectance in NIR domain lower than this threshold are masked.</p></li>
+<li><p><strong>Elimination of non vegetated pixels</strong>: the mask
+can be updated based on NDVI thresholding. Pixels with NDVI lower than
+this threshold are masked.</p></li>
+<li><p><strong>Elimination of residual clouds</strong>: : the mask can
+be updated based on NDVI thresholding. Pixels with reflectance in blue
+domain higher than this threshold are masked</p></li>
+<li><p><strong>Elimination of shaded areas</strong>: the mask can be
+updated based on NIR thresholding. Pixels with reflectance in NIR domain
+lower than this threshold are masked.</p></li>
 </ul>
-<p>__These radiometric filters are very basic filters and should not replace algorthms dedicated to the detection of cloud/shade/non-vegetated pixels.</p>
+<p>__These radiometric filters are very basic filters and should not
+replace algorthms dedicated to the detection of
+cloud/shade/non-vegetated pixels.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">NDVI_Thresh</span> <span class="op">&lt;-</span> <span class="fl">0.5</span></span>
 <span><span class="va">Blue_Thresh</span> <span class="op">&lt;-</span> <span class="fl">500</span></span>
@@ -189,29 +214,48 @@
 <div class="section level3">
 <h3 id="normalization-of-reflectance-data">Normalization of reflectance data<a class="anchor" aria-label="anchor" href="#normalization-of-reflectance-data"></a>
 </h3>
-<p><strong>Continuum Removal</strong>, a normalization procedure, is available when working with reflectance data. This procedure eliminates multiplicative effects, and proved to be relatively efficient in decreasing the effect of changes in illumination within individual tree crowns, when using high spatial resolution imaging spectroscopy over tropical forests.</p>
-<p><strong>Continuum Removal</strong> is recommended when processing high spatial resolution (spatial resolutionc <span class="math inline">\(\leq\)</span> 10 m) multi and hyperspectral data.</p>
+<p><strong>Continuum Removal</strong>, a normalization procedure, is
+available when working with reflectance data. This procedure eliminates
+multiplicative effects, and proved to be relatively efficient in
+decreasing the effect of changes in illumination within individual tree
+crowns, when using high spatial resolution imaging spectroscopy over
+tropical forests.</p>
+<p><strong>Continuum Removal</strong> is recommended when processing
+high spatial resolution (spatial resolutionc <span class="math inline">\(\leq\)</span> 10 m) multi and hyperspectral
+data.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Continuum_Removal</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="transformation-of-reflectance-and-dimensionality-reduction">Transformation of reflectance and dimensionality reduction<a class="anchor" aria-label="anchor" href="#transformation-of-reflectance-and-dimensionality-reduction"></a>
 </h3>
-<p>Once normalization is performed, the next step in <code>biodivMapR</code> consists in transformation of the data using one of the following techniques:</p>
+<p>Once normalization is performed, the next step in
+<code>biodivMapR</code> consists in transformation of the data using one
+of the following techniques:</p>
 <ul>
-<li><p><code>PCA</code>: Principal component analysis (no rescaling of the data, computation from covariance matrix)</p></li>
-<li><p><code>SPCA</code>: Standardized Principal component analysis (no rescaling of the data, computation from correlation matrix)</p></li>
-<li><p><code>MNF</code>: minimum noise fraction (appropriate for high dimensionality data such as imaging spectroscopy)</p></li>
+<li><p><code>PCA</code>: Principal component analysis (no rescaling of
+the data, computation from covariance matrix)</p></li>
+<li><p><code>SPCA</code>: Standardized Principal component analysis (no
+rescaling of the data, computation from correlation matrix)</p></li>
+<li><p><code>MNF</code>: minimum noise fraction (appropriate for high
+dimensionality data such as imaging spectroscopy)</p></li>
 </ul>
-<p>These transformations will be followed by component selection in order to perform dimensionality reduction.</p>
+<p>These transformations will be followed by component selection in
+order to perform dimensionality reduction.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">TypePCA</span> <span class="op">&lt;-</span> <span class="st">'SPCA'</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="filtering-outliers-in-pca">Filtering outliers in PCA<a class="anchor" aria-label="anchor" href="#filtering-outliers-in-pca"></a>
 </h3>
-<p>An additional filtering step can be performed, based on the detection of outliers in components of the PCA. This strategy is computationally more demanding and significantly longer. However, this outlier detection may be useful to mask pixels including residual effect of atmosphere, or outliers which may not be relevant to include in the process of computation of spectral variation.</p>
-<p>This PCA filtering can be performed by setting a unique parameter, <code>FilterPCA</code>, to <code>TRUE</code>.</p>
+<p>An additional filtering step can be performed, based on the detection
+of outliers in components of the PCA. This strategy is computationally
+more demanding and significantly longer. However, this outlier detection
+may be useful to mask pixels including residual effect of atmosphere, or
+outliers which may not be relevant to include in the process of
+computation of spectral variation.</p>
+<p>This PCA filtering can be performed by setting a unique parameter,
+<code>FilterPCA</code>, to <code>TRUE</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># PCA FILTERING:        Set to TRUE if you want second filtering based on PCA outliers to be processed.</span></span>
 <span><span class="co"># Slower process</span></span>
@@ -221,11 +265,24 @@
 <div class="section level3">
 <h3 id="definition-of-window-size-for-computation-of-spectral-diversity">Definition of window size for computation of spectral diversity<a class="anchor" aria-label="anchor" href="#definition-of-window-size-for-computation-of-spectral-diversity"></a>
 </h3>
-<p><code>biodivMapR</code> computes spectral diversity over a set of pixels. The number of pixels included for each spectral diversity data point is defined by a window size. The window size defines the spatial resolution of all diversity maps.</p>
-<p>The length of the side of the window is provided as input parameter: if <code>window_size=10</code>, then the pixels in the spectral diversity maps will correspond to a 10x10 pixels windows in the original image.</p>
-<p>Both image spatial resolution and type of ecosystem under study should be taken into account when defining the window size: in forested ecosystems, window size should be large enough to include groups of individuals.</p>
-<p>In forested ecosystems, window size between 0.25 and 4 ha usually match with ground data and correspond to a fair compromise. However, this would need to be adapted to specific situations.</p>
-<p>If the value of window_size is too low, this will result in low number of pixels per spatial unit, hence limited range of variation of diversity in the image.</p>
+<p><code>biodivMapR</code> computes spectral diversity over a set of
+pixels. The number of pixels included for each spectral diversity data
+point is defined by a window size. The window size defines the spatial
+resolution of all diversity maps.</p>
+<p>The length of the side of the window is provided as input parameter:
+if <code>window_size=10</code>, then the pixels in the spectral
+diversity maps will correspond to a 10x10 pixels windows in the original
+image.</p>
+<p>Both image spatial resolution and type of ecosystem under study
+should be taken into account when defining the window size: in forested
+ecosystems, window size should be large enough to include groups of
+individuals.</p>
+<p>In forested ecosystems, window size between 0.25 and 4 ha usually
+match with ground data and correspond to a fair compromise. However,
+this would need to be adapted to specific situations.</p>
+<p>If the value of window_size is too low, this will result in low
+number of pixels per spatial unit, hence limited range of variation of
+diversity in the image.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">window_size</span> <span class="op">&lt;-</span> <span class="fl">10</span></span></code></pre></div>
 </div>
@@ -234,8 +291,19 @@
 </h3>
 <p>The computational resource can be adjusted:</p>
 <ul>
-<li><p><code>nbCPU</code> corresponds to the number of processing units to be used during steps of the computation which are parallelized. Make sure you do not ask for more than what your computer can provide.</p></li>
-<li><p><code>MaxRAM</code> corresponds to the maximum size of file chunk of loaded in the RAM when processing the image. <strong>WARNING</strong>: this does not corresponds to the maximum amount of RAM needed for data processing. Once a chunk of file is written, its processing may require several time this amount of RAM to perfom different processing steps. <code>MaxRAM &lt;- 0.5</code> is reasonable when processing a 2Gb raster on a personal computer with 16Gb RAM. However, larger values of <code>MaxRAM</code> may rapidly require larger amount of RAM.</p></li>
+<li><p><code>nbCPU</code> corresponds to the number of processing units
+to be used during steps of the computation which are parallelized. Make
+sure you do not ask for more than what your computer can
+provide.</p></li>
+<li><p><code>MaxRAM</code> corresponds to the maximum size of file chunk
+of loaded in the RAM when processing the image.
+<strong>WARNING</strong>: this does not corresponds to the maximum
+amount of RAM needed for data processing. Once a chunk of file is
+written, its processing may require several time this amount of RAM to
+perfom different processing steps. <code>MaxRAM &lt;- 0.5</code> is
+reasonable when processing a 2Gb raster on a personal computer with 16Gb
+RAM. However, larger values of <code>MaxRAM</code> may rapidly require
+larger amount of RAM.</p></li>
 </ul>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nbCPU</span> <span class="op">&lt;-</span> <span class="fl">4</span></span>
@@ -244,12 +312,18 @@
 <div class="section level3">
 <h3 id="number-of-spectral-species">Number of spectral species<a class="anchor" aria-label="anchor" href="#number-of-spectral-species"></a>
 </h3>
-<p>The main spectral diversity metrics computed by <code>biodivMapR</code> are based on a clustering of normalized &amp; dimensionality reduced image. Following this clustering, a cluster ID is assigned to each pixel, corresponding to the <strong>‘spectral species’</strong> defined in the original publication.</p>
-<p>The number of clusters is defined by the value of <code>nbclusters</code>.</p>
+<p>The main spectral diversity metrics computed by
+<code>biodivMapR</code> are based on a clustering of normalized &amp;
+dimensionality reduced image. Following this clustering, a cluster ID is
+assigned to each pixel, corresponding to the <strong>‘spectral
+species’</strong> defined in the original publication.</p>
+<p>The number of clusters is defined by the value of
+<code>nbclusters</code>.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nbclusters</span> <span class="op">&lt;-</span> <span class="fl">50</span></span></code></pre></div>
 <p><br><br></p>
-<p>Once parameterization has been set, the image processing can start, first with an optional <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_03.html" target="_blank" class="external-link">radiometric filtering</a>.</p>
+<p>Once parameterization has been set, the image processing can start,
+first with an optional <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_03.html" target="_blank" class="external-link">radiometric filtering</a>.</p>
 </div>
   </div>
 

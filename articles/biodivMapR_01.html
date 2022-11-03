@@ -121,13 +121,14 @@
 
       
 
-      </header><script src="biodivMapR_01_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Prepare your data</h1>
-                        <h4 data-toc-skip class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
+                        <h4 data-toc-skip class="author">Jean-Baptiste
+Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2022-09-27</h4>
+            <h4 data-toc-skip class="date">2022-11-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_01.Rmd" class="external-link"><code>vignettes/biodivMapR_01.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_01.Rmd</code></div>
@@ -136,21 +137,35 @@
 
     
     
-<p><code>biodivMapR</code> produces (spectral) diversity maps based on (optical) images. The first step is then to have access to such image. Many possibilities exist to access Sentinel-2 data. The R package <a href="https://sen2r.ranghetti.info/" class="external-link"><code>sen2r</code></a> is a good option to access Sentinel-2 data if you want to develop a full workflow with R.</p>
+<p><code>biodivMapR</code> produces (spectral) diversity maps based on
+(optical) images. The first step is then to have access to such image.
+Many possibilities exist to access Sentinel-2 data. The R package <a href="https://sen2r.ranghetti.info/" class="external-link"><code>sen2r</code></a> is a good
+option to access Sentinel-2 data if you want to develop a full workflow
+with R.</p>
 <div class="section level3">
 <h3 id="data-requirements-to-run-biodivmapr">Data requirements to run <code>biodivMapR</code><a class="anchor" aria-label="anchor" href="#data-requirements-to-run-biodivmapr"></a>
 </h3>
-<p><code>biodivMapR</code> requires raster data as input, written as image stacks (one file including all spectral bands / dimensions used for the analysis). If optical data is processed, then <strong>the spectral bands should be provided in the header file</strong>, in order to allow computation of the continuum removal over the full spectrum. If Continuum_Removal is set to <strong>FALSE</strong>, then the spectral bands are not required.</p>
+<p><code>biodivMapR</code> requires raster data as input, written as
+image stacks (one file including all spectral bands / dimensions used
+for the analysis). If optical data is processed, then <strong>the
+spectral bands should be provided in the header file</strong>, in order
+to allow computation of the continuum removal over the full spectrum. If
+Continuum_Removal is set to <strong>FALSE</strong>, then the spectral
+bands are not required.</p>
 </div>
 <div class="section level2">
 <h2 id="download-a-sentinel-2-image-sample">Download a Sentinel-2 image sample<a class="anchor" aria-label="anchor" href="#download-a-sentinel-2-image-sample"></a>
 </h2>
-<p>In the chunk of code hereafter, an image subset is downloaded from a gitlab repository. The image is an ENVI raster including :</p>
+<p>In the chunk of code hereafter, an image subset is downloaded from a
+gitlab repository. The image is an ENVI raster including :</p>
 <ul>
 <li><p>A binary file (which has no extension here).</p></li>
 <li><p>A header file (with <strong>.hdr</strong> extension).</p></li>
 </ul>
-<p>The header file is a text file including all necessary metadata which can be read with a text editor. It includes image dimensions, projection, and the name and <strong>central wavelength for each spectral band</strong>.</p>
+<p>The header file is a text file including all necessary metadata which
+can be read with a text editor. It includes image dimensions,
+projection, and the name and <strong>central wavelength for each
+spectral band</strong>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># load biodivMapR and useful libraries </span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jbferet/biodivMapR" class="external-link">biodivMapR</a></span><span class="op">)</span></span>
@@ -170,16 +185,21 @@
 <span><span class="co"># name your raster HDR with the same name as the binary raster, with .hdr extension</span></span>
 <span><span class="va">destfile_HDR</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_HDR_name.html">get_HDR_name</a></span><span class="op">(</span><span class="va">destfile</span>,showWarnings <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">urlhdr</span>, destfile <span class="op">=</span> <span class="va">destfile_HDR</span>, method <span class="op">=</span> <span class="st">'auto'</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span>, mode <span class="op">=</span> <span class="st">"w"</span><span class="op">)</span></span></code></pre></div>
-<p>The subset is obtained from tile T33NUD, acquired by Sentinel-2A satellite in 2018/01/04 over Cameroon.</p>
+<p>The subset is obtained from tile T33NUD, acquired by Sentinel-2A
+satellite in 2018/01/04 over Cameroon.</p>
 <p align="center">
 <img width="50%" height="50%" src="../reference/figures/01_RGB_S2A_T33NUD_20180104_Subset.png"></p>
-<p>Once the image is downloaded, it can be processed with <code>biodivMapR</code>.</p>
+<p>Once the image is downloaded, it can be processed with
+<code>biodivMapR</code>.</p>
 <div class="section level3">
 <h3 id="add-a-header-file-to-tiff-images">Add a header file to Tiff images<a class="anchor" aria-label="anchor" href="#add-a-header-file-to-tiff-images"></a>
 </h3>
-<p>This example illustrates how to produce a proper HDR file for Sentinel-2 images when no header is paired with the main raster file.</p>
+<p>This example illustrates how to produce a proper HDR file for
+Sentinel-2 images when no header is paired with the main raster
+file.</p>
 <p>This is the case of most GeoTiff raster images, for example.</p>
-<p>To illustrate the procedure, let’s produce a GeoTiff image from the ENVI raster downloaded in the previous step.</p>
+<p>To illustrate the procedure, let’s produce a GeoTiff image from the
+ENVI raster downloaded in the previous step.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read ENVI file with stars</span></span>
 <span><span class="va">Stars_S2</span> <span class="op">&lt;-</span> <span class="fu">stars</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/stars/reference/read_stars.html" class="external-link">read_stars</a></span><span class="op">(</span><span class="va">destfile</span>, along <span class="op">=</span> <span class="st">'band'</span>,proxy <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -190,13 +210,22 @@
 <span><span class="va">destfiletiff</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">desttiff</span>,<span class="st">'S2_Subset.tif'</span>,fsep <span class="op">=</span> <span class="st">'\\'</span><span class="op">)</span></span>
 <span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/stars/reference/write_stars.html" class="external-link">write_stars</a></span><span class="op">(</span><span class="va">Stars_S2</span>, dsn<span class="op">=</span><span class="va">destfiletiff</span>, driver <span class="op">=</span>  <span class="st">'GTiff'</span>, type<span class="op">=</span><span class="st">'Int16'</span><span class="op">)</span></span></code></pre></div>
 <p>Then, let’s produce a header file for this GeoTiff image.</p>
-<p>In order to simplify the process if you are using <strong>Sentinel-2</strong>, <strong>Landsat-7</strong>, or <strong>WorldView</strong>: a <a href="'https://github.com/jbferet/biodivMapR/blob/master/inst/extdata/HDR'" target="_blank" class="external-link"><code>.hdr</code> template</a> is available. This <code>.hdr</code> template is valid for L2A level images, so make sure the spectral bands in your image correspond to the spectral bands identified in the raster file (name and rank).</p>
-<p>The bands in the GeoTiff raster are expected to be written as follows:</p>
+<p>In order to simplify the process if you are using
+<strong>Sentinel-2</strong>, <strong>Landsat-7</strong>, or
+<strong>WorldView</strong>: a <a href="'https://github.com/jbferet/biodivMapR/blob/master/inst/extdata/HDR'" target="_blank" class="external-link"><code>.hdr</code> template</a> is available. This
+<code>.hdr</code> template is valid for L2A level images, so make sure
+the spectral bands in your image correspond to the spectral bands
+identified in the raster file (name and rank).</p>
+<p>The bands in the GeoTiff raster are expected to be written as
+follows:</p>
 <ul>
 <li>
-<p><strong>Sentinel-2</strong> (possibility to differentiate <strong>Sentinel-2A</strong> and <strong>Sentinel-2B</strong>)</p>
-<p>** band names = {band 02, band 03, band 04, band 05, band 06, band 07, band 08, band 08A, band 11, band 12}.</p>
-<p>** wavelength = {496.6, 560.0, 664.5, 703.9, 740.2, 782.5, 835.1, 864.8, 1613.7, 2202.4}.</p>
+<p><strong>Sentinel-2</strong> (possibility to differentiate
+<strong>Sentinel-2A</strong> and <strong>Sentinel-2B</strong>)</p>
+<p>** band names = {band 02, band 03, band 04, band 05, band 06, band
+07, band 08, band 08A, band 11, band 12}.</p>
+<p>** wavelength = {496.6, 560.0, 664.5, 703.9, 740.2, 782.5, 835.1,
+864.8, 1613.7, 2202.4}.</p>
 <p>** bandwidth = {98, 45, 38, 19, 18, 28, 145, 33, 143, 242}.</p>
 </li>
 <li>
@@ -206,17 +235,23 @@
 </li>
 <li>
 <p><strong>WorldView</strong></p>
-<p>** band names = {Coastal, Blue, Green, Yellow, Red, Red Edge, NIR1, NIR2}</p>
-<p>** wavelength = { 425.000, 480.000, 545.000, 605.000, 660.000, 725.000, 832.500, 950.000}</p>
+<p>** band names = {Coastal, Blue, Green, Yellow, Red, Red Edge, NIR1,
+NIR2}</p>
+<p>** wavelength = { 425.000, 480.000, 545.000, 605.000, 660.000,
+725.000, 832.500, 950.000}</p>
 </li>
 </ul>
-<p><strong>If spectral bands in your raster image differ from these aforementioned, please properly define these spectral bands.</strong></p>
-<p><strong>Keep in mind that the bands should be ranked in ascending order (in terms of central wavelength).</strong></p>
+<p><strong>If spectral bands in your raster image differ from these
+aforementioned, please properly define these spectral
+bands.</strong></p>
+<p><strong>Keep in mind that the bands should be ranked in ascending
+order (in terms of central wavelength).</strong></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read ENVI file with stars</span></span>
 <span><span class="fu"><a href="../reference/create_hdr.html">create_hdr</a></span><span class="op">(</span>ImPath <span class="op">=</span> <span class="va">destfiletiff</span>, Sensor <span class="op">=</span> <span class="st">'SENTINEL_2A'</span>, </span>
 <span>           SpectralBands <span class="op">=</span> <span class="cn">NULL</span>, BandName <span class="op">=</span> <span class="cn">NULL</span>, WLunits <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
-<p>You can also produce a header file with your own parameters corresponding to the raster data.</p>
+<p>You can also produce a header file with your own parameters
+corresponding to the raster data.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read ENVI file with stars</span></span>
 <span><span class="va">BandName</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'band_02'</span>, <span class="st">'band 03'</span>, <span class="st">'band_04'</span>, <span class="st">'band_05'</span>, <span class="st">'band_06'</span>, </span>
@@ -230,8 +265,12 @@
 <div class="section level3">
 <h3 id="download-vector-files-used-for-validation">Download vector files used for ‘validation’<a class="anchor" aria-label="anchor" href="#download-vector-files-used-for-validation"></a>
 </h3>
-<p>A set of vector files is downloaded here, corresponding to circular plots identified in the raster. It will be used in the final step of the tutorial (<a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_08.html" target="_blank" class="external-link"><strong>How to perform validation?</strong></a>.).</p>
-<p>The following code allows downloading the zipfile containing the vector data, and unzipping it in the same directory as the one including the raster data.</p>
+<p>A set of vector files is downloaded here, corresponding to circular
+plots identified in the raster. It will be used in the final step of the
+tutorial (<a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_08.html" target="_blank" class="external-link"><strong>How to perform validation?</strong></a>.).</p>
+<p>The following code allows downloading the zipfile containing the
+vector data, and unzipping it in the same directory as the one including
+the raster data.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># library</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-lib/zip#readme" class="external-link">zip</a></span><span class="op">)</span></span>

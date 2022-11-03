@@ -121,13 +121,14 @@
 
       
 
-      </header><script src="biodivMapR_07_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Functional Diversity</h1>
-                        <h4 data-toc-skip class="author">Jean-Baptiste Féret, Florian de Boissieu</h4>
+                        <h4 data-toc-skip class="author">Jean-Baptiste
+Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2022-09-27</h4>
+            <h4 data-toc-skip class="date">2022-11-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_07.Rmd" class="external-link"><code>vignettes/biodivMapR_07.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_07.Rmd</code></div>
@@ -136,7 +137,12 @@
 
     
     
-<p>The functional diversity metrics (Richness, Evenness, Divergence) can be computed directly after dimensionality reduction. Here, we assume that each selected component correspond to a trait value (each trait is scaled over the full image), and each pixel corresponds to a species/individual (no clustering is performed, so one pixel from an individual spatial unit is seen as a different species).</p>
+<p>The functional diversity metrics (Richness, Evenness, Divergence) can
+be computed directly after dimensionality reduction. Here, we assume
+that each selected component correspond to a trait value (each trait is
+scaled over the full image), and each pixel corresponds to a
+species/individual (no clustering is performed, so one pixel from an
+individual spatial unit is seen as a different species).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">################################################################################</span></span>
 <span><span class="co">##              MAP FUNCTIONAL DIVERSITY METRICS FRic, FEve, FDiv             ##</span></span>
@@ -148,7 +154,9 @@
 <span><span class="fu"><a href="../reference/map_functional_div.html">map_functional_div</a></span><span class="op">(</span>Original_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Functional_File <span class="op">=</span> <span class="va">PCA_Files</span>,</span>
 <span>                   Selected_Features <span class="op">=</span> <span class="va">Selected_Features</span>, Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>,</span>
 <span>                   window_size <span class="op">=</span> <span class="va">window_size</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,TypePCA <span class="op">=</span> <span class="va">TypePCA</span><span class="op">)</span></span></code></pre></div>
-<p>These diversity metrics can also be computed directly from plots defined as polygons in the extent of the rasters. This step is key for validation, and is explained in the <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_08.html" target="_blank" class="external-link">next step</a>.</p>
+<p>These diversity metrics can also be computed directly from plots
+defined as polygons in the extent of the rasters. This step is key for
+validation, and is explained in the <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_08.html" target="_blank" class="external-link">next step</a>.</p>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

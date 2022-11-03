@@ -121,13 +121,15 @@
 
       
 
-      </header><script src="biodivMapR_13_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>PROGYSAT#3: Run biodivMapR on selected spectral indices</h1>
-                        <h4 data-toc-skip class="author">Jean-Baptiste Féret</h4>
+      <h1 data-toc-skip>PROGYSAT#3: Run biodivMapR on selected spectral
+indices</h1>
+                        <h4 data-toc-skip class="author">Jean-Baptiste
+Féret</h4>
             
-            <h4 data-toc-skip class="date">2022-09-27</h4>
+            <h4 data-toc-skip class="date">2022-11-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_13.Rmd" class="external-link"><code>vignettes/biodivMapR_13.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_13.Rmd</code></div>
@@ -136,15 +138,24 @@
 
     
     
-<p>This tutorial illustrates an alternative approach to compute spectral diversity with <code>biodivMapR</code>, This approach uses a selection of spectral indices instead of reflectance data, as described in the <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_12.html" class="external-link">standard mode</a>. If these spectral indices are appropriately selected in order to ensure minimum intercorrelation, they can be used directly for the computation of the spectral species, bypassing the preprocessing and dimensionality reduction with PCA.</p>
-<p>The computation of the spectral indices is based on the R package <a href="https://gitlab.com/jbferet/spinr" class="external-link"><code>spinR</code></a>, which needs to be installed first:</p>
+<p>This tutorial illustrates an alternative approach to compute spectral
+diversity with <code>biodivMapR</code>, This approach uses a selection
+of spectral indices instead of reflectance data, as described in the <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_12.html" class="external-link">standard
+mode</a>. If these spectral indices are appropriately selected in order
+to ensure minimum intercorrelation, they can be used directly for the
+computation of the spectral species, bypassing the preprocessing and
+dimensionality reduction with PCA.</p>
+<p>The computation of the spectral indices is based on the R package <a href="https://gitlab.com/jbferet/spinr" class="external-link"><code>spinR</code></a>, which
+needs to be installed first:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_gitlab</span><span class="op">(</span><span class="st">'jbferet/spinR'</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">spinR</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="set-data-path-and-parameters-for-biodivmapr">Set data path and parameters for biodivMapR<a class="anchor" aria-label="anchor" href="#set-data-path-and-parameters-for-biodivmapr"></a>
 </h3>
-<p>The data used here correspond to the data obtained from the application of <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_11.html" class="external-link">this tutorial</a>.</p>
+<p>The data used here correspond to the data obtained from the
+application of <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_11.html" class="external-link">this
+tutorial</a>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># libraries used in this script</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jbferet/biodivMapR" class="external-link">biodivMapR</a></span><span class="op">)</span></span>
@@ -181,7 +192,9 @@
 <div class="section level3">
 <h3 id="perform-radiometric-filtering">Perform radiometric filtering<a class="anchor" aria-label="anchor" href="#perform-radiometric-filtering"></a>
 </h3>
-<p>The radiometric filtering is important when running biodivMapR, for the same reason as explained in the <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_12.html" class="external-link">previous tutorial</a></p>
+<p>The radiometric filtering is important when running biodivMapR, for
+the same reason as explained in the <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_12.html" class="external-link">previous
+tutorial</a></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Input_Mask_File</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/perform_radiometric_filtering.html">perform_radiometric_filtering</a></span><span class="op">(</span>Image_Path <span class="op">=</span> <span class="va">Input_Image_File</span>, </span>
 <span>                                                 Mask_Path <span class="op">=</span> <span class="va">Input_Mask_File</span>,</span>
@@ -192,7 +205,10 @@
 <div class="section level3">
 <h3 id="compute-spectral-indices-from-sentinel-2">Compute spectral indices from Sentinel-2<a class="anchor" aria-label="anchor" href="#compute-spectral-indices-from-sentinel-2"></a>
 </h3>
-<p>Once radiometric thresholding is done, spectral indices are directly computed from Sentinel-2 images with the function <code>ComputeSpectralIndices_Raster</code> included in <code>spinR</code>. Here, we selected four spectral indices.</p>
+<p>Once radiometric thresholding is done, spectral indices are directly
+computed from Sentinel-2 images with the function
+<code>ComputeSpectralIndices_Raster</code> included in
+<code>spinR</code>. Here, we selected four spectral indices.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># 1. read raster and corresponding spectral bands</span></span>
 <span><span class="va">ImBrick</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/brick.html" class="external-link">brick</a></span><span class="op">(</span><span class="va">Input_Image_File</span><span class="op">)</span></span>
@@ -207,9 +223,16 @@
 <div class="section level3">
 <h3 id="write-raster-stack-of-spectral-indices-and-udated-shade-mask">Write raster stack of spectral indices and udated shade mask<a class="anchor" aria-label="anchor" href="#write-raster-stack-of-spectral-indices-and-udated-shade-mask"></a>
 </h3>
-<p>The spectral indices obtained in the previous section are then used to refine the mask: extreme values which were not filtered out with the cloud mask and radiometric filtering may still remain. In order to reduce the risk of outliers to bias the analysis, a filtering based on interquartile range statistics is performed.</p>
-<p>The updated shade mask combines the cloud mask produced with sen2Cor, the radiometric filter, and the outlier detection for each spectral index. It is written in the biodvMapR output directory.</p>
-<p>The spectral indices raster stack is written in the same location as the reflectance raster.</p>
+<p>The spectral indices obtained in the previous section are then used
+to refine the mask: extreme values which were not filtered out with the
+cloud mask and radiometric filtering may still remain. In order to
+reduce the risk of outliers to bias the analysis, a filtering based on
+interquartile range statistics is performed.</p>
+<p>The updated shade mask combines the cloud mask produced with sen2Cor,
+the radiometric filter, and the outlier detection for each spectral
+index. It is written in the biodvMapR output directory.</p>
+<p>The spectral indices raster stack is written in the same location as
+the reflectance raster.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># adjust mask to discard extreme values from spectral indices</span></span>
 <span><span class="va">Mask</span> <span class="op">&lt;-</span> <span class="fl">0</span><span class="op">*</span><span class="va">Spectral_Indices</span><span class="op">$</span><span class="va">SpectralIndices</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">+</span><span class="fl">1</span></span>
@@ -244,7 +267,12 @@
 <div class="section level3">
 <h3 id="map-spectral-species">Map Spectral species<a class="anchor" aria-label="anchor" href="#map-spectral-species"></a>
 </h3>
-<p>The spectral species are then defined based on the selected components. These spectral species result from the application of a K-Means clustering of the selected components. The number of clusters may impact the resulting diversity maps. Therefore, in the perspective of operational application, the optimization of the number of clusters based on ground information is critical.</p>
+<p>The spectral species are then defined based on the selected
+components. These spectral species result from the application of a
+K-Means clustering of the selected components. The number of clusters
+may impact the resulting diversity maps. Therefore, in the perspective
+of operational application, the optimization of the number of clusters
+based on ground information is critical.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># use all spectral indices to compute diversity</span></span>
 <span><span class="va">SelectedPCs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">Sel_Indices</span><span class="op">)</span><span class="op">)</span></span>
@@ -257,8 +285,10 @@
 <div class="section level3">
 <h3 id="map-alpha-diversity">Map alpha diversity<a class="anchor" aria-label="anchor" href="#map-alpha-diversity"></a>
 </h3>
-<p>Alpha diversity maps can then be computed from the spectral species distribution.</p>
-<p>Several alpha diversity metrics are available (currently Richness, Shannon, Simpson).</p>
+<p>Alpha diversity maps can then be computed from the spectral species
+distribution.</p>
+<p>Several alpha diversity metrics are available (currently Richness,
+Shannon, Simpson).</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Index_Alpha</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Shannon'</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/map_alpha_div.html">map_alpha_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
@@ -268,12 +298,25 @@
 <div class="section level3">
 <h3 id="map-beta-diversity">Map beta diversity<a class="anchor" aria-label="anchor" href="#map-beta-diversity"></a>
 </h3>
-<p>Beta diversity maps can then be computed from the spectral species distribution.</p>
-<p>Beta diversity is based on a 2-steps (or 3-steps depending on image size) process:</p>
+<p>Beta diversity maps can then be computed from the spectral species
+distribution.</p>
+<p>Beta diversity is based on a 2-steps (or 3-steps depending on image
+size) process:</p>
 <ul>
-<li><p>The Bray-Curtis dissimilarity is computed between each pair of windows (defined by window_size) in the image</p></li>
-<li><p>Then an ordination technique (default is Principal Coordinate Analysis, <a href="https://towardsdatascience.com/principal-coordinates-analysis-cc9a572ce6c" class="external-link">PCoA</a>) is applied on the dissimilarity matrix to transform it into a lower dimension space (3-dimensions is default value), and a 3-bands raster image is produced from the coordinates of each window in this 3D space.</p></li>
-<li><p>The explicit computation of the matrix becomes unmanageable for large amount of windows: in this case, the dissimilarity matrix is computed on a random subset of windows, followed by PCoA on this subset matrix. Then the dissimilarity between each window and this random subset is computed, and the coordinates of each window in this PCoA space is defined based on a weighted nearest neighbors rule.</p></li>
+<li><p>The Bray-Curtis dissimilarity is computed between each pair of
+windows (defined by window_size) in the image</p></li>
+<li><p>Then an ordination technique (default is Principal Coordinate
+Analysis, <a href="https://towardsdatascience.com/principal-coordinates-analysis-cc9a572ce6c" class="external-link">PCoA</a>)
+is applied on the dissimilarity matrix to transform it into a lower
+dimension space (3-dimensions is default value), and a 3-bands raster
+image is produced from the coordinates of each window in this 3D
+space.</p></li>
+<li><p>The explicit computation of the matrix becomes unmanageable for
+large amount of windows: in this case, the dissimilarity matrix is
+computed on a random subset of windows, followed by PCoA on this subset
+matrix. Then the dissimilarity between each window and this random
+subset is computed, and the coordinates of each window in this PCoA
+space is defined based on a weighted nearest neighbors rule.</p></li>
 </ul>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/map_beta_div.html">map_beta_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
