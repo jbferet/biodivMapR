@@ -104,47 +104,47 @@ map_beta_div <- function(Input_Image_File=FALSE, Output_Dir='', window_size=10,
   return(PCoA_model)
 }
 
-#' computes NMDS
-#
-#' @param MatBCdist BC dissimilarity matrix
-#' @param dimMDS numeric. number of dimensions of the NMDS
-#
-#' @return BetaNMDS_sel
-#' @importFrom future plan multiprocess multisession sequential
-#' @importFrom future.apply future_lapply
-#' @importFrom ecodist nmds
-#' @importFrom utils find
-#' @export
-
-compute_NMDS <- function(MatBCdist,dimMDS=3) {
-  nbiterNMDS <- 4
-  if (Sys.info()["sysname"] == "Windows") {
-    nbCoresNMDS <- 2
-  } else if (Sys.info()["sysname"] == "Linux") {
-    nbCoresNMDS <- 4
-  }
-  # multiprocess of spectral species distribution and alpha diversity metrics
-  # plan(multiprocess, workers = nbCoresNMDS) ## Parallelize using four cores
-  plan(multisession, workers = nbCoresNMDS) ## Parallelize using four cores
-  BetaNMDS <- future_lapply(MatBCdist, FUN = nmds, mindim = dimMDS, maxdim = dimMDS, nits = 1, future.packages = c("ecodist"))
-  plan(sequential)
-  # find iteration with minimum stress
-  Stress <- vector(length = nbiterNMDS)
-  for (i in 1:nbiterNMDS) {
-    Stress[i] <- BetaNMDS[[i]]$stress
-  }
-  print("Stress obtained for NMDS iterations:")
-  print(Stress)
-  print("Rule of thumb")
-  print("stress < 0.05 provides an excellent represention in reduced dimensions")
-  print("stress < 0.1 is great")
-  print("stress < 0.2 is good")
-  print("stress > 0.3 provides a poor representation")
-  MinStress <- find(Stress == min(Stress))
-  BetaNMDS_sel <- BetaNMDS[[MinStress]]$conf
-  BetaNMDS_sel <- data.frame(BetaNMDS_sel[[1]])
-  return(BetaNMDS_sel)
-}
+#' #' computes NMDS
+#' #
+#' #' @param MatBCdist BC dissimilarity matrix
+#' #' @param dimMDS numeric. number of dimensions of the NMDS
+#' #
+#' #' @return BetaNMDS_sel
+#' #' @importFrom future plan multiprocess multisession sequential
+#' #' @importFrom future.apply future_lapply
+#' #' @importFrom ecodist nmds
+#' #' @importFrom utils find
+#' #' @export
+#'
+#' compute_NMDS <- function(MatBCdist,dimMDS=3) {
+#'   nbiterNMDS <- 4
+#'   if (Sys.info()["sysname"] == "Windows") {
+#'     nbCoresNMDS <- 2
+#'   } else if (Sys.info()["sysname"] == "Linux") {
+#'     nbCoresNMDS <- 4
+#'   }
+#'   # multiprocess of spectral species distribution and alpha diversity metrics
+#'   # plan(multiprocess, workers = nbCoresNMDS) ## Parallelize using four cores
+#'   plan(multisession, workers = nbCoresNMDS) ## Parallelize using four cores
+#'   BetaNMDS <- future_lapply(MatBCdist, FUN = nmds, mindim = dimMDS, maxdim = dimMDS, nits = 1, future.packages = c("ecodist"))
+#'   plan(sequential)
+#'   # find iteration with minimum stress
+#'   Stress <- vector(length = nbiterNMDS)
+#'   for (i in 1:nbiterNMDS) {
+#'     Stress[i] <- BetaNMDS[[i]]$stress
+#'   }
+#'   print("Stress obtained for NMDS iterations:")
+#'   print(Stress)
+#'   print("Rule of thumb")
+#'   print("stress < 0.05 provides an excellent represention in reduced dimensions")
+#'   print("stress < 0.1 is great")
+#'   print("stress < 0.2 is good")
+#'   print("stress > 0.3 provides a poor representation")
+#'   MinStress <- find(Stress == min(Stress))
+#'   BetaNMDS_sel <- BetaNMDS[[MinStress]]$conf
+#'   BetaNMDS_sel <- data.frame(BetaNMDS_sel[[1]])
+#'   return(BetaNMDS_sel)
+#' }
 
 #' Identifies ordination coordinates based on nearest neighbors
 #'
@@ -375,14 +375,14 @@ compute_beta_metrics <- function(ClusterMap_Path, MinSun, Nb_Units_Ordin, nb_par
   # core management seems better on linux --> 4 cores possible
   MatBCdist <- as.dist(MatBC, diag = FALSE, upper = FALSE)
   BetaPCO <- NULL
-  if (scaling == 'NMDS') {
-    Beta_Ordination_sel <- compute_NMDS(MatBCdist)
-    PCname <- 'NMDS'
-  } else if (scaling == 'PCO') {
-    BetaPCO <- labdsv::pco(MatBCdist, k = dimMDS)
-    Beta_Ordination_sel <- BetaPCO$points
-    PCname <- 'PCoA'
-  }
+  # if (scaling == 'NMDS') {
+  #   Beta_Ordination_sel <- compute_NMDS(MatBCdist)
+  #   PCname <- 'NMDS'
+  # } else if (scaling == 'PCO') {
+  BetaPCO <- labdsv::pco(MatBCdist, k = dimMDS)
+  Beta_Ordination_sel <- BetaPCO$points
+  PCname <- 'PCoA'
+  # }
 
   # Perform nearest neighbor on spatial units excluded from Ordination
   print("BC dissimilarity between samples selected for Ordination and remaining")
