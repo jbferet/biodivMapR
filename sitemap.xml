@@ -91,6 +91,9 @@
     <loc>/reference/apply_continuum_removal.html</loc>
   </url>
   <url>
+    <loc>/reference/apply_kmeans.html</loc>
+  </url>
+  <url>
     <loc>/reference/build_image_from_list.html</loc>
   </url>
   <url>
@@ -326,6 +329,9 @@
   </url>
   <url>
     <loc>/reference/write_ENVI_header.html</loc>
+  </url>
+  <url>
+    <loc>/reference/write_PCA_raster.html</loc>
   </url>
   <url>
     <loc>/reference/write_StarsStack.html</loc>
