@@ -83,7 +83,7 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
   SpectralFilter <- CleanData$Spectral
 
   # Compute PCA #1 on DataSubset
-  print("perform PCA#1 on the subset image")
+  print(paste('perform',TypePCA,'on the subset image'))
   if (TypePCA == "PCA" | TypePCA == "SPCA") {
     PCA_model <- pca(DataSubset, TypePCA)
   # } else if (TypePCA == "NLPCA") {
@@ -105,7 +105,7 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
     # after PCA transformation.
     # In order to exclude these pixels, we compute mean and SD for the 3 first
     # components and exclude all pixels showing values ouside "mean+-3SD" range
-    print("perform 2nd filtering: Exclude extreme PCA values")
+    print("Exclude extreme PCA values")
     if (dim(PCA_model$x)[2] > 5) {
       PCsel <- 1:5
     } else {
@@ -142,7 +142,7 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
     CleanData <- rm_invariant_bands(DataSubset, SpectralFilter)
     DataSubset <- CleanData$DataMatrix
     SpectralFilter <- CleanData$Spectral
-    print("perform PCA#2 on the subset image")
+    print(paste('perform',TypePCA,'#2 on the subset image'))
     if (TypePCA == "PCA" | TypePCA == "SPCA") {
       PCA_model <- pca(DataSubset, TypePCA)
     # } else if (TypePCA == "NLPCA") {
@@ -160,7 +160,6 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
   PCA_model$Nb_PCs <- Nb_PCs
   # PCA_model$x <- NULL
   # CREATE PCA FILE CONTAINING ONLY SELECTED PCs
-  print("Apply PCA model to the whole image")
   Output_Dir_PCA <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "PCA")
   PCA_Files <- file.path(Output_Dir_PCA, paste("OutputPCA_", Nb_PCs, "_PCs", sep = ""))
   write_PCA_raster(Input_Image_File = Input_Image_File, Input_Mask_File = Input_Mask_File,
@@ -326,20 +325,23 @@ filter_PCA <- function(Input_Image_File, HDR, Input_Mask_File, Shade_Update,
   return(Shade_Update)
 }
 
-# writes an ENVI image corresponding to PCA
-#
-# @param Input_Image_File path for the raster on which PCA is applied
-# @param Input_Mask_File path for the corresponding mask
-# @param PCA_Path path for resulting PCA
-# @param PCA_model PCA model description
-# @param Spectral spectral information to be used in the image
-# @param Nb_PCs number of components kept in the resulting PCA raster
-# @param CR boolean. If TRUE continuum removal is performed.
-# @param TypePCA PCA, SPCA, NLPCA
-# @param nbCPU number of CPUs to process data
-# @param MaxRAM max RAM when initial image is read (in Gb)
-#
-# @return None
+#' writes an ENVI image corresponding to PCA
+#'
+#' @param Input_Image_File path for the raster on which PCA is applied
+#' @param Input_Mask_File path for the corresponding mask
+#' @param PCA_Path path for resulting PCA
+#' @param PCA_model PCA model description
+#' @param Spectral spectral information to be used in the image
+#' @param Nb_PCs number of components kept in the resulting PCA raster
+#' @param Continuum_Removal boolean. If TRUE continuum removal is performed.
+#' @param TypePCA PCA, SPCA, NLPCA
+#' @param nbCPU number of CPUs to process data
+#' @param MaxRAM max RAM when initial image is read (in Gb)
+#'
+#' @return None
+#' @importFrom progress progress_bar
+#' @export
+
 write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_model,
                              Spectral, Nb_PCs, Continuum_Removal, TypePCA, nbCPU = 1, MaxRAM = 0.25) {
   ImPathHDR <- get_HDR_name(Input_Image_File)
@@ -393,13 +395,22 @@ write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_mo
   # }
   # prepare for sequential processing: SeqRead_Image informs about byte location to read
   nbPieces <- split_image(HDR, LimitSizeGb = MaxRAM)
+  nbPieces <- nbCPU*(1+(nbPieces-1)%/%nbCPU)
+
+  # if (nbPieces<10){
+  #   nbPieces <- 10
+  # }
   SeqRead_Image <- where_to_read(HDR, nbPieces)
   SeqRead_Shade <- where_to_read(HDR_Shade, nbPieces)
   SeqRead_PCA <- where_to_read(HDR_PCA, nbPieces)
 
   # for each piece of image
+  print(paste('Apply PCA model to the full raster:',nbPieces,'chunks distributed on',nbCPU,'CPU'))
+  pb <- progress_bar$new(
+    format = paste('Apply ',TypePCA,' on the image [:bar] :percent in :elapsedfull',sep = ''),
+    total = nbPieces, clear = FALSE, width= 100)
   for (i in 1:nbPieces) {
-    print(paste("PCA Piece #", i, "/", nbPieces))
+    # print(paste("PCA Piece #", i, "/", nbPieces))
     # read image and mask data
     nbLines <- SeqRead_Image$Lines_Per_Chunk[i]
     ImgFormat <- "2D"
@@ -455,6 +466,7 @@ write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_mo
     PCA_Chunk <- aperm(PCA_Chunk, c(2, 3, 1))
     writeBin(c(PCA_Chunk), fidOUT, size = PCA_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
     close(fidOUT)
+    pb$tick()
   }
   list <- ls()
   rm(list = list)

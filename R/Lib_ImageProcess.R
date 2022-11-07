@@ -660,7 +660,8 @@ get_BB_from_Vector <- function(path_raster,path_vector,Buffer = 0){
 #' Kind (Kernel index) and 'id' the sample ID to be used with the kernel
 #' @export
 
-get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Per_Partition, kernel=NULL,MaxRAM = 0.5) {
+get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions,
+                                         Pix_Per_Partition, kernel=NULL, MaxRAM = 0.5) {
 
   metarast <- raster::raster(ImPath)
   # updated raster package: do not use brick with 2D raster
@@ -1524,6 +1525,7 @@ write_ENVI_header <- function(HDR, HDRpath) {
 #' @param Image_Format list. description of data format corresponding to ENVI type
 #'
 #' @return None
+#' @importFrom progress progress_bar
 #' @export
 
 Write_Big_Image <- function(ImgWrite,ImagePath,HDR,Image_Format){
@@ -1535,8 +1537,11 @@ Write_Big_Image <- function(ImgWrite,ImagePath,HDR,Image_Format){
   )
   close(fidOUT)
   # for each piece of image
+  pb <- progress_bar$new(
+    format = 'Writing raster [:bar] :percent in :elapsedfull',
+    total = nbPieces, clear = FALSE, width= 100)
+
   for (i in 1:nbPieces) {
-    print(paste("Writing Image, piece #", i, "/", nbPieces))
     # read image and mask data
     Byte_Start <- SeqRead_Image$ReadByte_Start[i]
     Line_Start <- SeqRead_Image$Line_Start[i]
@@ -1564,6 +1569,7 @@ Write_Big_Image <- function(ImgWrite,ImagePath,HDR,Image_Format){
       writeBin(c(as.integer(ImgChunk)), fidOUT, size = Image_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
     }
     close(fidOUT)
+    pb$tick()
   }
   rm(ImgWrite)
   rm(ImgChunk)

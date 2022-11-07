@@ -1,3 +1,9 @@
+# biodivMapR v1.9.7
+
+## Addition
+- progress bar instead of messages
+- future: multisession instead of multiprocess
+
 # biodivMapR v1.9.6.1
 
 ## Addition

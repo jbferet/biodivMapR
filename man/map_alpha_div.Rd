@@ -13,9 +13,9 @@ map_alpha_div(
   MinSun = 0.25,
   pcelim = 0.02,
   Index_Alpha = "Shannon",
-  FullRes = TRUE,
-  LowRes = FALSE,
-  MapSTD = FALSE,
+  FullRes = FALSE,
+  LowRes = TRUE,
+  MapSTD = TRUE,
   nbCPU = FALSE,
   MaxRAM = FALSE,
   ClassifMap = FALSE

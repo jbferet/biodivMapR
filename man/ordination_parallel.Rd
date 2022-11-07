@@ -13,7 +13,8 @@ ordination_parallel(
   Nb_Units_Ordin,
   nb_partitions,
   nbclusters,
-  pcelim
+  pcelim,
+  p = NULL
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ ordination_parallel(
 \item{nbclusters}{numeric. Number of clusters defined in k-Means.}
 
 \item{pcelim}{numeric. Minimum contribution in percents required for a spectral species}
+
+\item{p}{function.}
 }
 \value{
 OutPut list of mean and SD of alpha diversity metrics

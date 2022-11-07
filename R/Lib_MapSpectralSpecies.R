@@ -40,9 +40,9 @@ map_spectral_species <- function(Input_Image_File, Output_Dir, PCA_Files, Input_
                                  PCA_model = NULL, SpectralFilter = NULL,Continuum_Removal= TRUE) {
 
   Kmeans_info <- NULL
-  if (MaxRAM == FALSE) {
-    MaxRAM <- 0.25
-  }
+  # if (MaxRAM == FALSE) {
+  #   MaxRAM <- 0.25
+  # }
   # if no prior diversity map has been produced --> need PCA file
   if (!file.exists(PCA_Files)) {
     message("")
@@ -120,7 +120,6 @@ map_spectral_species <- function(Input_Image_File, Output_Dir, PCA_Files, Input_
     if (Kmeans_info$Error==FALSE){
       if (Kmeans_Only==FALSE){
         ##    3- ASSIGN SPECTRAL SPECIES TO EACH PIXEL
-        print("apply Kmeans to the whole image and determine spectral species")
         apply_kmeans(PCA_Files, PC_Select, Input_Mask_File, Kmeans_info, Spectral_Species_Path, nbCPU, MaxRAM)
       } else {
         print("'Kmeans_Only' was set to TRUE: kmeans was not applied on the full image")
@@ -227,18 +226,23 @@ init_kmeans <- function(dataPCA, Pix_Per_Partition, nb_partitions, nbclusters, n
   }
 }
 
-# Applies Kmeans clustering to PCA image
-#
-# @param PCA_Path path for the PCA image
-# @param PC_Select PCs selected from PCA
-# @param Input_Mask_File Path for the mask
-# @param Kmeans_info information about kmeans computed in previous step
-# @param nbCPU
-# @param MaxRAM
-# @param Spectral_Species_Path path for spectral species file to be written
-#
-# @return None
-apply_kmeans <- function(PCA_Path, PC_Select, Input_Mask_File, Kmeans_info, Spectral_Species_Path, nbCPU = 1, MaxRAM = FALSE) {
+#' Applies Kmeans clustering to PCA image and writes spectral species map
+#'
+#' @param PCA_Path path for the PCA image
+#' @param PC_Select PCs selected from PCA
+#' @param Input_Mask_File Path for the mask
+#' @param Kmeans_info information about kmeans computed in previous step
+#' @param Spectral_Species_Path path for spectral species file to be written
+#' @param nbCPU numeric. number of CPU to work with in multiprocess task
+#' @param MaxRAM numeric. size of image pieces to be read at once
+#'
+#' @return None
+#' @importFrom progress progress_bar
+#' @export
+
+apply_kmeans <- function(PCA_Path, PC_Select, Input_Mask_File, Kmeans_info,
+                         Spectral_Species_Path, nbCPU = 1, MaxRAM = FALSE) {
+
   ImPathHDR <- get_HDR_name(PCA_Path)
   HDR_PCA <- read_ENVI_header(ImPathHDR)
   PCA_Format <- ENVI_type2bytes(HDR_PCA)
@@ -249,6 +253,10 @@ apply_kmeans <- function(PCA_Path, PC_Select, Input_Mask_File, Kmeans_info, Spec
     MaxRAM <- 0.25
   }
   nbPieces <- split_image(HDR_PCA, MaxRAM)
+  nbPieces <- nbCPU*(1+(nbPieces-1)%/%nbCPU)
+  # if (nbPieces<10){
+  #   nbPieces <- 10
+  # }
   SeqRead_PCA <- where_to_read(HDR_PCA, nbPieces)
   SeqRead_Shade <- where_to_read(HDR_Shade, nbPieces)
   # create output file for spectral species assignment
@@ -256,19 +264,11 @@ apply_kmeans <- function(PCA_Path, PC_Select, Input_Mask_File, Kmeans_info, Spec
   nb_partitions <- length(Kmeans_info$Centroids)
   HDR_SS$bands <- nb_partitions
   HDR_SS$`data type` <- 1
-  Iter <- paste('Iter', 1:nb_partitions, collapse = ", ")
-  HDR_SS$`band names` <- Iter
-  HDR_SS$wavelength <- NULL
-  HDR_SS$fwhm <- NULL
-  HDR_SS$resolution <- NULL
-  HDR_SS$bandwidth <- NULL
-  HDR_SS$purpose <- NULL
+  HDR_SS$`band names` <- paste('Iter', 1:nb_partitions, collapse = ", ")
+  HDR_SS$wavelength <- HDR_SS$fwhm <- HDR_SS$resolution <- HDR_SS$bandwidth <- NULL
+  HDR_SS$`default bands` <- HDR_SS$`wavelength units` <- HDR_SS$`z plot titles` <- NULL
+  HDR_SS$purpose <- HDR_SS$`data gain values` <- HDR_SS$`default stretch` <- NULL
   HDR_SS$interleave <- 'BIL'
-  HDR_SS$`default bands` <- NULL
-  HDR_SS$`wavelength units` <- NULL
-  HDR_SS$`z plot titles` <- NULL
-  HDR_SS$`data gain values` <- NULL
-  HDR_SS$`default stretch` <- NULL
   HDR_SS$`byte order` <- get_byte_order()
   headerFpath <- paste(Spectral_Species_Path, ".hdr", sep = "")
   write_ENVI_header(HDR_SS, headerFpath)
@@ -279,8 +279,12 @@ apply_kmeans <- function(PCA_Path, PC_Select, Input_Mask_File, Kmeans_info, Spec
   )
   close(fidSS)
 
+  # for each piece of image
+  print(paste('Apply Kmeans to the full raster:',nbPieces,'chunks distributed on',nbCPU,'CPU'))
+  pb <- progress_bar$new(
+    format = paste('Write spectral species file [:bar] :percent in :elapsedfull',sep = ''),
+    total = nbPieces, clear = FALSE, width= 100)
   for (i in 1:nbPieces) {
-    print(paste("Spectral Species Piece #", i, "/", nbPieces))
     Location_RW <- list()
     Location_RW$nbLines <- SeqRead_PCA$Lines_Per_Chunk[i]
     Location_RW$Byte_Start_PCA <- SeqRead_PCA$ReadByte_Start[i]
@@ -289,7 +293,10 @@ apply_kmeans <- function(PCA_Path, PC_Select, Input_Mask_File, Kmeans_info, Spec
     Location_RW$lenBin_Shade <- SeqRead_Shade$ReadByte_End[i] - SeqRead_Shade$ReadByte_Start[i] + 1
     Location_RW$Byte_Start_SS <- 1 + (SeqRead_Shade$ReadByte_Start[i] - 1) * nb_partitions
     Location_RW$lenBin_SS <- nb_partitions * (SeqRead_Shade$ReadByte_End[i] - SeqRead_Shade$ReadByte_Start[i]) + 1
-    compute_spectral_species(PCA_Path, Input_Mask_File, Spectral_Species_Path, Location_RW, PC_Select, Kmeans_info, nbCPU)
+    compute_spectral_species(PCA_Path = PCA_Path, Input_Mask_File = Input_Mask_File,
+                             Spectral_Species_Path = Spectral_Species_Path, Location_RW = Location_RW,
+                             PC_Select = PC_Select, Kmeans_info = Kmeans_info, nbCPU = nbCPU)
+    pb$tick()
   }
   return(invisible())
 }
@@ -325,14 +332,16 @@ compute_spectral_species <- function(PCA_Path, Input_Mask_File, Spectral_Species
   HDR_Shade <- read_ENVI_header(ShadeHDR)
   Shade.Format <- ENVI_type2bytes(HDR_Shade)
   ImgFormat <- "Shade"
-  Shade_Chunk <- read_BIL_image_subset(Input_Mask_File, HDR_Shade, Location_RW$Byte_Start_Shade, Location_RW$lenBin_Shade, Location_RW$nbLines, Shade.Format, ImgFormat)
+  Shade_Chunk <- read_BIL_image_subset(Input_Mask_File, HDR_Shade, Location_RW$Byte_Start_Shade,
+                                       Location_RW$lenBin_Shade, Location_RW$nbLines, Shade.Format, ImgFormat)
 
   PCA_HDR <- get_HDR_name(PCA_Path)
   HDR_PCA <- read_ENVI_header(PCA_HDR)
   PCA_Format <- ENVI_type2bytes(HDR_PCA)
   # read "unfolded" (2D) PCA image
   ImgFormat <- "2D"
-  PCA_Chunk <- read_BIL_image_subset(PCA_Path, HDR_PCA, Location_RW$Byte_Start_PCA, Location_RW$lenBin_PCA, Location_RW$nbLines, PCA_Format, ImgFormat)
+  PCA_Chunk <- read_BIL_image_subset(PCA_Path, HDR_PCA, Location_RW$Byte_Start_PCA, Location_RW$lenBin_PCA,
+                                     Location_RW$nbLines, PCA_Format, ImgFormat)
   PCA_Chunk <- PCA_Chunk[, PC_Select]
   if (length(PC_Select) == 1) {
     PCA_Chunk <- matrix(PCA_Chunk, ncol = 1)
@@ -355,7 +364,7 @@ compute_spectral_species <- function(PCA_Path, Input_Mask_File, Spectral_Species
     nbSubsets <- ceiling(length(keepShade) / nbSamples_Per_Rdist)
     PCA_Chunk <- snow::splitRows(PCA_Chunk, nbSubsets)
     if (nbCPU>1){
-      plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
+      plan(multiprocess, workers = nbCPU)
       Schedule_Per_Thread <- ceiling(nbSubsets / nbCPU)
       res <- future_lapply(PCA_Chunk, FUN = RdistList, CentroidsArray = CentroidsArray,
                            nbClusters = nrow(Kmeans_info$Centroids[[1]]),

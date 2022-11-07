@@ -38,8 +38,8 @@
 map_beta_div <- function(Input_Image_File=FALSE, Output_Dir='', window_size=10,
                          TypePCA = 'SPCA', nb_partitions = 20,nbclusters = 50,
                          Nb_Units_Ordin = 2000, MinSun = 0.25,
-                         pcelim = 0.02, scaling = 'PCO', FullRes = TRUE,
-                         LowRes = FALSE, nbCPU = 1, MaxRAM = 0.25,
+                         pcelim = 0.02, scaling = 'PCO', FullRes = FALSE,
+                         LowRes = TRUE, nbCPU = 1, MaxRAM = 0.25,
                          ClassifMap = FALSE, dimMDS=3) {
 
   if (ClassifMap == FALSE){
@@ -110,7 +110,7 @@ map_beta_div <- function(Input_Image_File=FALSE, Output_Dir='', window_size=10,
 #' @param dimMDS numeric. number of dimensions of the NMDS
 #
 #' @return BetaNMDS_sel
-#' @importFrom future plan multiprocess sequential
+#' @importFrom future plan multiprocess multisession sequential
 #' @importFrom future.apply future_lapply
 #' @importFrom ecodist nmds
 #' @importFrom utils find
@@ -124,7 +124,8 @@ compute_NMDS <- function(MatBCdist,dimMDS=3) {
     nbCoresNMDS <- 4
   }
   # multiprocess of spectral species distribution and alpha diversity metrics
-  plan(multiprocess, workers = nbCoresNMDS) ## Parallelize using four cores
+  # plan(multiprocess, workers = nbCoresNMDS) ## Parallelize using four cores
+  plan(multisession, workers = nbCoresNMDS) ## Parallelize using four cores
   BetaNMDS <- future_lapply(MatBCdist, FUN = nmds, mindim = dimMDS, maxdim = dimMDS, nits = 1, future.packages = c("ecodist"))
   plan(sequential)
   # find iteration with minimum stress
@@ -158,37 +159,46 @@ compute_NMDS <- function(MatBCdist,dimMDS=3) {
 #'
 #' @return Ordination_est coordinates of each spatial unit in ordination space
 #' @importFrom snow splitRows
-#' @importFrom future plan multiprocess sequential
+#' @importFrom future plan multiprocess multisession sequential
 #' @importFrom future.apply future_lapply
+#' @importFrom progressr progressor handlers with_progress
 #' @export
 
 ordination_to_NN <- function(Beta_Ordination_sel, SSD_Path, Sample_Sel, coordTotSort,
                              nb_partitions, nbclusters, pcelim, nbCPU = 1) {
   nb_Sunlit <- dim(coordTotSort)[1]
-  # define number of samples to be sampled each time during paralle processing
+  # define number of samples to be sampled each time during parallel processing
   nb_samples_per_sub <- round(1e7 / dim(Sample_Sel)[1])
   # number of paralle processes to run
   nb.sub <- round(nb_Sunlit / nb_samples_per_sub)
   if (nb.sub == 0) nb.sub <- 1
-  id.sub <- splitRows(as.matrix(seq(1, nb_Sunlit, by = 1), ncol = 1), ncl = nb.sub)
+  id.sub <- snow::splitRows(as.matrix(seq(1, nb_Sunlit, by = 1), ncol = 1), ncl = nb.sub)
   # compute ordination coordinates from each subpart
   Nb_Units_Ordin <- dim(Sample_Sel)[1]
   if (nbCPU>1){
-    plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
-    Schedule_Per_Thread <- ceiling(nb.sub / nbCPU)
-    OutPut <- future_lapply(id.sub,
-                            FUN = ordination_parallel, coordTotSort = coordTotSort, SSD_Path = SSD_Path,
-                            Sample_Sel = Sample_Sel, Beta_Ordination_sel = Beta_Ordination_sel, Nb_Units_Ordin = Nb_Units_Ordin,
-                            nb_partitions = nb_partitions, nbclusters = nbclusters, pcelim = pcelim,
-                            future.scheduling = Schedule_Per_Thread,
-                            future.packages = c("vegan", "dissUtils", "R.utils", "tools", "snow", "matlab")
-    )
+    # plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
+    plan(multisession, workers = nbCPU) ## Parallelize using four cores
+    handlers(global = TRUE)
+    handlers("progress")
+    with_progress({
+      p <- progressr::progressor(steps = nb.sub)
+      OutPut <- future_lapply(id.sub,
+                              FUN = ordination_parallel, coordTotSort = coordTotSort, SSD_Path = SSD_Path,
+                              Sample_Sel = Sample_Sel, Beta_Ordination_sel = Beta_Ordination_sel, Nb_Units_Ordin = Nb_Units_Ordin,
+                              nb_partitions = nb_partitions, nbclusters = nbclusters, pcelim = pcelim, p,
+                              future.packages = c("vegan", "dissUtils", "R.utils", "tools", "snow", "matlab"))
+      })
     plan(sequential)
   } else {
-    OutPut <- lapply(id.sub, FUN = ordination_parallel, coordTotSort = coordTotSort,
-                     SSD_Path = SSD_Path, Sample_Sel = Sample_Sel,
-                     Beta_Ordination_sel = Beta_Ordination_sel, Nb_Units_Ordin = Nb_Units_Ordin,
-                     nb_partitions = nb_partitions, nbclusters = nbclusters, pcelim = pcelim)
+    handlers(global = TRUE)
+    handlers("progress")
+    with_progress({
+      p <- progressr::progressor(steps = nb.sub)
+      OutPut <- lapply(id.sub, FUN = ordination_parallel, coordTotSort = coordTotSort,
+                       SSD_Path = SSD_Path, Sample_Sel = Sample_Sel,
+                       Beta_Ordination_sel = Beta_Ordination_sel, Nb_Units_Ordin = Nb_Units_Ordin,
+                       nb_partitions = nb_partitions, nbclusters = nbclusters, pcelim = pcelim, p)
+    })
   }
   Ordination_est <- do.call("rbind", OutPut)
   gc()
@@ -206,12 +216,13 @@ ordination_to_NN <- function(Beta_Ordination_sel, SSD_Path, Sample_Sel, coordTot
 #' @param nb_partitions numeric. Number of partitions (repetitions) to be computed then averaged.
 #' @param nbclusters numeric. Number of clusters defined in k-Means.
 #' @param pcelim numeric. Minimum contribution in percents required for a spectral species
+#' @param p function.
 #
 #' @return OutPut list of mean and SD of alpha diversity metrics
 #' @export
 
 ordination_parallel <- function(id.sub, coordTotSort, SSD_Path, Sample_Sel, Beta_Ordination_sel,
-                                Nb_Units_Ordin, nb_partitions, nbclusters, pcelim) {
+                                Nb_Units_Ordin, nb_partitions, nbclusters, pcelim, p = NULL) {
 
   # get Spectral species distribution
   coordPix <- coordTotSort[id.sub, ]
@@ -231,6 +242,8 @@ ordination_parallel <- function(id.sub, coordTotSort, SSD_Path, Sample_Sel, Beta
   # get the knn closest neighbors from each kernel
   knn <- 3
   OutPut <- compute_NN_from_ordination(MatBCtmp, knn, Beta_Ordination_sel)
+
+  p()
   return(OutPut)
 }
 

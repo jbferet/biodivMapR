@@ -34,8 +34,8 @@
 map_alpha_div <- function(Input_Image_File=FALSE, Output_Dir='', window_size=10,
                           TypePCA = "SPCA", nbclusters = 50,
                           MinSun = 0.25, pcelim = 0.02,
-                          Index_Alpha = "Shannon", FullRes = TRUE,
-                          LowRes = FALSE, MapSTD = FALSE,
+                          Index_Alpha = "Shannon", FullRes = FALSE,
+                          LowRes = TRUE, MapSTD = TRUE,
                           nbCPU = FALSE, MaxRAM = FALSE,
                           ClassifMap = FALSE) {
 
@@ -198,8 +198,9 @@ compute_ALPHA_FromPlot <- function(SpectralSpecies_Plot,pcelim = 0.02){
 # @param MinSun numeric. minimum proportion of sunlit pixels required to consider plot
 #
 # @return list of mean and SD of alpha diversity metrics
-#' @importFrom future plan multiprocess sequential
+#' @importFrom future plan multiprocess multisession sequential
 #' @importFrom future.apply future_lapply
+#' @importFrom progressr progressor handlers with_progress
 #' @importFrom stats sd
 compute_alpha_metrics <- function(Spectral_Species_Path, window_size, nbclusters,
                                   MinSun, pcelim, nbCPU = FALSE, MaxRAM = FALSE, Index_Alpha = "Shannon") {
@@ -209,14 +210,18 @@ compute_alpha_metrics <- function(Spectral_Species_Path, window_size, nbclusters
   if (MaxRAM == FALSE) {
     MaxRAM <- 0.25
   }
-  nbPieces_Min <- split_image(HDR_SS, MaxRAM)
   if (nbCPU == FALSE) {
     nbCPU <- 1
   }
-  if (nbPieces_Min < nbCPU) {
-    nbPieces_Min <- nbCPU
-  }
-  SeqRead.SS <- where_to_read_kernel(HDR_SS, nbPieces_Min, window_size)
+  nbPieces <- split_image(HDR_SS, MaxRAM)
+  nbPieces <- nbCPU*(1+(nbPieces-1)%/%nbCPU)
+  # if (nbPieces < nbCPU) {
+  #   nbPieces <- nbCPU
+  # }
+  # if (nbPieces<10){
+  #   nbPieces <- 10
+  # }
+  SeqRead.SS <- where_to_read_kernel(HDR_SS, nbPieces, window_size)
 
   ##          prepare SS distribution map and corresponding sunlit map        ##
   # prepare SS distribution map
@@ -240,7 +245,7 @@ compute_alpha_metrics <- function(Spectral_Species_Path, window_size, nbclusters
   close(fidSSD)
   headerFpath <- paste(SSD_Path, ".hdr", sep = "")
   write_ENVI_header(HDR_SSD, headerFpath)
-  SeqWrite.SSD <- where_to_write_kernel(HDR_SS, HDR_SSD, nbPieces_Min, window_size)
+  SeqWrite.SSD <- where_to_write_kernel(HDR_SS, HDR_SSD, nbPieces, window_size)
 
   # prepare proportion of sunlit pixels from each spatial unit
   Sunlit_Path <- paste(SSD_Path, "_Sunlit", sep = "")
@@ -257,11 +262,11 @@ compute_alpha_metrics <- function(Spectral_Species_Path, window_size, nbclusters
   close(fidSunlit)
   headerFpath <- paste(Sunlit_Path, ".hdr", sep = "")
   write_ENVI_header(HDR_Sunlit, headerFpath)
-  SeqWrite.Sunlit <- where_to_write_kernel(HDR_SS, HDR_Sunlit, nbPieces_Min, window_size)
+  SeqWrite.Sunlit <- where_to_write_kernel(HDR_SS, HDR_Sunlit, nbPieces, window_size)
 
   # for each piece of image
   ReadWrite <- list()
-  for (i in 1:nbPieces_Min) {
+  for (i in 1:nbPieces) {
     ReadWrite[[i]] <- list()
     ReadWrite[[i]]$RW_SS <- ReadWrite[[i]]$RW_SSD <- ReadWrite[[i]]$RW_Sunlit <- list()
     ReadWrite[[i]]$RW_SS$Byte_Start <- SeqRead.SS$ReadByte_Start[i]
@@ -283,22 +288,35 @@ compute_alpha_metrics <- function(Spectral_Species_Path, window_size, nbclusters
 
   # multiprocess of spectral species distribution and alpha diversity metrics
   if (nbCPU>1){
-    plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
-    Schedule_Per_Thread <- ceiling(nbPieces_Min / nbCPU)
-    ALPHA <- future_lapply(ReadWrite,
-                           FUN = convert_PCA_to_SSD, Spectral_Species_Path = Spectral_Species_Path,
-                           HDR_SS = HDR_SS, HDR_SSD = HDR_SSD, SS_Format = SS_Format, SSD_Format = SSD_Format,
-                           ImgFormat = ImgFormat, window_size = window_size, nbclusters = nbclusters, MinSun = MinSun,
-                           pcelim = pcelim, Index_Alpha = Index_Alpha, SSD_Path = SSD_Path, Sunlit_Path = Sunlit_Path,
-                           Sunlit_Format = Sunlit_Format, future.scheduling = Schedule_Per_Thread
-    )
+    plan(multisession, workers = nbCPU) ## Parallelize using four cores
+    # plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
+    Schedule_Per_Thread <- ceiling(nbPieces / nbCPU)
+    handlers(global = TRUE)
+    handlers("progress")
+    with_progress({
+      p <- progressr::progressor(steps = nbPieces)
+      ALPHA <- future_lapply(ReadWrite,
+                             FUN = convert_PCA_to_SSD, Spectral_Species_Path = Spectral_Species_Path,
+                             HDR_SS = HDR_SS, HDR_SSD = HDR_SSD, SS_Format = SS_Format, SSD_Format = SSD_Format,
+                             ImgFormat = ImgFormat, window_size = window_size, nbclusters = nbclusters, MinSun = MinSun,
+                             pcelim = pcelim, Index_Alpha = Index_Alpha, SSD_Path = SSD_Path, Sunlit_Path = Sunlit_Path,
+                             Sunlit_Format = Sunlit_Format, p = p)
+      })
+
+
+    # ALPHA <- future_lapply(ReadWrite,
+    #                        FUN = convert_PCA_to_SSD, Spectral_Species_Path = Spectral_Species_Path,
+    #                        HDR_SS = HDR_SS, HDR_SSD = HDR_SSD, SS_Format = SS_Format, SSD_Format = SSD_Format,
+    #                        ImgFormat = ImgFormat, window_size = window_size, nbclusters = nbclusters, MinSun = MinSun,
+    #                        pcelim = pcelim, Index_Alpha = Index_Alpha, SSD_Path = SSD_Path, Sunlit_Path = Sunlit_Path,
+    #                        Sunlit_Format = Sunlit_Format, future.scheduling = Schedule_Per_Thread)
     plan(sequential)
   } else {
     ALPHA <- lapply(ReadWrite, FUN = convert_PCA_to_SSD, Spectral_Species_Path = Spectral_Species_Path,
                     HDR_SS = HDR_SS, HDR_SSD = HDR_SSD, SS_Format = SS_Format, SSD_Format = SSD_Format,
                     ImgFormat = ImgFormat, window_size = window_size, nbclusters = nbclusters, MinSun = MinSun,
                     pcelim = pcelim, Index_Alpha = Index_Alpha, SSD_Path = SSD_Path, Sunlit_Path = Sunlit_Path,
-                    Sunlit_Format = Sunlit_Format)
+                    Sunlit_Format = Sunlit_Format,p= NULL)
   }
 
   # create ful map from chunks
@@ -348,13 +366,15 @@ compute_alpha_metrics <- function(Spectral_Species_Path, window_size, nbclusters
 # @param SSD_Path
 # @param Sunlit_Path
 # @param Sunlit_Format
+# @param p
 #
 # @param
 # @param
 # @return
 convert_PCA_to_SSD <- function(ReadWrite, Spectral_Species_Path, HDR_SS, HDR_SSD,
                                SS_Format, SSD_Format, ImgFormat, window_size, nbclusters,
-                               MinSun, pcelim, Index_Alpha, SSD_Path, Sunlit_Path, Sunlit_Format) {
+                               MinSun, pcelim, Index_Alpha, SSD_Path, Sunlit_Path, Sunlit_Format,
+                               p = NULL) {
   SS_Chunk <- read_BIL_image_subset(
     Spectral_Species_Path, HDR_SS,
     ReadWrite$RW_SS$Byte_Start, ReadWrite$RW_SS$lenBin,
@@ -398,6 +418,9 @@ convert_PCA_to_SSD <- function(ReadWrite, Spectral_Species_Path, HDR_SS, HDR_SSD
   Simpson_SD_Chunk <- apply(SSD_Alpha$Simpson, 1:2, sd)
   rm(SSD_Alpha)
   gc()
+  if (!is.null(p)){
+    p()
+  }
   my_list <- list(
     "Shannon" = Shannon_Mean_Chunk, "Fisher" = Fisher_Mean_Chunk, "Simpson" = Simpson_Mean_Chunk,
     "Shannon.SD" = Shannon_SD_Chunk, "Fisher.SD" = Fisher_SD_Chunk, "Simpson.SD" = Simpson_SD_Chunk
