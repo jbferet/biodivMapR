@@ -1,3 +1,8 @@
+# biodivMapR v1.9.8
+
+## Addition
+- removed NMDS as possible ordination method when computing beta diversity
+
 # biodivMapR v1.9.7
 
 ## Addition
