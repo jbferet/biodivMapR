@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.8</span>
       </span>
     </div>
 
@@ -128,7 +128,7 @@
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2022-11-07</h4>
+            <h4 data-toc-skip class="date">2022-11-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_10.Rmd" class="external-link"><code>vignettes/biodivMapR_10.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_10.Rmd</code></div>
@@ -575,7 +575,7 @@ to be downloaded from the repository and unzipped.</p>
 <code class="sourceCode R"><span><span class="co"># list vector data</span></span>
 <span><span class="va">Path_Vector</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/list_shp.html">list_shp</a></span><span class="op">(</span><span class="va">VectorDir</span><span class="op">)</span></span>
 <span><span class="va">Name_Vector</span> <span class="op">&lt;-</span> <span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/fileutils.html" class="external-link">file_path_sans_ext</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">Path_Vector</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">NamePlots</span> <span class="op">&lt;-</span> <span class="fu">rgdal</span><span class="fu">::</span><span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span><span class="va">VectorDir</span>,<span class="va">Name_Vector</span>,verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">ID</span></span>
+<span><span class="va">NamePlots</span> <span class="op">&lt;-</span> <span class="fu">rgdal</span><span class="fu">::</span><span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/rgdal-deprecated.html" class="external-link">readOGR</a></span><span class="op">(</span><span class="va">VectorDir</span>,<span class="va">Name_Vector</span>,verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">ID</span></span>
 <span><span class="co"># location of the spectral species raster needed for validation</span></span>
 <span><span class="va">Path_SpectralSpecies</span> <span class="op">&lt;-</span> <span class="va">Kmeans_info</span><span class="op">$</span><span class="va">SpectralSpecies</span></span>
 <span><span class="co"># get diversity indicators corresponding to shapefiles (no partitioning of spectral dibversity based on field plots so far...)</span></span>
@@ -586,7 +586,7 @@ to be downloaded from the repository and unzipped.</p>
 <span><span class="co"># identify which plots were in the image</span></span>
 <span><span class="va">WhichPlots</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Biodiv_Indicators</span><span class="op">$</span><span class="va">Shannon</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="va">Biodiv_Indicators</span><span class="op">$</span><span class="va">Shannon</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="va">NamePlot</span> <span class="op">&lt;-</span> <span class="va">Biodiv_Indicators</span><span class="op">$</span><span class="va">Name_Plot</span><span class="op">[</span><span class="va">WhichPlots</span><span class="op">]</span></span>
-<span><span class="va">TypeCommunity</span> <span class="op">&lt;-</span> <span class="fu">rgdal</span><span class="fu">::</span><span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span><span class="va">VectorDir</span>,<span class="va">Name_Vector</span>,verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">COMM</span><span class="op">[</span><span class="va">WhichPlots</span><span class="op">]</span></span>
+<span><span class="va">TypeCommunity</span> <span class="op">&lt;-</span> <span class="fu">rgdal</span><span class="fu">::</span><span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/rgdal-deprecated.html" class="external-link">readOGR</a></span><span class="op">(</span><span class="va">VectorDir</span>,<span class="va">Name_Vector</span>,verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">COMM</span><span class="op">[</span><span class="va">WhichPlots</span><span class="op">]</span></span>
 <span></span>
 <span><span class="va">Richness_RS</span> <span class="op">&lt;-</span> <span class="va">Biodiv_Indicators</span><span class="op">$</span><span class="va">Richness</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">WhichPlots</span><span class="op">]</span></span>
 <span><span class="va">Shannon_RS</span> <span class="op">&lt;-</span> <span class="va">Biodiv_Indicators</span><span class="op">$</span><span class="va">Shannon</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">WhichPlots</span><span class="op">]</span></span>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.8</span>
       </span>
     </div>
 
@@ -185,10 +185,6 @@ expecting a matrix of spectral species (n pixels x p repetitions)</p></td>
           <p><code><a href="compute_Functional_metrics.html">compute_Functional_metrics()</a></code> </p>
         </td>
         <td><p>Map functional diversity metrics based on spectral species</p></td>
-      </tr><tr><td>
-          <p><code><a href="compute_NMDS.html">compute_NMDS()</a></code> </p>
-        </td>
-        <td><p>computes NMDS</p></td>
       </tr><tr><td>
           <p><code><a href="compute_NN_from_ordination.html">compute_NN_from_ordination()</a></code> </p>
         </td>
@@ -379,7 +375,17 @@ or applies the transformation based on a previously defined min and max</p></td>
       </tr><tr><td>
           <p><code><a href="ordination_to_NN.html">ordination_to_NN()</a></code> </p>
         </td>
-        <td><p>Identifies ordination coordinates based on nearest neighbors</p></td>
+        <td><p>#' computes NMDS
+#
+#' @param MatBCdist BC dissimilarity matrix
+#' @param dimMDS numeric. number of dimensions of the NMDS
+#
+#' @return BetaNMDS_sel
+#' @importFrom future plan multiprocess multisession sequential
+#' @importFrom future.apply future_lapply
+#' @importFrom ecodist nmds
+#' @importFrom utils find
+#' @export</p></td>
       </tr><tr><td>
           <p><code><a href="pca.html">pca()</a></code> </p>
         </td>
