@@ -20,7 +20,7 @@ expecting a matrix of spectral species (n pixels x p repetitions)"><meta propert
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.9</span>
       </span>
     </div>
 
@@ -107,7 +107,12 @@ expecting a matrix of spectral species (n pixels x p repetitions)</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">compute_BETA_FromPlots</span><span class="op">(</span><span class="va">SpectralSpecies_Plots</span>, <span class="va">nbclusters</span>, pcelim <span class="op">=</span> <span class="fl">0.02</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">compute_BETA_FromPlots</span><span class="op">(</span></span>
+<span>  <span class="va">SpectralSpecies_Plots</span>,</span>
+<span>  <span class="va">nbclusters</span>,</span>
+<span>  Hellinger <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  pcelim <span class="op">=</span> <span class="fl">0.02</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -118,6 +123,10 @@ expecting a matrix of spectral species (n pixels x p repetitions)</p>
 
 <dt>nbclusters</dt>
 <dd><p>numeric. number of clusters</p></dd>
+
+
+<dt>Hellinger</dt>
+<dd><p>boolean. set TRUE to compute Hellinger distance matrices based on Euclidean distances</p></dd>
 
 
 <dt>pcelim</dt>
@@ -144,7 +153,7 @@ each spectral species with a proprtion &lt; pcelim is eliminated before computat
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
