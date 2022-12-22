@@ -253,6 +253,7 @@ ordination_parallel <- function(id.sub, coordTotSort, SSD_Path, Sample_Sel, Beta
 #'
 #' @param SpectralSpecies_Plots list. list of matrices of spectral species corresponding to plots
 #' @param nbclusters numeric. number of clusters
+#' @param Hellinger boolean. set TRUE to compute Hellinger distance matrices based on Euclidean distances
 #' @param pcelim numeric. Minimum contribution (in %) required for a spectral species
 #' each spectral species with a proprtion < pcelim is eliminated before computation of diversity
 #
@@ -260,31 +261,39 @@ ordination_parallel <- function(id.sub, coordTotSort, SSD_Path, Sample_Sel, Beta
 #' @importFrom vegan vegdist
 #' @export
 
-compute_BETA_FromPlots <- function(SpectralSpecies_Plots,nbclusters,pcelim = 0.02){
+compute_BETA_FromPlots <- function(SpectralSpecies_Plots,nbclusters,Hellinger = FALSE, pcelim = 0.02){
 
   nbPolygons<- length(SpectralSpecies_Plots)
-  Pixel.Inventory.All <- list()
+  Pixel_Inventory_All <- Pixel_Hellinger_All <- list()
   nb_partitions <- dim(SpectralSpecies_Plots[[1]])[2]
   # for each plot
   for (plot in 1:nbPolygons){
     # for each repetition
-    Pixel.Inventory <- list()
+    Pixel_Inventory <- Pixel_Hellinger <- list()
     for (i in 1:nb_partitions){
       # compute distribution of spectral species
       Distritab <- table(SpectralSpecies_Plots[[plot]][,i])
       # compute distribution of spectral species
-      Pixel.Inventory[[i]] <- as.data.frame(Distritab)
-      SumPix <- sum(Pixel.Inventory[[i]]$Freq)
+      Pixel_Inventory[[i]] <- as.data.frame(Distritab)
+      SumPix <- sum(Pixel_Inventory[[i]]$Freq)
       ThreshElim <- pcelim*SumPix
-      ElimZeros <- which(Pixel.Inventory[[i]]$Freq<ThreshElim)
+      ElimZeros <- which(Pixel_Inventory[[i]]$Freq<ThreshElim)
       if (length(ElimZeros)>=1){
-        Pixel.Inventory[[i]] <- Pixel.Inventory[[i]][-ElimZeros,]
+        Pixel_Inventory[[i]] <- Pixel_Inventory[[i]][-ElimZeros,]
       }
-      if (length(which(Pixel.Inventory[[i]]$Var1==0))==1){
-        Pixel.Inventory[[i]] <- Pixel.Inventory[[i]][-which(Pixel.Inventory[[i]]$Var1==0),]
+      if (length(which(Pixel_Inventory[[i]]$Var1==0))==1){
+        Pixel_Inventory[[i]] <- Pixel_Inventory[[i]][-which(Pixel_Inventory[[i]]$Var1==0),]
       }
     }
-    Pixel.Inventory.All[[plot]] <- Pixel.Inventory
+    Pixel_Inventory_All[[plot]] <- Pixel_Inventory
+    if (Hellinger == TRUE){
+      for (i in 1:nb_partitions){
+        # compute Hellinger distance
+        Pixel_Hellinger[[i]] <- Pixel_Inventory[[i]]
+        Pixel_Hellinger[[i]]$Freq <- sqrt(Pixel_Hellinger[[i]]$Freq/sum(Pixel_Hellinger[[i]]$Freq))
+      }
+      Pixel_Hellinger_All[[plot]] <- Pixel_Hellinger
+    }
   }
 
   # for each pair of plot, compute beta diversity indices
@@ -292,8 +301,8 @@ compute_BETA_FromPlots <- function(SpectralSpecies_Plots,nbclusters,pcelim = 0.0
   for(i in 1:nb_partitions){
     MergeDiversity <- matrix(0,nrow = nbclusters,ncol = nbPolygons)
     for(j in 1:nbPolygons){
-      SelSpectralSpecies <- as.numeric(as.vector(Pixel.Inventory.All[[j]][[i]]$Var1))
-      SelFrequency <- Pixel.Inventory.All[[j]][[i]]$Freq
+      SelSpectralSpecies <- as.numeric(as.vector(Pixel_Inventory_All[[j]][[i]]$Var1))
+      SelFrequency <- Pixel_Inventory_All[[j]][[i]]$Freq
       MergeDiversity[SelSpectralSpecies,j] = SelFrequency
     }
     BC[[i]] <- vegan::vegdist(t(MergeDiversity),method="bray")
@@ -303,7 +312,28 @@ compute_BETA_FromPlots <- function(SpectralSpecies_Plots,nbclusters,pcelim = 0.0
     BC_mean <- BC_mean+BC[[i]]
   }
   BC_mean <- BC_mean/nb_partitions
-  beta <- list('BrayCurtis' = BC_mean, 'BrayCurtis_ALL' = BC)
+
+  # Hellinger
+  if (Hellinger==TRUE){
+    # for each pair of plot, compute Euclidean distance on Hellinger
+    Hellmat <- list()
+    for(i in 1:nb_partitions){
+      MergeDiversity <- matrix(0,nrow = nbclusters,ncol = nbPolygons)
+      for(j in 1:nbPolygons){
+        SelSpectralSpecies <- as.numeric(as.vector(Pixel_Hellinger_All[[j]][[i]]$Var1))
+        SelFrequency <- Pixel_Hellinger_All[[j]][[i]]$Freq
+        MergeDiversity[SelSpectralSpecies,j] = SelFrequency
+      }
+      Hellmat[[i]] <- vegan::vegdist(t(MergeDiversity),method="euclidean")
+    }
+    Hellinger_mean <- 0*Hellmat[[1]]
+    for(i in 1:nb_partitions){
+      Hellinger_mean <- Hellinger_mean+Hellmat[[i]]
+    }
+    Hellinger_mean <- Hellinger_mean/nb_partitions
+  }
+  beta <- list('BrayCurtis' = BC_mean, 'BrayCurtis_ALL' = BC,
+               'Hellinger' = Hellinger_mean, 'Hellinger_ALL' = Hellmat)
   return(beta)
 }
 

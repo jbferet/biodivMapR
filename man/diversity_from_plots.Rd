@@ -11,6 +11,7 @@ diversity_from_plots(
   Raster_Functional = FALSE,
   Selected_Features = FALSE,
   Name_Plot = FALSE,
+  Hellinger = FALSE,
   pcelim = 0.02
 )
 }
@@ -26,6 +27,8 @@ diversity_from_plots(
 \item{Selected_Features}{numeric. selected features for Raster_Functional. use all features if set to FALSE}
 
 \item{Name_Plot}{character. Name of the plots defined in the shapefiles}
+
+\item{Hellinger}{boolean. set TRUE to compute Hellinger distance matrices based on Euclidean distances}
 
 \item{pcelim}{numeric. Discard spectral species when contribution is < pcelim (between 0 and 1)}
 }

@@ -5,12 +5,19 @@
 \title{compute beta diversity from spectral species computed for a plot
 expecting a matrix of spectral species (n pixels x p repetitions)}
 \usage{
-compute_BETA_FromPlots(SpectralSpecies_Plots, nbclusters, pcelim = 0.02)
+compute_BETA_FromPlots(
+  SpectralSpecies_Plots,
+  nbclusters,
+  Hellinger = FALSE,
+  pcelim = 0.02
+)
 }
 \arguments{
 \item{SpectralSpecies_Plots}{list. list of matrices of spectral species corresponding to plots}
 
 \item{nbclusters}{numeric. number of clusters}
+
+\item{Hellinger}{boolean. set TRUE to compute Hellinger distance matrices based on Euclidean distances}
 
 \item{pcelim}{numeric. Minimum contribution (in %) required for a spectral species
 each spectral species with a proprtion < pcelim is eliminated before computation of diversity}
