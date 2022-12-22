@@ -19,6 +19,7 @@
 #' @param Raster_Functional character. path for the raster file used to compute functional diversity
 #' @param Selected_Features numeric. selected features for Raster_Functional. use all features if set to FALSE
 #' @param Name_Plot character. Name of the plots defined in the shapefiles
+#' @param Hellinger boolean. set TRUE to compute Hellinger distance matrices based on Euclidean distances
 #' @param pcelim numeric. Discard spectral species when contribution is < pcelim (between 0 and 1)
 #'
 #' @return alpha and beta diversity metrics
@@ -30,7 +31,7 @@
 #' @export
 diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
                                 Raster_Functional = FALSE, Selected_Features = FALSE,
-                                Name_Plot = FALSE, pcelim = 0.02){
+                                Name_Plot = FALSE, Hellinger = FALSE, pcelim = 0.02){
 
   # get hdr from Raster_SpectralSpecies
   HDR <- read_ENVI_header(paste(Raster_SpectralSpecies,'.hdr',sep=''))
@@ -84,7 +85,7 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
   ###                 Compute alpha diversity             ###
   ## ______________________________________________________##
   # for each polygon
-  Pixel.Inventory.All <- list()
+  Pixel_Inventory_All <- Pixel_Hellinger_All <- list()
   for (ip in 1:nbPolygons){
     # if only one polygon in the shapefile and if the polyon is not included in the Raster_SpectralSpecies
     if (length(XY[[ip]]$col)==0){
@@ -104,7 +105,7 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
         ExtractIm <- matrix(ExtractIm,ncol = nbRepetitions)
       }
       # compute alpha diversity for each repetition
-      Pixel.Inventory <- list()
+      Pixel_Inventory <- Pixel_Hellinger <- list()
       Richness.tmp <- Shannon.tmp <- Fisher.tmp <- Simpson.tmp <- vector(length = nbRepetitions)
       # eliminate spectral species contributing to less than pcelim percent of the total valid pixels
       # pcelim <- 0.02
@@ -114,21 +115,21 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
         } else {
           Distritab <- table(ExtractIm[,i])
         }
-        Pixel.Inventory[[i]] <- as.data.frame(Distritab)
+        Pixel_Inventory[[i]] <- as.data.frame(Distritab)
         # fix 2022/07/20: first discard shaded pixels before application of pcelim
-        if (length(which(Pixel.Inventory[[i]]$Var1==0))==1){
-          Pixel.Inventory[[i]] <- Pixel.Inventory[[i]][-which(Pixel.Inventory[[i]]$Var1==0),]
+        if (length(which(Pixel_Inventory[[i]]$Var1==0))==1){
+          Pixel_Inventory[[i]] <- Pixel_Inventory[[i]][-which(Pixel_Inventory[[i]]$Var1==0),]
         }
-        SumPix <- sum(Pixel.Inventory[[i]]$Freq)
+        SumPix <- sum(Pixel_Inventory[[i]]$Freq)
         ThreshElim <- pcelim*SumPix
-        ElimZeros <- which(Pixel.Inventory[[i]]$Freq<ThreshElim)
+        ElimZeros <- which(Pixel_Inventory[[i]]$Freq<ThreshElim)
         if (length(ElimZeros)>=1){
-          Pixel.Inventory[[i]] <- Pixel.Inventory[[i]][-ElimZeros,]
+          Pixel_Inventory[[i]] <- Pixel_Inventory[[i]][-ElimZeros,]
         }
-        # if (length(which(Pixel.Inventory[[i]]$Var1==0))==1){
-        #   Pixel.Inventory[[i]] <- Pixel.Inventory[[i]][-which(Pixel.Inventory[[i]]$Var1==0),]
+        # if (length(which(Pixel_Inventory[[i]]$Var1==0))==1){
+        #   Pixel_Inventory[[i]] <- Pixel_Inventory[[i]][-which(Pixel_Inventory[[i]]$Var1==0),]
         # }
-        Alpha <- get_alpha_metrics(Pixel.Inventory[[i]]$Freq)
+        Alpha <- get_alpha_metrics(Pixel_Inventory[[i]]$Freq)
         # Alpha diversity
         Richness.tmp[i] <- as.numeric(Alpha$Richness)
         Fisher.tmp[i] <- Alpha$fisher
@@ -143,7 +144,16 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
       Fisher <- rbind(Fisher, mean(Fisher.tmp), row.names = NULL, col.names = NULL)
       Shannon <- rbind(Shannon, mean(Shannon.tmp), row.names = NULL, col.names = NULL)
       Simpson <- rbind(Simpson, mean(Simpson.tmp), row.names = NULL, col.names = NULL)
-      Pixel.Inventory.All[[ip]] <- Pixel.Inventory
+      Pixel_Inventory_All[[ip]] <- Pixel_Inventory
+      # compute beta with Hellinger
+      if (Hellinger == TRUE){
+        for (i in 1:nbRepetitions){
+          # compute Hellinger distance
+          Pixel_Hellinger[[i]] <- Pixel_Inventory[[i]]
+          Pixel_Hellinger[[i]]$Freq <- sqrt(Pixel_Hellinger[[i]]$Freq/sum(Pixel_Hellinger[[i]]$Freq))
+        }
+        Pixel_Hellinger_All[[plot]] <- Pixel_Hellinger
+      }
     }
   }
   Richness.AllRep <- do.call(rbind,Richness.AllRep)
@@ -223,11 +233,11 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
     MergeDiversity <- matrix(0,nrow = nbclusters,ncol = nbPolygons)
     for(j in 1:nbPolygons){
       if (nbRepetitions>1){
-        SelSpectralSpecies <- as.numeric(as.vector(Pixel.Inventory.All[[j]][[i]]$Var1))
-        SelFrequency <- Pixel.Inventory.All[[j]][[i]]$Freq
+        SelSpectralSpecies <- as.numeric(as.vector(Pixel_Inventory_All[[j]][[i]]$Var1))
+        SelFrequency <- Pixel_Inventory_All[[j]][[i]]$Freq
       } else {
-        SelSpectralSpecies <- as.numeric(as.vector(Pixel.Inventory.All[[j]][[i]]$ExtractIm))
-        SelFrequency <- Pixel.Inventory.All[[j]][[i]]$Freq
+        SelSpectralSpecies <- as.numeric(as.vector(Pixel_Inventory_All[[j]][[i]]$ExtractIm))
+        SelFrequency <- Pixel_Inventory_All[[j]][[i]]$Freq
       }
       MergeDiversity[SelSpectralSpecies,j] = SelFrequency
     }
@@ -237,6 +247,27 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
   for(i in 1:nbRepetitions){
     BC_mean <- BC_mean+BC[[i]]
   }
+
+  # Hellinger
+  if (Hellinger==TRUE){
+    # for each pair of plot, compute Euclidean distance on Hellinger
+    Hellmat <- list()
+    for(i in 1:nbRepetitions){
+      MergeDiversity <- matrix(0,nrow = nbclusters,ncol = nbPolygons)
+      for(j in 1:nbPolygons){
+        SelSpectralSpecies <- as.numeric(as.vector(Pixel_Hellinger_All[[j]][[i]]$Var1))
+        SelFrequency <- Pixel_Hellinger_All[[j]][[i]]$Freq
+        MergeDiversity[SelSpectralSpecies,j] = SelFrequency
+      }
+      Hellmat[[i]] <- vegan::vegdist(t(MergeDiversity),method="euclidean")
+    }
+    Hellinger_mean <- 0*Hellmat[[1]]
+    for(i in 1:nbRepetitions){
+      Hellinger_mean <- Hellinger_mean+Hellmat[[i]]
+    }
+    Hellinger_mean <- Hellinger_mean/nbRepetitions
+  }
+
   # if (length(Name_Plot)>1){
   #   elim <- which(is.na(Name_Plot))
   #   if (length(elim)>0){
@@ -248,11 +279,12 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
   names(Fisher) <- 'Fisher'
   names(Shannon) <- 'Shannon'
   names(Simpson) <- 'Simpson'
-  names(Richness) <- 'Richness'
   return(list("Richness" = Richness, "Fisher" = Fisher, "Shannon" = Shannon, "Simpson" = Simpson,
               "fisher.All" = Fisher.AllRep, "Shannon.All" = Shannon.AllRep, "Simpson.All" = Simpson.AllRep,
-              'BCdiss' = BC_mean, 'BCdiss.All' = BC,'Name_Plot' = Name_Plot,
-              "FunctionalDiversity"= FunctionalDiversity))
+              "FunctionalDiversity"= FunctionalDiversity,
+              'BCdiss' = BC_mean, 'BCdiss.All' = BC,
+              'Hellinger' = Hellinger_mean, 'Hellinger_ALL' = Hellmat,
+              'Name_Plot' = Name_Plot))
 }
 
 #' Get list of shapefiles in a directory

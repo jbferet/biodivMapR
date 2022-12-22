@@ -1,3 +1,8 @@
+# biodivMapR v1.9.9
+
+## Addition
+- added Hellinger distance as beta diversity metric
+
 # biodivMapR v1.9.7
 
 ## Addition
