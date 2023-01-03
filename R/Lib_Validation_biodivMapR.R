@@ -249,6 +249,7 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
   }
 
   # Hellinger
+  Hellinger_mean <- Hellmat <- NULL
   if (Hellinger==TRUE){
     # for each pair of plot, compute Euclidean distance on Hellinger
     Hellmat <- list()

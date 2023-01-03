@@ -1,3 +1,9 @@
+# biodivMapR v1.9.10
+
+## Addition
+- use of list for computation of beta diversity
+- addition of functions getBCdiss and Normalize_SSD
+
 # biodivMapR v1.9.9
 
 ## Addition

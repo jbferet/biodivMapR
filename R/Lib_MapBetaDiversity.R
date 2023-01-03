@@ -186,7 +186,7 @@ ordination_to_NN <- function(Beta_Ordination_sel, SSD_Path, Sample_Sel, coordTot
                               FUN = ordination_parallel, coordTotSort = coordTotSort, SSD_Path = SSD_Path,
                               Sample_Sel = Sample_Sel, Beta_Ordination_sel = Beta_Ordination_sel, Nb_Units_Ordin = Nb_Units_Ordin,
                               nb_partitions = nb_partitions, nbclusters = nbclusters, pcelim = pcelim, p,
-                              future.packages = c("vegan", "dissUtils", "R.utils", "tools", "snow", "matlab"))
+                              future.packages = c("vegan", "dissUtils", "tools", "snow", "matlab"))
       })
     plan(sequential)
   } else {
@@ -228,17 +228,24 @@ ordination_parallel <- function(id.sub, coordTotSort, SSD_Path, Sample_Sel, Beta
   coordPix <- coordTotSort[id.sub, ]
   SSD_NN <- extract_samples_from_image(SSD_Path, coordPix)
   # compute the mean BC dissimilarity sequentially for each iteration
-  MatBCtmp <- matrix(0, nrow = nrow(id.sub), ncol = Nb_Units_Ordin)
-  SSDList <- list()
+  lub <- list()
   for (i in 1:nb_partitions) {
-    lb <- 1 + (i - 1) * nbclusters
-    ub <- i * nbclusters
-    SSDList[[1]] <- SSD_NN[, lb:ub]
-    SSDList[[2]] <- Sample_Sel[, lb:ub]
-    MatBCtmp0 <- compute_BCdiss(SSDList, pcelim)
-    MatBCtmp <- MatBCtmp + MatBCtmp0
+    lub[[i]] <- data.frame('lb' = 1 + (i - 1) * nbclusters,
+                           'ub' = i * nbclusters)
   }
-  MatBCtmp <- MatBCtmp / nb_partitions
+  MatBCtmp0 <- lapply(lub,getBCdiss,SSD_NN,Sample_Sel,pcelim)
+  MatBCtmp <- Reduce('+', MatBCtmp0)/nb_partitions
+  # MatBCtmp <- matrix(0, nrow = nrow(id.sub), ncol = Nb_Units_Ordin)
+  # SSDList <- list()
+  # for (i in 1:nb_partitions) {
+  #   lb <- 1 + (i - 1) * nbclusters
+  #   ub <- i * nbclusters
+  #   SSDList[[1]] <- SSD_NN[, lb:ub]
+  #   SSDList[[2]] <- Sample_Sel[, lb:ub]
+  #   MatBCtmp0 <- compute_BCdiss(SSDList, pcelim)
+  #   MatBCtmp <- MatBCtmp + MatBCtmp0
+  # }
+  # MatBCtmp <- MatBCtmp / nb_partitions
   # get the knn closest neighbors from each kernel
   knn <- 3
   OutPut <- compute_NN_from_ordination(MatBCtmp, knn, Beta_Ordination_sel)
@@ -386,18 +393,26 @@ compute_beta_metrics <- function(ClusterMap_Path, MinSun, Nb_Units_Ordin, nb_par
   # create a Bray curtis dissimilarity matrix for each iteration
   print("compute BC dissimilarity for selected kernels")
   # create a list in with each element is an iteration
-  MatBC <- matrix(0, ncol = Nb_Units_Ordin, nrow = Nb_Units_Ordin)
-  SSDList <- list()
-  BC.from.SSD <- list()
+  lub <- list()
   for (i in 1:nb_partitions) {
-    lb <- 1 + (i - 1) * nbclusters
-    ub <- i * nbclusters
-    SSDList[[1]] <- Sample_Sel[, lb:ub]
-    SSDList[[2]] <- Sample_Sel[, lb:ub]
-    BC.from.SSD <- compute_BCdiss(SSDList, pcelim)
-    MatBC <- MatBC + BC.from.SSD
+    lub[[i]] <- data.frame('lb' = 1 + (i - 1) * nbclusters,
+                           'ub' = i * nbclusters)
   }
-  MatBC <- MatBC / nb_partitions
+  MatBCtmp0 <- lapply(lub,getBCdiss,Sample_Sel,Sample_Sel,pcelim)
+  MatBC <- Reduce('+', MatBCtmp0)/nb_partitions
+
+  # MatBC <- matrix(0, ncol = Nb_Units_Ordin, nrow = Nb_Units_Ordin)
+  # SSDList <- list()
+  # BC.from.SSD <- list()
+  # for (i in 1:nb_partitions) {
+  #   lb <- 1 + (i - 1) * nbclusters
+  #   ub <- i * nbclusters
+  #   SSDList[[1]] <- Sample_Sel[, lb:ub]
+  #   SSDList[[2]] <- Sample_Sel[, lb:ub]
+  #   BC.from.SSD <- compute_BCdiss(SSDList, pcelim)
+  #   MatBC <- MatBC + BC.from.SSD
+  # }
+  # MatBC <- MatBC / nb_partitions
 
   # Perform Ordination based on BC dissimilarity matrix
   print("perform Ordination on the BC dissimilarity matrix averaged from all iterations")
@@ -464,30 +479,34 @@ compute_beta_metrics <- function(ClusterMap_Path, MinSun, Nb_Units_Ordin, nb_par
 #' @importFrom dissUtils diss
 #' @export
 
-compute_BCdiss <- function(SSDList, pcelim) {
+compute_BCdiss <- function(SSDList, pcelim=0.02) {
   # compute the proportion of each spectral species
   # Here, the proportion is computed with regards to the total number of sunlit pixels
   # One may want to determine if the results are similar when the proportion is computed
   # with regards to the total number of pixels (se*se)
-  # however it would increase dissimilarity betwen kernels with different number of sunlit pixels
-  SSD <- list()
-  for (i in 1:length(SSDList)) {
-    # get the total number of sunlit pixels in spatial unit
-    SumSpecies <- rowSums(SSDList[[i]])
-    elim <- which(SumSpecies == 0)
-    if (length(elim) > 0) {
-      SumSpecies[elim] <- 1
-      SSDList[[i]][elim, ] <- 0
-    }
-    SSD[[i]] <- apply(SSDList[[i]], 2, function(x, c1) x / c1, 'c1' = SumSpecies)
-    SSD[[i]][which(SSD[[i]] < pcelim)] <- 0
-  }
+  # however it would increase dissimilarity between kernels with different number of sunlit pixels
+
+  # SSD <- list()
+  # for (i in 1:length(SSDList)) {
+  #   # get the total number of sunlit pixels in spatial unit
+  #   SumSpecies <- rowSums(SSDList[[i]])
+  #   elim <- which(SumSpecies == 0)
+  #   if (length(elim) > 0) {
+  #     SumSpecies[elim] <- 1
+  #     SSDList[[i]][elim, ] <- 0
+  #   }
+  #   SSD[[i]] <- apply(SSDList[[i]], 2, function(x, c1) x / c1, 'c1' = SumSpecies)
+  #   SSD[[i]][which(SSD[[i]] < pcelim)] <- 0
+  # }
+
+  SSD <- lapply(SSDList,FUN = Normalize_SSD, pcelim = pcelim)
   # matrix of bray curtis dissimilarity (size = nb kernels x nb kernels)
   # Here use the package "dissUtils" to compute dissimilarity matrices sequentially
   MatBC <- diss(SSD[[1]], SSD[[2]], method = 'braycurtis')
   # EDIT 06-Feb-2019: added this to fix problem when empty kernels occur, leading to NA BC value
-  if (length(which(is.na(MatBC) == TRUE)) > 0) {
-    MatBC[which(is.na(MatBC) == TRUE)] <- 1
+  BCNA <- which(is.na(MatBC) == TRUE)
+  if (length(BCNA) > 0) {
+    MatBC[BCNA] <- 1
   }
   return(MatBC)
 }
@@ -579,4 +598,44 @@ get_sunlit_pixels <- function(ImPathSunlit, MinSun) {
 
   my_list <- list('Select_Sunlit' = Select_Sunlit, 'coordTotSort' = coordTotSort)
   return(my_list)
+}
+
+
+#' Performs normalization of spectral species distribution based on cumulative
+#' sum of spectral species
+#'
+#' @param SSDList numeric. matrix corresponding to element of a list of SSD
+#' @param pcelim numeric. Minimum contribution in percent required for a spectral species.
+#'
+#' @return SSD numeric. matrix corresponding to normalized spectral species distribution
+#' @export
+Normalize_SSD <- function(SSDList, pcelim = 0.02){
+
+  SumSpecies <- rowSums(SSDList)
+  elim <- which(SumSpecies == 0)
+  if (length(elim) > 0) {
+    SumSpecies[elim] <- 1
+    SSDList[elim, ] <- 0
+  }
+  SSD <- apply(SSDList, 2, function(x, c1) x / c1, 'c1' = SumSpecies)
+  SSD[which(SSD < pcelim)] <- 0
+  return(SSD)
+}
+
+#' Computes BC dissimilarity between distributions defined by a subset of columns
+#' of two matrices
+#'
+#' @param lub list. lower and upper values of the columns used in the computation
+#' @param Mat1 numeric. matrix of spectral species distribution #1
+#' @param Mat2 numeric. matrix of spectral species distribution #2
+#' @param pcelim numeric. Minimum contribution in percent required for a spectral species.
+#'
+#' @return BCtmp numeric. BC dissimilarity matrix corresponding to Mat1 and Mat2
+#' @export
+getBCdiss <- function(lub, Mat1, Mat2, pcelim = 0.02){
+  SSDList <- list()
+  SSDList[[1]] <- Mat1[, lub$lb:lub$ub]
+  SSDList[[2]] <- Mat2[, lub$lb:lub$ub]
+  BCtmp <- compute_BCdiss(SSDList, pcelim)
+  return(BCtmp)
 }

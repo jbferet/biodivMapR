@@ -7,7 +7,7 @@
 SSDList is a list containing spectral species distribution for two sets of kernels ([[1]] and [[2]])
 pcelim is the threshold for minimum contributin of a spctral species to be kept}
 \usage{
-compute_BCdiss(SSDList, pcelim)
+compute_BCdiss(SSDList, pcelim = 0.02)
 }
 \arguments{
 \item{SSDList}{list. list of 2 groups to compute BC dissimilarity from}
