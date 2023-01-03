@@ -1,7 +1,18 @@
+# biodivMapR v1.9.10
+
+## Addition
+- use of list for computation of beta diversity
+- addition of functions getBCdiss and Normalize_SSD
+
 # biodivMapR v1.9.9
 
 ## Addition
 - added Hellinger distance as beta diversity metric
+
+# biodivMapR v1.9.8
+
+## Addition
+- removed NMDS as possible ordination method when computing beta diversity
 
 # biodivMapR v1.9.7
 
