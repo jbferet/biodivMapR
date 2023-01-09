@@ -16,8 +16,8 @@ map_alpha_div(
   FullRes = FALSE,
   LowRes = TRUE,
   MapSTD = TRUE,
-  nbCPU = FALSE,
-  MaxRAM = FALSE,
+  nbCPU = 1,
+  MaxRAM = 0.25,
   ClassifMap = FALSE
 )
 }

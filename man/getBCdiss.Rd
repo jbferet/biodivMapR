@@ -2,24 +2,20 @@
 % Please edit documentation in R/Lib_MapBetaDiversity.R
 \name{getBCdiss}
 \alias{getBCdiss}
-\title{Computes BC dissimilarity between distributions defined by a subset of columns
-of two matrices}
+\title{Computes BC dissimilarity for a given matrix}
 \usage{
-getBCdiss(lub, Mat1, Mat2, pcelim = 0.02)
+getBCdiss(Mat1, pcelim = 0.02, p = NULL)
 }
 \arguments{
-\item{lub}{list. lower and upper values of the columns used in the computation}
-
-\item{Mat1}{numeric. matrix of spectral species distribution #1}
-
-\item{Mat2}{numeric. matrix of spectral species distribution #2}
+\item{Mat1}{numeric. matrix of spectral species distribution}
 
 \item{pcelim}{numeric. Minimum contribution in percent required for a spectral species.}
+
+\item{p}{list. progressor object for progress bar}
 }
 \value{
 BCtmp numeric. BC dissimilarity matrix corresponding to Mat1 and Mat2
 }
 \description{
-Computes BC dissimilarity between distributions defined by a subset of columns
-of two matrices
+Computes BC dissimilarity for a given matrix
 }

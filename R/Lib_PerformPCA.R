@@ -26,9 +26,10 @@
 #'
 #' @return list of paths corresponding to resulting PCA files
 #' @export
-perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuum_Removal=TRUE, TypePCA="SPCA",
-                         NbPCs_To_Keep=30,FilterPCA = FALSE, Excluded_WL = FALSE, nb_partitions = 20,
-                         nbCPU = 1, MaxRAM = 0.25) {
+perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir,
+                         Continuum_Removal = TRUE, TypePCA = "SPCA",
+                         NbPCs_To_Keep = 30, FilterPCA = FALSE, Excluded_WL = FALSE,
+                         nb_partitions = 20, nbCPU = 1, MaxRAM = 0.25) {
   # check if format of raster data is as expected
   check_data(Input_Image_File)
   if (!Input_Mask_File==FALSE){
@@ -89,9 +90,7 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
   # } else if (TypePCA == "NLPCA") {
   #   print("performing NL-PCA with autoencoder")
   #   print("Make sure you properly installed and defined python environment if using this functionality")
-  #   tic()
   #   PCA_model <- nlpca(DataSubset)
-  #   toc()
   } else if(TypePCA=="MNF"){
     PCA_model <- mnf(DataSubset, Subset$coordPix)
   }
@@ -100,7 +99,7 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
   if (FilterPCA == TRUE) {
     # Perform PCA-based pixels filtering
     # the shade mask helps discarding most unwanted pixels: Shade, clouds, soil,
-    # water...). However some unwanted pixels remain. Here we hypothese that
+    # water...). However some unwanted pixels remain. Here we assume that
     # such pixels which do not correspond to vegetation will take extreme values
     # after PCA transformation.
     # In order to exclude these pixels, we compute mean and SD for the 3 first
@@ -147,9 +146,7 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
       PCA_model <- pca(DataSubset, TypePCA)
     # } else if (TypePCA == "NLPCA") {
     #   print("performing NL-PCA with autoencoder")
-    #   tic()
     #   PCA_model <- nlpca(DataSubset)
-    #   toc()
     }
   }
   # Number of PCs computed and written in the PCA file: 30 if hyperspectral
@@ -162,10 +159,12 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
   # CREATE PCA FILE CONTAINING ONLY SELECTED PCs
   Output_Dir_PCA <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "PCA")
   PCA_Files <- file.path(Output_Dir_PCA, paste("OutputPCA_", Nb_PCs, "_PCs", sep = ""))
-  write_PCA_raster(Input_Image_File = Input_Image_File, Input_Mask_File = Input_Mask_File,
-                   PCA_Path = PCA_Files, PCA_model = PCA_model, Spectral = SpectralFilter,
-                   Nb_PCs = Nb_PCs, Continuum_Removal = Continuum_Removal, TypePCA = TypePCA,
-                   nbCPU = nbCPU, MaxRAM = MaxRAM)
+  write_PCA_raster(Input_Image_File = Input_Image_File,
+                   Input_Mask_File = Input_Mask_File,
+                   PCA_Path = PCA_Files, PCA_model = PCA_model,
+                   Spectral = SpectralFilter,
+                   Nb_PCs = Nb_PCs, Continuum_Removal = Continuum_Removal,
+                   TypePCA = TypePCA, nbCPU = nbCPU, MaxRAM = MaxRAM)
   # save workspace for this stage
   WS_Save <- file.path(Output_Dir_PCA, "PCA_Info.RData")
   my_list <- list("PCA_Files" = PCA_Files,"Pix_Per_Partition" =Pix_Per_Partition, "nb_partitions" = nb_partitions,
@@ -344,8 +343,8 @@ filter_PCA <- function(Input_Image_File, HDR, Input_Mask_File, Shade_Update,
 
 write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_model,
                              Spectral, Nb_PCs, Continuum_Removal, TypePCA, nbCPU = 1, MaxRAM = 0.25) {
-  ImPathHDR <- get_HDR_name(Input_Image_File)
-  HDR <- read_ENVI_header(ImPathHDR)
+
+
   if (is.character(Input_Mask_File) && (Input_Mask_File != "")) {
     ShadeHDR <- get_HDR_name(Input_Mask_File)
     HDR_Shade <- read_ENVI_header(ShadeHDR)
@@ -353,33 +352,11 @@ write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_mo
     HDR_Shade <- FALSE
   }
   # 1- create hdr and binary files corresponding to PCA file
-  HDR_PCA <- HDR
-  HDR_PCA$bands <- Nb_PCs
-  HDR_PCA$`data type` <- 4
-  HDR_PCA$interleave <- 'BIL'
-  HDR_PCA$`default bands` <- NULL
-  HDR_PCA$`wavelength units` <- NULL
-  HDR_PCA$`z plot titles` <- NULL
-  HDR_PCA$`data gain values` <- NULL
-  HDR_PCA$`file type` <- NULL
-  HDR_PCA$`band names` <- paste('PC', 1:Nb_PCs, collapse = ", ")
-  HDR_PCA$wavelength <- NULL
-  HDR_PCA$fwhm <- NULL
-  HDR_PCA$resolution <- NULL
-  HDR_PCA$bandwidth <- NULL
-  HDR_PCA$purpose <- NULL
-  HDR_PCA$`default stretch` <- NULL
-  HDR_PCA$`byte order` <- get_byte_order()
-  headerFpath <- paste(PCA_Path, ".hdr", sep = "")
-  write_ENVI_header(HDR_PCA, headerFpath)
-  # create updated shade mask
-  fidPCA <- file(
-    description = PCA_Path, open = "wb", blocking = TRUE,
-    encoding = getOption("encoding"), raw = FALSE
-  )
-  close(fidPCA)
+  ImPathHDR <- get_HDR_name(Input_Image_File)
+  HDR <- read_ENVI_header(ImPathHDR)
+  HDR_PCA <- prepare_HDR_PCA(HDR, Nb_PCs, PCA_Path)
+
   # apply PCA to the image
-  # read image file sequentially
   Image_Format <- ENVI_type2bytes(HDR)
   PCA_Format <- ENVI_type2bytes(HDR_PCA)
 
@@ -388,29 +365,17 @@ write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_mo
   } else if (typeof(HDR_Shade) == 'logical'){
     Shade_Format <- FALSE
   }
-  # if (!HDR_Shade == FALSE) {
-  #   Shade_Format <- ENVI_type2bytes(HDR_Shade)
-  # } else {
-  #   Shade_Format <- FALSE
-  # }
+
   # prepare for sequential processing: SeqRead_Image informs about byte location to read
   nbPieces <- split_image(HDR, LimitSizeGb = MaxRAM)
-  nbPieces <- nbCPU*(1+(nbPieces-1)%/%nbCPU)
-
-  # if (nbPieces<10){
-  #   nbPieces <- 10
-  # }
   SeqRead_Image <- where_to_read(HDR, nbPieces)
   SeqRead_Shade <- where_to_read(HDR_Shade, nbPieces)
   SeqRead_PCA <- where_to_read(HDR_PCA, nbPieces)
 
   # for each piece of image
   print(paste('Apply PCA model to the full raster:',nbPieces,'chunks distributed on',nbCPU,'CPU'))
-  pb <- progress_bar$new(
-    format = paste('Apply ',TypePCA,' on the image [:bar] :percent in :elapsedfull',sep = ''),
-    total = nbPieces, clear = FALSE, width= 100)
   for (i in 1:nbPieces) {
-    # print(paste("PCA Piece #", i, "/", nbPieces))
+    message(paste('Computing PCA for image subset #',i,' / ',nbPieces))
     # read image and mask data
     nbLines <- SeqRead_Image$Lines_Per_Chunk[i]
     ImgFormat <- "2D"
@@ -447,7 +412,6 @@ write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_mo
     if (TypePCA == "PCA" | TypePCA == "SPCA" | TypePCA == "MNF") {
       Image_Chunk <- scale(Image_Chunk, PCA_model$center, PCA_model$scale) %*% PCA_model$rotation[, 1:Nb_PCs]
     }
-
     # get PCA of the group of line and rearrange the data to write it correctly in the output file
     PCA_Chunk <- matrix(NA, ncol = Nb_PCs, nrow = (HDR$samples * nbLines))
     if (length(keepShade) > 0) {
@@ -466,7 +430,6 @@ write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_mo
     PCA_Chunk <- aperm(PCA_Chunk, c(2, 3, 1))
     writeBin(c(PCA_Chunk), fidOUT, size = PCA_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
     close(fidOUT)
-    pb$tick()
   }
   list <- ls()
   rm(list = list)
@@ -737,4 +700,43 @@ mnf <- function(X, coordPix=NULL, retx=TRUE){
     modMNF$x= array(Xc %*% modMNF$rotation, dim = Xdim)
 
   return(modMNF)
+}
+
+
+# prepares PCA file and header
+#
+# @param HDR list. header of the image file used as template
+# @param Nb_PCs numeric. number of PCs to be written
+# @param PCA_Path character. path for PCA file
+# @param window_size numeric. window size
+#
+# @return HDR_PCA
+prepare_HDR_PCA <- function(HDR, Nb_PCs, PCA_Path){
+  HDR_PCA <- HDR
+  HDR_PCA$bands <- Nb_PCs
+  HDR_PCA$`data type` <- 4
+  HDR_PCA$interleave <- 'BIL'
+  HDR_PCA$`default bands` <- NULL
+  HDR_PCA$`wavelength units` <- NULL
+  HDR_PCA$`z plot titles` <- NULL
+  HDR_PCA$`data gain values` <- NULL
+  HDR_PCA$`file type` <- NULL
+  HDR_PCA$`band names` <- paste('PC', 1:Nb_PCs, collapse = ", ")
+  HDR_PCA$wavelength <- NULL
+  HDR_PCA$fwhm <- NULL
+  HDR_PCA$resolution <- NULL
+  HDR_PCA$bandwidth <- NULL
+  HDR_PCA$purpose <- NULL
+  HDR_PCA$`default stretch` <- NULL
+  HDR_PCA$`byte order` <- get_byte_order()
+  headerFpath <- paste(PCA_Path, ".hdr", sep = "")
+  write_ENVI_header(HDR_PCA, headerFpath)
+  # create updated shade mask
+  fidPCA <- file(
+    description = PCA_Path, open = "wb", blocking = TRUE,
+    encoding = getOption("encoding"), raw = FALSE
+  )
+  close(fidPCA)
+
+  return(HDR_PCA)
 }

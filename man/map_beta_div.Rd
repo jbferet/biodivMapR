@@ -15,12 +15,12 @@ map_beta_div(
   MinSun = 0.25,
   pcelim = 0.02,
   scaling = "PCO",
+  dimMDS = 3,
   FullRes = FALSE,
   LowRes = TRUE,
   nbCPU = 1,
   MaxRAM = 0.25,
-  ClassifMap = FALSE,
-  dimMDS = 3
+  ClassifMap = FALSE
 )
 }
 \arguments{
@@ -46,6 +46,8 @@ map_beta_div(
 
 \item{scaling}{character. PCO or NMDS}
 
+\item{dimMDS}{numeric. number of dimensions for the scaling.}
+
 \item{FullRes}{boolean.}
 
 \item{LowRes}{boolean.}
@@ -56,8 +58,6 @@ map_beta_div(
 
 \item{ClassifMap}{character. If FALSE, perform standard biodivMapR based on SpectralSpecies.
 else corresponds to path for a classification map.}
-
-\item{dimMDS}{numeric. number of dimensions for the scaling.}
 }
 \value{
 PCoA_model

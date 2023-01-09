@@ -7,13 +7,13 @@
 init_kmeans(dataPCA, Pix_Per_Partition, nb_partitions, nbclusters, nbCPU = 1)
 }
 \arguments{
-\item{dataPCA}{initial dataset sampled from PCA image}
+\item{dataPCA}{numeric. initial dataset sampled from PCA image}
 
-\item{Pix_Per_Partition}{number of pixels per iteration}
+\item{Pix_Per_Partition}{numeric. number of pixels per iteration}
 
-\item{nb_partitions}{number of k-means then averaged}
+\item{nb_partitions}{numeric. number of k-means then averaged}
 
-\item{nbclusters}{number of clusters used in kmeans}
+\item{nbclusters}{numeric.number of clusters used in kmeans}
 
 \item{nbCPU}{numeric. Number of CPUs available}
 }

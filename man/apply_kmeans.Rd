@@ -11,7 +11,7 @@ apply_kmeans(
   Kmeans_info,
   Spectral_Species_Path,
   nbCPU = 1,
-  MaxRAM = FALSE
+  MaxRAM = 0.25
 )
 }
 \arguments{
@@ -25,7 +25,7 @@ apply_kmeans(
 
 \item{Spectral_Species_Path}{path for spectral species file to be written}
 
-\item{nbCPU}{numeric. number of CPU to work with in multiprocess task}
+\item{nbCPU}{numeric. number of CPU to work with in multisession task}
 
 \item{MaxRAM}{numeric. size of image pieces to be read at once}
 }
