@@ -62,7 +62,7 @@ Identifies ordination coordinates based on nearest neighbors'><meta property="og
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.11</span>
       </span>
     </div>
 
@@ -183,33 +183,29 @@ Identifies ordination coordinates based on nearest neighbors</p>
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ordination_to_NN</span><span class="op">(</span></span>
+<span>  <span class="va">SSD_subset</span>,</span>
 <span>  <span class="va">Beta_Ordination_sel</span>,</span>
-<span>  <span class="va">SSD_Path</span>,</span>
 <span>  <span class="va">Sample_Sel</span>,</span>
-<span>  <span class="va">coordTotSort</span>,</span>
 <span>  <span class="va">nb_partitions</span>,</span>
 <span>  <span class="va">nbclusters</span>,</span>
-<span>  <span class="va">pcelim</span>,</span>
-<span>  nbCPU <span class="op">=</span> <span class="fl">1</span></span>
+<span>  pcelim <span class="op">=</span> <span class="fl">0.02</span>,</span>
+<span>  nbCPU <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  SamplesPerThread <span class="op">=</span> <span class="fl">2000</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>Beta_Ordination_sel</dt>
+    <dl><dt>SSD_subset</dt>
+<dd><p>numeric. matrix corresponding to Spectral species distribution for a set of windows</p></dd>
+
+
+<dt>Beta_Ordination_sel</dt>
 <dd><p>ordination of dissimilarity matrix for a selection of spatial units</p></dd>
-
-
-<dt>SSD_Path</dt>
-<dd><p>character. path for spectral species distribution file</p></dd>
 
 
 <dt>Sample_Sel</dt>
 <dd><p>numeric. Samples selected during ordination</p></dd>
-
-
-<dt>coordTotSort</dt>
-<dd><p>numeric. coordinates of sunlit spatial units</p></dd>
 
 
 <dt>nb_partitions</dt>
@@ -226,6 +222,10 @@ Identifies ordination coordinates based on nearest neighbors</p>
 
 <dt>nbCPU</dt>
 <dd><p>numeric. number of CPUs available</p></dd>
+
+
+<dt>SamplesPerThread</dt>
+<dd><p>numeric. number of samples to be processed per thread for dissimilarity matrix</p></dd>
 
 </dl></div>
     <div id="value">

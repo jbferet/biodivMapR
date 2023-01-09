@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.11</span>
       </span>
     </div>
 
@@ -100,6 +100,21 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
+          <p><code><a href="Compute_ALPHA_SSD_per_window.html">Compute_ALPHA_SSD_per_window()</a></code> </p>
+        </td>
+        <td><p>computes alpha diversity metrics and spectral species distribution for a
+window (individual spatial unit) defined in biodivmapR</p></td>
+      </tr><tr><td>
+          <p><code><a href="Compute_ALPHA_SSD_per_window_list.html">Compute_ALPHA_SSD_per_window_list()</a></code> </p>
+        </td>
+        <td><p>computes alpha diversity metrics and spectral species distribution for a list
+of windows (individual spatial unit) defined in biodivmapR</p></td>
+      </tr><tr><td>
+          <p><code><a href="Compute_ALPHA_per_window.html">Compute_ALPHA_per_window()</a></code> </p>
+        </td>
+        <td><p>computes alpha diversity metrics and update spectral species distribution for
+a window defined in biodivmapR</p></td>
+      </tr><tr><td>
           <p><code><a href="ContinuumRemoval.html">ContinuumRemoval()</a></code> </p>
         </td>
         <td><p>Computes continuum removal for matrix shaped data: more efficient than
@@ -195,6 +210,14 @@ expecting a matrix of spectral species (n pixels x p repetitions)</p></td>
         </td>
         <td><p>compute the nearest neighbors among kernels used in NMDS</p></td>
       </tr><tr><td>
+          <p><code><a href="compute_SSD.html">compute_SSD()</a></code> </p>
+        </td>
+        <td><p>compute spectral species distribution from original spectral species map</p></td>
+      </tr><tr><td>
+          <p><code><a href="compute_alpha_metrics.html">compute_alpha_metrics()</a></code> </p>
+        </td>
+        <td><p>Computes alpha diversity metrics based on spectral species</p></td>
+      </tr><tr><td>
           <p><code><a href="compute_beta_metrics.html">compute_beta_metrics()</a></code> </p>
         </td>
         <td><p>computes beta diversity metrics</p></td>
@@ -209,6 +232,10 @@ applies kmeans --&gt; closest cluster corresponds to the "spectral species"</p><
         </td>
         <td><p>compute spectral species for a subset of pixels provided in a list, each element
 corresponding to a polygon</p></td>
+      </tr><tr><td>
+          <p><code><a href="convert_PCA_to_SSD.html">convert_PCA_to_SSD()</a></code> </p>
+        </td>
+        <td><p>Convert PCA into SSD based on previous clustering</p></td>
       </tr><tr><td>
           <p><code><a href="coordPix_kernel.html">coordPix_kernel()</a></code> </p>
         </td>
@@ -285,8 +312,7 @@ borrowed from https://johnbaumgartner.wordpress.com/2012/07/26/getting-rasters-i
       </tr><tr><td>
           <p><code><a href="getBCdiss.html">getBCdiss()</a></code> </p>
         </td>
-        <td><p>Computes BC dissimilarity between distributions defined by a subset of columns
-of two matrices</p></td>
+        <td><p>Computes BC dissimilarity for a given matrix</p></td>
       </tr><tr><td>
           <p><code><a href="get_BB.html">get_BB()</a></code> </p>
         </td>
@@ -303,6 +329,25 @@ of two matrices</p></td>
           <p><code><a href="get_HDR_name.html">get_HDR_name()</a></code> </p>
         </td>
         <td><p>get hdr name from image file name, assuming it is BIL format</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_SSpath.html">get_SSpath()</a></code> </p>
+        </td>
+        <td><p>defines path for the spectral species raster file. Depends on preprocessing:
+- if standard dimensionality reduction (PCA, SPCA, MNF) was used, the
+corresponding directory is pointed
+- if no dimensionality reduction, or an alternative dimensionality reduction
+(spectral indices, tasseled cap... ) was used, user defined subdirectory is used
+- Diversity metrics can also be computed from a classification map</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_Shannon.html">get_Shannon()</a></code> </p>
+        </td>
+        <td><p>computes shannon index from a distribution
+(faster than version implemented in vegan package)</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_Simpson.html">get_Simpson()</a></code> </p>
+        </td>
+        <td><p>computes Simpson index from a distribution
+(faster than version implemented in vegan package)</p></td>
       </tr><tr><td>
           <p><code><a href="get_alpha_metrics.html">get_alpha_metrics()</a></code> </p>
         </td>
@@ -340,6 +385,10 @@ image coordinates are given as index = (ID.col-1) * total.lines + ID.row</p></td
           <p><code><a href="init_kmeans.html">init_kmeans()</a></code> </p>
         </td>
         <td><p>computes k-means from nb_partitions subsets taken from dataPCA</p></td>
+      </tr><tr><td>
+          <p><code><a href="kmeans_progressr.html">kmeans_progressr()</a></code> </p>
+        </td>
+        <td><p>applies results of ordination to full image based on nearest neighbors</p></td>
       </tr><tr><td>
           <p><code><a href="list_shp.html">list_shp()</a></code> </p>
         </td>
@@ -379,10 +428,6 @@ or applies the transformation based on a previously defined min and max</p></td>
         </td>
         <td><p>this function</p></td>
       </tr><tr><td>
-          <p><code><a href="ordination_parallel.html">ordination_parallel()</a></code> </p>
-        </td>
-        <td><p>applies results of ordination to full image based on nearest neighbors</p></td>
-      </tr><tr><td>
           <p><code><a href="ordination_to_NN.html">ordination_to_NN()</a></code> </p>
         </td>
         <td><p>#' computes NMDS
@@ -397,6 +442,11 @@ or applies the transformation based on a previously defined min and max</p></td>
 #' @importFrom utils find
 #' @export</p></td>
       </tr><tr><td>
+          <p><code><a href="ordination_to_NN_list.html">ordination_to_NN_list()</a></code> </p>
+        </td>
+        <td><p>computes nearest neighbors of a SSD subset with samples used for the adjustment
+of the ordination, then gets the coordinates of each window in the ordination space</p></td>
+      </tr><tr><td>
           <p><code><a href="pca.html">pca()</a></code> </p>
         </td>
         <td><p>Function to perform PCA on a matrix</p></td>
@@ -408,6 +458,10 @@ or applies the transformation based on a previously defined min and max</p></td>
           <p><code><a href="perform_radiometric_filtering.html">perform_radiometric_filtering()</a></code> </p>
         </td>
         <td><p>Performs radiometric filtering based on three criteria: NDVI, NIR reflectance, Blue reflectance</p></td>
+      </tr><tr><td>
+          <p><code><a href="prepare_HDR_Sunlit.html">prepare_HDR_Sunlit()</a></code> </p>
+        </td>
+        <td><p>prepare for writing sunlit proportion file</p></td>
       </tr><tr><td>
           <p><code><a href="raster2BIL.html">raster2BIL()</a></code> </p>
         </td>
