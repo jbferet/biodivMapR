@@ -33,21 +33,25 @@ apply_continuum_removal <- function(Spectral_Data, Spectral, nbCPU = 1) {
     # corresponds to ~ 40 Mb data, but CR tends to requires ~ 10 times memory
     # avoids memory crash
     Max.nb.Values <- 2e6
-    nb.CR <- ceiling(nb.Values / Max.nb.Values)
-    Spectral_Data <- snow::splitRows(Spectral_Data, nb.CR)
+    nb_CR <- ceiling(nb.Values / Max.nb.Values)
+    Spectral_Data <- snow::splitRows(Spectral_Data, nb_CR)
     # perform multithread continuum removal
     if (nbCPU>1){
-      future::plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
-      Schedule_Per_Thread <- ceiling(nb.CR / nbCPU)
-      Spectral_Data_tmp <- future.apply::future_lapply(Spectral_Data, FUN = ContinuumRemoval,
-                                                       Spectral_Bands = Spectral$Wavelength,
-                                                       future.scheduling = Schedule_Per_Thread)
+      future::plan(multisession, workers = nbCPU)
+      handlers(global = TRUE)
+      handlers("cli")
+      with_progress({
+        p <- progressr::progressor(steps = nb_CR)
+        Spectral_Data_tmp <- future.apply::future_lapply(Spectral_Data,
+                                                         FUN = ContinuumRemoval,
+                                                         Spectral_Bands = Spectral$Wavelength,
+                                                         p = p)
+      })
       future::plan(sequential)
     } else {
       Spectral_Data_tmp <- lapply(Spectral_Data, FUN = ContinuumRemoval,
                                   Spectral_Bands = Spectral$Wavelength)
     }
-
     Spectral_Data <- do.call("rbind", Spectral_Data_tmp)
     rm(Spectral_Data_tmp)
   } else {
@@ -66,11 +70,12 @@ apply_continuum_removal <- function(Spectral_Data, Spectral, nbCPU = 1) {
 #'
 #' @param Minit numeric. initial data matrix (nb samples x nb bands)
 #' @param Spectral_Bands numeric. central wavelength for the spectral bands
+#' @param p list. progressor object for progress bar
 #
 #' @return samples from image and updated number of pixels to sampel if necessary
 #' @export
 
-ContinuumRemoval <- function(Minit, Spectral_Bands) {
+ContinuumRemoval <- function(Minit, Spectral_Bands, p = NULL) {
 
   # Filter and prepare data prior to continuum removal
   CR_data <- filter_prior_CR(Minit, Spectral_Bands)

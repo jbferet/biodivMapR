@@ -7,12 +7,14 @@ processing individual spectra
 the convex hull is based on the computation of the derivative between R at a
 given spectral band and R at the following bands}
 \usage{
-ContinuumRemoval(Minit, Spectral_Bands)
+ContinuumRemoval(Minit, Spectral_Bands, p = NULL)
 }
 \arguments{
 \item{Minit}{numeric. initial data matrix (nb samples x nb bands)}
 
 \item{Spectral_Bands}{numeric. central wavelength for the spectral bands}
+
+\item{p}{list. progressor object for progress bar}
 }
 \value{
 samples from image and updated number of pixels to sampel if necessary

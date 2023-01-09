@@ -14,7 +14,7 @@ map_spectral_species(
   TypePCA = "SPCA",
   nbclusters = 50,
   nbCPU = 1,
-  MaxRAM = FALSE,
+  MaxRAM = 0.25,
   Kmeans_Only = FALSE,
   SelectedPCs = FALSE,
   PCA_model = NULL,

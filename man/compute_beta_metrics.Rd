@@ -12,9 +12,10 @@ compute_beta_metrics(
   nbclusters,
   pcelim,
   scaling = "PCO",
-  nbCPU = FALSE,
-  MaxRAM = FALSE,
-  dimMDS = 3
+  dimMDS = 3,
+  nbCPU = 1,
+  MaxRAM = 0.25,
+  SamplesPerThread = 2000
 )
 }
 \arguments{
@@ -32,11 +33,13 @@ compute_beta_metrics(
 
 \item{scaling}{character. scaling method, PCO or NMDS}
 
+\item{dimMDS}{numeric. number of dimensions for the scaling.}
+
 \item{nbCPU}{numeric. Number of CPUs to use in parallel.}
 
 \item{MaxRAM}{numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.}
 
-\item{dimMDS}{numeric. number of dimensions for the scaling.}
+\item{SamplesPerThread}{numeric. number of samples to be processed per thread for dissimilarity matrix}
 }
 \value{
 my_list a list of information including results of 3 dimensional ordination with PCoA, PCoA model, map of sunlit windows

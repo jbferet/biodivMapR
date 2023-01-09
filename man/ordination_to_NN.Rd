@@ -15,24 +15,22 @@
 #' @export}
 \usage{
 ordination_to_NN(
+  SSD_subset,
   Beta_Ordination_sel,
-  SSD_Path,
   Sample_Sel,
-  coordTotSort,
   nb_partitions,
   nbclusters,
-  pcelim,
-  nbCPU = 1
+  pcelim = 0.02,
+  nbCPU = 1,
+  SamplesPerThread = 2000
 )
 }
 \arguments{
+\item{SSD_subset}{numeric. matrix corresponding to Spectral species distribution for a set of windows}
+
 \item{Beta_Ordination_sel}{ordination of dissimilarity matrix for a selection of spatial units}
 
-\item{SSD_Path}{character. path for spectral species distribution file}
-
 \item{Sample_Sel}{numeric. Samples selected during ordination}
-
-\item{coordTotSort}{numeric. coordinates of sunlit spatial units}
 
 \item{nb_partitions}{number of k-means then averaged}
 
@@ -41,6 +39,8 @@ ordination_to_NN(
 \item{pcelim}{numeric. Minimum contribution in percent required for a spectral species}
 
 \item{nbCPU}{numeric. number of CPUs available}
+
+\item{SamplesPerThread}{numeric. number of samples to be processed per thread for dissimilarity matrix}
 }
 \value{
 Ordination_est coordinates of each spatial unit in ordination space
