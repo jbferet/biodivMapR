@@ -31,8 +31,11 @@ Name_Vector <- tools::file_path_sans_ext(basename(Path_Vector))
 # location of the spectral species raster needed for validation
 Path_SpectralSpecies <- Kmeans_info$SpectralSpecies
 # get diversity indicators corresponding to shapefiles (no partitioning of spectral dibversity based on field plots so far...)
-Biodiv_Indicators <- diversity_from_plots(Raster_SpectralSpecies = Path_SpectralSpecies, Plots = Path_Vector,
-                                          nbclusters = nbclusters, Raster_Functional = PCA_Files, Selected_Features = Selected_Features)
+Biodiv_Indicators <- diversity_from_plots(Raster_SpectralSpecies = Path_SpectralSpecies, 
+                                          Plots = Path_Vector,
+                                          nbclusters = nbclusters, 
+                                          Raster_Functional = PCA_Output$PCA_Files, 
+                                          Selected_Features = Selected_Features)
 
 Shannon_RS <- c(Biodiv_Indicators$Shannon)[[1]]
 FRic <- c(Biodiv_Indicators$FunctionalDiversity$FRic)
@@ -110,8 +113,14 @@ for (i in 1: length(nbSamples)){
 }
 
 # create data frame including a selection of alpha diversity metrics and beta diversity expressed as coordinates in the PCoA space
-Results <- data.frame('vgtype'=Type_Vegetation,'pco1'= BetaPCO$points[,1],'pco2'= BetaPCO$points[,2],'pco3' = BetaPCO$points[,3],
-                      'shannon'=Shannon_RS,'FRic' = FRic, 'FEve' = FEve, 'FDiv' = FDiv)
+Results <- data.frame('vgtype'=Type_Vegetation,
+                      'pco1'= BetaPCO$points[,1],
+                      'pco2'= BetaPCO$points[,2],
+                      'pco3' = BetaPCO$points[,3],
+                      'shannon' = Shannon_RS,
+                      'FRic' = FRic, 
+                      'FEve' = FEve, 
+                      'FDiv' = FDiv)
 
 # plot field data in the PCoA space, with size corresponding to shannon index
 g1 <-ggplot (Results, aes (x=pco1, y=pco2, color=vgtype,size=shannon)) + 

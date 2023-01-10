@@ -9,7 +9,6 @@ map_beta_div(
   Output_Dir = "",
   window_size = 10,
   TypePCA = "SPCA",
-  nb_partitions = 20,
   nbclusters = 50,
   Nb_Units_Ordin = 2000,
   MinSun = 0.25,
@@ -31,8 +30,6 @@ map_beta_div(
 \item{window_size}{numeric. Dimensions of the spatial unit.}
 
 \item{TypePCA}{character. Type of PCA (PCA, SPCA, NLPCA...).}
-
-\item{nb_partitions}{numeric. Number of partitions (repetitions) to be computed then averaged.}
 
 \item{nbclusters}{numeric. Number of clusters defined in k-Means.}
 

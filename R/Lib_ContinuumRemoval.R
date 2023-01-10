@@ -43,13 +43,13 @@ apply_continuum_removal <- function(Spectral_Data, Spectral, nbCPU = 1) {
       with_progress({
         p <- progressr::progressor(steps = nb_CR)
         Spectral_Data_tmp <- future.apply::future_lapply(Spectral_Data,
-                                                         FUN = ContinuumRemoval,
+                                                         FUN = continuumRemoval,
                                                          Spectral_Bands = Spectral$Wavelength,
                                                          p = p)
       })
       future::plan(sequential)
     } else {
-      Spectral_Data_tmp <- lapply(Spectral_Data, FUN = ContinuumRemoval,
+      Spectral_Data_tmp <- lapply(Spectral_Data, FUN = continuumRemoval,
                                   Spectral_Bands = Spectral$Wavelength)
     }
     Spectral_Data <- do.call("rbind", Spectral_Data_tmp)
@@ -75,7 +75,7 @@ apply_continuum_removal <- function(Spectral_Data, Spectral, nbCPU = 1) {
 #' @return samples from image and updated number of pixels to sampel if necessary
 #' @export
 
-ContinuumRemoval <- function(Minit, Spectral_Bands, p = NULL) {
+continuumRemoval <- function(Minit, Spectral_Bands, p = NULL) {
 
   # Filter and prepare data prior to continuum removal
   CR_data <- filter_prior_CR(Minit, Spectral_Bands)
@@ -159,6 +159,7 @@ ContinuumRemoval <- function(Minit, Spectral_Bands, p = NULL) {
   } else {
     CR_Results <- matrix(0, ncol = (nbBands - 3), nrow = nbSamples)
   }
+  if (!is.null(p)){p()}
   list <- ls()
   rm(list = list[-which(list == "CR_Results")])
   rm(list)

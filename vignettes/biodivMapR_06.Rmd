@@ -28,13 +28,22 @@ The code to compute $\alpha$ and $\beta$ diversity maps from this file is as fol
 print("MAP ALPHA DIVERSITY")
 # Index.Alpha   = c('Shannon','Simpson')
 Index_Alpha <- c('Shannon')
-map_alpha_div(Input_Image_File = Input_Image_File, Output_Dir = Output_Dir, TypePCA = TypePCA,
-              window_size = window_size, nbCPU = nbCPU, MaxRAM = MaxRAM,
-              Index_Alpha = Index_Alpha, nbclusters = nbclusters)
+map_alpha_div(Input_Image_File = Input_Image_File, 
+              Output_Dir = Output_Dir, 
+              TypePCA = TypePCA,
+              window_size = window_size, 
+              nbCPU = nbCPU, 
+              MaxRAM = MaxRAM,
+              Index_Alpha = Index_Alpha, 
+              nbclusters = nbclusters)
 
 print("MAP BETA DIVERSITY")
-map_beta_div(Input_Image_File = Input_Image_File, Output_Dir = Output_Dir, TypePCA = TypePCA,
-             window_size = window_size, nb_partitions=nb_partitions, nbCPU = nbCPU, MaxRAM = MaxRAM,
+map_beta_div(Input_Image_File = Input_Image_File, 
+             Output_Dir = Output_Dir, 
+             TypePCA = TypePCA,
+             window_size = window_size, 
+             nbCPU = nbCPU, 
+             MaxRAM = MaxRAM,
              nbclusters = nbclusters)
 ```
 

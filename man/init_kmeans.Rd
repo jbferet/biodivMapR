@@ -4,12 +4,10 @@
 \alias{init_kmeans}
 \title{computes k-means from nb_partitions subsets taken from dataPCA}
 \usage{
-init_kmeans(dataPCA, Pix_Per_Partition, nb_partitions, nbclusters, nbCPU = 1)
+init_kmeans(dataPCA, nb_partitions, nbclusters, nbCPU = 1)
 }
 \arguments{
 \item{dataPCA}{numeric. initial dataset sampled from PCA image}
-
-\item{Pix_Per_Partition}{numeric. number of pixels per iteration}
 
 \item{nb_partitions}{numeric. number of k-means then averaged}
 

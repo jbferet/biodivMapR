@@ -1,6 +1,16 @@
+# biodivMapR v1.10.0
+
+## Fix
+- now uses red band instead of red edge band for the computation of NDVI
+--> changes thresholding
+
+## changes
+- simplified inputs for functions such as map_spectral_species(), init_kmeans(), map_beta_div()
+- updated vignettes
+
 # biodivMapR v1.9.11
 
-## Addition
+## changes
 - optimized codes for the computation of spectral species, alpha and beta diversity
 - addition of progress bars during the different steps of the computation of spectral species, alpha and beta diversity maps
 - addition of functions Compute_ALPHA_SSD_per_window_list, Compute_ALPHA_SSD_per_window, Compute_ALPHA_per_window, prepare_HDR_SSD, prepare_HDR_Sunlit, RW_bytes_all, RW_bytes
