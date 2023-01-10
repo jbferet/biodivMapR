@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.0</span>
       </span>
     </div>
 
@@ -128,7 +128,7 @@
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2023-01-09</h4>
+            <h4 data-toc-skip class="date">2023-01-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_04.Rmd" class="external-link"><code>vignettes/biodivMapR_04.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_04.Rmd</code></div>
@@ -150,15 +150,16 @@ information are still not masked).</p>
 <p>The additional PCA filtering is performed during this stage.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"PERFORM DIMENSIONALITY REDUCTION"</span><span class="op">)</span></span>
-<span><span class="va">PCA_Output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/perform_PCA.html">perform_PCA</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Input_Mask_File <span class="op">=</span> <span class="va">Input_Mask_File</span>,</span>
-<span>                          Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>, FilterPCA<span class="op">=</span><span class="va">FilterPCA</span>,</span>
-<span>                          nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>, Continuum_Removal <span class="op">=</span> <span class="va">Continuum_Removal</span><span class="op">)</span></span>
+<span><span class="va">PCA_Output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/perform_PCA.html">perform_PCA</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, </span>
+<span>                          Input_Mask_File <span class="op">=</span> <span class="va">Input_Mask_File</span>,</span>
+<span>                          Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, </span>
+<span>                          TypePCA <span class="op">=</span> <span class="va">TypePCA</span>, </span>
+<span>                          FilterPCA <span class="op">=</span> <span class="va">FilterPCA</span>,</span>
+<span>                          nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, </span>
+<span>                          MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>, </span>
+<span>                          Continuum_Removal <span class="op">=</span> <span class="va">Continuum_Removal</span><span class="op">)</span></span>
 <span><span class="co"># path of the raster resulting from dimensionality reduction</span></span>
 <span><span class="va">PCA_Files</span> <span class="op">&lt;-</span> <span class="va">PCA_Output</span><span class="op">$</span><span class="va">PCA_Files</span></span>
-<span><span class="co"># number of pixels used for each partition used for k-means clustering</span></span>
-<span><span class="va">Pix_Per_Partition</span> <span class="op">&lt;-</span> <span class="va">PCA_Output</span><span class="op">$</span><span class="va">Pix_Per_Partition</span></span>
-<span><span class="co"># number of partitions used for k-means clustering</span></span>
-<span><span class="va">nb_partitions</span> <span class="op">&lt;-</span> <span class="va">PCA_Output</span><span class="op">$</span><span class="va">nb_partitions</span></span>
 <span><span class="co"># path for the updated mask</span></span>
 <span><span class="va">Input_Mask_File</span> <span class="op">&lt;-</span> <span class="va">PCA_Output</span><span class="op">$</span><span class="va">MaskPath</span></span></code></pre></div>
 </div>
@@ -189,8 +190,10 @@ we are currently working on automatic selection of these components.</p>
 <code class="sourceCode R"><span><span class="co"># Select components from the PCA/SPCA/MNF raster</span></span>
 <span><span class="co"># Sel_PC = path of the file where selected components are stored</span></span>
 <span><span class="va">Sel_PC</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_PCA_components.html">select_PCA_components</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>,</span>
-<span>                                Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, PCA_Files <span class="op">=</span> <span class="va">PCA_Files</span>,</span>
-<span>                                TypePCA <span class="op">=</span> <span class="va">TypePCA</span>, File_Open <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span>                                Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, </span>
+<span>                                PCA_Files <span class="op">=</span> <span class="va">PCA_Output</span><span class="op">$</span><span class="va">PCA_Files</span>,</span>
+<span>                                TypePCA <span class="op">=</span> <span class="va">PCA_Output</span><span class="op">$</span><span class="va">TypePCA</span>, </span>
+<span>                                File_Open <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>For this example, PCA bands 1, 2, 5, 6 and 8 can be kept if writing
 the following lines in file <code>Selected_Components.txt</code> opened
 for edition (do not forget carriage return after last value):</p>

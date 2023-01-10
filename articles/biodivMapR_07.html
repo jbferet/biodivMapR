@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.0</span>
       </span>
     </div>
 
@@ -128,7 +128,7 @@
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2023-01-09</h4>
+            <h4 data-toc-skip class="date">2023-01-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_07.Rmd" class="external-link"><code>vignettes/biodivMapR_07.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_07.Rmd</code></div>
@@ -151,9 +151,14 @@ individual spatial unit is seen as a different species).</p>
 <span><span class="co">## read selected features from dimensionality reduction</span></span>
 <span><span class="va">Selected_Features</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span><span class="va">Sel_PC</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">## path for selected components</span></span>
-<span><span class="fu"><a href="../reference/map_functional_div.html">map_functional_div</a></span><span class="op">(</span>Original_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Functional_File <span class="op">=</span> <span class="va">PCA_Files</span>,</span>
-<span>                   Selected_Features <span class="op">=</span> <span class="va">Selected_Features</span>, Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>,</span>
-<span>                   window_size <span class="op">=</span> <span class="va">window_size</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,TypePCA <span class="op">=</span> <span class="va">TypePCA</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/map_functional_div.html">map_functional_div</a></span><span class="op">(</span>Original_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, </span>
+<span>                   Functional_File <span class="op">=</span> <span class="va">PCA_Output</span><span class="op">$</span><span class="va">PCA_Files</span>,</span>
+<span>                   Selected_Features <span class="op">=</span> <span class="va">Selected_Features</span>, </span>
+<span>                   Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>,</span>
+<span>                   window_size <span class="op">=</span> <span class="va">window_size</span>, </span>
+<span>                   nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, </span>
+<span>                   MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,</span>
+<span>                   TypePCA <span class="op">=</span> <span class="va">TypePCA</span><span class="op">)</span></span></code></pre></div>
 <p>These diversity metrics can also be computed directly from plots
 defined as polygons in the extent of the rasters. This step is key for
 validation, and is explained in the <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_08.html" target="_blank" class="external-link">next step</a>.</p>

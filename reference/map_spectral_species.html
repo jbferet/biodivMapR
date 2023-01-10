@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.0</span>
       </span>
     </div>
 
@@ -104,20 +104,15 @@
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">map_spectral_species</span><span class="op">(</span></span>
 <span>  <span class="va">Input_Image_File</span>,</span>
-<span>  <span class="va">Output_Dir</span>,</span>
-<span>  <span class="va">PCA_Files</span>,</span>
 <span>  <span class="va">Input_Mask_File</span>,</span>
-<span>  <span class="va">Pix_Per_Partition</span>,</span>
-<span>  <span class="va">nb_partitions</span>,</span>
-<span>  TypePCA <span class="op">=</span> <span class="st">"SPCA"</span>,</span>
+<span>  <span class="va">Output_Dir</span>,</span>
+<span>  <span class="va">SpectralSpace_Output</span>,</span>
 <span>  nbclusters <span class="op">=</span> <span class="fl">50</span>,</span>
 <span>  nbCPU <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  MaxRAM <span class="op">=</span> <span class="fl">0.25</span>,</span>
 <span>  Kmeans_Only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  SelectedPCs <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  PCA_model <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  SpectralFilter <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  Continuum_Removal <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  SpectralFilter <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -127,28 +122,16 @@
 <dd><p>character. Path of the image to be processed</p></dd>
 
 
-<dt>Output_Dir</dt>
-<dd><p>character. Path for output directory</p></dd>
-
-
-<dt>PCA_Files</dt>
-<dd><p>character. Path of the PCA image</p></dd>
-
-
 <dt>Input_Mask_File</dt>
 <dd><p>character. Path of the mask corresponding to the image</p></dd>
 
 
-<dt>Pix_Per_Partition</dt>
-<dd><p>numeric. number of pixels for each partition</p></dd>
+<dt>Output_Dir</dt>
+<dd><p>character. Path for output directory</p></dd>
 
 
-<dt>nb_partitions</dt>
-<dd><p>numeric. number of partition</p></dd>
-
-
-<dt>TypePCA</dt>
-<dd><p>character. Type of PCA: choose either "PCA" or "SPCA"</p></dd>
+<dt>SpectralSpace_Output</dt>
+<dd><p>list. list of variables produced from function perform_PCA</p></dd>
 
 
 <dt>nbclusters</dt>
@@ -171,16 +154,8 @@
 <dd><p>numeric. Define PCs to be selected. Set to FALSE if you want to use the "Selected_Components.txt" file</p></dd>
 
 
-<dt>PCA_model</dt>
-<dd><p>list. Parameters for the PCA model to be applied on original image</p></dd>
-
-
 <dt>SpectralFilter</dt>
-<dd><p>list. information about spectral band location</p></dd>
-
-
-<dt>Continuum_Removal</dt>
-<dd><p>boolean. Set to TRUE if continuum removal should be applied
+<dd><p>list. information about spectral band location
 (central wavelength), bands to keep...</p></dd>
 
 </dl></div>

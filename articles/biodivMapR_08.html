@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.0</span>
       </span>
     </div>
 
@@ -128,7 +128,7 @@
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2023-01-09</h4>
+            <h4 data-toc-skip class="date">2023-01-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_08.Rmd" class="external-link"><code>vignettes/biodivMapR_08.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_08.Rmd</code></div>
@@ -149,8 +149,11 @@ extracts the corresponding diversity indices from previouly computed
 <span><span class="co"># location of the spectral species raster needed for validation</span></span>
 <span><span class="va">Path_SpectralSpecies</span> <span class="op">&lt;-</span> <span class="va">Kmeans_info</span><span class="op">$</span><span class="va">SpectralSpecies</span></span>
 <span><span class="co"># get diversity indicators corresponding to shapefiles (no partitioning of spectral dibversity based on field plots so far...)</span></span>
-<span><span class="va">Biodiv_Indicators</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/diversity_from_plots.html">diversity_from_plots</a></span><span class="op">(</span>Raster_SpectralSpecies <span class="op">=</span> <span class="va">Path_SpectralSpecies</span>, Plots <span class="op">=</span> <span class="va">Path_Vector</span>,</span>
-<span>                                          nbclusters <span class="op">=</span> <span class="va">nbclusters</span>, Raster_Functional <span class="op">=</span> <span class="va">PCA_Files</span>, Selected_Features <span class="op">=</span> <span class="va">Selected_Features</span><span class="op">)</span></span>
+<span><span class="va">Biodiv_Indicators</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/diversity_from_plots.html">diversity_from_plots</a></span><span class="op">(</span>Raster_SpectralSpecies <span class="op">=</span> <span class="va">Path_SpectralSpecies</span>, </span>
+<span>                                          Plots <span class="op">=</span> <span class="va">Path_Vector</span>,</span>
+<span>                                          nbclusters <span class="op">=</span> <span class="va">nbclusters</span>, </span>
+<span>                                          Raster_Functional <span class="op">=</span> <span class="va">PCA_Output</span><span class="op">$</span><span class="va">PCA_Files</span>, </span>
+<span>                                          Selected_Features <span class="op">=</span> <span class="va">Selected_Features</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">Shannon_RS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Biodiv_Indicators</span><span class="op">$</span><span class="va">Shannon</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="va">FRic</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Biodiv_Indicators</span><span class="op">$</span><span class="va">FunctionalDiversity</span><span class="op">$</span><span class="va">FRic</span><span class="op">)</span></span>
@@ -222,8 +225,14 @@ vegetation in the PCoA space:</p>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="co"># create data frame including a selection of alpha diversity metrics and beta diversity expressed as coordinates in the PCoA space</span></span>
-<span><span class="va">Results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="st">'vgtype'</span><span class="op">=</span><span class="va">Type_Vegetation</span>,<span class="st">'pco1'</span><span class="op">=</span> <span class="va">BetaPCO</span><span class="op">$</span><span class="va">points</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,<span class="st">'pco2'</span><span class="op">=</span> <span class="va">BetaPCO</span><span class="op">$</span><span class="va">points</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span>,<span class="st">'pco3'</span> <span class="op">=</span> <span class="va">BetaPCO</span><span class="op">$</span><span class="va">points</span><span class="op">[</span>,<span class="fl">3</span><span class="op">]</span>,</span>
-<span>                      <span class="st">'shannon'</span><span class="op">=</span><span class="va">Shannon_RS</span>,<span class="st">'FRic'</span> <span class="op">=</span> <span class="va">FRic</span>, <span class="st">'FEve'</span> <span class="op">=</span> <span class="va">FEve</span>, <span class="st">'FDiv'</span> <span class="op">=</span> <span class="va">FDiv</span><span class="op">)</span></span>
+<span><span class="va">Results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="st">'vgtype'</span><span class="op">=</span><span class="va">Type_Vegetation</span>,</span>
+<span>                      <span class="st">'pco1'</span><span class="op">=</span> <span class="va">BetaPCO</span><span class="op">$</span><span class="va">points</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,</span>
+<span>                      <span class="st">'pco2'</span><span class="op">=</span> <span class="va">BetaPCO</span><span class="op">$</span><span class="va">points</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span>,</span>
+<span>                      <span class="st">'pco3'</span> <span class="op">=</span> <span class="va">BetaPCO</span><span class="op">$</span><span class="va">points</span><span class="op">[</span>,<span class="fl">3</span><span class="op">]</span>,</span>
+<span>                      <span class="st">'shannon'</span> <span class="op">=</span> <span class="va">Shannon_RS</span>,</span>
+<span>                      <span class="st">'FRic'</span> <span class="op">=</span> <span class="va">FRic</span>, </span>
+<span>                      <span class="st">'FEve'</span> <span class="op">=</span> <span class="va">FEve</span>, </span>
+<span>                      <span class="st">'FDiv'</span> <span class="op">=</span> <span class="va">FDiv</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># plot field data in the PCoA space, with size corresponding to shannon index</span></span>
 <span><span class="va">g1</span> <span class="op">&lt;-</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span> <span class="op">(</span><span class="va">Results</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span> <span class="op">(</span>x<span class="op">=</span><span class="va">pco1</span>, y<span class="op">=</span><span class="va">pco2</span>, color<span class="op">=</span><span class="va">vgtype</span>,size<span class="op">=</span><span class="va">shannon</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
