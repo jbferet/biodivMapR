@@ -96,18 +96,12 @@ map_functional_div <- function(Original_Image_File,Functional_File = FALSE,
 #' @importFrom stats sd
 #' @importFrom raster brick values nbands
 compute_Functional_metrics <- function(Functional_File, Functional_Map_Path, Selected_Features,
-                                       window_size, MinSun, nbCPU = FALSE, MaxRAM = FALSE) {
+                                       window_size, MinSun, nbCPU = 1, MaxRAM = 0.25) {
 
   ## read Functional_File and write Functional_Map_Path
   HDRname <- get_HDR_name(Functional_File)
   HDR <- read_ENVI_header(HDRname)
-  if (MaxRAM == FALSE) {
-    MaxRAM <- 0.25
-  }
   nbPieces_Min <- split_image(HDR, MaxRAM)
-  if (nbCPU == FALSE) {
-    nbCPU <- 1
-  }
   if (nbPieces_Min < nbCPU) {
     nbPieces_Min <- nbCPU
   }
@@ -168,15 +162,13 @@ compute_Functional_metrics <- function(Functional_File, Functional_Map_Path, Sel
 
   # multiprocess of spectral species distribution and alpha diversity metrics
   if (nbCPU>1){
-    plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
-    Schedule_Per_Thread <- ceiling(nbPieces_Min / nbCPU)
+    plan(multisession, workers = nbCPU) ## Parallelize using four cores
     FUNCT_DIV <- future_lapply(ReadWrite,
                                FUN = Get_FunctionalMetrics_From_Traits, Functional_File = Functional_File, Selected_Features = Selected_Features,
                                MinMaxRaster = MinMaxRaster, HDR = HDR, HDR_Funct = HDR_Funct,
                                FunctIN_Format = FunctIN_Format, FunctOUT_Format = FunctOUT_Format,
                                ImgFormat = ImgFormat, window_size = window_size, MinSun = MinSun,
-                               Functional_Map_Path = Functional_Map_Path,  future.scheduling = Schedule_Per_Thread
-    )
+                               Functional_Map_Path = Functional_Map_Path)
     plan(sequential)
   } else {
     FUNCT_DIV <- lapply(ReadWrite, FUN = Get_FunctionalMetrics_From_Traits, Functional_File = Functional_File,

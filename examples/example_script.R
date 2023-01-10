@@ -80,7 +80,7 @@ Input_Mask_File <- FALSE
 Output_Dir <- 'biodivMapR_Example/03_RESULTS'
 dir.create(path = Output_Dir,recursive = T,showWarnings = F)
 # Define levels for radiometric filtering
-NDVI_Thresh <- 0.5
+NDVI_Thresh <- 0.8
 Blue_Thresh <- 500
 NIR_Thresh <- 1500
 # Apply normalization with continuum removal?
@@ -104,47 +104,50 @@ nbclusters <- 50
 ## https://jbferet.github.io/biodivMapR/articles/biodivMapR_3.html            ##
 ################################################################################
 print("PERFORM RADIOMETRIC FILTERING")
-Input_Mask_File <- perform_radiometric_filtering(Image_Path = Input_Image_File, Mask_Path = Input_Mask_File,
-                                                 Output_Dir = Output_Dir, TypePCA = TypePCA,
-                                                 NDVI_Thresh = NDVI_Thresh, Blue_Thresh = Blue_Thresh,
+Input_Mask_File <- perform_radiometric_filtering(Image_Path = Input_Image_File,
+                                                 Mask_Path = Input_Mask_File,
+                                                 Output_Dir = Output_Dir,
+                                                 TypePCA = TypePCA,
+                                                 NDVI_Thresh = NDVI_Thresh,
+                                                 Blue_Thresh = Blue_Thresh,
                                                  NIR_Thresh = NIR_Thresh)
-
 
 ################################################################################
 ##                  Perform PCA & Dimensionality reduction                    ##
 ## https://jbferet.github.io/biodivMapR/articles/biodivMapR_4.html            ##
 ################################################################################
 print("PERFORM DIMENSIONALITY REDUCTION")
-PCA_Output <- perform_PCA(Input_Image_File = Input_Image_File, Input_Mask_File = Input_Mask_File,
-                          Output_Dir = Output_Dir, TypePCA = TypePCA, FilterPCA=FilterPCA,
-                          nbCPU = nbCPU, MaxRAM = MaxRAM, Continuum_Removal = Continuum_Removal)
-# path of the raster resulting from dimensionality reduction
-PCA_Files <- PCA_Output$PCA_Files
-# number of pixels used for each partition used for k-means clustering
-Pix_Per_Partition <- PCA_Output$Pix_Per_Partition
-# number of partitions used for k-means clustering
-nb_partitions <- PCA_Output$nb_partitions
+PCA_Output <- perform_PCA(Input_Image_File = Input_Image_File,
+                          Input_Mask_File = Input_Mask_File,
+                          Output_Dir = Output_Dir,
+                          TypePCA = TypePCA,
+                          FilterPCA = FilterPCA,
+                          nbCPU = nbCPU,
+                          MaxRAM = MaxRAM,
+                          Continuum_Removal = Continuum_Removal)
+
 # path for the updated mask
 Input_Mask_File <- PCA_Output$MaskPath
 
 # Select components from the PCA/SPCA/MNF raster
 # Sel_PC = path of the file where selected components are stored
 Sel_PC <- select_PCA_components(Input_Image_File = Input_Image_File,
-                                Output_Dir = Output_Dir, PCA_Files = PCA_Files,
-                                TypePCA = TypePCA, File_Open = TRUE)
-
+                                Output_Dir = Output_Dir,
+                                PCA_Files = PCA_Output$PCA_Files,
+                                TypePCA = PCA_Output$TypePCA,
+                                File_Open = TRUE)
 
 ################################################################################
 ##                  Perform Spectral species mapping                          ##
 ## https://jbferet.github.io/biodivMapR/articles/biodivMapR_5.html            ##
 ################################################################################
 print("MAP SPECTRAL SPECIES")
-Kmeans_info <- map_spectral_species(Input_Image_File = Input_Image_File, Output_Dir = Output_Dir,
-                                    PCA_Files = PCA_Files, Input_Mask_File = Input_Mask_File,
-                                    Pix_Per_Partition = Pix_Per_Partition, nb_partitions = nb_partitions,
-                                    nbCPU = nbCPU, MaxRAM = MaxRAM, nbclusters = nbclusters, TypePCA = TypePCA,
-                                    Continuum_Removal = Continuum_Removal)
-
+Kmeans_info <- map_spectral_species(Input_Image_File = Input_Image_File,
+                                    Input_Mask_File = PCA_Output$MaskPath,
+                                    Output_Dir = Output_Dir,
+                                    SpectralSpace_Output = PCA_Output,
+                                    nbclusters = nbclusters,
+                                    nbCPU = nbCPU, MaxRAM = MaxRAM)
 
 ################################################################################
 ##                Perform alpha and beta diversity mapping                    ##
@@ -153,13 +156,22 @@ Kmeans_info <- map_spectral_species(Input_Image_File = Input_Image_File, Output_
 print("MAP ALPHA DIVERSITY")
 # Index.Alpha   = c('Shannon','Simpson')
 Index_Alpha <- c('Shannon')
-map_alpha_div(Input_Image_File = Input_Image_File, Output_Dir = Output_Dir, TypePCA = TypePCA,
-              window_size = window_size, nbCPU = nbCPU, MaxRAM = MaxRAM,
-              Index_Alpha = Index_Alpha, nbclusters = nbclusters)
+map_alpha_div(Input_Image_File = Input_Image_File,
+              Output_Dir = Output_Dir,
+              TypePCA = TypePCA,
+              window_size = window_size,
+              nbCPU = nbCPU,
+              MaxRAM = MaxRAM,
+              Index_Alpha = Index_Alpha,
+              nbclusters = nbclusters)
 
 print("MAP BETA DIVERSITY")
-map_beta_div(Input_Image_File = Input_Image_File, Output_Dir = Output_Dir, TypePCA = TypePCA,
-             window_size = window_size, nb_partitions=nb_partitions, nbCPU = nbCPU, MaxRAM = MaxRAM,
+map_beta_div(Input_Image_File = Input_Image_File,
+             Output_Dir = Output_Dir,
+             TypePCA = TypePCA,
+             window_size = window_size,
+             nbCPU = nbCPU,
+             MaxRAM = MaxRAM,
              nbclusters = nbclusters)
 
 
@@ -171,10 +183,14 @@ map_beta_div(Input_Image_File = Input_Image_File, Output_Dir = Output_Dir, TypeP
 ## read selected features from dimensionality reduction
 Selected_Features <- read.table(Sel_PC)[[1]]
 ## path for selected components
-map_functional_div(Original_Image_File = Input_Image_File, Functional_File = PCA_Files,
-                   Selected_Features = Selected_Features, Output_Dir = Output_Dir,
-                   window_size = window_size, nbCPU = nbCPU, MaxRAM = MaxRAM,TypePCA = TypePCA)
-
+map_functional_div(Original_Image_File = Input_Image_File,
+                   Functional_File = PCA_Output$PCA_Files,
+                   Selected_Features = Selected_Features,
+                   Output_Dir = Output_Dir,
+                   window_size = window_size,
+                   nbCPU = nbCPU,
+                   MaxRAM = MaxRAM,
+                   TypePCA = TypePCA)
 
 ################################################################################
 ##            Perform validation based on a vectorized plot network           ##
@@ -188,8 +204,11 @@ Name_Vector <- tools::file_path_sans_ext(basename(Path_Vector))
 # location of the spectral species raster needed for validation
 Path_SpectralSpecies <- Kmeans_info$SpectralSpecies
 # get diversity indicators corresponding to shapefiles (no partitioning of spectral dibversity based on field plots so far...)
-Biodiv_Indicators <- diversity_from_plots(Raster_SpectralSpecies = Path_SpectralSpecies, Plots = Path_Vector,
-                                          nbclusters = nbclusters, Raster_Functional = PCA_Files, Selected_Features = Selected_Features)
+Biodiv_Indicators <- diversity_from_plots(Raster_SpectralSpecies = Path_SpectralSpecies,
+                                          Plots = Path_Vector,
+                                          nbclusters = nbclusters,
+                                          Raster_Functional = PCA_Output$PCA_Files,
+                                          Selected_Features = Selected_Features)
 
 Shannon_RS <- c(Biodiv_Indicators$Shannon)[[1]]
 FRic <- c(Biodiv_Indicators$FunctionalDiversity$FRic)
@@ -245,15 +264,15 @@ Results <- data.frame('vgtype'=Type_Vegetation,'pco1'= BetaPCO$points[,1],'pco2'
                       'shannon'=Shannon_RS,'FRic' = FRic, 'FEve' = FEve, 'FDiv' = FDiv)
 
 # plot field data in the PCoA space, with size corresponding to shannon index
-g1 <-ggplot (Results, aes (x=pco1, y=pco2, color=vgtype,size=shannon)) + 
+g1 <-ggplot (Results, aes (x=pco1, y=pco2, color=vgtype,size=shannon)) +
   geom_point(alpha=0.6) +
   scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
 
-g2 <-ggplot (Results, aes (x=pco1, y=pco3, color=vgtype,size=shannon)) + 
+g2 <-ggplot (Results, aes (x=pco1, y=pco3, color=vgtype,size=shannon)) +
   geom_point(alpha=0.6) +
   scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
 
-g3 <-ggplot (Results, aes (x=pco2, y=pco3, color=vgtype,size=shannon)) + 
+g3 <-ggplot (Results, aes (x=pco2, y=pco3, color=vgtype,size=shannon)) +
   geom_point(alpha=0.6) +
   scale_color_manual(values=c("#e6140a", "#e6d214", "#e68214", "#145ae6"))
 

@@ -82,7 +82,7 @@ If no mask file is available with the image to process, it is possible to perfor
 
 __These radiometric filters are very basic filters and should not replace algorthms dedicated to the detection of cloud/shade/non-vegetated pixels. 
 ```{r set parameters#4}
-NDVI_Thresh <- 0.5
+NDVI_Thresh <- 0.8
 Blue_Thresh <- 500
 NIR_Thresh <- 1500
 ```

@@ -28,10 +28,12 @@ Info about K-means clustering and the path for the spectral species file can be 
 
 ```{r Spectral species map}
 print("MAP SPECTRAL SPECIES")
-Kmeans_info <- map_spectral_species(Input_Image_File = Input_Image_File, Output_Dir = Output_Dir,
-                                    PCA_Files = PCA_Files, Input_Mask_File = Input_Mask_File,
-                                    Pix_Per_Partition = Pix_Per_Partition, nb_partitions = nb_partitions,
-                                    nbCPU = nbCPU, MaxRAM = MaxRAM, nbclusters = nbclusters, TypePCA = TypePCA)
+Kmeans_info <- map_spectral_species(Input_Image_File = Input_Image_File, 
+                                    Input_Mask_File = PCA_Output$MaskPath,
+                                    Output_Dir = Output_Dir,
+                                    SpectralSpace_Output = PCA_Output, 
+                                    nbclusters = nbclusters, 
+                                    nbCPU = nbCPU, MaxRAM = MaxRAM)
 ```
 
 SpectralSpecies is then stored in a raster file located here:

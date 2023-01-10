@@ -16,7 +16,6 @@
 #' @param Output_Dir character. Output directory.
 #' @param window_size numeric. Dimensions of the spatial unit.
 #' @param TypePCA character. Type of PCA (PCA, SPCA, NLPCA...).
-#' @param nb_partitions numeric. Number of partitions (repetitions) to be computed then averaged.
 #' @param nbclusters numeric. Number of clusters defined in k-Means.
 #' @param Nb_Units_Ordin numeric. Maximum number of spatial units to be processed in NMDS.
 #' --> 1000 will be fast but may not capture important patterns if large area
@@ -39,7 +38,6 @@ map_beta_div <- function(Input_Image_File = FALSE,
                          Output_Dir = '',
                          window_size = 10,
                          TypePCA = 'SPCA',
-                         nb_partitions = 20,
                          nbclusters = 50,
                          Nb_Units_Ordin = 2000,
                          MinSun = 0.25, pcelim = 0.02, scaling = 'PCO', dimMDS = 3,
@@ -52,12 +50,13 @@ map_beta_div <- function(Input_Image_File = FALSE,
   Spectral_Species_Path <- SSDpathlist$Spectral_Species_Path
   Input_Image_File <- SSDpathlist$Input_Image_File
   nbclusters <- SSDpathlist$nbclusters
+  HDR_SSD <- read_ENVI_header(get_HDR_name(Spectral_Species_Path))
 
   # 2- compute beta diversity
   Beta <- compute_beta_metrics(ClusterMap_Path = Spectral_Species_Path,
                                MinSun = MinSun,
                                Nb_Units_Ordin = Nb_Units_Ordin,
-                               nb_partitions = nb_partitions,
+                               nb_partitions = HDR_SSD$bands,
                                nbclusters = nbclusters, pcelim = pcelim,
                                scaling = scaling, dimMDS = dimMDS,
                                nbCPU = nbCPU, MaxRAM = MaxRAM)
@@ -98,6 +97,51 @@ map_beta_div <- function(Input_Image_File = FALSE,
 #'   # plan(multiprocess, workers = nbCoresNMDS) ## Parallelize using four cores
 #'   plan(multisession, workers = nbCoresNMDS) ## Parallelize using four cores
 #'   BetaNMDS <- future_lapply(MatBCdist, FUN = nmds, mindim = dimMDS, maxdim = dimMDS, nits = 1, future.packages = c("ecodist"))
+#'   plan(sequential)
+#'   # find iteration with minimum stress
+#'   Stress <- vector(length = nbiterNMDS)
+#'   for (i in 1:nbiterNMDS) {
+#'     Stress[i] <- BetaNMDS[[i]]$stress
+#'   }
+#'   print("Stress obtained for NMDS iterations:")
+#'   print(Stress)
+#'   print("Rule of thumb")
+#'   print("stress < 0.05 provides an excellent represention in reduced dimensions")
+#'   print("stress < 0.1 is great")
+#'   print("stress < 0.2 is good")
+#'   print("stress > 0.3 provides a poor representation")
+#'   MinStress <- find(Stress == min(Stress))
+#'   BetaNMDS_sel <- BetaNMDS[[MinStress]]$conf
+#'   BetaNMDS_sel <- data.frame(BetaNMDS_sel[[1]])
+#'   return(BetaNMDS_sel)
+#' }
+
+#' #' computes NMDS
+#' #
+#' #' @param MatBCdist BC dissimilarity matrix
+#' #' @param dimMDS numeric. number of dimensions of the NMDS
+#' #
+#' #' @return BetaNMDS_sel
+#' #' @importFrom future plan multiprocess multisession sequential
+#' #' @importFrom future.apply future_lapply
+#' #' @importFrom ecodist nmds
+#' #' @importFrom utils find
+#' #' @export
+#'
+#' compute_NMDS <- function(MatBCdist,dimMDS=3) {
+#'   nbiterNMDS <- 4
+#'   if (Sys.info()["sysname"] == "Windows") {
+#'     nbCoresNMDS <- 2
+#'   } else if (Sys.info()["sysname"] == "Linux") {
+#'     nbCoresNMDS <- 4
+#'   }
+#'   # multiprocess of spectral species distribution and alpha diversity metrics
+#'   # plan(multiprocess, workers = nbCoresNMDS) ## Parallelize using four cores
+#'   plan(multisession, workers = nbCoresNMDS) ## Parallelize using four cores
+#'   BetaNMDS <- future_lapply(MatBCdist,
+#'                             FUN = nmds,
+#'                             mindim = dimMDS, maxdim = dimMDS, nits = 1,
+#'                             future.packages = c("ecodist"))
 #'   plan(sequential)
 #'   # find iteration with minimum stress
 #'   Stress <- vector(length = nbiterNMDS)
@@ -372,7 +416,7 @@ compute_beta_metrics <- function(ClusterMap_Path,
 
   # create a Bray curtis dissimilarity matrix for each iteration
   print("compute BC dissimilarity for selected kernels")
-  Sample_Sel_list <- snow::splitCols(x = Sample_Sel,ncl = nbclusters)
+  Sample_Sel_list <- snow::splitCols(x = Sample_Sel,ncl = nb_partitions)
   plan(multisession, workers = nbCPU)
   handlers(global = TRUE)
   handlers("cli")
@@ -488,7 +532,7 @@ compute_BCdiss <- function(SSDList, pcelim=0.02) {
   #   SSD[[i]][which(SSD[[i]] < pcelim)] <- 0
   # }
 
-  SSD <- lapply(SSDList,FUN = Normalize_SSD, pcelim = pcelim)
+  SSD <- lapply(SSDList,FUN = normalize_SSD, pcelim = pcelim)
   # matrix of bray curtis dissimilarity (size = nb kernels x nb kernels)
   # Here use the package "dissUtils" to compute dissimilarity matrices sequentially
   MatBC <- diss(SSD[[1]], SSD[[2]], method = 'braycurtis')
@@ -616,7 +660,7 @@ getBCdiss <- function(Mat1, pcelim = 0.02, p = NULL){
 #'
 #' @return SSD numeric. matrix corresponding to normalized spectral species distribution
 #' @export
-Normalize_SSD <- function(SSDList, pcelim = 0.02){
+normalize_SSD <- function(SSDList, pcelim = 0.02){
 
   SumSpecies <- rowSums(SSDList)
   elim <- which(SumSpecies == 0)

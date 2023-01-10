@@ -25,9 +25,10 @@
 #'
 #' @return MaskPath = updated mask file
 #' @export
-perform_radiometric_filtering <- function(Image_Path, Mask_Path, Output_Dir, TypePCA = "SPCA",
-                                          NDVI_Thresh = 0.5, Blue_Thresh = 500, NIR_Thresh = 1500,
-                                          Blue = 480, Red = 700, NIR = 835) {
+perform_radiometric_filtering <- function(Image_Path, Mask_Path = FALSE, Output_Dir,
+                                          TypePCA = "SPCA",
+                                          NDVI_Thresh = 0.8, Blue_Thresh = 500, NIR_Thresh = 1500,
+                                          Blue = 480, Red = 670, NIR = 835) {
   # check if format of raster data is as expected
   check_data(Image_Path)
   if (!Mask_Path==FALSE){
@@ -42,7 +43,8 @@ perform_radiometric_filtering <- function(Image_Path, Mask_Path, Output_Dir, Typ
     print("Update mask based on NDVI, NIR and Blue threshold")
   }
   Shade_Update <- file.path(Output_Dir_Full, "ShadeMask_Update")
-  Mask_Path <- create_mask_from_threshold(ImPath = Image_Path, MaskPath = Mask_Path, MaskPath_Update = Shade_Update,
+  Mask_Path <- create_mask_from_threshold(ImPath = Image_Path,
+                                          MaskPath = Mask_Path, MaskPath_Update = Shade_Update,
                                           NDVI_Thresh = NDVI_Thresh, Blue_Thresh = Blue_Thresh, NIR_Thresh = NIR_Thresh,
                                           Blue = Blue, Red = Red, NIR = NIR)
   return(Mask_Path)
@@ -65,7 +67,8 @@ perform_radiometric_filtering <- function(Image_Path, Mask_Path, Output_Dir, Typ
 #' @param NIR numeric. spectral band corresponding to the NIR channel (in nanometers)
 #
 # @return MaskPath path for the updated shademask produced
-create_mask_from_threshold <- function(ImPath, MaskPath, MaskPath_Update, NDVI_Thresh, Blue_Thresh, NIR_Thresh,
+create_mask_from_threshold <- function(ImPath, MaskPath, MaskPath_Update,
+                                       NDVI_Thresh, Blue_Thresh, NIR_Thresh,
                                        Blue = 480, Red = 690, NIR = 835) {
   # define wavelength corresponding to the spectral domains Blue, Red and NIR
   Spectral_Bands <- c(Blue, Red, NIR)

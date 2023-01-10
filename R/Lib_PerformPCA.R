@@ -37,7 +37,7 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir,
   }
   # define the path corresponding to image, mask and output directory
   ImNames <- list()
-  ImNames$Input.Image <- Input_Image_File
+  ImNames$Input_Image <- Input_Image_File
   ImNames$Mask_list <- Input_Mask_File
   Output_Dir_Full <- define_output_directory(Output_Dir, Input_Image_File, TypePCA)
   # Identify water vapor absorption bands in image and possibly other spectral domains to discard
@@ -167,10 +167,13 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir,
                    TypePCA = TypePCA, nbCPU = nbCPU, MaxRAM = MaxRAM)
   # save workspace for this stage
   WS_Save <- file.path(Output_Dir_PCA, "PCA_Info.RData")
-  my_list <- list("PCA_Files" = PCA_Files,"Pix_Per_Partition" =Pix_Per_Partition, "nb_partitions" = nb_partitions,
-                  "MaskPath" = Input_Mask_File, "PCA_model" =PCA_model,"SpectralFilter"=   SpectralFilter)
-  MaskPath = Input_Mask_File
-  save(PCA_Files,Pix_Per_Partition, nb_partitions, MaskPath, PCA_model, SpectralFilter,file = WS_Save)
+  my_list <- list("PCA_Files" = PCA_Files, "Pix_Per_Partition" = Pix_Per_Partition,
+                  "nb_partitions" = nb_partitions, "MaskPath" = Input_Mask_File,
+                  "PCA_model" = PCA_model, "SpectralFilter" = SpectralFilter,
+                  "TypePCA" = TypePCA)
+  MaskPath <- Input_Mask_File
+  save(PCA_Files,Pix_Per_Partition, nb_partitions, MaskPath, PCA_model,
+       SpectralFilter, TypePCA, file = WS_Save)
   return(my_list)
 }
 
@@ -468,7 +471,7 @@ pca <- function(X, type) {
 #' @export
 
 define_pixels_per_iter <- function(ImNames, nb_partitions) {
-  Input_Image_File <- ImNames$Input.Image
+  Input_Image_File <- ImNames$Input_Image
   Input_Mask_File <- ImNames$Mask_list
   # define dimensions of the image
   ImPathHDR <- get_HDR_name(Input_Image_File)
@@ -477,8 +480,6 @@ define_pixels_per_iter <- function(ImNames, nb_partitions) {
   ipix <- as.double(HDR$lines)
   jpix <- as.double(HDR$samples)
   nbPixels <- ipix * jpix
-  lenTot <- nbPixels * as.double(HDR$bands)
-  ImSizeGb <- (lenTot * Image_Format$Bytes) / (1024^3)
   # if shade mask, update number of pixels
   if (is.character(Input_Mask_File) && (Input_Mask_File != "")) {
     # read shade mask
@@ -533,7 +534,8 @@ define_pixels_per_iter <- function(ImNames, nb_partitions) {
 #' @importFrom utils file.edit
 #' @importFrom tools file_path_sans_ext
 #' @export
-select_PCA_components <- function(Input_Image_File, Output_Dir, PCA_Files, TypePCA = "SPCA", File_Open = FALSE) {
+select_PCA_components <- function(Input_Image_File, Output_Dir, PCA_Files,
+                                  TypePCA = "SPCA", File_Open = FALSE) {
   message("")
   message("*********************************************************")
   message("Please check following PCA file:")

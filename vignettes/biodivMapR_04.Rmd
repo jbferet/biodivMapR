@@ -33,15 +33,16 @@ The additional PCA filtering is performed during this stage.
 
 ```{r DIMENSIONALITY REDUCTION}
 print("PERFORM DIMENSIONALITY REDUCTION")
-PCA_Output <- perform_PCA(Input_Image_File = Input_Image_File, Input_Mask_File = Input_Mask_File,
-                          Output_Dir = Output_Dir, TypePCA = TypePCA, FilterPCA=FilterPCA,
-                          nbCPU = nbCPU, MaxRAM = MaxRAM, Continuum_Removal = Continuum_Removal)
+PCA_Output <- perform_PCA(Input_Image_File = Input_Image_File, 
+                          Input_Mask_File = Input_Mask_File,
+                          Output_Dir = Output_Dir, 
+                          TypePCA = TypePCA, 
+                          FilterPCA = FilterPCA,
+                          nbCPU = nbCPU, 
+                          MaxRAM = MaxRAM, 
+                          Continuum_Removal = Continuum_Removal)
 # path of the raster resulting from dimensionality reduction
 PCA_Files <- PCA_Output$PCA_Files
-# number of pixels used for each partition used for k-means clustering
-Pix_Per_Partition <- PCA_Output$Pix_Per_Partition
-# number of partitions used for k-means clustering
-nb_partitions <- PCA_Output$nb_partitions
 # path for the updated mask
 Input_Mask_File <- PCA_Output$MaskPath
 ```
@@ -68,8 +69,10 @@ The main goal of PC selection is to discard PCs showing no relevant information 
 # Select components from the PCA/SPCA/MNF raster
 # Sel_PC = path of the file where selected components are stored
 Sel_PC <- select_PCA_components(Input_Image_File = Input_Image_File,
-                                Output_Dir = Output_Dir, PCA_Files = PCA_Files,
-                                TypePCA = TypePCA, File_Open = TRUE)
+                                Output_Dir = Output_Dir, 
+                                PCA_Files = PCA_Output$PCA_Files,
+                                TypePCA = PCA_Output$TypePCA, 
+                                File_Open = TRUE)
 ```
 
 For this example, PCA bands 1, 2, 5, 6 and 8 can be kept if writing the following lines in file `Selected_Components.txt` opened for edition (do not forget carriage return after last value):

@@ -415,7 +415,7 @@ compute_SSD <- function(Image_Chunk, window_size, nbclusters,
   }
 
   # tictoc::tic()
-  # alphaSSD <- pbapply::pblapply(listAlpha, Compute_ALPHA_SSD_per_window, MinSun, nb_partitions, alphaIdx)
+  # alphaSSD <- pbapply::pblapply(listAlpha, compute_ALPHA_SSD_per_window, MinSun, nb_partitions, alphaIdx)
   # tictoc::toc()
 
   if (nbCPU > 1){
@@ -428,7 +428,7 @@ compute_SSD <- function(Image_Chunk, window_size, nbclusters,
       with_progress({
         p <- progressr::progressor(steps = nbCPU)
         alphaSSD <- future.apply::future_lapply(X = listAlpha,
-                                                FUN = Compute_ALPHA_SSD_per_window_list,
+                                                FUN = compute_ALPHA_SSD_per_window_list,
                                                 nb_partitions = nb_partitions,
                                                 nbclusters = nbclusters,
                                                 alphaIdx = alphaIdx,
@@ -436,7 +436,7 @@ compute_SSD <- function(Image_Chunk, window_size, nbclusters,
       })
     } else {
       alphaSSD <- future.apply::future_lapply(X = listAlpha,
-                                              FUN = Compute_ALPHA_SSD_per_window_list,
+                                              FUN = compute_ALPHA_SSD_per_window_list,
                                               nb_partitions = nb_partitions,
                                               nbclusters = nbclusters,
                                               alphaIdx = alphaIdx,
@@ -454,7 +454,7 @@ compute_SSD <- function(Image_Chunk, window_size, nbclusters,
   } else {
 
     alphaSSD <- lapply(X = listAlpha,
-                       FUN = Compute_ALPHA_SSD_per_window,
+                       FUN = compute_ALPHA_SSD_per_window,
                        nb_partitions = nb_partitions, nbclusters = nbclusters,
                        alphaIdx = alphaIdx, MinSun = MinSun, pcelim = pcelim)
 
@@ -595,11 +595,11 @@ get_Simpson <- function(Distrib) {
 #' corresponding to the list of windows
 #' @export
 
-Compute_ALPHA_SSD_per_window_list <- function(listAlpha, nb_partitions, nbclusters,
+compute_ALPHA_SSD_per_window_list <- function(listAlpha, nb_partitions, nbclusters,
                                               alphaIdx, MinSun = 0.25, pcelim = 0.02,
                                               p = NULL) {
   alphaSSD <- lapply(X = listAlpha,
-                     FUN = Compute_ALPHA_SSD_per_window,
+                     FUN = compute_ALPHA_SSD_per_window,
                      nb_partitions = nb_partitions, nbclusters = nbclusters,
                      alphaIdx = alphaIdx, MinSun = MinSun, pcelim = pcelim)
 
@@ -628,7 +628,7 @@ Compute_ALPHA_SSD_per_window_list <- function(listAlpha, nb_partitions, nbcluste
 #' corresponding to the window
 #' @export
 
-Compute_ALPHA_SSD_per_window <- function(listAlpha, nb_partitions, nbclusters,
+compute_ALPHA_SSD_per_window <- function(listAlpha, nb_partitions, nbclusters,
                                          alphaIdx, MinSun = 0.25, pcelim = 0.02) {
 
   if (listAlpha$PCsun > MinSun) {
@@ -639,7 +639,7 @@ Compute_ALPHA_SSD_per_window <- function(listAlpha, nb_partitions, nbclusters,
     if (!typeof(SSD)=='list'){
       SSD <- lapply(X = snow::splitRows(listAlpha$data, ncl = nrow(listAlpha$data)), FUN = table)
     }
-    alphawin <- lapply(SSD, FUN = Compute_ALPHA_per_window,
+    alphawin <- lapply(SSD, FUN = compute_ALPHA_per_window,
                        nbPix_Sunlit = listAlpha$nbPix_Sunlit,
                        alphaIdx = alphaIdx,
                        nbclusters = nbclusters,
@@ -672,7 +672,7 @@ Compute_ALPHA_SSD_per_window <- function(listAlpha, nb_partitions, nbclusters,
 #' @return shannon, Simpson, Fisher, SSDMap
 #' @export
 
-Compute_ALPHA_per_window <- function(SSD, nbPix_Sunlit, alphaIdx, nbclusters,
+compute_ALPHA_per_window <- function(SSD, nbPix_Sunlit, alphaIdx, nbclusters,
                                      pcelim = 0.02){
 
   ClusterID <- as.numeric(names(SSD))

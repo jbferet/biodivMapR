@@ -31,9 +31,14 @@ The functional diversity metrics (Richness, Evenness, Divergence) can be compute
 ## read selected features from dimensionality reduction
 Selected_Features <- read.table(Sel_PC)[[1]]
 ## path for selected components
-map_functional_div(Original_Image_File = Input_Image_File, Functional_File = PCA_Files,
-                   Selected_Features = Selected_Features, Output_Dir = Output_Dir,
-                   window_size = window_size, nbCPU = nbCPU, MaxRAM = MaxRAM,TypePCA = TypePCA)
+map_functional_div(Original_Image_File = Input_Image_File, 
+                   Functional_File = PCA_Output$PCA_Files,
+                   Selected_Features = Selected_Features, 
+                   Output_Dir = Output_Dir,
+                   window_size = window_size, 
+                   nbCPU = nbCPU, 
+                   MaxRAM = MaxRAM,
+                   TypePCA = TypePCA)
 ```
 
 These diversity metrics can also be computed directly from plots defined as polygons in the extent of the rasters. This step is key for validation, and is explained in the [next step](https://jbferet.github.io/biodivMapR/articles/biodivMapR_08.html){target="_blank"}.
