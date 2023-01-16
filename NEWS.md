@@ -1,3 +1,8 @@
+# biodivMapR v1.10.1
+
+## Fix
+- Updated alpha and beta diversity mapping when starting from a classification map
+
 # biodivMapR v1.10.0
 
 ## Fix

@@ -32,6 +32,7 @@
 #' @importFrom stars read_stars write_stars
 #' @export
 map_alpha_div <- function(Input_Image_File = FALSE,
+                          Input_Mask_File = FALSE,
                           Output_Dir = '',
                           window_size = 10,
                           TypePCA = "SPCA",
@@ -46,12 +47,15 @@ map_alpha_div <- function(Input_Image_File = FALSE,
   # and nbclusters if using classification map as input data
   SSDpathlist <- get_SSpath(Output_Dir, Input_Image_File, TypePCA, ClassifMap, nbclusters)
   Spectral_Species_Path <- SSDpathlist$Spectral_Species_Path
+  SSD_Dir <- SSDpathlist$SSD_Dir
   Input_Image_File <- SSDpathlist$Input_Image_File
   nbclusters <- SSDpathlist$nbclusters
 
   # 2- COMPUTE ALPHA DIVERSITY
   ALPHA <- compute_alpha_metrics(Spectral_Species_Path = Spectral_Species_Path,
+                                 SSD_Dir = SSD_Dir,
                                  window_size = window_size,
+                                 Input_Mask_File = Input_Mask_File,
                                  nbclusters = nbclusters,
                                  MinSun = MinSun,
                                  pcelim = pcelim,
@@ -161,7 +165,8 @@ compute_ALPHA_FromPlot <- function(SpectralSpecies_Plot,pcelim = 0.02){
 
 #' Computes alpha diversity metrics based on spectral species
 #
-#' @param Spectral_Species_Path character. path for spectral species file to be written
+#' @param Spectral_Species_Path character. path for spectral species file
+#' @param SSD_Path character. path for spectral species distribution file to be written
 #' @param window_size numeric. size of spatial units (in pixels) to compute diversity
 #' @param nbclusters numeric. number of clusters defined in k-Means
 #' @param MinSun numeric. minimum proportion of sunlit pixels required to consider plot
@@ -179,7 +184,9 @@ compute_ALPHA_FromPlot <- function(SpectralSpecies_Plot,pcelim = 0.02){
 #' @export
 
 compute_alpha_metrics <- function(Spectral_Species_Path,
+                                  SSD_Dir,
                                   window_size,
+                                  Input_Mask_File = FALSE,
                                   nbclusters,
                                   MinSun = 0.25,
                                   pcelim = 0.02,
@@ -189,27 +196,33 @@ compute_alpha_metrics <- function(Spectral_Species_Path,
 
   # Prepare files to read and write: spectral species (R), spectral species
   # distribution (W) and sunlit proportion per window (W)
+  # optional mask file
   SS_HDR <- get_HDR_name(Spectral_Species_Path)
   HDR_SS <- read_ENVI_header(SS_HDR)
   nbPieces <- split_image(HDR_SS, MaxRAM)
   # prepare for reading spectral species file
   SeqRead_SS <- where_to_read_kernel(HDR_SS, nbPieces, window_size)
+
+  if (Input_Mask_File==FALSE){
+    SeqRead_Mask <- FALSE
+  } else {
+    Mask_HDR <- get_HDR_name(Input_Mask_File)
+    HDR_Mask <- read_ENVI_header(Mask_HDR)
+    # prepare for reading mask file
+    SeqRead_Mask <- where_to_read_kernel(HDR_Mask, nbPieces, window_size)
+  }
+
   # prepare for writing spectral species distribution file
-  SSD_Path <- paste(Spectral_Species_Path, "_Distribution", sep = "")
+  SSD_Path <- file.path(SSD_Dir, "SpectralSpecies_Distribution")
   HDR_SSD <- prepare_HDR_SSD(HDR_SS, SSD_Path, nbclusters, window_size = window_size)
   SeqWrite_SSD <- where_to_write_kernel(HDR_SS, HDR_SSD, nbPieces, window_size)
   # prepare for writing sunlit proportion file
-  Sunlit_Path <- paste(Spectral_Species_Path, "_Distribution_Sunlit", sep = "")
+  Sunlit_Path <- file.path(SSD_Dir, "SpectralSpecies_Distribution_Sunlit")
   HDR_Sunlit <- prepare_HDR_Sunlit(HDR_SSD, Sunlit_Path)
   SeqWrite_Sunlit <- where_to_write_kernel(HDR_SS, HDR_Sunlit, nbPieces, window_size)
 
   # for each piece of image
-  ReadWrite <- RW_bytes_all(SeqRead_SS, SeqWrite_SSD, SeqWrite_Sunlit)
-
-  ImgFormat <- "3D"
-  SSD_Format <- ENVI_type2bytes(HDR_SSD)
-  SS_Format <- ENVI_type2bytes(HDR_SS)
-  Sunlit_Format <- ENVI_type2bytes(HDR_Sunlit)
+  ReadWrite <- RW_bytes_all(SeqRead_SS, SeqWrite_SSD, SeqWrite_Sunlit, SeqRead_Mask)
 
   if (nbPieces>1){
     handlers(global = TRUE)
@@ -218,22 +231,20 @@ compute_alpha_metrics <- function(Spectral_Species_Path,
       p <- progressr::progressor(steps = nbPieces)
       ALPHA <- lapply(ReadWrite, FUN = convert_PCA_to_SSD,
                       Spectral_Species_Path = Spectral_Species_Path,
-                      HDR_SS = HDR_SS, HDR_SSD = HDR_SSD,
-                      SS_Format = SS_Format, SSD_Format = SSD_Format,
-                      ImgFormat = ImgFormat,
+                      HDR_SS = HDR_SS, HDR_SSD = HDR_SSD, HDR_Sunlit = HDR_Sunlit,
                       window_size = window_size, nbclusters = nbclusters,
                       MinSun = MinSun, pcelim = pcelim, Index_Alpha = Index_Alpha,
                       SSD_Path = SSD_Path,
+                      Input_Mask_File = Input_Mask_File, HDR_Mask = HDR_Mask,
                       Sunlit_Path = Sunlit_Path, Sunlit_Format = Sunlit_Format,
                       p= p, nbCPU = nbCPU, nbPieces = nbPieces)
     })
   } else {
     ALPHA <- lapply(ReadWrite, FUN = convert_PCA_to_SSD,
                     Spectral_Species_Path = Spectral_Species_Path,
-                    HDR_SS = HDR_SS, HDR_SSD = HDR_SSD,
-                    SS_Format = SS_Format, SSD_Format = SSD_Format,
-                    ImgFormat = ImgFormat,
+                    HDR_SS = HDR_SS, HDR_SSD = HDR_SSD, HDR_Sunlit = HDR_Sunlit,
                     window_size = window_size, nbclusters = nbclusters,
+                    Input_Mask_File = Input_Mask_File, HDR_Mask = HDR_Mask,
                     MinSun = MinSun, pcelim = pcelim, Index_Alpha = Index_Alpha,
                     SSD_Path = SSD_Path,
                     Sunlit_Path = Sunlit_Path, Sunlit_Format = Sunlit_Format,
@@ -276,11 +287,11 @@ compute_alpha_metrics <- function(Spectral_Species_Path,
 #' @param Spectral_Species_Path character. path for Spectral_Species raster file
 #' @param HDR_SS list. HDR file for spectral species
 #' @param HDR_SSD list. HDR file for spectral species distribution
-#' @param SS_Format character. format of data corresponding to spectral species file
-#' @param SSD_Format character. format of data corresponding to spectral species distribution file
-#' @param ImgFormat character. image format
+#' @param HDR_Sunlit list. HDR file for spectral species distribution
 #' @param window_size numeric. window size
 #' @param nbclusters numeric. number of clusters
+#' @param Input_Mask_File character. input mask file (useful when using classification map)
+#' @param HDR_Mask list. HDR file for mask
 #' @param MinSun numeric. Minimum proportion of sunlit pixels required to consider plot.
 #' @param pcelim numeric. Minimum contribution (in \%) required for a spectral species.
 #' @param Index_Alpha list. list of spectral metrics to be computed
@@ -292,22 +303,42 @@ compute_alpha_metrics <- function(Spectral_Species_Path,
 #' @param nbPieces numeric. number of pieces to split file read into
 
 convert_PCA_to_SSD <- function(ReadWrite, Spectral_Species_Path,
-                               HDR_SS, HDR_SSD, SS_Format, SSD_Format, ImgFormat,
+                               HDR_SS, HDR_SSD, HDR_Sunlit,
                                window_size, nbclusters,
+                               Input_Mask_File = FALSE, HDR_Mask = FALSE,
                                MinSun = 0.25, pcelim = 0.02,
-                               Index_Alpha,
+                               Index_Alpha = c('Shannon'),
                                SSD_Path, Sunlit_Path, Sunlit_Format,
                                p = NULL, nbCPU = 1, nbPieces= 1) {
+
+  ImgFormat <- "3D"
+  SSD_Format <- ENVI_type2bytes(HDR_SSD)
+  SS_Format <- ENVI_type2bytes(HDR_SS)
+  Sunlit_Format <- ENVI_type2bytes(HDR_Sunlit)
+  if (typeof(HDR_Mask)=='list'){
+    Mask_Format <- ENVI_type2bytes(HDR_Mask)
+  }
 
   # read image chunk
   SS_Chunk <- read_BIL_image_subset(Spectral_Species_Path, HDR_SS,
                                     ReadWrite$RW_SS$Byte_Start, ReadWrite$RW_SS$lenBin,
                                     ReadWrite$RW_SS$nbLines, SS_Format, ImgFormat)
 
+  if (!Input_Mask_File==FALSE){
+    Mask_Chunk <- read_BIL_image_subset(Input_Mask_File, HDR_Mask,
+                                        ReadWrite$RW_Mask$Byte_Start, ReadWrite$RW_Mask$lenBin,
+                                        ReadWrite$RW_Mask$nbLines, Mask_Format, ImgFormat)
+  } else {
+    Mask_Chunk <- FALSE
+  }
+
+
+
   # compute SSD from each window of the image chunk
   SSD_Alpha <- compute_SSD(Image_Chunk = SS_Chunk, window_size = window_size,
                            nbclusters = nbclusters, MinSun = MinSun, pcelim = pcelim,
-                           Index_Alpha = Index_Alpha, nbCPU = nbCPU, nbPieces = nbPieces)
+                           Index_Alpha = Index_Alpha, nbCPU = nbCPU, nbPieces = nbPieces,
+                           Mask_Chunk = Mask_Chunk)
 
   # write spectral Species ditribution file
   fidSSD <- file(description = SSD_Path, open = "r+b", blocking = TRUE,
@@ -362,6 +393,7 @@ convert_PCA_to_SSD <- function(ReadWrite, Spectral_Species_Path,
 #' @param Index_Alpha list. list of alpha diversity indices to be computed from spectral species
 #' @param nbCPU numeric. Number of CPUs to use in parallel.
 #' @param nbPieces numeric. number of pieces in which original image is split
+#' @param Mask_Chunk numeric. 3D image chunk of mask (optional)
 #
 #' @return list of alpha diversity metrics for each iteration
 #' @import cli
@@ -373,7 +405,7 @@ convert_PCA_to_SSD <- function(ReadWrite, Spectral_Species_Path,
 
 compute_SSD <- function(Image_Chunk, window_size, nbclusters,
                         MinSun = 0.25, pcelim = 0.02,
-                        Index_Alpha = "Shannon", nbCPU = 1, nbPieces = 1) {
+                        Index_Alpha = "Shannon", nbCPU = 1, nbPieces = 1, Mask_Chunk = FALSE) {
 
   nbi <- round(dim(Image_Chunk)[1] / window_size)
   nbj <- round(dim(Image_Chunk)[2] / window_size)
@@ -401,7 +433,13 @@ compute_SSD <- function(Image_Chunk, window_size, nbclusters,
       # put all iterations in a 2D matrix shape
       ijit <- t(matrix(Image_Chunk[li:ui, lj:uj, ], ncol = nb_partitions))
       # keep non zero values
-      ijit <- matrix(ijit[, which(!ijit[1, ] == 0)], nrow = nb_partitions)
+      if (typeof(Mask_Chunk)=='integer'){
+        ijit_mask <- t(matrix(Mask_Chunk[li:ui, lj:uj, ], ncol = 1))
+        ijit <- matrix(ijit[, which(!ijit_mask[1, ] == 0)], nrow = nb_partitions)
+      } else {
+        ijit <- matrix(ijit[, which(!ijit[1, ] == 0)], nrow = nb_partitions)
+
+      }
       nbPix_Sunlit <- dim(ijit)[2]
       PCsun[ii, jj] <- nbPix_Sunlit / window_size**2
       ij <- ij+1
@@ -512,39 +550,54 @@ get_SSpath <- function(Output_Dir, Input_Image_File, TypePCA, ClassifMap, nbclus
     if (! file.exists(ClassifMap)){
       message("classification map is not found:")
       print(ClassifMap)
+      stop()
     } else {
       message("updating nbclusters based on number of classes")
       ClassifRaster <- stars::read_stars(ClassifMap,proxy = FALSE)
       Classif_Values <- ClassifRaster[[1]]
-      nbclusters <- max(Classif_Values,na.rm = TRUE)
+      CheckClasses <- tryCatch(
+        {
+          CheckClasses <- max(Classif_Values,na.rm = TRUE)
+        },
+        error = function(cond) {
+          CheckClasses <- length(unique(Classif_Values))
+          return(CheckClasses)
+        },
+        finally = {
+        }
+      )
+      nbclusters <- CheckClasses
+      # nbclusters <- max(Classif_Values,na.rm = TRUE)
+      # nbclusters <- length(unique(Classif_Values))
       message(paste("Number of classes : "),nbclusters)
-
-      # save classification map in proper format in output directory
-      # if not expected file format for Spectral Species map
-      driver <- attr(rgdal::GDALinfo(ClassifMap,returnStats = FALSE), 'driver')
-      df <- unique(attr(rgdal::GDALinfo(ClassifMap,returnStats = FALSE),"df")$GDType)
-      if (driver=='ENVI' & df =='Byte'){
-        if (Input_Image_File==FALSE){
-          Input_Image_File <- tools::file_path_sans_ext(basename(ClassifMap))
-        }
-        Spectral_Species_Path <- ClassifMap
+    }
+    # save classification map in proper format in output directory
+    # if not expected file format for Spectral Species map
+    driver <- attr(rgdal::GDALinfo(ClassifMap,returnStats = FALSE), 'driver')
+    df <- unique(attr(rgdal::GDALinfo(ClassifMap,returnStats = FALSE),"df")$GDType)
+    if (driver=='ENVI' & df =='Byte'){
+      if (Input_Image_File==FALSE){
+        Input_Image_File <- tools::file_path_sans_ext(basename(ClassifMap))
+      }
+      Spectral_Species_Path <- ClassifMap
+    } else {
+      if (Input_Image_File==FALSE){
+        Input_Image_File <- tools::file_path_sans_ext(basename(ClassifMap))
+      }
+      Output_Dir_SS <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "UserClassification")
+      Spectral_Species_Path <- file.path(Output_Dir_SS, "UserClassification")
+      if (! file.exists(Spectral_Species_Path)){
+        stars::write_stars(ClassifRaster, Spectral_Species_Path, driver =  "ENVI",type='Byte')
       } else {
-        if (Input_Image_File==FALSE){
-          Input_Image_File <- tools::file_path_sans_ext(basename(ClassifMap))
-        }
-        Output_Dir_SS <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "UserClassification")
-        Spectral_Species_Path <- file.path(Output_Dir_SS, "UserClassification")
-        if (! file.exists(Spectral_Species_Path)){
-          stars::write_stars(ClassifRaster, Spectral_Species_Path, driver =  "ENVI",type='Byte')
-        } else {
-          message("This already existing classification map will be used")
-          print(Spectral_Species_Path)
-          message("Please delete it and re-run if you updated classification since last run")
-        }
+        message("This already existing classification map will be used")
+        print(Spectral_Species_Path)
+        message("Please delete it and re-run if you updated classification since last run")
       }
     }
   }
+  Output_Dir_SSD <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "SpectralSpecies")
   res <- list('Spectral_Species_Path' = Spectral_Species_Path,
+              'SSD_Dir' = Output_Dir_SSD,
               'Input_Image_File' = Input_Image_File,
               'nbclusters' = nbclusters)
   return(res)
@@ -639,6 +692,14 @@ compute_ALPHA_SSD_per_window <- function(listAlpha, nb_partitions, nbclusters,
     if (!typeof(SSD)=='list'){
       SSD <- lapply(X = snow::splitRows(listAlpha$data, ncl = nrow(listAlpha$data)), FUN = table)
     }
+
+    # future optimization using data.table to be implemented beforehands
+    # data2 = matrix(sample(seq(0,50), 2000000,replace = T),nrow=20000)
+    # tictoc::tic()
+    # SSD = (data2 %>% t() %>% as.data.table %>% melt(measure.vars=paste0('V',1:20000)))[,.(count=.N), by=c('variable', 'value')]
+    # tictoc::toc()
+
+
     alphawin <- lapply(SSD, FUN = compute_ALPHA_per_window,
                        nbPix_Sunlit = listAlpha$nbPix_Sunlit,
                        alphaIdx = alphaIdx,
@@ -720,6 +781,9 @@ prepare_HDR_SSD <- function(HDR_SS, SSD_Path, nbclusters, window_size){
   HDR_SSD$lines <- round(HDR_SS$lines / window_size)
   HDR_SSD$interleave <- 'bil'
   HDR_SSD$`file type` <- NULL
+  HDR_SSD$classes <- NULL
+  HDR_SSD$`class names` <- NULL
+  HDR_SSD$`class lookup` <- NULL
   # change resolution
   HDR_SSD <- change_resolution_HDR(HDR_SSD, window_size)
   HDR_SSD$`band names` <- NULL
@@ -764,10 +828,12 @@ prepare_HDR_Sunlit <- function(HDR_SSD, Sunlit_Path){
 # @param SeqRead_SS list. coordinates corresponding to spectral species file
 # @param SeqWrite_SSD list. coordinates corresponding to spectral species distribution file
 # @param SeqWrite_Sunlit list. coordinates corresponding to sunlit proportion
+# @param SeqRead_Mask list. coordinates corresponding to optional mask file
 #
 # @return ReadWrite list of bytes coordinates for each read and write
 
-RW_bytes_all <- function(SeqRead_SS, SeqWrite_SSD, SeqWrite_Sunlit){
+RW_bytes_all <- function(SeqRead_SS, SeqWrite_SSD, SeqWrite_Sunlit,
+                         SeqRead_Mask = FALSE){
   nbPieces <- length(SeqRead_SS$ReadByte_Start)
   ReadWrite <- list()
   for (i in 1:nbPieces) {
@@ -776,6 +842,9 @@ RW_bytes_all <- function(SeqRead_SS, SeqWrite_SSD, SeqWrite_Sunlit){
     ReadWrite[[i]]$RW_SS <- RW_bytes(SeqRead_SS, i)
     ReadWrite[[i]]$RW_SSD <- RW_bytes(SeqWrite_SSD, i)
     ReadWrite[[i]]$RW_Sunlit <- RW_bytes(SeqWrite_Sunlit, i)
+    if (typeof(SeqRead_Mask)=='list'){
+      ReadWrite[[i]]$RW_Mask <- RW_bytes(SeqRead_Mask, i)
+    }
   }
   return(ReadWrite)
 }
