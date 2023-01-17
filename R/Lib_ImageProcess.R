@@ -685,6 +685,7 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions,
   }
 
   if(is.matrix(kernel)){
+    mask[which(is.na(c(mask)))] <- 0
     # erode mask with kernel, to keep valid central pixels and neighbours
     mask = matlab::padarray(mask, c(1,1), padval=0, direction='both')
     mask = mmand::erode(mask, (kernel!=0)*1)
@@ -1454,7 +1455,9 @@ where_to_read_kernel <- function(HDR, nbPieces, SE_Size) {
   lenTot <- as.double(HDR$lines) * Data_Per_Line
   # starting line for each chunk
   Start_Per_Chunk <- ceiling(seq(1, (HDR$lines + 1), length.out = nbPieces + 1))
-  Start_Per_Chunk <- Start_Per_Chunk - Start_Per_Chunk %% SE_Size + 1
+  # Start_Per_Chunk <- Start_Per_Chunk - Start_Per_Chunk %% SE_Size + 1
+  Start_Per_Chunk2 <- Start_Per_Chunk - Start_Per_Chunk %% SE_Size + 1
+  Start_Per_Chunk[1:nbPieces] <- Start_Per_Chunk2[1:nbPieces]
   # elements in input data
   lb <- 1 + ((Start_Per_Chunk - 1) * Data_Per_Line)
   ub <- lb - 1
@@ -1481,8 +1484,10 @@ where_to_write_kernel <- function(HDR_SS, HDR_SSD, nbPieces, SE_Size) {
 
   # starting line for each chunk of spectral species
   Start_Per_Chunk <- ceiling(seq(1, (HDR_SS$lines + 1), length.out = nbPieces + 1))
-  Start_Per_Chunk <- Start_Per_Chunk - Start_Per_Chunk %% SE_Size
-  Start_Per_Chunk.SSD <- (Start_Per_Chunk / SE_Size) + 1
+  Start_Per_Chunk2 <- Start_Per_Chunk - Start_Per_Chunk %% SE_Size + 1
+  Start_Per_Chunk[1:nbPieces] <- Start_Per_Chunk2[1:nbPieces]
+  # Start_Per_Chunk <- Start_Per_Chunk - Start_Per_Chunk %% SE_Size
+  Start_Per_Chunk.SSD <- ceiling((Start_Per_Chunk-1) / SE_Size) + 1
 
   # elements in input data
   Image_Format <- ENVI_type2bytes(HDR_SSD)

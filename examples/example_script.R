@@ -95,7 +95,7 @@ FilterPCA <- FALSE
 window_size <- 10
 # computational parameters
 nbCPU <- 4
-MaxRAM <- 0.5
+MaxRAM <- 0.2
 # number of clusters (spectral species)
 nbclusters <- 50
 

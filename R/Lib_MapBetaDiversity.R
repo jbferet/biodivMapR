@@ -50,13 +50,15 @@ map_beta_div <- function(Input_Image_File = FALSE,
   Spectral_Species_Path <- SSDpathlist$Spectral_Species_Path
   Input_Image_File <- SSDpathlist$Input_Image_File
   nbclusters <- SSDpathlist$nbclusters
-  HDR_SSD <- read_ENVI_header(get_HDR_name(Spectral_Species_Path))
+  SSD_Dir <- SSDpathlist$SSD_Dir
+  HDR_SS <- read_ENVI_header(get_HDR_name(Spectral_Species_Path))
 
   # 2- compute beta diversity
   Beta <- compute_beta_metrics(ClusterMap_Path = Spectral_Species_Path,
+                               SSD_Dir = SSD_Dir,
                                MinSun = MinSun,
                                Nb_Units_Ordin = Nb_Units_Ordin,
-                               nb_partitions = HDR_SSD$bands,
+                               nb_partitions = HDR_SS$bands,
                                nbclusters = nbclusters, pcelim = pcelim,
                                scaling = scaling, dimMDS = dimMDS,
                                nbCPU = nbCPU, MaxRAM = MaxRAM)
@@ -73,48 +75,6 @@ map_beta_div <- function(Input_Image_File = FALSE,
   PCoA_model <- Beta$PCoA_model
   return(PCoA_model)
 }
-
-#' #' computes NMDS
-#' #
-#' #' @param MatBCdist BC dissimilarity matrix
-#' #' @param dimMDS numeric. number of dimensions of the NMDS
-#' #
-#' #' @return BetaNMDS_sel
-#' #' @importFrom future plan multiprocess multisession sequential
-#' #' @importFrom future.apply future_lapply
-#' #' @importFrom ecodist nmds
-#' #' @importFrom utils find
-#' #' @export
-#'
-#' compute_NMDS <- function(MatBCdist,dimMDS=3) {
-#'   nbiterNMDS <- 4
-#'   if (Sys.info()["sysname"] == "Windows") {
-#'     nbCoresNMDS <- 2
-#'   } else if (Sys.info()["sysname"] == "Linux") {
-#'     nbCoresNMDS <- 4
-#'   }
-#'   # multiprocess of spectral species distribution and alpha diversity metrics
-#'   # plan(multiprocess, workers = nbCoresNMDS) ## Parallelize using four cores
-#'   plan(multisession, workers = nbCoresNMDS) ## Parallelize using four cores
-#'   BetaNMDS <- future_lapply(MatBCdist, FUN = nmds, mindim = dimMDS, maxdim = dimMDS, nits = 1, future.packages = c("ecodist"))
-#'   plan(sequential)
-#'   # find iteration with minimum stress
-#'   Stress <- vector(length = nbiterNMDS)
-#'   for (i in 1:nbiterNMDS) {
-#'     Stress[i] <- BetaNMDS[[i]]$stress
-#'   }
-#'   print("Stress obtained for NMDS iterations:")
-#'   print(Stress)
-#'   print("Rule of thumb")
-#'   print("stress < 0.05 provides an excellent represention in reduced dimensions")
-#'   print("stress < 0.1 is great")
-#'   print("stress < 0.2 is good")
-#'   print("stress > 0.3 provides a poor representation")
-#'   MinStress <- find(Stress == min(Stress))
-#'   BetaNMDS_sel <- BetaNMDS[[MinStress]]$conf
-#'   BetaNMDS_sel <- data.frame(BetaNMDS_sel[[1]])
-#'   return(BetaNMDS_sel)
-#' }
 
 #' #' computes NMDS
 #' #
@@ -361,6 +321,7 @@ compute_BETA_FromPlots <- function(SpectralSpecies_Plots,nbclusters,Hellinger = 
 #' computes beta diversity metrics
 #'
 #' @param ClusterMap_Path character. File containing spectral species or classes from prior classification
+#' @param SSD_Dir character. path for spectral species distribution file to be written
 #' @param MinSun numeric. minimum proportion of sunlit pixels required to consider plot
 #' @param Nb_Units_Ordin numeric. maximum number of spatial units to be processed in Ordination
 #' @param nb_partitions numeric. number of iterations
@@ -380,6 +341,7 @@ compute_BETA_FromPlots <- function(SpectralSpecies_Plots,nbclusters,Hellinger = 
 #' @export
 
 compute_beta_metrics <- function(ClusterMap_Path,
+                                 SSD_Dir,
                                  MinSun,
                                  Nb_Units_Ordin,
                                  nb_partitions,
@@ -390,8 +352,8 @@ compute_beta_metrics <- function(ClusterMap_Path,
 
   # 1- perform analysis for a subset of windows
   # Define path for images to be used
-  SSD_Path <- paste(ClusterMap_Path, '_Distribution', sep = '')
-  ImPathSunlit <- paste(ClusterMap_Path, '_Distribution_Sunlit', sep = '')
+  SSD_Path <- file.path(SSD_Dir, 'SpectralSpecies_Distribution')
+  ImPathSunlit <- file.path(SSD_Dir, 'SpectralSpecies_Distribution_Sunlit')
 
   # Get illuminated pixels based on  SpectralSpecies_Distribution_Sunlit
   Sunlit_Pixels <- get_sunlit_pixels(ImPathSunlit, MinSun)
@@ -441,9 +403,15 @@ compute_beta_metrics <- function(ClusterMap_Path,
   #   Beta_Ordination_sel <- compute_NMDS(MatBCdist)
   #   PCname <- 'NMDS'
   # } else if (scaling == 'PCO') {
+<<<<<<< HEAD
   BetaPCO <- labdsv::pco(MatBCdist, k = dimMDS)
   Beta_Ordination_sel <- BetaPCO$points
   PCname <- 'PCoA'
+=======
+    BetaPCO <- labdsv::pco(MatBCdist, k = dimMDS)
+    Beta_Ordination_sel <- BetaPCO$points
+    PCname <- 'PCoA'
+>>>>>>> dev
   # }
 
   # 2- perform analysis on all the image, using nearest neighbor between

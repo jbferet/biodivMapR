@@ -6,6 +6,7 @@
 \usage{
 compute_beta_metrics(
   ClusterMap_Path,
+  SSD_Dir,
   MinSun,
   Nb_Units_Ordin,
   nb_partitions,
@@ -20,6 +21,8 @@ compute_beta_metrics(
 }
 \arguments{
 \item{ClusterMap_Path}{character. File containing spectral species or classes from prior classification}
+
+\item{SSD_Dir}{character. path for spectral species distribution file to be written}
 
 \item{MinSun}{numeric. minimum proportion of sunlit pixels required to consider plot}
 
