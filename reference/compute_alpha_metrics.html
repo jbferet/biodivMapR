@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.1</span>
       </span>
     </div>
 
@@ -104,7 +104,9 @@
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">compute_alpha_metrics</span><span class="op">(</span></span>
 <span>  <span class="va">Spectral_Species_Path</span>,</span>
+<span>  <span class="va">SSD_Dir</span>,</span>
 <span>  <span class="va">window_size</span>,</span>
+<span>  Input_Mask_File <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">nbclusters</span>,</span>
 <span>  MinSun <span class="op">=</span> <span class="fl">0.25</span>,</span>
 <span>  pcelim <span class="op">=</span> <span class="fl">0.02</span>,</span>
@@ -117,11 +119,19 @@
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>Spectral_Species_Path</dt>
-<dd><p>character. path for spectral species file to be written</p></dd>
+<dd><p>character. path for spectral species file</p></dd>
+
+
+<dt>SSD_Dir</dt>
+<dd><p>character. path for spectral species distribution file to be written</p></dd>
 
 
 <dt>window_size</dt>
 <dd><p>numeric. size of spatial units (in pixels) to compute diversity</p></dd>
+
+
+<dt>Input_Mask_File</dt>
+<dd><p>character. Path and name of the mask corresponding to the image to be processed.</p></dd>
 
 
 <dt>nbclusters</dt>
