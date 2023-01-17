@@ -20,7 +20,6 @@ LazyData: true
 Imports: 
     dissUtils,
     data.table,
-    ecodist,
     emstreeR,
     fields,
     future,

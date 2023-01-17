@@ -6,6 +6,7 @@
 \usage{
 map_alpha_div(
   Input_Image_File = FALSE,
+  Input_Mask_File = FALSE,
   Output_Dir = "",
   window_size = 10,
   TypePCA = "SPCA",
@@ -23,6 +24,8 @@ map_alpha_div(
 }
 \arguments{
 \item{Input_Image_File}{character. Path and name of the image to be processed.}
+
+\item{Input_Mask_File}{character. Path and name of the mask corresponding to the image to be processed.}
 
 \item{Output_Dir}{character. Output directory.}
 

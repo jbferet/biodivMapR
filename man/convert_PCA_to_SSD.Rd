@@ -9,17 +9,16 @@ convert_PCA_to_SSD(
   Spectral_Species_Path,
   HDR_SS,
   HDR_SSD,
-  SS_Format,
-  SSD_Format,
-  ImgFormat,
+  HDR_Sunlit,
   window_size,
   nbclusters,
+  Input_Mask_File = FALSE,
+  HDR_Mask = FALSE,
   MinSun = 0.25,
   pcelim = 0.02,
-  Index_Alpha,
+  Index_Alpha = c("Shannon"),
   SSD_Path,
   Sunlit_Path,
-  Sunlit_Format,
   p = NULL,
   nbCPU = 1,
   nbPieces = 1
@@ -34,15 +33,15 @@ convert_PCA_to_SSD(
 
 \item{HDR_SSD}{list. HDR file for spectral species distribution}
 
-\item{SS_Format}{character. format of data corresponding to spectral species file}
-
-\item{SSD_Format}{character. format of data corresponding to spectral species distribution file}
-
-\item{ImgFormat}{character. image format}
+\item{HDR_Sunlit}{list. HDR file for spectral species distribution}
 
 \item{window_size}{numeric. window size}
 
 \item{nbclusters}{numeric. number of clusters}
+
+\item{Input_Mask_File}{character. input mask file (useful when using classification map)}
+
+\item{HDR_Mask}{list. HDR file for mask}
 
 \item{MinSun}{numeric. Minimum proportion of sunlit pixels required to consider plot.}
 
@@ -53,8 +52,6 @@ convert_PCA_to_SSD(
 \item{SSD_Path}{character. path for spectral species distribution file}
 
 \item{Sunlit_Path}{character. path for sunlit proportion file}
-
-\item{Sunlit_Format}{list. format of raster}
 
 \item{p}{list. progressor object for progress bar}
 

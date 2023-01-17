@@ -12,7 +12,8 @@ compute_SSD(
   pcelim = 0.02,
   Index_Alpha = "Shannon",
   nbCPU = 1,
-  nbPieces = 1
+  nbPieces = 1,
+  Mask_Chunk = FALSE
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ compute_SSD(
 \item{nbCPU}{numeric. Number of CPUs to use in parallel.}
 
 \item{nbPieces}{numeric. number of pieces in which original image is split}
+
+\item{Mask_Chunk}{numeric. 3D image chunk of mask (optional)}
 }
 \value{
 list of alpha diversity metrics for each iteration

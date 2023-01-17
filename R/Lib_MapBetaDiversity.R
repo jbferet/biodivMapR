@@ -321,7 +321,7 @@ compute_BETA_FromPlots <- function(SpectralSpecies_Plots,nbclusters,Hellinger = 
 #' computes beta diversity metrics
 #'
 #' @param ClusterMap_Path character. File containing spectral species or classes from prior classification
-#' @param SSD_Path character. path for spectral species distribution file to be written
+#' @param SSD_Dir character. path for spectral species distribution file to be written
 #' @param MinSun numeric. minimum proportion of sunlit pixels required to consider plot
 #' @param Nb_Units_Ordin numeric. maximum number of spatial units to be processed in Ordination
 #' @param nb_partitions numeric. number of iterations
@@ -399,14 +399,14 @@ compute_beta_metrics <- function(ClusterMap_Path,
   # core management seems better on linux --> 4 cores possible
   MatBCdist <- as.dist(MatBC, diag = FALSE, upper = FALSE)
   BetaPCO <- NULL
-  if (scaling == 'NMDS') {
-    Beta_Ordination_sel <- compute_NMDS(MatBCdist)
-    PCname <- 'NMDS'
-  } else if (scaling == 'PCO') {
+  # if (scaling == 'NMDS') {
+  #   Beta_Ordination_sel <- compute_NMDS(MatBCdist)
+  #   PCname <- 'NMDS'
+  # } else if (scaling == 'PCO') {
     BetaPCO <- labdsv::pco(MatBCdist, k = dimMDS)
     Beta_Ordination_sel <- BetaPCO$points
     PCname <- 'PCoA'
-  }
+  # }
 
   # 2- perform analysis on all the image, using nearest neighbor between
   # subset previously analysed and spatial units excluded from Ordination

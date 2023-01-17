@@ -6,7 +6,9 @@
 \usage{
 compute_alpha_metrics(
   Spectral_Species_Path,
+  SSD_Dir,
   window_size,
+  Input_Mask_File = FALSE,
   nbclusters,
   MinSun = 0.25,
   pcelim = 0.02,
@@ -16,9 +18,13 @@ compute_alpha_metrics(
 )
 }
 \arguments{
-\item{Spectral_Species_Path}{character. path for spectral species file to be written}
+\item{Spectral_Species_Path}{character. path for spectral species file}
+
+\item{SSD_Dir}{character. path for spectral species distribution file to be written}
 
 \item{window_size}{numeric. size of spatial units (in pixels) to compute diversity}
+
+\item{Input_Mask_File}{character. Path and name of the mask corresponding to the image to be processed.}
 
 \item{nbclusters}{numeric. number of clusters defined in k-Means}
 

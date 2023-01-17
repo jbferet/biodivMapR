@@ -13,6 +13,7 @@
 #' maps alpha diversity indicators  based on prior selection of PCs
 #'
 #' @param Input_Image_File character. Path and name of the image to be processed.
+#' @param Input_Mask_File character. Path and name of the mask corresponding to the image to be processed.
 #' @param Output_Dir character. Output directory.
 #' @param window_size numeric. Size of spatial units (in pixels) to compute diversity.
 #' @param TypePCA character. Type of PCA (PCA, SPCA, NLPCA...).
@@ -166,8 +167,9 @@ compute_ALPHA_FromPlot <- function(SpectralSpecies_Plot,pcelim = 0.02){
 #' Computes alpha diversity metrics based on spectral species
 #
 #' @param Spectral_Species_Path character. path for spectral species file
-#' @param SSD_Path character. path for spectral species distribution file to be written
+#' @param SSD_Dir character. path for spectral species distribution file to be written
 #' @param window_size numeric. size of spatial units (in pixels) to compute diversity
+#' @param Input_Mask_File character. Path and name of the mask corresponding to the image to be processed.
 #' @param nbclusters numeric. number of clusters defined in k-Means
 #' @param MinSun numeric. minimum proportion of sunlit pixels required to consider plot
 #' @param pcelim numeric. percentage of occurence of a cluster below which cluster is eliminated
@@ -201,10 +203,13 @@ compute_alpha_metrics <- function(Spectral_Species_Path,
   HDR_SS <- read_ENVI_header(SS_HDR)
   nbPieces <- split_image(HDR_SS, MaxRAM)
   # prepare for reading spectral species file
-  SeqRead_SS <- where_to_read_kernel(HDR_SS, nbPieces, window_size)
+  SeqRead_SS <- where_to_read_kernel(HDR = HDR_SS,
+                                     nbPieces = nbPieces,
+                                     SE_Size = window_size)
 
   if (Input_Mask_File==FALSE){
     SeqRead_Mask <- FALSE
+    HDR_Mask <- FALSE
   } else {
     Mask_HDR <- get_HDR_name(Input_Mask_File)
     HDR_Mask <- read_ENVI_header(Mask_HDR)
@@ -215,7 +220,10 @@ compute_alpha_metrics <- function(Spectral_Species_Path,
   # prepare for writing spectral species distribution file
   SSD_Path <- file.path(SSD_Dir, "SpectralSpecies_Distribution")
   HDR_SSD <- prepare_HDR_SSD(HDR_SS, SSD_Path, nbclusters, window_size = window_size)
-  SeqWrite_SSD <- where_to_write_kernel(HDR_SS, HDR_SSD, nbPieces, window_size)
+  SeqWrite_SSD <- where_to_write_kernel(HDR_SS = HDR_SS,
+                                        HDR_SSD = HDR_SSD,
+                                        nbPieces = nbPieces,
+                                        SE_Size = window_size)
   # prepare for writing sunlit proportion file
   Sunlit_Path <- file.path(SSD_Dir, "SpectralSpecies_Distribution_Sunlit")
   HDR_Sunlit <- prepare_HDR_Sunlit(HDR_SSD, Sunlit_Path)
@@ -229,25 +237,27 @@ compute_alpha_metrics <- function(Spectral_Species_Path,
     handlers("cli")
     with_progress({
       p <- progressr::progressor(steps = nbPieces)
-      ALPHA <- lapply(ReadWrite, FUN = convert_PCA_to_SSD,
+      ALPHA <- lapply(ReadWrite,
+                      FUN = convert_PCA_to_SSD,
                       Spectral_Species_Path = Spectral_Species_Path,
                       HDR_SS = HDR_SS, HDR_SSD = HDR_SSD, HDR_Sunlit = HDR_Sunlit,
                       window_size = window_size, nbclusters = nbclusters,
                       MinSun = MinSun, pcelim = pcelim, Index_Alpha = Index_Alpha,
                       SSD_Path = SSD_Path,
                       Input_Mask_File = Input_Mask_File, HDR_Mask = HDR_Mask,
-                      Sunlit_Path = Sunlit_Path, Sunlit_Format = Sunlit_Format,
+                      Sunlit_Path = Sunlit_Path,
                       p= p, nbCPU = nbCPU, nbPieces = nbPieces)
     })
   } else {
-    ALPHA <- lapply(ReadWrite, FUN = convert_PCA_to_SSD,
+    ALPHA <- lapply(ReadWrite,
+                    FUN = convert_PCA_to_SSD,
                     Spectral_Species_Path = Spectral_Species_Path,
                     HDR_SS = HDR_SS, HDR_SSD = HDR_SSD, HDR_Sunlit = HDR_Sunlit,
                     window_size = window_size, nbclusters = nbclusters,
                     Input_Mask_File = Input_Mask_File, HDR_Mask = HDR_Mask,
                     MinSun = MinSun, pcelim = pcelim, Index_Alpha = Index_Alpha,
                     SSD_Path = SSD_Path,
-                    Sunlit_Path = Sunlit_Path, Sunlit_Format = Sunlit_Format,
+                    Sunlit_Path = Sunlit_Path,
                     p= NULL, nbCPU = nbCPU, nbPieces = nbPieces)
   }
 
@@ -297,7 +307,6 @@ compute_alpha_metrics <- function(Spectral_Species_Path,
 #' @param Index_Alpha list. list of spectral metrics to be computed
 #' @param SSD_Path character. path for spectral species distribution file
 #' @param Sunlit_Path character. path for sunlit proportion file
-#' @param Sunlit_Format list. format of raster
 #' @param p list. progressor object for progress bar
 #' @param nbCPU numeric. Number of CPUs to use in parallel.
 #' @param nbPieces numeric. number of pieces to split file read into
@@ -308,7 +317,7 @@ convert_PCA_to_SSD <- function(ReadWrite, Spectral_Species_Path,
                                Input_Mask_File = FALSE, HDR_Mask = FALSE,
                                MinSun = 0.25, pcelim = 0.02,
                                Index_Alpha = c('Shannon'),
-                               SSD_Path, Sunlit_Path, Sunlit_Format,
+                               SSD_Path, Sunlit_Path,
                                p = NULL, nbCPU = 1, nbPieces= 1) {
 
   ImgFormat <- "3D"
@@ -331,8 +340,6 @@ convert_PCA_to_SSD <- function(ReadWrite, Spectral_Species_Path,
   } else {
     Mask_Chunk <- FALSE
   }
-
-
 
   # compute SSD from each window of the image chunk
   SSD_Alpha <- compute_SSD(Image_Chunk = SS_Chunk, window_size = window_size,
@@ -747,11 +754,11 @@ compute_ALPHA_per_window <- function(SSD, nbPix_Sunlit, alphaIdx, nbclusters,
     SSDMap0[ClusterID] <- SSD
   }
   SimpsonAlpha <- shannonIter <- FisherAlpha <- NA
-  if (alphaIdx$Shannon == TRUE) { shannonIter <- get_Shannon(SSD) }
-  if (alphaIdx$Simpson == TRUE) { SimpsonAlpha <- get_Simpson(SSD) }
+  if (alphaIdx$Shannon == TRUE) { shannonIter <- get_Shannon(as.numeric(SSD)) }
+  if (alphaIdx$Simpson == TRUE) { SimpsonAlpha <- get_Simpson(as.numeric(SSD)) }
   if (alphaIdx$Fisher == TRUE) {
     if (length(SSD) > 2) {
-      FisherAlpha <- fisher.alpha(SSD)
+      FisherAlpha <- fisher.alpha(as.numeric(SSD))
     }
   } else {
     FisherAlpha <- 0
@@ -779,6 +786,8 @@ prepare_HDR_SSD <- function(HDR_SS, SSD_Path, nbclusters, window_size){
   # define image size
   HDR_SSD$samples <- round(HDR_SS$samples / window_size)
   HDR_SSD$lines <- round(HDR_SS$lines / window_size)
+  # HDR_SSD$samples <- floor(HDR_SS$samples / window_size)
+  # HDR_SSD$lines <- floor(HDR_SS$lines / window_size)
   HDR_SSD$interleave <- 'bil'
   HDR_SSD$`file type` <- NULL
   HDR_SSD$classes <- NULL
