@@ -403,15 +403,9 @@ compute_beta_metrics <- function(ClusterMap_Path,
   #   Beta_Ordination_sel <- compute_NMDS(MatBCdist)
   #   PCname <- 'NMDS'
   # } else if (scaling == 'PCO') {
-<<<<<<< HEAD
   BetaPCO <- labdsv::pco(MatBCdist, k = dimMDS)
   Beta_Ordination_sel <- BetaPCO$points
   PCname <- 'PCoA'
-=======
-    BetaPCO <- labdsv::pco(MatBCdist, k = dimMDS)
-    Beta_Ordination_sel <- BetaPCO$points
-    PCname <- 'PCoA'
->>>>>>> dev
   # }
 
   # 2- perform analysis on all the image, using nearest neighbor between
