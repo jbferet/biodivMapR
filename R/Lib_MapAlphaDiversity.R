@@ -414,8 +414,10 @@ compute_SSD <- function(Image_Chunk, window_size, nbclusters,
                         MinSun = 0.25, pcelim = 0.02,
                         Index_Alpha = "Shannon", nbCPU = 1, nbPieces = 1, Mask_Chunk = FALSE) {
 
-  nbi <- round(dim(Image_Chunk)[1] / window_size)
-  nbj <- round(dim(Image_Chunk)[2] / window_size)
+  nbi <- ceiling(dim(Image_Chunk)[1] / window_size)
+  nbj <- ceiling(dim(Image_Chunk)[2] / window_size)
+  # nbi <- round(dim(Image_Chunk)[1] / window_size)
+  # nbj <- round(dim(Image_Chunk)[2] / window_size)
   nb_partitions <- dim(Image_Chunk)[3]
   SSDMap <- array(NA, c(nbi, nbj, nb_partitions * nbclusters))
   shannonIter <- FisherAlpha <- SimpsonAlpha <- array(NA, dim = c(nbi, nbj, nb_partitions))
@@ -770,22 +772,26 @@ compute_ALPHA_per_window <- function(SSD, nbPix_Sunlit, alphaIdx, nbclusters,
   return(res)
 }
 
-# prepares Spectral species distribution (SSD) file and header
-#
-# @param HDR_SS list. header of the spectral species file
-# @param SSD_Path character. path for spectral species file
-# @param nbclusters numeric. number of clusters
-# @param window_size numeric. window size
-#
-# @return HDR_SSD
+#' prepares Spectral species distribution (SSD) file and header
+#'
+#' @param HDR_SS list. header of the spectral species file
+#' @param SSD_Path character. path for spectral species file
+#' @param nbclusters numeric. number of clusters
+#' @param window_size numeric. window size
+#'
+#' @return HDR_SSD
+#' @export
+
 prepare_HDR_SSD <- function(HDR_SS, SSD_Path, nbclusters, window_size){
   # prepare SS distribution map
   HDR_SSD <- HDR_SS
   # define number of bands
   HDR_SSD$bands <- HDR_SS$bands * nbclusters
   # define image size
-  HDR_SSD$samples <- round(HDR_SS$samples / window_size)
-  HDR_SSD$lines <- round(HDR_SS$lines / window_size)
+  HDR_SSD$samples <- ceiling(HDR_SS$samples / window_size)
+  HDR_SSD$lines <- ceiling(HDR_SS$lines / window_size)
+  # HDR_SSD$samples <- round(HDR_SS$samples / window_size)
+  # HDR_SSD$lines <- round(HDR_SS$lines / window_size)
   # HDR_SSD$samples <- floor(HDR_SS$samples / window_size)
   # HDR_SSD$lines <- floor(HDR_SS$lines / window_size)
   HDR_SSD$interleave <- 'bil'
