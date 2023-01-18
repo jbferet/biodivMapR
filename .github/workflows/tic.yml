@@ -108,15 +108,15 @@ jobs:
         if: runner.os == 'Linux' && matrix.config.pkgdown != ''
         run: sudo apt install libharfbuzz-dev libfribidi-dev
 
-      - name: "[Stage] [macOS] Install system libs for terra"
-        if: runner.os == 'macOS'
-        run: |
+#      - name: "[Stage] [macOS] Install system libs for terra"
+#        if: runner.os == 'macOS'
+#        run: |
             # from https://github.com/r-spatial/sf/blob/main/.github/workflows/tic.yml
             # maybe not necessary anymore as package terra is installed from binary
             # rm '/usr/local/bin/gfortran'
             # brew install pkg-config gdal proj geos
             # preinstall package terra binary as compilation from source fails for macOS-latest
-            Rscript -e "install.packages('terra', type='binary')"
+#            Rscript -e "install.packages('terra', type='binary')"
 
       - name: Install dissUtils
         run: Rscript -e "remotes::install_github('cran/dissUtils')"
