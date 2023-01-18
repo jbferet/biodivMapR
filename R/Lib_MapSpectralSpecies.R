@@ -37,6 +37,15 @@ map_spectral_species <- function(Input_Image_File, Input_Mask_File, Output_Dir,
 
   Kmeans_info <- NULL
   # if no prior diversity map has been produced --> need PCA file
+  if (is.null(SpectralSpace_Output$PCA_Files) | is.null(SpectralSpace_Output$TypePCA)){
+    message('Please define input variable SpectralSpace_Output as a list including')
+    message('PCA_Files: corresponds to the raster data to be processed (not necessarily resulting from PCA)')
+    message('TypePCA: defines main directory where outputs will be written')
+    message('This variable is automatically produced as an output of function perform_PCA()')
+    message('However, you can set it manually, for example if you want to use spectral indices')
+    message('as input raster data instead of PCA file produced from reflectance data')
+    stop()
+  }
   if (!file.exists(SpectralSpace_Output$PCA_Files)) {
     error_no_PCA_file(SpectralSpace_Output$PCA_Files)
     stop()
@@ -48,14 +57,21 @@ map_spectral_species <- function(Input_Image_File, Input_Mask_File, Output_Dir,
   Spectral_Species_Path <-  file.path(Output_Dir_SS, "SpectralSpecies")
 
   # 1- Select components used to perform clustering
-  if (SelectedPCs == FALSE){
-    PC_Select_Path <- file.path(Output_Dir_PCA, "Selected_Components.txt")
+  if (typeof(SelectedPCs) == 'logical'){
+    if (SelectedPCs == FALSE){
+      PC_Select_Path <- file.path(Output_Dir_PCA, "Selected_Components.txt")
+    } else {
+      message('Error when defining SelectedPCs :')
+      message('either set SelectedPCs = FALSE')
+      message('or provide a vectorincluding the rank of the variables to be selected from SpectralSpace_Output$PCA_Files')
+      stop()
+    }
   } else {
     PC_Select_Path = 'NoFile'
   }
   if (file.exists(PC_Select_Path)) {
     PC_Select <- utils::read.table(PC_Select_Path)[[1]]
-  } else if (!SelectedPCs == FALSE){
+  } else if (is.numeric(SelectedPCs)){
     PC_Select <- SelectedPCs
   } else {
     error_PC_sel(Output_Dir_PCA)

@@ -1,3 +1,9 @@
+# biodivMapR v1.10.2
+
+## Fix
+- fixed bug when defining SelectedPCs as a vector in map_spectral_species()
+- Updated vignettes
+
 # biodivMapR v1.10.1
 
 ## Fix
