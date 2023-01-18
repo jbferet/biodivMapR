@@ -98,6 +98,7 @@ Here, we produce figures in order to locate the different types of vegetation in
 library(rgdal)
 library(tools)
 library(ggplot2)
+library(gridExtra)
 nbSamples <- shpName <- c()
 for (i in 1:length(Path_Vector)){
   shp <- Path_Vector[i]

@@ -29,7 +29,7 @@ Here we will illustrate this functionality with the S2 subset used in the previo
 
 ## Computation of the spectral indices
 
-The computation of spectral indices can be performed with the package `prosail`. Please refer to the [homepage](https://jbferet.gitlab.io/prosail/index.html) and follow instructions for installation. 
+The computation of spectral indices can be performed with the package `spinR`. Please refer to the [homepage](https://gitlab.com/jbferet/spinr) and follow instructions for installation. 
 
 ### Load additional libraries and prepare data for computation
 
@@ -38,7 +38,7 @@ Here, the path for the image to be processed is assumed to be defined in the `de
 We will first read it with the `raster` package, and get the central wavelength corresponding to each spectral band in the file from the __header file__, which is critical for the automated computation of spectral indices. 
 
 ```{r load libraries and read image}
-library(prosail) # https://jbferet.gitlab.io/prosail/
+library(spinR) # https://gitlab.com/jbferet/spinr
 library(preprocS2) # https://jbferet.gitlab.io/preprocs2/
 library(stars)
 library(raster)
@@ -52,22 +52,26 @@ SensorBands <- HDR$wavelength
 ```
 
 
-### Computation of spectral indices pre-defined in `prosail`
+### Computation of spectral indices pre-defined in `spinR`
 
 A set of spectral indices specific to Sentinel-2 sensors is already available. If you are not using Sentinel-2 data, then the spctral indices will still be computed, but they will use the closest band available to the Sentinel-2 bands required. 
 
 __There are over 35 spectral indices, some showing high redundancy with each others.__
 
-You can check the expression used to compute them [here](https://gitlab.com/jbferet/prosail/-/blob/master/R/Lib_SpectralIndices.R){target="_blank"}.
+You can check the expression used to compute them [here](https://gitlab.com/jbferet/spinr/-/blob/master/R/Lib_SpectralIndices.R){target="_blank"}.
 
 To obtain the list of spectral indices, and to compute a set of spectral indices from this list, please proceed as follows:
 
 ```{r Compute pre-defined indices}
 # First define a list of spectral indices
 Sel_Indices <- c('mNDVI705','CR_SWIR','LAI_SAVI')
-# then compute the spectral indices
-Spectral_Indices <- ComputeSpectralIndices_Raster(ImBrick, SensorBands, Sel_Indices=Sel_Indices, 
-                                                  StackOut=T,ReflFactor = 10000)
+# then compute the spectral indices from raster data, using spectral bands as 
+# close as possible from Sentinel-2 spectral bands used for the spectral indices
+Spectral_Indices <- spinR::compute_S2SI_Raster(Refl = ImBrick, 
+                                               SensorBands = SensorBands, 
+                                               Sel_Indices = Sel_Indices, 
+                                               StackOut = T, 
+                                               ReflFactor = 10000)
 # get the name of all spectral indices available
 unlist(Spectral_Indices$listIndices)
 
@@ -99,9 +103,11 @@ Bands_NDVI <- list()
 Bands_NDVI[['B1']] <- 665
 Bands_NDVI[['B2']] <- 835
 # 3- Compute the spectral indices
-NDVI <- ComputeSpectralIndices_fromExpression(Refl = ImBrick, SensorBands = SensorBands, 
-                                               ExpressIndex = Expression_NDVI, listBands = Bands_NDVI, 
-                                               ReflFactor=10000, NameIndex = 'NDVI')
+NDVI <- spinR::compute_SI_fromExp(Refl = ImBrick, 
+                                  SensorBands = SensorBands, 
+                                  ExpressIndex = Expression_NDVI, 
+                                  listBands = Bands_NDVI, 
+                                  ReflFactor = 10000, NameIndex = 'NDVI')
 ```
 
 The same results should be obtained as when using pre-defined NDVI, with a correlation of 1. 
@@ -110,8 +116,11 @@ The same results should be obtained as when using pre-defined NDVI, with a corre
 # First define a list of spectral indices
 Index <- c('NDVI')
 # then compute the spectral indices
-NDVI_Precomp <- ComputeSpectralIndices_Raster(ImBrick, SensorBands, Sel_Indices=Index, 
-                                                  StackOut=F,ReflFactor = 10000)
+NDVI_Precomp <- spinR::compute_S2SI_Raster(Refl = ImBrick, 
+                                           SensorBands = SensorBands, 
+                                           Sel_Indices = Index, 
+                                           StackOut = F,
+                                           ReflFactor = 10000)
 cor.test(c(values(NDVI)),c(values(NDVI_Precomp$SpectralIndices$NDVI)))
 ```
 
@@ -135,7 +144,7 @@ Mask <- 0*Spectral_Indices$SpectralIndices$mNDVI705+1
 # remove outliers from spectral indices
 for (idx in Sel_Indices){
   rast <- Spectral_Indices$SpectralIndices[[idx]]
-  IQRminmax <- IQR_outliers(DistVal = raster::values(rast),weightIRQ = 3)
+  IQRminmax <- biodivMapR::IQR_outliers(DistVal = raster::values(rast),weightIRQ = 3)
   Mask[rast<IQRminmax[1] | rast>IQRminmax[2]] <- NA
 }
 # apply mask on stack and convert as stars object
@@ -157,7 +166,10 @@ Input_Mask_File <- file.path(PathIndices,'Mask')
 stars::write_stars(st_as_stars(Mask), dsn=Input_Mask_File, driver =  "ENVI",type='Byte')
 # save Stack of spectral indices in raster file with spectral indices defining band names
 Path_StackIndices <- file.path(PathIndices,NameStack)
-write_StarsStack(StarsObj = StarsObj, dsn = Path_StackIndices, Bands=Sel_Indices, datatype='Float32')
+biodivMapR::write_StarsStack(StarsObj = StarsObj, 
+                             dsn = Path_StackIndices, 
+                             BandNames = Sel_Indices, 
+                             datatype='Float32')
 ```
 
 
@@ -180,7 +192,7 @@ Output_Dir <- '../RESULTS'
 window_size <- 10
 # computational parameters
 nbCPU <- 4
-MaxRAM <- 0.5
+MaxRAM <- 0.25
 # number of clusters (spectral species)
 nbclusters <- 50
 
@@ -197,10 +209,16 @@ Pix_Per_Partition <- round(0.1*NbPix/nb_partitions)
 print("MAP SPECTRAL SPECIES")
 # select all spectral indices
 SelectedPCs <- seq(1,dim(raster::stack(Input_SIstack_File))[3])
-Kmeans_info <- map_spectral_species(Input_Image_File = Input_SIstack_File, Output_Dir = Output_Dir, SelectedPCs = SelectedPCs,
-                                    PCA_Files = Input_SIstack_File, Input_Mask_File = Input_Mask_File,
-                                    Pix_Per_Partition = Pix_Per_Partition, nb_partitions = nb_partitions,
-                                    nbCPU = nbCPU, MaxRAM = MaxRAM, nbclusters = nbclusters, TypePCA = TypePCA)
+SpectralSpace_Output <- list('PCA_Files' = Input_SIstack_File, 
+                             'TypePCA' = TypePCA)
+
+Kmeans_info <- map_spectral_species(Input_Image_File = Input_SIstack_File, 
+                                    Input_Mask_File = Input_Mask_File,
+                                    Output_Dir = Output_Dir,
+                                    SpectralSpace_Output = SpectralSpace_Output, 
+                                    nbclusters = nbclusters, 
+                                    nbCPU = nbCPU, MaxRAM = MaxRAM, 
+                                    SelectedPCs = SelectedPCs)
 ```
 
 ### Map diversity indices
@@ -209,21 +227,37 @@ Kmeans_info <- map_spectral_species(Input_Image_File = Input_SIstack_File, Outpu
 # https://jbferet.github.io/biodivMapR/articles/biodivMapR_06.html
 print("MAP ALPHA DIVERSITY")
 Index_Alpha <- c('Shannon')
-map_alpha_div(Input_Image_File = Input_SIstack_File, Output_Dir = Output_Dir, TypePCA = TypePCA,
-              window_size = window_size, nbCPU = nbCPU, MaxRAM = MaxRAM,
-              Index_Alpha = Index_Alpha, nbclusters = nbclusters,LowRes = T)
+map_alpha_div(Input_Image_File = Input_SIstack_File, 
+              Input_Mask_File = Input_Mask_File, 
+              Output_Dir = Output_Dir, 
+              TypePCA = TypePCA,
+              window_size = window_size, 
+              nbCPU = nbCPU, 
+              MaxRAM = MaxRAM,
+              Index_Alpha = Index_Alpha, 
+              nbclusters = nbclusters)
 
 print("MAP BETA DIVERSITY")
-map_beta_div(Input_Image_File = Input_SIstack_File, Output_Dir = Output_Dir, TypePCA = TypePCA,
-             window_size = window_size, nb_partitions=nb_partitions, nbCPU = nbCPU, MaxRAM = MaxRAM,
+map_beta_div(Input_Image_File = Input_SIstack_File, 
+             Output_Dir = Output_Dir, 
+             TypePCA = TypePCA,
+             window_size = window_size, 
+             nbCPU = nbCPU, 
+             MaxRAM = MaxRAM,
              nbclusters = nbclusters)
 
 print("MAP FUNCTIONAL DIVERSITY")
 # https://jbferet.github.io/biodivMapR/articles/biodivMapR_7.html
 # Villeger et al, 2008 https://doi.org/10.1890/07-1206.1
-map_functional_div(Original_Image_File = Input_SIstack_File, Functional_File = Input_SIstack_File,
-                   Selected_Features = SelectedPCs, Output_Dir = Output_Dir,
-                   window_size = window_size, nbCPU = nbCPU, MaxRAM = MaxRAM,TypePCA = TypePCA, LowRes = T)
+
+map_functional_div(Original_Image_File = Input_SIstack_File, 
+                   Functional_File = Input_SIstack_File,
+                   Selected_Features = SelectedPCs, 
+                   Output_Dir = Output_Dir,
+                   window_size = window_size, 
+                   nbCPU = nbCPU, 
+                   MaxRAM = MaxRAM,
+                   TypePCA = TypePCA)
 ```
 
 ### Perform validation based on a vectorized plot network

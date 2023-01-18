@@ -114,14 +114,14 @@ Once opened in QGIS, the image should look like this:
 
 ## Compute spectral indices from imaging spectroscopy
 
-The computation of spectral indices can be performed with the package `prosail`. Please refer to the [homepage](https://jbferet.gitlab.io/prosail/index.html) and follow instructions for installation. 
+The computation of spectral indices can be performed with the package `spinR`. Please refer to the [homepage](https://gitlab.com/jbferet/spinr) and follow instructions for installation. 
 
 ### Load additional libraries and prepare data for computation
 
 We will first read the imaging spectroscopy raster with the `raster` package. We will also get the central wavelength corresponding to each spectral band in the file from the __header file__, which is critical for the automated computation of spectral indices.
 
 ```{r load libraries and read image}
-library(prosail) # https://jbferet.gitlab.io/prosail/
+library(spinR) # https://gitlab.com/jbferet/spinr
 library(stars)
 library(raster)
 # 
@@ -153,14 +153,18 @@ ReflFactor <- 10000 # using reflectance data coded in Int16 between 0 and 10000
 #############################       NDVI     ###################################
 # 1- Define the expression corresponding to the spectral index
 Expression_NDVI <- '(B2-B1)/(B2+B1)'
-# 2- Define the spectral bands corresponding to bands in the spectral index, identified as BXX, with XX the number of the band
+# 2- Define the spectral bands corresponding to bands in the spectral index, 
+# identified as BXX, with XX the number of the band
 Bands_NDVI <- list()
 Bands_NDVI[['B1']] <- 665
 Bands_NDVI[['B2']] <- 835
 # 3- Compute the spectral indices
-NDVI <- ComputeSpectralIndices_fromExpression(Refl = ImBrick, SensorBands = SensorBands, 
-                                               ExpressIndex = Expression_NDVI, listBands = Bands_NDVI, 
-                                               ReflFactor=ReflFactor, NameIndex = 'NDVI')
+NDVI <- spinR::compute_SI_fromExp(Refl = ImBrick, 
+                                  SensorBands = SensorBands, 
+                                  ExpressIndex = Expression_NDVI, 
+                                  listBands = Bands_NDVI, 
+                                  ReflFactor = ReflFactor, 
+                                  NameIndex = 'NDVI')
 
 #############################   TCARI/OSAVI   ##################################
 # _______________                     TCARI                     ________________
@@ -172,9 +176,12 @@ Bands_TCARI[['B3']] <- 550
 # 2- Formula for the index
 Formula_TCARI <- '3*(B1-B2-0.2*(B1-B3)*(B1/B2))'
 # 3- application of spectral index on image
-TCARI <- ComputeSpectralIndices_fromExpression(Refl = ImBrick, SensorBands = SensorBands,
-                                               ExpressIndex = Formula_TCARI, listBands = Bands_TCARI,
-                                               ReflFactor=ReflFactor,NameIndex = 'TCARI')
+TCARI <- spinR::compute_SI_fromExp(Refl = ImBrick, 
+                                   SensorBands = SensorBands,
+                                   ExpressIndex = Formula_TCARI, 
+                                   listBands = Bands_TCARI,
+                                   ReflFactor = ReflFactor,
+                                   NameIndex = 'TCARI')
 
 # _______________                     OSAVI                     ________________
 # 1- spectral bands to be used
@@ -185,9 +192,12 @@ Bands_OSAVI[['B3']] <- 670
 # 2- Formula for the index
 Formula_OSAVI <- '1.16*(B1-B3)/(B2+B3-0.16)'
 # 3- application of spectral index on image
-OSAVI <- ComputeSpectralIndices_fromExpression(Refl = ImBrick, SensorBands = SensorBands,
-                                               ExpressIndex = Formula_OSAVI, listBands = Bands_OSAVI,
-                                               ReflFactor=ReflFactor,NameIndex = 'OSAVI')
+OSAVI <- spinR::compute_SI_fromExp(Refl = ImBrick, 
+                                   SensorBands = SensorBands,
+                                   ExpressIndex = Formula_OSAVI, 
+                                   listBands = Bands_OSAVI,
+                                   ReflFactor = ReflFactor,
+                                   NameIndex = 'OSAVI')
 
 # _______________             Compute TCARI/OSAVI             _________________
 message('computing TCARI/OSAVI')
@@ -195,38 +205,48 @@ TCARI_OSAVI <- TCARI/OSAVI
 names(TCARI_OSAVI) <- 'TCARI_OSAVI'
 
 #############################       CR_SWIR     ##################################
-# 1- The expression for computation of continuum removal is already coded in PROSAIL
-# 2- Define the spectral bands corresponding to bands in the spectral index, identified as BXX, with XX the number of the band
+# 1- The expression for computation of continuum removal is already coded in spinR
+# 2- Define the spectral bands corresponding to bands in the spectral index
 Bands_CR_SWIR <- list()
 Bands_CR_SWIR[['CRmin']] <- 1150
 Bands_CR_SWIR[['CRmax']] <- 2200
 Bands_CR_SWIR[['target']] <- 1550
 # 3- Compute the spectral indices
-CR_SWIR <- CR_WL(Refl = ImBrick, SensorBands = SensorBands,
-                 CRbands = Bands_CR_SWIR, ReflFactor=ReflFactor)
+CR_SWIR <- spinR::CR_WL(Refl = ImBrick, 
+                        SensorBands = SensorBands,
+                        CRbands = Bands_CR_SWIR, 
+                        ReflFactor = ReflFactor)
 CR_SWIR <- CR_SWIR[[1]]
 
 #############################       ND_LMA     ##################################
 # 1- Define the expression corresponding to the spectral index
 Expression_ND_LMA <- '(B2-B1)/(B2+B1)'
-# 2- Define the spectral bands corresponding to bands in the spectral index, identified as BXX, with XX the number of the band
+# 2- Define the spectral bands corresponding to bands in the spectral index
 Bands_ND_LMA <- list()
 Bands_ND_LMA[['B1']] <- 1490
 Bands_ND_LMA[['B2']] <- 2260
 # 3- Compute the spectral indices
-ND_LMA <- ComputeSpectralIndices_fromExpression(Refl = ImBrick, SensorBands = SensorBands, 
-                                               ExpressIndex = Expression_ND_LMA, listBands = Bands_ND_LMA, 
-                                               ReflFactor=ReflFactor, NameIndex = 'ND_LMA')
+ND_LMA <- spinR::CR_WL(Refl = ImBrick, 
+                       SensorBands = SensorBands, 
+                       ExpressIndex = Expression_ND_LMA, 
+                       listBands = Bands_ND_LMA, 
+                       ReflFactor = ReflFactor, 
+                       NameIndex = 'ND_LMA')
 
 #############################       ANCB      ##################################
 message('computing ANCB')
 AUCminmax <- list()
 AUCminmax[['CRmin']] <- 650
 AUCminmax[['CRmax']] <- 720
-ANCB <- AUC(Refl = ImBrick, SensorBands = SensorBands, AUCminmax = AUCminmax, ReflFactor=ReflFactor)
+ANCB <- spinR::AUC(Refl = ImBrick, 
+                   SensorBands = SensorBands, 
+                   AUCminmax = AUCminmax, 
+                   ReflFactor = ReflFactor)
 AUCminmax[['target']] <- 670
-ANCB <- ANCB/(1-CR_WL(Refl = ImBrick, SensorBands = SensorBands,
-                      CRbands = AUCminmax, ReflFactor=ReflFactor)[[1]])
+ANCB <- ANCB/(1-spinR::CR_WL(Refl = ImBrick, 
+                             SensorBands = SensorBands,
+                             CRbands = AUCminmax, 
+                             ReflFactor = ReflFactor)[[1]])
 ```
 
 Once computed, we we perform interquartile analysis on these spectral indices in order to mask outliers. 
@@ -330,7 +350,10 @@ NameRaster <- 'HSI_Lautaret'
 NameStack <- paste(NameRaster,'_StackIndices',sep = '')
 # save Stack of spectral indices in raster file with spectral indices defining band names
 Path_StackIndices <- file.path(PathData,NameStack)
-write_StarsStack(StarsObj = StarsObj, dsn = Path_StackIndices, BandNames =names(Index_Path), datatype='Float32')
+biodivMapR::write_StarsStack(StarsObj = StarsObj, 
+                             dsn = Path_StackIndices, 
+                             BandNames = names(Index_Path), 
+                             datatype = 'Float32')
 ```
 
 ## Run biodivMapR on a raster stack
@@ -368,10 +391,16 @@ Pix_Per_Partition <- round(0.1*NbPix/nb_partitions)
 print("MAP SPECTRAL SPECIES")
 # select all spectral indices
 SelectedPCs <- seq(1,dim(raster::stack(Input_SIstack_File))[3])
-Kmeans_info <- map_spectral_species(Input_Image_File = Input_SIstack_File, Output_Dir = Output_Dir, SelectedPCs = SelectedPCs,
-                                    PCA_Files = Input_SIstack_File, Input_Mask_File = Input_Mask_File,
-                                    Pix_Per_Partition = Pix_Per_Partition, nb_partitions = nb_partitions,
-                                    nbCPU = nbCPU, MaxRAM = MaxRAM, nbclusters = nbclusters, TypePCA = TypePCA)
+SpectralSpace_Output <- list('PCA_Files' = Input_SIstack_File, 
+                             'TypePCA' = TypePCA)
+
+Kmeans_info <- map_spectral_species(Input_Image_File = Input_SIstack_File, 
+                                    Input_Mask_File = Input_Mask_File,
+                                    Output_Dir = Output_Dir,
+                                    SpectralSpace_Output = SpectralSpace_Output, 
+                                    nbclusters = nbclusters, 
+                                    nbCPU = nbCPU, MaxRAM = MaxRAM, 
+                                    SelectedPCs = SelectedPCs)
 ```
 
 ### Map diversity indices
@@ -380,21 +409,36 @@ Kmeans_info <- map_spectral_species(Input_Image_File = Input_SIstack_File, Outpu
 # https://jbferet.github.io/biodivMapR/articles/biodivMapR_06.html
 print("MAP ALPHA DIVERSITY")
 Index_Alpha <- c('Shannon')
-map_alpha_div(Input_Image_File = Input_SIstack_File, Output_Dir = Output_Dir, TypePCA = TypePCA,
-              window_size = window_size, nbCPU = nbCPU, MaxRAM = MaxRAM,
-              Index_Alpha = Index_Alpha, nbclusters = nbclusters,LowRes = T)
+map_alpha_div(Input_Image_File = Input_SIstack_File, 
+              Input_Mask_File = Input_Mask_File, 
+              Output_Dir = Output_Dir, 
+              TypePCA = TypePCA,
+              window_size = window_size, 
+              nbCPU = nbCPU, 
+              MaxRAM = MaxRAM,
+              Index_Alpha = Index_Alpha, 
+              nbclusters = nbclusters)
 
 print("MAP BETA DIVERSITY")
-map_beta_div(Input_Image_File = Input_SIstack_File, Output_Dir = Output_Dir, TypePCA = TypePCA,
-             window_size = window_size, nb_partitions=nb_partitions, nbCPU = nbCPU, MaxRAM = MaxRAM,
+map_beta_div(Input_Image_File = Input_SIstack_File, 
+             Output_Dir = Output_Dir, 
+             TypePCA = TypePCA,
+             window_size = window_size, 
+             nbCPU = nbCPU, 
+             MaxRAM = MaxRAM,
              nbclusters = nbclusters)
 
 # print("MAP FUNCTIONAL DIVERSITY")
 # https://jbferet.github.io/biodivMapR/articles/biodivMapR_07.html
 # Villeger et al, 2008 https://doi.org/10.1890/07-1206.1
-# map_functional_div(Original_Image_File = Input_SIstack_File, Functional_File = Input_SIstack_File,
-#                    Selected_Features = SelectedPCs, Output_Dir = Output_Dir,
-#                    window_size = window_size, nbCPU = nbCPU, MaxRAM = MaxRAM,TypePCA = TypePCA, LowRes = T)
+# map_functional_div(Original_Image_File = Input_SIstack_File, 
+#                    Functional_File = Input_SIstack_File,
+#                    Selected_Features = SelectedPCs, 
+#                    Output_Dir = Output_Dir,
+#                    window_size = window_size, 
+#                    nbCPU = nbCPU, 
+#                    MaxRAM = MaxRAM,
+#                    TypePCA = TypePCA)
 ```
 
 The map corresponding to beta-diversity (based on a principal coordinate analysis applied to Bray Curts dissimilarity matrix) is displayed hereafter:

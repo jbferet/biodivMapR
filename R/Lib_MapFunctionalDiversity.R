@@ -40,8 +40,9 @@ map_functional_div <- function(Original_Image_File,Functional_File = FALSE,
                                Output_Dir, window_size,
                                TypePCA = "SPCA",
                                MinSun = 0.25,
-                               FullRes = TRUE,LowRes = FALSE, MapSTD = FALSE,
-                               nbCPU = FALSE, MaxRAM = FALSE,SmoothImage = TRUE) {
+                               FullRes = FALSE, LowRes = TRUE, MapSTD = TRUE,
+                               nbCPU = 1, MaxRAM = 0.25,
+                               SmoothImage = TRUE) {
 
   if (Functional_File==FALSE){
     Functional_File <- Original_Image_File
@@ -69,8 +70,10 @@ map_functional_div <- function(Original_Image_File,Functional_File = FALSE,
   Functional_Map_Path <- file.path(Output_Dir_Funct, "FunctionalDiversity_Map")
   # 1- COMPUTE FUNCTIONAL DIVERSITY: RICHNESS, EVENNESS, DIVERGENCE
   print("Compute functional metrics")
-  FunctionalMetrics <- compute_Functional_metrics(Functional_File = Functional_File, Functional_Map_Path = Functional_Map_Path,
-                                                  Selected_Features = Selected_Features, window_size = window_size,
+  FunctionalMetrics <- compute_Functional_metrics(Functional_File = Functional_File,
+                                                  Functional_Map_Path = Functional_Map_Path,
+                                                  Selected_Features = Selected_Features,
+                                                  window_size = window_size,
                                                   MinSun = MinSun, nbCPU = nbCPU, MaxRAM = MaxRAM)
 
   # 2- SAVE FUNCTIONAL DIVERSITY MAPS
