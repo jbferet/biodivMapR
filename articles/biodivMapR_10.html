@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.2</span>
       </span>
     </div>
 
@@ -128,7 +128,7 @@
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2023-01-17</h4>
+            <h4 data-toc-skip class="date">2023-01-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_10.Rmd" class="external-link"><code>vignettes/biodivMapR_10.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_10.Rmd</code></div>
@@ -265,8 +265,8 @@ Illustration of S type
 <h2 id="compute-spectral-indices-from-imaging-spectroscopy">Compute spectral indices from imaging spectroscopy<a class="anchor" aria-label="anchor" href="#compute-spectral-indices-from-imaging-spectroscopy"></a>
 </h2>
 <p>The computation of spectral indices can be performed with the package
-<code>prosail</code>. Please refer to the <a href="https://jbferet.gitlab.io/prosail/index.html" class="external-link">homepage</a> and
-follow instructions for installation.</p>
+<code>spinR</code>. Please refer to the <a href="https://gitlab.com/jbferet/spinr" class="external-link">homepage</a> and follow
+instructions for installation.</p>
 <div class="section level3">
 <h3 id="load-additional-libraries-and-prepare-data-for-computation">Load additional libraries and prepare data for computation<a class="anchor" aria-label="anchor" href="#load-additional-libraries-and-prepare-data-for-computation"></a>
 </h3>
@@ -276,7 +276,7 @@ corresponding to each spectral band in the file from the <strong>header
 file</strong>, which is critical for the automated computation of
 spectral indices.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">prosail</span><span class="op">)</span> <span class="co"># https://jbferet.gitlab.io/prosail/</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">spinR</span><span class="op">)</span> <span class="co"># https://gitlab.com/jbferet/spinr</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/stars/" class="external-link">stars</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span></span>
 <span><span class="co"># </span></span>
@@ -310,14 +310,18 @@ indices based on an expression.</p>
 <span><span class="co">#############################       NDVI     ###################################</span></span>
 <span><span class="co"># 1- Define the expression corresponding to the spectral index</span></span>
 <span><span class="va">Expression_NDVI</span> <span class="op">&lt;-</span> <span class="st">'(B2-B1)/(B2+B1)'</span></span>
-<span><span class="co"># 2- Define the spectral bands corresponding to bands in the spectral index, identified as BXX, with XX the number of the band</span></span>
+<span><span class="co"># 2- Define the spectral bands corresponding to bands in the spectral index, </span></span>
+<span><span class="co"># identified as BXX, with XX the number of the band</span></span>
 <span><span class="va">Bands_NDVI</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">Bands_NDVI</span><span class="op">[[</span><span class="st">'B1'</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">665</span></span>
 <span><span class="va">Bands_NDVI</span><span class="op">[[</span><span class="st">'B2'</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">835</span></span>
 <span><span class="co"># 3- Compute the spectral indices</span></span>
-<span><span class="va">NDVI</span> <span class="op">&lt;-</span> <span class="fu">ComputeSpectralIndices_fromExpression</span><span class="op">(</span>Refl <span class="op">=</span> <span class="va">ImBrick</span>, SensorBands <span class="op">=</span> <span class="va">SensorBands</span>, </span>
-<span>                                               ExpressIndex <span class="op">=</span> <span class="va">Expression_NDVI</span>, listBands <span class="op">=</span> <span class="va">Bands_NDVI</span>, </span>
-<span>                                               ReflFactor<span class="op">=</span><span class="va">ReflFactor</span>, NameIndex <span class="op">=</span> <span class="st">'NDVI'</span><span class="op">)</span></span>
+<span><span class="va">NDVI</span> <span class="op">&lt;-</span> <span class="fu">spinR</span><span class="fu">::</span><span class="fu">compute_SI_fromExp</span><span class="op">(</span>Refl <span class="op">=</span> <span class="va">ImBrick</span>, </span>
+<span>                                  SensorBands <span class="op">=</span> <span class="va">SensorBands</span>, </span>
+<span>                                  ExpressIndex <span class="op">=</span> <span class="va">Expression_NDVI</span>, </span>
+<span>                                  listBands <span class="op">=</span> <span class="va">Bands_NDVI</span>, </span>
+<span>                                  ReflFactor <span class="op">=</span> <span class="va">ReflFactor</span>, </span>
+<span>                                  NameIndex <span class="op">=</span> <span class="st">'NDVI'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#############################   TCARI/OSAVI   ##################################</span></span>
 <span><span class="co"># _______________                     TCARI                     ________________</span></span>
@@ -329,9 +333,12 @@ indices based on an expression.</p>
 <span><span class="co"># 2- Formula for the index</span></span>
 <span><span class="va">Formula_TCARI</span> <span class="op">&lt;-</span> <span class="st">'3*(B1-B2-0.2*(B1-B3)*(B1/B2))'</span></span>
 <span><span class="co"># 3- application of spectral index on image</span></span>
-<span><span class="va">TCARI</span> <span class="op">&lt;-</span> <span class="fu">ComputeSpectralIndices_fromExpression</span><span class="op">(</span>Refl <span class="op">=</span> <span class="va">ImBrick</span>, SensorBands <span class="op">=</span> <span class="va">SensorBands</span>,</span>
-<span>                                               ExpressIndex <span class="op">=</span> <span class="va">Formula_TCARI</span>, listBands <span class="op">=</span> <span class="va">Bands_TCARI</span>,</span>
-<span>                                               ReflFactor<span class="op">=</span><span class="va">ReflFactor</span>,NameIndex <span class="op">=</span> <span class="st">'TCARI'</span><span class="op">)</span></span>
+<span><span class="va">TCARI</span> <span class="op">&lt;-</span> <span class="fu">spinR</span><span class="fu">::</span><span class="fu">compute_SI_fromExp</span><span class="op">(</span>Refl <span class="op">=</span> <span class="va">ImBrick</span>, </span>
+<span>                                   SensorBands <span class="op">=</span> <span class="va">SensorBands</span>,</span>
+<span>                                   ExpressIndex <span class="op">=</span> <span class="va">Formula_TCARI</span>, </span>
+<span>                                   listBands <span class="op">=</span> <span class="va">Bands_TCARI</span>,</span>
+<span>                                   ReflFactor <span class="op">=</span> <span class="va">ReflFactor</span>,</span>
+<span>                                   NameIndex <span class="op">=</span> <span class="st">'TCARI'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># _______________                     OSAVI                     ________________</span></span>
 <span><span class="co"># 1- spectral bands to be used</span></span>
@@ -342,9 +349,12 @@ indices based on an expression.</p>
 <span><span class="co"># 2- Formula for the index</span></span>
 <span><span class="va">Formula_OSAVI</span> <span class="op">&lt;-</span> <span class="st">'1.16*(B1-B3)/(B2+B3-0.16)'</span></span>
 <span><span class="co"># 3- application of spectral index on image</span></span>
-<span><span class="va">OSAVI</span> <span class="op">&lt;-</span> <span class="fu">ComputeSpectralIndices_fromExpression</span><span class="op">(</span>Refl <span class="op">=</span> <span class="va">ImBrick</span>, SensorBands <span class="op">=</span> <span class="va">SensorBands</span>,</span>
-<span>                                               ExpressIndex <span class="op">=</span> <span class="va">Formula_OSAVI</span>, listBands <span class="op">=</span> <span class="va">Bands_OSAVI</span>,</span>
-<span>                                               ReflFactor<span class="op">=</span><span class="va">ReflFactor</span>,NameIndex <span class="op">=</span> <span class="st">'OSAVI'</span><span class="op">)</span></span>
+<span><span class="va">OSAVI</span> <span class="op">&lt;-</span> <span class="fu">spinR</span><span class="fu">::</span><span class="fu">compute_SI_fromExp</span><span class="op">(</span>Refl <span class="op">=</span> <span class="va">ImBrick</span>, </span>
+<span>                                   SensorBands <span class="op">=</span> <span class="va">SensorBands</span>,</span>
+<span>                                   ExpressIndex <span class="op">=</span> <span class="va">Formula_OSAVI</span>, </span>
+<span>                                   listBands <span class="op">=</span> <span class="va">Bands_OSAVI</span>,</span>
+<span>                                   ReflFactor <span class="op">=</span> <span class="va">ReflFactor</span>,</span>
+<span>                                   NameIndex <span class="op">=</span> <span class="st">'OSAVI'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># _______________             Compute TCARI/OSAVI             _________________</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">'computing TCARI/OSAVI'</span><span class="op">)</span></span>
@@ -352,38 +362,48 @@ indices based on an expression.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">TCARI_OSAVI</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">'TCARI_OSAVI'</span></span>
 <span></span>
 <span><span class="co">#############################       CR_SWIR     ##################################</span></span>
-<span><span class="co"># 1- The expression for computation of continuum removal is already coded in PROSAIL</span></span>
-<span><span class="co"># 2- Define the spectral bands corresponding to bands in the spectral index, identified as BXX, with XX the number of the band</span></span>
+<span><span class="co"># 1- The expression for computation of continuum removal is already coded in spinR</span></span>
+<span><span class="co"># 2- Define the spectral bands corresponding to bands in the spectral index</span></span>
 <span><span class="va">Bands_CR_SWIR</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">Bands_CR_SWIR</span><span class="op">[[</span><span class="st">'CRmin'</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1150</span></span>
 <span><span class="va">Bands_CR_SWIR</span><span class="op">[[</span><span class="st">'CRmax'</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">2200</span></span>
 <span><span class="va">Bands_CR_SWIR</span><span class="op">[[</span><span class="st">'target'</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1550</span></span>
 <span><span class="co"># 3- Compute the spectral indices</span></span>
-<span><span class="va">CR_SWIR</span> <span class="op">&lt;-</span> <span class="fu">CR_WL</span><span class="op">(</span>Refl <span class="op">=</span> <span class="va">ImBrick</span>, SensorBands <span class="op">=</span> <span class="va">SensorBands</span>,</span>
-<span>                 CRbands <span class="op">=</span> <span class="va">Bands_CR_SWIR</span>, ReflFactor<span class="op">=</span><span class="va">ReflFactor</span><span class="op">)</span></span>
+<span><span class="va">CR_SWIR</span> <span class="op">&lt;-</span> <span class="fu">spinR</span><span class="fu">::</span><span class="fu">CR_WL</span><span class="op">(</span>Refl <span class="op">=</span> <span class="va">ImBrick</span>, </span>
+<span>                        SensorBands <span class="op">=</span> <span class="va">SensorBands</span>,</span>
+<span>                        CRbands <span class="op">=</span> <span class="va">Bands_CR_SWIR</span>, </span>
+<span>                        ReflFactor <span class="op">=</span> <span class="va">ReflFactor</span><span class="op">)</span></span>
 <span><span class="va">CR_SWIR</span> <span class="op">&lt;-</span> <span class="va">CR_SWIR</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co">#############################       ND_LMA     ##################################</span></span>
 <span><span class="co"># 1- Define the expression corresponding to the spectral index</span></span>
 <span><span class="va">Expression_ND_LMA</span> <span class="op">&lt;-</span> <span class="st">'(B2-B1)/(B2+B1)'</span></span>
-<span><span class="co"># 2- Define the spectral bands corresponding to bands in the spectral index, identified as BXX, with XX the number of the band</span></span>
+<span><span class="co"># 2- Define the spectral bands corresponding to bands in the spectral index</span></span>
 <span><span class="va">Bands_ND_LMA</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">Bands_ND_LMA</span><span class="op">[[</span><span class="st">'B1'</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1490</span></span>
 <span><span class="va">Bands_ND_LMA</span><span class="op">[[</span><span class="st">'B2'</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">2260</span></span>
 <span><span class="co"># 3- Compute the spectral indices</span></span>
-<span><span class="va">ND_LMA</span> <span class="op">&lt;-</span> <span class="fu">ComputeSpectralIndices_fromExpression</span><span class="op">(</span>Refl <span class="op">=</span> <span class="va">ImBrick</span>, SensorBands <span class="op">=</span> <span class="va">SensorBands</span>, </span>
-<span>                                               ExpressIndex <span class="op">=</span> <span class="va">Expression_ND_LMA</span>, listBands <span class="op">=</span> <span class="va">Bands_ND_LMA</span>, </span>
-<span>                                               ReflFactor<span class="op">=</span><span class="va">ReflFactor</span>, NameIndex <span class="op">=</span> <span class="st">'ND_LMA'</span><span class="op">)</span></span>
+<span><span class="va">ND_LMA</span> <span class="op">&lt;-</span> <span class="fu">spinR</span><span class="fu">::</span><span class="fu">CR_WL</span><span class="op">(</span>Refl <span class="op">=</span> <span class="va">ImBrick</span>, </span>
+<span>                       SensorBands <span class="op">=</span> <span class="va">SensorBands</span>, </span>
+<span>                       ExpressIndex <span class="op">=</span> <span class="va">Expression_ND_LMA</span>, </span>
+<span>                       listBands <span class="op">=</span> <span class="va">Bands_ND_LMA</span>, </span>
+<span>                       ReflFactor <span class="op">=</span> <span class="va">ReflFactor</span>, </span>
+<span>                       NameIndex <span class="op">=</span> <span class="st">'ND_LMA'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#############################       ANCB      ##################################</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">'computing ANCB'</span><span class="op">)</span></span>
 <span><span class="va">AUCminmax</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">AUCminmax</span><span class="op">[[</span><span class="st">'CRmin'</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">650</span></span>
 <span><span class="va">AUCminmax</span><span class="op">[[</span><span class="st">'CRmax'</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">720</span></span>
-<span><span class="va">ANCB</span> <span class="op">&lt;-</span> <span class="fu">AUC</span><span class="op">(</span>Refl <span class="op">=</span> <span class="va">ImBrick</span>, SensorBands <span class="op">=</span> <span class="va">SensorBands</span>, AUCminmax <span class="op">=</span> <span class="va">AUCminmax</span>, ReflFactor<span class="op">=</span><span class="va">ReflFactor</span><span class="op">)</span></span>
+<span><span class="va">ANCB</span> <span class="op">&lt;-</span> <span class="fu">spinR</span><span class="fu">::</span><span class="fu">AUC</span><span class="op">(</span>Refl <span class="op">=</span> <span class="va">ImBrick</span>, </span>
+<span>                   SensorBands <span class="op">=</span> <span class="va">SensorBands</span>, </span>
+<span>                   AUCminmax <span class="op">=</span> <span class="va">AUCminmax</span>, </span>
+<span>                   ReflFactor <span class="op">=</span> <span class="va">ReflFactor</span><span class="op">)</span></span>
 <span><span class="va">AUCminmax</span><span class="op">[[</span><span class="st">'target'</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">670</span></span>
-<span><span class="va">ANCB</span> <span class="op">&lt;-</span> <span class="va">ANCB</span><span class="op">/</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="fu">CR_WL</span><span class="op">(</span>Refl <span class="op">=</span> <span class="va">ImBrick</span>, SensorBands <span class="op">=</span> <span class="va">SensorBands</span>,</span>
-<span>                      CRbands <span class="op">=</span> <span class="va">AUCminmax</span>, ReflFactor<span class="op">=</span><span class="va">ReflFactor</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">ANCB</span> <span class="op">&lt;-</span> <span class="va">ANCB</span><span class="op">/</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="fu">spinR</span><span class="fu">::</span><span class="fu">CR_WL</span><span class="op">(</span>Refl <span class="op">=</span> <span class="va">ImBrick</span>, </span>
+<span>                             SensorBands <span class="op">=</span> <span class="va">SensorBands</span>,</span>
+<span>                             CRbands <span class="op">=</span> <span class="va">AUCminmax</span>, </span>
+<span>                             ReflFactor <span class="op">=</span> <span class="va">ReflFactor</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <p>Once computed, we we perform interquartile analysis on these spectral
 indices in order to mask outliers.</p>
 <p>Then we write these indices as individual raster files.</p>
@@ -482,7 +502,10 @@ indices<a class="anchor" aria-label="anchor" href="#mask-data-from-spectral-indi
 <span><span class="va">NameStack</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">NameRaster</span>,<span class="st">'_StackIndices'</span>,sep <span class="op">=</span> <span class="st">''</span><span class="op">)</span></span>
 <span><span class="co"># save Stack of spectral indices in raster file with spectral indices defining band names</span></span>
 <span><span class="va">Path_StackIndices</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">PathData</span>,<span class="va">NameStack</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/write_StarsStack.html">write_StarsStack</a></span><span class="op">(</span>StarsObj <span class="op">=</span> <span class="va">StarsObj</span>, dsn <span class="op">=</span> <span class="va">Path_StackIndices</span>, BandNames <span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">Index_Path</span><span class="op">)</span>, datatype<span class="op">=</span><span class="st">'Float32'</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">biodivMapR</span><span class="fu">::</span><span class="fu"><a href="../reference/write_StarsStack.html">write_StarsStack</a></span><span class="op">(</span>StarsObj <span class="op">=</span> <span class="va">StarsObj</span>, </span>
+<span>                             dsn <span class="op">=</span> <span class="va">Path_StackIndices</span>, </span>
+<span>                             BandNames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">Index_Path</span><span class="op">)</span>, </span>
+<span>                             datatype <span class="op">=</span> <span class="st">'Float32'</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -522,10 +545,16 @@ indices<a class="anchor" aria-label="anchor" href="#mask-data-from-spectral-indi
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"MAP SPECTRAL SPECIES"</span><span class="op">)</span></span>
 <span><span class="co"># select all spectral indices</span></span>
 <span><span class="va">SelectedPCs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html" class="external-link">stack</a></span><span class="op">(</span><span class="va">Input_SIstack_File</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="va">Kmeans_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/map_spectral_species.html">map_spectral_species</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_SIstack_File</span>, Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, SelectedPCs <span class="op">=</span> <span class="va">SelectedPCs</span>,</span>
-<span>                                    PCA_Files <span class="op">=</span> <span class="va">Input_SIstack_File</span>, Input_Mask_File <span class="op">=</span> <span class="va">Input_Mask_File</span>,</span>
-<span>                                    Pix_Per_Partition <span class="op">=</span> <span class="va">Pix_Per_Partition</span>, nb_partitions <span class="op">=</span> <span class="va">nb_partitions</span>,</span>
-<span>                                    nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>, nbclusters <span class="op">=</span> <span class="va">nbclusters</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">SpectralSpace_Output</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">'PCA_Files'</span> <span class="op">=</span> <span class="va">Input_SIstack_File</span>, </span>
+<span>                             <span class="st">'TypePCA'</span> <span class="op">=</span> <span class="va">TypePCA</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">Kmeans_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/map_spectral_species.html">map_spectral_species</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_SIstack_File</span>, </span>
+<span>                                    Input_Mask_File <span class="op">=</span> <span class="va">Input_Mask_File</span>,</span>
+<span>                                    Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>,</span>
+<span>                                    SpectralSpace_Output <span class="op">=</span> <span class="va">SpectralSpace_Output</span>, </span>
+<span>                                    nbclusters <span class="op">=</span> <span class="va">nbclusters</span>, </span>
+<span>                                    nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>, </span>
+<span>                                    SelectedPCs <span class="op">=</span> <span class="va">SelectedPCs</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="map-diversity-indices">Map diversity indices<a class="anchor" aria-label="anchor" href="#map-diversity-indices"></a>
@@ -534,21 +563,36 @@ indices<a class="anchor" aria-label="anchor" href="#mask-data-from-spectral-indi
 <code class="sourceCode R"><span><span class="co"># https://jbferet.github.io/biodivMapR/articles/biodivMapR_06.html</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"MAP ALPHA DIVERSITY"</span><span class="op">)</span></span>
 <span><span class="va">Index_Alpha</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Shannon'</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/map_alpha_div.html">map_alpha_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_SIstack_File</span>, Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
-<span>              window_size <span class="op">=</span> <span class="va">window_size</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,</span>
-<span>              Index_Alpha <span class="op">=</span> <span class="va">Index_Alpha</span>, nbclusters <span class="op">=</span> <span class="va">nbclusters</span>,LowRes <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/map_alpha_div.html">map_alpha_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_SIstack_File</span>, </span>
+<span>              Input_Mask_File <span class="op">=</span> <span class="va">Input_Mask_File</span>, </span>
+<span>              Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, </span>
+<span>              TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
+<span>              window_size <span class="op">=</span> <span class="va">window_size</span>, </span>
+<span>              nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, </span>
+<span>              MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,</span>
+<span>              Index_Alpha <span class="op">=</span> <span class="va">Index_Alpha</span>, </span>
+<span>              nbclusters <span class="op">=</span> <span class="va">nbclusters</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"MAP BETA DIVERSITY"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/map_beta_div.html">map_beta_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_SIstack_File</span>, Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
-<span>             window_size <span class="op">=</span> <span class="va">window_size</span>, nb_partitions<span class="op">=</span><span class="va">nb_partitions</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,</span>
+<span><span class="fu"><a href="../reference/map_beta_div.html">map_beta_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_SIstack_File</span>, </span>
+<span>             Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, </span>
+<span>             TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
+<span>             window_size <span class="op">=</span> <span class="va">window_size</span>, </span>
+<span>             nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, </span>
+<span>             MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,</span>
 <span>             nbclusters <span class="op">=</span> <span class="va">nbclusters</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># print("MAP FUNCTIONAL DIVERSITY")</span></span>
 <span><span class="co"># https://jbferet.github.io/biodivMapR/articles/biodivMapR_07.html</span></span>
 <span><span class="co"># Villeger et al, 2008 https://doi.org/10.1890/07-1206.1</span></span>
-<span><span class="co"># map_functional_div(Original_Image_File = Input_SIstack_File, Functional_File = Input_SIstack_File,</span></span>
-<span><span class="co">#                    Selected_Features = SelectedPCs, Output_Dir = Output_Dir,</span></span>
-<span><span class="co">#                    window_size = window_size, nbCPU = nbCPU, MaxRAM = MaxRAM,TypePCA = TypePCA, LowRes = T)</span></span></code></pre></div>
+<span><span class="co"># map_functional_div(Original_Image_File = Input_SIstack_File, </span></span>
+<span><span class="co">#                    Functional_File = Input_SIstack_File,</span></span>
+<span><span class="co">#                    Selected_Features = SelectedPCs, </span></span>
+<span><span class="co">#                    Output_Dir = Output_Dir,</span></span>
+<span><span class="co">#                    window_size = window_size, </span></span>
+<span><span class="co">#                    nbCPU = nbCPU, </span></span>
+<span><span class="co">#                    MaxRAM = MaxRAM,</span></span>
+<span><span class="co">#                    TypePCA = TypePCA)</span></span></code></pre></div>
 <p>The map corresponding to beta-diversity (based on a principal
 coordinate analysis applied to Bray Curts dissimilarity matrix) is
 displayed hereafter:</p>
