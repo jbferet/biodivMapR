@@ -6,9 +6,9 @@
 \usage{
 map_spectral_species(
   Input_Image_File,
-  Input_Mask_File,
   Output_Dir,
   SpectralSpace_Output,
+  Input_Mask_File = FALSE,
   nbclusters = 50,
   nbCPU = 1,
   MaxRAM = 0.25,
@@ -20,11 +20,11 @@ map_spectral_species(
 \arguments{
 \item{Input_Image_File}{character. Path of the image to be processed}
 
-\item{Input_Mask_File}{character. Path of the mask corresponding to the image}
-
 \item{Output_Dir}{character. Path for output directory}
 
 \item{SpectralSpace_Output}{list. list of variables produced from function perform_PCA}
+
+\item{Input_Mask_File}{character. Path of the mask corresponding to the image}
 
 \item{nbclusters}{numeric. number of clusters defined in k-Means}
 

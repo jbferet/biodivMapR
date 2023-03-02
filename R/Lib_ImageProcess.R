@@ -1356,6 +1356,41 @@ update_shademask <- function(MaskPath, HDR, Mask, MaskPath_Update) {
   return(MaskPath_Update)
 }
 
+
+#' check if the format of the mask is as expected: integer, coded in Bytes, same
+#' dimensions as input image
+#'
+#' @param Input_Mask_File character. path for original mask
+#' @param Input_Image_File character. path for image file corresponding to the mask
+#'
+#' @return MaskPath_Update
+#' @importFrom stars read_stars
+#' @export
+
+check_update_mask_format <- function(Input_Mask_File, Input_Image_File){
+  Mask <-  stars::read_stars(Input_Mask_File,proxy = F)
+  ncols <- as.integer(ncol(Mask[[1]]))
+  nrows <- as.integer(nrow(Mask[[1]]))
+
+  Mask <- t(matrix(as.integer(Mask[[1]]), nrow = nrows, ncol = ncols))
+  MaskPath_Update <- paste(file_path_sans_ext(Input_Mask_File),'_byte',sep = '')
+  HDR <- read_ENVI_header(get_HDR_name(Input_Image_File))
+
+  if (!ncols == HDR$samples | !nrows == HDR$lines){
+    message('Warning: image and corresponding mask do not have the same dimensions')
+    message('Please make sure dimensions match between image and mask')
+    stop()
+  } else {
+    MaskPath_Update <- update_shademask(MaskPath = FALSE,
+                                        HDR = HDR,
+                                        Mask = Mask,
+                                        MaskPath_Update = MaskPath_Update)
+  }
+  rm(Mask)
+  gc()
+  return(MaskPath_Update)
+}
+
 #' This function identify plots from a shapefile matching with a raster footprint
 #'
 #' @param PathVect character. path for input vector file
