@@ -1,3 +1,9 @@
+# biodivMapR v1.10.3
+
+## Changes
+- function map_spectral_species checks if format and dimensions of Input_Mask_File are as expected
+- function map_spectral_species now supports Input_Mask_File = FALSE. It writes a blank mask to ensure next processes
+
 # biodivMapR v1.10.2
 
 ## Fix

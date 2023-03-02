@@ -15,9 +15,9 @@
 #' maps spectral species based on PCA file computed previously
 #'
 #' @param Input_Image_File character. Path of the image to be processed
-#' @param Input_Mask_File character. Path of the mask corresponding to the image
 #' @param Output_Dir character. Path for output directory
 #' @param SpectralSpace_Output list. list of variables produced from function perform_PCA
+#' @param Input_Mask_File character. Path of the mask corresponding to the image
 #' @param nbclusters numeric. number of clusters defined in k-Means
 #' @param nbCPU numeric. Number of CPUs to use in parallel.
 #' @param MaxRAM numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.
@@ -28,12 +28,45 @@
 #'
 #' @return Kmeans_info
 #' @importFrom utils read.table
+#' @importFrom rgdal getDriverLongName getDriver GDAL.open GDAL.close
 #' @export
-map_spectral_species <- function(Input_Image_File, Input_Mask_File, Output_Dir,
-                                 SpectralSpace_Output, nbclusters = 50,
+map_spectral_species <- function(Input_Image_File, Output_Dir,
+                                 SpectralSpace_Output,
+                                 Input_Mask_File = FALSE,
+                                 nbclusters = 50,
                                  nbCPU = 1, MaxRAM = 0.25,
                                  Kmeans_Only = FALSE, SelectedPCs = FALSE,
                                  SpectralFilter = NULL) {
+
+  # check if input mask file has expected format
+  if (!Input_Mask_File==FALSE){
+    # driverMask_class <- new("GDALReadOnlyDataset", Input_Mask_File)
+    driverMask_class <- GDAL.open(filename = Input_Mask_File,
+                                  read.only = TRUE, silent=FALSE,
+                                  allowedDrivers = NULL, options=NULL)
+    driverMask <- rgdal::getDriverLongName(getDriver(driverMask_class))
+    GDAL.close(driverMask_class)
+    if (driverMask == 'ENVI .hdr Labelled'){
+      HDR <- read_ENVI_header(get_HDR_name(Input_Mask_File))
+      if (!HDR$`data type`==1){
+        Input_Mask_File <- check_update_mask_format(Input_Mask_File, Input_Image_File)
+      }
+    } else {
+      Input_Mask_File <- check_update_mask_format(Input_Mask_File, Input_Image_File)
+    }
+  } else {
+    message('Input_Mask_File not provided in function map_spectral_species.')
+    message('Assuming all pixels are valid')
+    message('A blank mask will be created for the need of next processing steps')
+
+    HDR <- read_ENVI_header(get_HDR_name(Input_Image_File))
+    Mask <- t(matrix(as.integer(1), nrow = HDR$lines, ncol = HDR$samples))
+    MaskPath_Update <- paste(file_path_sans_ext(Input_Image_File),'_BlankMask',sep = '')
+    Input_Mask_File <- update_shademask(MaskPath = FALSE,
+                                        HDR = HDR,
+                                        Mask = Mask,
+                                        MaskPath_Update = MaskPath_Update)
+  }
 
   Kmeans_info <- NULL
   # if no prior diversity map has been produced --> need PCA file
