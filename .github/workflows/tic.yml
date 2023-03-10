@@ -94,7 +94,10 @@ jobs:
 #        if: runner.os == 'macOS'
 #        run: brew install gdal-bin proj-bin libgdal-dev libproj-dev
 
-      - name: Install binary dependencies
+      - name: Install dissUtils
+        run: Rscript -e "remotes::install_github('cran/dissUtils')"
+
+      - name: "[Stage] [macOS] Install binary dependencies"
         if: runner.os == 'macOS'
         run: |
           remotes::install_deps(dependencies = TRUE, type="binary")
@@ -117,9 +120,6 @@ jobs:
             # brew install pkg-config gdal proj geos
             # preinstall package terra binary as compilation from source fails for macOS-latest
             Rscript -e "install.packages('terra', type='binary')"
-
-      - name: Install dissUtils
-        run: Rscript -e "remotes::install_github('cran/dissUtils')"
 
       - name: "[Stage] Install"
         if: matrix.config.os != 'macOS-latest' || matrix.config.r != 'devel'
