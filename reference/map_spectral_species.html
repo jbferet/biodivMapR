@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.3</span>
       </span>
     </div>
 
@@ -104,9 +104,9 @@
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">map_spectral_species</span><span class="op">(</span></span>
 <span>  <span class="va">Input_Image_File</span>,</span>
-<span>  <span class="va">Input_Mask_File</span>,</span>
 <span>  <span class="va">Output_Dir</span>,</span>
 <span>  <span class="va">SpectralSpace_Output</span>,</span>
+<span>  Input_Mask_File <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  nbclusters <span class="op">=</span> <span class="fl">50</span>,</span>
 <span>  nbCPU <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  MaxRAM <span class="op">=</span> <span class="fl">0.25</span>,</span>
@@ -122,16 +122,16 @@
 <dd><p>character. Path of the image to be processed</p></dd>
 
 
-<dt>Input_Mask_File</dt>
-<dd><p>character. Path of the mask corresponding to the image</p></dd>
-
-
 <dt>Output_Dir</dt>
 <dd><p>character. Path for output directory</p></dd>
 
 
 <dt>SpectralSpace_Output</dt>
 <dd><p>list. list of variables produced from function perform_PCA</p></dd>
+
+
+<dt>Input_Mask_File</dt>
+<dd><p>character. Path of the mask corresponding to the image</p></dd>
 
 
 <dt>nbclusters</dt>
