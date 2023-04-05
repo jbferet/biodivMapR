@@ -7,19 +7,14 @@
 map_spectral_species(
   Input_Image_File,
   Output_Dir,
-  PCA_Files,
-  PCA_model,
-  SpectralFilter,
-  Input_Mask_File,
-  Pix_Per_Partition,
-  nb_partitions,
-  Continuum_Removal = TRUE,
-  TypePCA = "SPCA",
+  SpectralSpace_Output,
+  Input_Mask_File = FALSE,
   nbclusters = 50,
   nbCPU = 1,
-  MaxRAM = FALSE,
+  MaxRAM = 0.25,
   Kmeans_Only = FALSE,
-  SelectedPCs = FALSE
+  SelectedPCs = FALSE,
+  SpectralFilter = NULL
 )
 }
 \arguments{
@@ -27,22 +22,9 @@ map_spectral_species(
 
 \item{Output_Dir}{character. Path for output directory}
 
-\item{PCA_Files}{character. Path of the PCA image}
-
-\item{PCA_model}{list. Parameters for teh PCA model to be applied on original image}
-
-\item{SpectralFilter}{list. information about spectral band location
-(central wavelength), bands to keep...}
+\item{SpectralSpace_Output}{list. list of variables produced from function perform_PCA}
 
 \item{Input_Mask_File}{character. Path of the mask corresponding to the image}
-
-\item{Pix_Per_Partition}{numeric. number of pixels for each partition}
-
-\item{nb_partitions}{numeric. number of partition}
-
-\item{Continuum_Removal}{boolean. Set to TRUE if continuum removal should be applied}
-
-\item{TypePCA}{character. Type of PCA: choose either "PCA" or "SPCA"}
 
 \item{nbclusters}{numeric. number of clusters defined in k-Means}
 
@@ -53,9 +35,12 @@ map_spectral_species(
 \item{Kmeans_Only}{boolean. set to TRUE if computation of kmeans without production of spectral species map}
 
 \item{SelectedPCs}{numeric. Define PCs to be selected. Set to FALSE if you want to use the "Selected_Components.txt" file}
+
+\item{SpectralFilter}{list. information about spectral band location
+(central wavelength), bands to keep...}
 }
 \value{
-None
+Kmeans_info
 }
 \description{
 maps spectral species based on PCA file computed previously

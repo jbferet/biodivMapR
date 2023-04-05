@@ -40,8 +40,9 @@ map_functional_div <- function(Original_Image_File,Functional_File = FALSE,
                                Output_Dir, window_size,
                                TypePCA = "SPCA",
                                MinSun = 0.25,
-                               FullRes = TRUE,LowRes = FALSE, MapSTD = FALSE,
-                               nbCPU = FALSE, MaxRAM = FALSE,SmoothImage = TRUE) {
+                               FullRes = FALSE, LowRes = TRUE, MapSTD = TRUE,
+                               nbCPU = 1, MaxRAM = 0.25,
+                               SmoothImage = TRUE) {
 
   if (Functional_File==FALSE){
     Functional_File <- Original_Image_File
@@ -49,7 +50,7 @@ map_functional_div <- function(Original_Image_File,Functional_File = FALSE,
   # check if selected features match with image dimensions
   HDRname <- get_HDR_name(Functional_File)
   HDR <- read_ENVI_header(HDRname)
-  if (Selected_Features[1]==FALSE){
+  if (length(Selected_Features) ==1 & Selected_Features[1] ==FALSE){
     Selected_Features = seq(1,HDR$bands)
   } else {
     if (max(Selected_Features)>HDR$bands){
@@ -66,15 +67,19 @@ map_functional_div <- function(Original_Image_File,Functional_File = FALSE,
   }
   # define output directory
   Output_Dir_Funct <- define_output_subdir(Output_Dir, Original_Image_File, TypePCA, "FUNCTIONAL")
-  Functional_Map_Path <- paste(Output_Dir_Funct, "FunctionalDiversity_Map", sep = "")
+  Functional_Map_Path <- file.path(Output_Dir_Funct, "FunctionalDiversity_Map")
   # 1- COMPUTE FUNCTIONAL DIVERSITY: RICHNESS, EVENNESS, DIVERGENCE
   print("Compute functional metrics")
-  FunctionalMetrics <- compute_Functional_metrics(Functional_File,Functional_Map_Path,Selected_Features,
-                                           window_size, MinSun, nbCPU = nbCPU, MaxRAM = MaxRAM)
+  FunctionalMetrics <- compute_Functional_metrics(Functional_File = Functional_File,
+                                                  Functional_Map_Path = Functional_Map_Path,
+                                                  Selected_Features = Selected_Features,
+                                                  window_size = window_size,
+                                                  MinSun = MinSun, nbCPU = nbCPU, MaxRAM = MaxRAM)
 
   # 2- SAVE FUNCTIONAL DIVERSITY MAPS
   print("Write functional diversity maps")
-  write_raster(FunctionalMetrics$FunctMap, FunctionalMetrics$HDR, Functional_Map_Path, window_size, FullRes = FullRes, LowRes = LowRes,SmoothImage = SmoothImage)
+  write_raster(FunctionalMetrics$FunctMap, FunctionalMetrics$HDR, Functional_Map_Path,
+               window_size, FullRes = FullRes, LowRes = LowRes,SmoothImage = SmoothImage)
   return(invisible())
 }
 
@@ -92,19 +97,14 @@ map_functional_div <- function(Original_Image_File,Functional_File = FALSE,
 #' @importFrom future plan multiprocess sequential
 #' @importFrom future.apply future_lapply
 #' @importFrom stats sd
+#' @importFrom raster brick values nbands
 compute_Functional_metrics <- function(Functional_File, Functional_Map_Path, Selected_Features,
-                                       window_size, MinSun, nbCPU = FALSE, MaxRAM = FALSE) {
+                                       window_size, MinSun, nbCPU = 1, MaxRAM = 0.25) {
 
   ## read Functional_File and write Functional_Map_Path
   HDRname <- get_HDR_name(Functional_File)
   HDR <- read_ENVI_header(HDRname)
-  if (MaxRAM == FALSE) {
-    MaxRAM <- 0.25
-  }
   nbPieces_Min <- split_image(HDR, MaxRAM)
-  if (nbCPU == FALSE) {
-    nbCPU <- 1
-  }
   if (nbPieces_Min < nbCPU) {
     nbPieces_Min <- nbCPU
   }
@@ -140,29 +140,46 @@ compute_Functional_metrics <- function(Functional_File, Functional_Map_Path, Sel
   FunctOUT_Format <- ENVI_type2bytes(HDR_Funct)
   FunctIN_Format <- ENVI_type2bytes(HDR)
 
-  # get minimum and maximum value for each feature
+  # # get minimum and maximum value for each feature
+  # FunctRaster <- brick(Functional_File)
+  # RasterVal <- setMinMax(FunctRaster)
+  # MinFunct <- MaxFunct <- c()
+  # for (i in 1:nbands(FunctRaster)){
+  #   MinFunct[i] <- minValue(RasterVal[[i]])
+  #   MaxFunct[i] <- maxValue(RasterVal[[i]])
+  # }
+
+  # get interquantile range for standardization
   FunctRaster <- brick(Functional_File)
-  RasterVal <- setMinMax(FunctRaster)
   MinFunct <- MaxFunct <- c()
   for (i in 1:nbands(FunctRaster)){
-    MinFunct[i] <- minValue(RasterVal[[i]])
-    MaxFunct[i] <- maxValue(RasterVal[[i]])
+    RasterVal <- FunctRaster[[i]]
+    RangeTraits <- IQR_outliers(raster::values(RasterVal))
+    MinFunct[i] <- RangeTraits[1]
+    MaxFunct[i] <- RangeTraits[2]
   }
+
   MinFunct <- MinFunct[Selected_Features]
   MaxFunct <- MaxFunct[Selected_Features]
   MinMaxRaster <- data.frame('MinRaster'=MinFunct,'MaxRaster'=MaxFunct)
 
   # multiprocess of spectral species distribution and alpha diversity metrics
-  plan(multiprocess, workers = nbCPU) ## Parallelize using four cores
-  Schedule_Per_Thread <- ceiling(nbPieces_Min / nbCPU)
-  FUNCT_DIV <- future_lapply(ReadWrite,
-    FUN = Get_FunctionalMetrics_From_Traits, Functional_File = Functional_File, Selected_Features = Selected_Features,
-    MinMaxRaster = MinMaxRaster, HDR = HDR, HDR_Funct = HDR_Funct,
-    FunctIN_Format = FunctIN_Format, FunctOUT_Format = FunctOUT_Format,
-    ImgFormat = ImgFormat, window_size = window_size, MinSun = MinSun,
-    Functional_Map_Path = Functional_Map_Path,  future.scheduling = Schedule_Per_Thread, future.seed = TRUE
-  )
-  plan(sequential)
+  if (nbCPU>1){
+    plan(multisession, workers = nbCPU) ## Parallelize using four cores
+    FUNCT_DIV <- future_lapply(ReadWrite,
+                               FUN = Get_FunctionalMetrics_From_Traits, Functional_File = Functional_File, Selected_Features = Selected_Features,
+                               MinMaxRaster = MinMaxRaster, HDR = HDR, HDR_Funct = HDR_Funct,
+                               FunctIN_Format = FunctIN_Format, FunctOUT_Format = FunctOUT_Format,
+                               ImgFormat = ImgFormat, window_size = window_size, MinSun = MinSun,
+                               Functional_Map_Path = Functional_Map_Path)
+    plan(sequential)
+  } else {
+    FUNCT_DIV <- lapply(ReadWrite, FUN = Get_FunctionalMetrics_From_Traits, Functional_File = Functional_File,
+                        Selected_Features = Selected_Features, MinMaxRaster = MinMaxRaster,
+                        HDR = HDR, HDR_Funct = HDR_Funct, FunctIN_Format = FunctIN_Format,
+                        FunctOUT_Format = FunctOUT_Format, ImgFormat = ImgFormat, window_size = window_size,
+                        MinSun = MinSun, Functional_Map_Path = Functional_Map_Path)
+  }
   # create ful map from chunks
   FRic_Chunk <- FEve_Chunk <- FDiv_Chunk <- list()
   for (i in 1:length(FUNCT_DIV)) {
@@ -228,6 +245,8 @@ Get_FunctionalMetrics_From_Traits <- function(ReadWrite, Functional_File, Select
 #' @return list of functional diversity metrics corresponding to image chunk
 #' @importFrom geometry convhulln
 #' @importFrom emstreeR ComputeMST
+#' @export
+
 compute_FUNCT <- function(Image_Chunk, window_size, MinSun) {
   nbi <- floor(dim(Image_Chunk)[1] / window_size)
   nbj <- floor(dim(Image_Chunk)[2] / window_size)
@@ -252,7 +271,7 @@ compute_FUNCT <- function(Image_Chunk, window_size, MinSun) {
         # compute functional metrics
         # 1- Functional Richness
         # convex hull using geometry
-        FRicmap[ii,jj] <- 100*convhulln(ij, output.options = 'FA')$vol
+        FRicmap[ii,jj] <- 100*geometry::convhulln(ij, output.options = 'FA')$vol
         # 2- Functional Divergence
         # mean distance from centroid
         Centroid <- colMeans(ij)
@@ -260,7 +279,9 @@ compute_FUNCT <- function(Image_Chunk, window_size, MinSun) {
         # FDivmap[ii,jj] <- 100*sum(sqrt(rowSums((t(t(ij) )^2))))/nbPix_Sunlit
         # 3- Functional Evenness
         # euclidean minimum spanning tree
-        FEvemap[ii,jj] <- 100*sum(ComputeMST(ij,verbose = FALSE)$distance)/nbPix_Sunlit
+        # 20220112: wait for update of emstreeR and integration of mlpack
+        # FEvemap[ii,jj] <- NA*FDivmap[ii,jj]
+        FEvemap[ii,jj] <- 100*sum(emstreeR::ComputeMST(ij,verbose = FALSE)$distance)/nbPix_Sunlit
       } else {
         FRicmap[ii,jj] <- NA
         FDivmap[ii,jj] <- NA

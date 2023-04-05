@@ -6,14 +6,14 @@
 \usage{
 perform_radiometric_filtering(
   Image_Path,
-  Mask_Path,
+  Mask_Path = FALSE,
   Output_Dir,
   TypePCA = "SPCA",
-  NDVI_Thresh = 0.5,
+  NDVI_Thresh = 0.8,
   Blue_Thresh = 500,
   NIR_Thresh = 1500,
   Blue = 480,
-  Red = 700,
+  Red = 670,
   NIR = 835
 )
 }

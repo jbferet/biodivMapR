@@ -5,24 +5,27 @@
 \title{maps alpha diversity indicators  based on prior selection of PCs}
 \usage{
 map_alpha_div(
-  Input_Image_File,
-  Output_Dir,
-  window_size,
+  Input_Image_File = FALSE,
+  Input_Mask_File = FALSE,
+  Output_Dir = "",
+  window_size = 10,
   TypePCA = "SPCA",
   nbclusters = 50,
   MinSun = 0.25,
   pcelim = 0.02,
   Index_Alpha = "Shannon",
-  FullRes = TRUE,
-  LowRes = FALSE,
-  MapSTD = FALSE,
-  nbCPU = FALSE,
-  MaxRAM = FALSE,
+  FullRes = FALSE,
+  LowRes = TRUE,
+  MapSTD = TRUE,
+  nbCPU = 1,
+  MaxRAM = 0.25,
   ClassifMap = FALSE
 )
 }
 \arguments{
 \item{Input_Image_File}{character. Path and name of the image to be processed.}
+
+\item{Input_Mask_File}{character. Path and name of the mask corresponding to the image to be processed.}
 
 \item{Output_Dir}{character. Output directory.}
 

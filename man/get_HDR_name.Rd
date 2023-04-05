@@ -4,10 +4,12 @@
 \alias{get_HDR_name}
 \title{get hdr name from image file name, assuming it is BIL format}
 \usage{
-get_HDR_name(ImPath)
+get_HDR_name(ImPath, showWarnings = TRUE)
 }
 \arguments{
-\item{ImPath}{path of the image}
+\item{ImPath}{character. ath of the image}
+
+\item{showWarnings}{boolean. set TRUE if warning because HDR does not exist}
 }
 \value{
 corresponding hdr

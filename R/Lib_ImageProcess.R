@@ -11,14 +11,16 @@
 # Mainly applicable to ENVI HDR data wth BIL interleave
 # ==============================================================================
 
-# rebuild full image from list of subsets
-#
-# @param Image_Subsets subsets of an image. list expected
-# @param ipix nb of lines for the full image
-# @param jpix nb of columns for the full image
-# @param nbBands nb of bands for the full image & subsets
-#
-# @return image full size in 3 dimensions
+#' rebuilds full image from list of subsets
+#'
+#' @param Image_Subsets list. subsets of an image
+#' @param ipix numeric. nb of lines for the full image
+#' @param jpix numeric. nb of columns for the full image
+#' @param nbBands numeric. nb of bands for the full image & subsets
+#'
+#' @return Image numeric. full size in 3 dimensions
+#' @export
+
 build_image_from_list <- function(Image_Subsets, ipix, jpix, nbBands) {
   Image <- array(NA, c(ipix, jpix, nbBands))
   Line_Begin <- 0
@@ -33,13 +35,15 @@ build_image_from_list <- function(Image_Subsets, ipix, jpix, nbBands) {
   return(Image)
 }
 
-# center and reduce data matrix based on known mean and SD
-#
-# @param X data matrix (each column is centered/reduced)
-# @param m mean of each variable in the data matrix
-# @param sig SD of each variable in the data matrix
-#
-# @return Centered matrix
+#' center and reduce data matrix based on known mean and SD
+#'
+#' @param X numeric. data matrix (each column is centered/reduced)
+#' @param m numeric. mean of each variable in the data matrix
+#' @param sig numeric. SD of each variable in the data matrix
+#'
+#' @return X numeric. Centered matrix
+#' @export
+
 center_reduce <- function(X, m, sig) {
   for (i in 1:ncol(X)) {
     X[, i] <- (X[, i] - m[i]) / sig[i]
@@ -47,12 +51,14 @@ center_reduce <- function(X, m, sig) {
   return(X)
 }
 
-# change resolution in a HDR file
-#
-# @param HDR information read from a header file
-# @param window_size multiplying factor for initial resolution
-#
-# @return updated HDR information
+#' change resolution in a HDR file
+#'
+#' @param HDR information read from a header file
+#' @param window_size multiplying factor for initial resolution
+#'
+#' @return updated HDR information
+#' @export
+
 change_resolution_HDR <- function(HDR, window_size) {
   MapInfo <- strsplit(HDR$`map info`, split = ",")
   MapInfo[[1]][6] <- as.numeric(MapInfo[[1]][6]) * window_size
@@ -61,13 +67,85 @@ change_resolution_HDR <- function(HDR, window_size) {
   return(HDR)
 }
 
-# remove constant bands
-#
-# @param DataMatrix each variable is a column
-# @param Spectral summary of spectral information: which spectral bands selected from initial data
-#
-# @return updated DataMatrix and Spectral
-# ' @importFrom stats sd
+#' create a hdr file for a raster
+#'
+#' @param ImPath character. path of the raster image
+#' @param Sensor character. name of the sensor
+#' @param SpectralBands numeric. vector of spectral bands for the raster
+#' @param BandName character. name for each band in the raster
+#' @param WLunits character. wavelengths unit. 'Micrometers' or 'Nanometers'
+#'
+#' @return corresponding hdr
+#' @importFrom raster raster hdr
+#' @export
+
+create_hdr <- function(ImPath, Sensor = 'unknown', SpectralBands = NULL,
+                       BandName = NULL, WLunits = NULL) {
+
+  # hdr file corresponding to the file
+  ImPathHDR <- get_HDR_name(ImPath,showWarnings = FALSE)
+  if (file.exists(ImPathHDR)) {
+    message("WARNING : HDR FILE ALREADY EXISTS")
+    print(ImPathHDR)
+    message("It will be overwritten")
+  }
+  # create HDR
+  r <- raster::raster(ImPath)
+  raster::hdr(x = r,format = 'ENVI')
+  # add bands
+  HDR_input <- read_ENVI_header(ImPathHDR)
+  HDR_Temp_Path <- system.file("extdata", "HDR", paste0(Sensor, ".hdr"), package = "biodivMapR")
+  if (file.exists(HDR_Temp_Path)) {
+    # get raster template corresponding to the sensor
+    HDR_Template <- read_ENVI_header(HDR_Temp_Path)
+    # Define spectral bands (central wavelength and band name)
+    if (is.null(SpectralBands)){
+      HDR_input$wavelength <- HDR_Template$wavelength
+    } else {
+      HDR_input$wavelength <- SpectralBands
+    }
+    if (is.null(BandName)){
+      HDR_input$`band names` <- HDR_Template$`band names`
+    } else {
+      HDR_input$`band names` <- BandName
+    }
+    # Define sensor type
+    HDR_input$`sensor type` <- Sensor
+    if (is.null(WLunits)) {
+      HDR_input$`wavelength units` <- HDR_Template$`wavelength units`
+    } else {
+      HDR_input$`wavelength units` <- WLunits
+    }
+  } else if (!file.exists(HDR_Temp_Path)){
+    message(paste('No template exist for the sensor',Sensor,sep = ' '))
+    HDR_input$wavelength <- SpectralBands
+    HDR_input$`band names` <- BandName
+    HDR_input$`sensor type` <- Sensor
+    HDR_input$`wavelength units` <- WLunits
+    if (is.null(SpectralBands)){
+      message('Please provide sensor information to update header')
+      message('Central wavelength for each spectral band expected in SpectralBands')
+
+    }
+  }
+  # define visual stretch in the VIS domain
+  if (HDR_input$`data type`==2 | HDR_input$`data type`==4){
+    HDR_input$`default stretch` <- "0 1000 linear"
+  }
+  # write corresponding hdr file
+  write_ENVI_header(HDR_input, ImPathHDR)
+  return(ImPathHDR)
+}
+
+
+#' remove constant bands
+#'
+#' @param DataMatrix numeric. each variable is a column
+#' @param Spectral list. summary of spectral information: which spectral bands selected from initial data
+#'
+#' @return updated DataMatrix and Spectral
+#' @importFrom stats sd
+#' @export
 
 rm_invariant_bands <- function(DataMatrix, Spectral) {
   # samples with inf value are eliminated
@@ -93,39 +171,50 @@ rm_invariant_bands <- function(DataMatrix, Spectral) {
 
 #' define output directory and create it if necessary
 #'
-#' @param Output_Dir output directory
-#' @param ImPath image path
-#' @param TypePCA Type of PCA (PCA, SPCA, NLPCA...)
+#' @param Output_Dir character. output directory
+#' @param ImPath character. image path
+#' @param TypePCA character. Type of PCA (PCA, SPCA, NLPCA...)
 #'
 #' @return path of the output directory
+#' @importFrom tools file_path_sans_ext
 #' @export
+
 define_output_directory <- function(Output_Dir, ImPath, TypePCA) {
-  Image_Name <- strsplit(basename(ImPath), "\\.")[[1]][1]
-  Output_Dir <- paste(Output_Dir, "/", Image_Name, "/", TypePCA, "/", sep = "")
+  Image_Name <- file_path_sans_ext(basename(ImPath))
+  Output_Dir <- file.path(Output_Dir, Image_Name, TypePCA)
   dir.create(Output_Dir, showWarnings = FALSE, recursive = TRUE)
   return(Output_Dir)
 }
 
-# define output directory and subdirectory and create it if necessary
-#
-# @param Output_Dir output directory
-# @param ImPath image path
-# @param TypePCA Type of PCA (PCA, SPCA, NLPCA...)
-# @param Sub subdirectory
-#
-# @return path of the output directory
+#' define output directory and subdirectory and create it if necessary
+#'
+#' @param Output_Dir character. output directory
+#' @param ImPath character. image path
+#' @param TypePCA character. Type of PCA (PCA, SPCA, NLPCA...)
+#' @param Sub character. subdirectory
+#'
+#' @return path of the output directory
+#' @importFrom tools file_path_sans_ext
+#' @export
+
 define_output_subdir <- function(Output_Dir, ImPath, TypePCA, Sub) {
-  Image_Name <- strsplit(basename(ImPath), "\\.")[[1]][1]
-  Output_Dir <- paste(Output_Dir, "/", Image_Name, "/", TypePCA, "/", Sub, "/", sep = "")
+  if (ImPath==FALSE){
+    message('Please provide input image file')
+    stop()
+  }
+  Image_Name <- file_path_sans_ext(basename(ImPath))
+  Output_Dir <- file.path(Output_Dir, Image_Name, TypePCA, Sub)
   dir.create(Output_Dir, showWarnings = FALSE, recursive = TRUE)
   return(Output_Dir)
 }
 
-# get information corresponding to data type defined in ENVI
-#
-# @param HDR header file
-#
-# @return description of data format corresponding to ENVI type
+#' get information corresponding to data type defined in ENVI
+#'
+#' @param HDR list. header file
+#'
+#' @return description of data format corresponding to ENVI type
+#' @export
+
 ENVI_type2bytes <- function(HDR) {
 
   # http://www.harrisgeospatial.com/docs/ENVIHeaderFiles.html
@@ -185,12 +274,14 @@ ENVI_type2bytes <- function(HDR) {
   return(my_list)
 }
 
-# define Water Vapor bands based on spectral smapling of original image
-#
-# @param ImPath path of the image
-# @param Excluded_WL spectral domains corresponding to water vapor absorption
-#
-# @return bands corresponding to atmospheric water absorption domain
+#' define Water Vapor bands based on spectral smapling of original image
+#'
+#' @param ImPath character. path of the image
+#' @param Excluded_WL numeric. spectral domains corresponding to water vapor absorption
+#'
+#' @return bands corresponding to atmospheric water absorption domain
+#' @export
+
 exclude_spectral_domains <- function(ImPath, Excluded_WL = FALSE) {
   # definition of water vapor absorption
   if (is.null(Excluded_WL)){
@@ -199,7 +290,7 @@ exclude_spectral_domains <- function(ImPath, Excluded_WL = FALSE) {
     if (Excluded_WL == FALSE) {
       Excluded_WL <- c(0, 400)
       Excluded_WL <- rbind(Excluded_WL, c(895, 1005))
-      Excluded_WL <- rbind(Excluded_WL, c(1180, 1480))
+      Excluded_WL <- rbind(Excluded_WL, c(1320, 1480))
       Excluded_WL <- rbind(Excluded_WL, c(1780, 2040))
     }
   }
@@ -244,13 +335,15 @@ exclude_spectral_domains <- function(ImPath, Excluded_WL = FALSE) {
   return(my_list)
 }
 
-# extracts sample points from binary image file
-#
-# @param coordPix_List coordinates of pixels to sample
-# @param ImPath path for image
-# @param HDR hdr path
-#
-# @return samples from image subset corresponding to coordPix_List
+#' extracts sample points from binary image file
+#'
+#' @param coordPix_List list. coordinates of pixels to sample
+#' @param ImPath character. path for image
+#' @param HDR list. hdr path
+#'
+#' @return samples from image subset corresponding to coordPix_List
+#' @export
+
 extract_pixels <- function(coordPix_List, ImPath, HDR) {
   coordPix_List <- matrix(coordPix_List, ncol = 2)
   Sample_Sel <- matrix(0, nrow = nrow(coordPix_List), ncol = HDR$bands)
@@ -296,14 +389,16 @@ extract_pixels <- function(coordPix_List, ImPath, HDR) {
   return(Sample_Sel)
 }
 
-# extracts pixels from image based on their coordinates
-#
-# @param ImPath path for image
-# @param MaxRAM
-# @param Already.Split
-# @param coordPix pixel coordinates
-#
-# @return samples from image corresponding to coordPix
+#' extracts pixels from image based on their coordinates
+#'
+#' @param ImPath character. path for image
+#' @param coordPix numeric. pixel coordinates
+#' @param MaxRAM numeric.
+#' @param Already.Split Boolean.
+#'
+#' @return samples from image corresponding to coordPix
+#' @export
+
 extract_samples_from_image <- function(ImPath, coordPix, MaxRAM = FALSE, Already.Split = FALSE) {
   # get image header data
   ImPathHDR <- get_HDR_name(ImPath)
@@ -398,9 +493,10 @@ extract_samples_from_image <- function(ImPath, coordPix, MaxRAM = FALSE, Already
 #' It constrains the maximum number rows of a block
 #'
 #' @return matrix. Rows are corresponding to the samples, columns are the bands.
-#' @importFrom raster brick
+#' @importFrom raster brick nbands
 #' @import stars
 #' @export
+
 extract.big_raster <- function(ImPath, rowcol, MaxRAM=.50){
 
   if(!is.data.frame(rowcol)){
@@ -412,28 +508,40 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.50){
     colnames(rowcol)[1:2]= c('row', 'col')
   }
 
+  metarast <- raster(ImPath)
+  # updated raster package: do not use brick with 2D raster
+  if (raster::nbands(metarast)>1){
+    rasterInfo <- raster::brick(ImPath)
+  } else{
+    rasterInfo <- metarast
+  }
 
-  r = brick(ImPath)
-  # nbytes = as.numeric(substring(dataType(r), 4, 4))
+  # nbytes = as.numeric(substring(dataType(rasterInfo), 4, 4))
   # stars converts automatically values to numeric
-  nbytes = 8
-  ImgSizeGb = prod(dim(r))*nbytes/2^30
-  LineSizeGb = prod(dim(r)[2:3])*nbytes/2^30
-  LinesBlock = floor(MaxRAM/LineSizeGb)
-  rowcol$rowInBlock = ((rowcol$row-1) %% LinesBlock)+1  # row in block number
-  rowcol$block=floor((rowcol$row-1)/LinesBlock)+1  # block number
-  rowcol$sampleIndex = 1:nrow(rowcol)  # sample index to reorder result
+  nbytes <- 8
+  ImgSizeGb <- prod(dim(rasterInfo))*nbytes/2^30
+  LineSizeGb <- prod(dim(rasterInfo)[2:3])*nbytes/2^30
+  LinesBlock <- floor(MaxRAM/LineSizeGb)
+  rowcol$rowInBlock <- ((rowcol$row-1) %% LinesBlock)+1  # row in block number
+  rowcol$block <- floor((rowcol$row-1)/LinesBlock)+1  # block number
+  rowcol$sampleIndex <- 1:nrow(rowcol)  # sample index to reorder result
 
   sampleList = lapply(unique(rowcol$block), function(iblock){
-    rc = rowcol[rowcol$block==iblock,]
-    rr = range(rc$row)
-    nYSize = diff(rr)+1
-    nXSize = max(rc$col)
+    rc <- rowcol[rowcol$block==iblock,]
+    rr <- range(rc$row)
+    nYSize <- diff(rr)+1
+    nXSize <- max(rc$col)
     # stars data cube dimension order is x*y*band
-    ipix_stars = (rc$rowInBlock-min(rc$rowInBlock))*nXSize+rc$col
-    values = read_stars(ImPath, RasterIO =list(nXSize=nXSize, nYOff=rr[1], nYSize=nYSize),proxy = FALSE)[[1]]
-    values = matrix(values, nrow=nYSize*nXSize)
-    res = cbind(rc$sampleIndex, values[ipix_stars, ])
+    ipix_stars <- (rc$rowInBlock-min(rc$rowInBlock))*nXSize+rc$col
+    # get driver
+    driver <- attr(rgdal::GDALinfo(ImPath,returnStats = FALSE), 'driver')
+    values <- read_stars(ImPath, RasterIO =list(nXSize=nXSize, nYOff=rr[1], nYSize=nYSize),proxy = FALSE, driver=driver)[[1]]
+    values <- matrix(values, nrow=nYSize*nXSize)
+    if (length(ipix_stars)>1){
+      res <- cbind(rc$sampleIndex, values[ipix_stars, ])
+    } else {
+      res <- cbind(rc$sampleIndex, matrix(values[ipix_stars, ],nrow = 1))
+    }
     rm('values')
     gc()
     return(res)
@@ -443,6 +551,90 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.50){
   samples = samples[order(samples[,1]),2:ncol(samples)]
 
   return(samples)
+}
+
+#' This function gets coordinates of a bounding box defined by a vector (optional) and a raster
+#'
+#' @param path_raster character. path for raster file
+#' @param path_vector character. path for vector file
+#' @param Buffer numeric. buffer applied to vector file (in meters)
+#'
+#' @return BB_XYcoords list. Coordinates (in pixels) of the upper/lower right/left corners of bounding box
+#' @export
+
+get_BB <- function(path_raster,path_vector=NULL,Buffer = 0){
+
+  if (!is.null(path_vector)){
+    # get bounding box with a 50m buffer in order to allow for interpolation
+    BB_XYcoords <- get_BB_from_Vector(path_raster = path_raster,
+                                      path_vector = path_vector,
+                                      Buffer = Buffer)
+  } else if (is.null(path_vector)){
+    BB_XYcoords <- get_BB_from_fullImage(path_raster)
+  }
+  return(BB_XYcoords)
+}
+
+#' This function gets extreme coordinates of a bounding box corresponding to a full image
+#'
+#' @param path_raster character. path for raster file
+#'
+#' @return BB_XYcoords list. Coordinates (in pixels) of the upper/lower right/left corners of bounding box
+#' @importFrom raster raster
+#' @export
+
+get_BB_from_fullImage <- function(path_raster){
+  # get raster coordinates corresponding to Full image
+  rasterobj <- raster::raster(path_raster)
+  BB_XYcoords <- list()
+  BB_XYcoords[['UL']] <- data.frame('row'=1,'col'=1)
+  BB_XYcoords[['UR']] <- data.frame('row'=1,'col'=dim(rasterobj)[2])
+  BB_XYcoords[['LL']] <- data.frame('row'=dim(rasterobj)[1],'col'=1)
+  BB_XYcoords[['LR']] <- data.frame('row'=dim(rasterobj)[1],'col'=dim(rasterobj)[2])
+  return(BB_XYcoords)
+}
+
+#' This gets bounding box corresponding to a vector from a raster (UL, UR, LL, LR corners)
+#'
+#' @param path_raster character. path for raster file
+#' @param path_vector character. path for vector file
+#' @param Buffer numeric. buffer applied to vector file (in meters)
+#'
+#' @return BB_XYcoords list. Coordinates (in pixels) of the upper/lower right/left corners of bounding box
+#' @importFrom sf st_read
+#' @importFrom rgeos gBuffer
+#' @importFrom sp SpatialPoints
+#' @importFrom raster projection extract extent raster
+#' @importFrom methods as
+#' @export
+
+get_BB_from_Vector <- function(path_raster,path_vector,Buffer = 0){
+
+  Raster <- raster::raster(path_raster)
+  # xmin <- xmax <- ymin <- ymax <- c()
+  # extract BB coordinates from vector
+  BB <- rgeos::gBuffer(spgeom = as(st_read(dsn = path_vector,quiet = T), "Spatial"),width=Buffer,byid = TRUE)
+  BBext <- raster::extent(BB)
+  xmin <- BBext[1]
+  xmax <- BBext[2]
+  ymin <- BBext[3]
+  ymax <- BBext[4]
+  # get coordinates of bounding box corresponding to vector
+  Corners <- list()
+  Corners[['UR']] <- sp::SpatialPoints(coords = cbind(xmax, ymax))
+  Corners[['LR']] <- sp::SpatialPoints(coords = cbind(xmax, ymin))
+  Corners[['UL']] <- sp::SpatialPoints(coords = cbind(xmin, ymax))
+  Corners[['LL']] <- sp::SpatialPoints(coords = cbind(xmin, ymin))
+  raster::projection(Corners[['UL']]) <- raster::projection(Corners[['UR']]) <-
+    raster::projection(Corners[['LL']]) <- raster::projection(Corners[['LR']]) <- raster::projection(st_read(dsn = path_vector,quiet = T))
+  # get coordinates for corners of bounding box
+  BB_XYcoords <- list()
+  for (corner in names(Corners)){
+    ex.df <- as.data.frame(raster::extract(Raster,Corners[[corner]],cellnumbers=T))
+    ColRow <- ind2sub(Raster,ex.df$cell)
+    BB_XYcoords[[corner]] <- data.frame('row'=ColRow$row,'col'=ColRow$col)
+  }
+  return(BB_XYcoords)
 }
 
 #' extract random subset of pixels from an image
@@ -455,7 +647,7 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.50){
 #' @param MaxRAM numeric.
 #'
 #' @importFrom matlab ones
-#' @import raster
+#' @importFrom raster raster brick nbands ncell values
 #' @importFrom mmand erode
 #' @importFrom data.table data.table rbindlist setorder
 #' @importFrom matrixStats rowAnys
@@ -467,26 +659,36 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.50){
 #' - coordPix: a data.table with columns 'row', 'col' of pixel in the image corresponding to each row of DataSubset, and if kernel is not NULL
 #' Kind (Kernel index) and 'id' the sample ID to be used with the kernel
 #' @export
-get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Per_Partition, kernel=NULL,MaxRAM = 0.5) {
-  r <- brick(ImPath)
+
+get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions,
+                                         Pix_Per_Partition, kernel=NULL, MaxRAM = 0.5) {
+
+  metarast <- raster::raster(ImPath)
+  # updated raster package: do not use brick with 2D raster
+  if (raster::nbands(metarast)>1){
+    rasterInfo <- raster::brick(ImPath)
+  } else{
+    rasterInfo <- metarast
+  }
   nbPix2Sample <- nb_partitions * Pix_Per_Partition
   # get total number of pixels
-  rdim <- dim(r)
+  rdim <- dim(rasterInfo)
   nlines <- rdim[1]
   nsamples <- rdim[2]
-  nbpix <- ncell(r)
+  nbpix <- raster::ncell(rasterInfo)
   # 1- Exclude masked pixels from random subset
   # Read Mask
   if ((!MaskPath == "") & (!MaskPath == FALSE)) {
-    mask <- matrix(t(raster(MaskPath)),ncol= nsamples,nrow = nlines)
+    mask <- t(matrix(values(raster::raster(MaskPath)),ncol= nlines,nrow = nsamples))
   } else {
     mask <- array(1, dim = c(nlines, nsamples))
   }
 
   if(is.matrix(kernel)){
+    mask[which(is.na(c(mask)))] <- 0
     # erode mask with kernel, to keep valid central pixels and neighbours
     mask = matlab::padarray(mask, c(1,1), padval=0, direction='both')
-    mask = erode(mask, (kernel!=0)*1)
+    mask = mmand::erode(mask, (kernel!=0)*1)
     mask = mask[2:(nrow(mask)-1), 2:(ncol(mask)-1)]
   }
 
@@ -513,13 +715,13 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Pe
     coordPixK = list()
     mesh=matlab::meshgrid(-(ncol(kernel)%/%2):(ncol(kernel)%/%2), -(nrow(kernel)%/%2):(nrow(kernel)%/%2))
     for(p in which(kernel!=0)){
-      coordPixK[[p]] = data.table(row = Row+mesh$y[p], col = Column+mesh$x[p], id=1:length(Row))
+      coordPixK[[p]] = data.table::data.table(row = Row+mesh$y[p], col = Column+mesh$x[p], id=1:length(Row))
     }
-    coordPix = rbindlist(coordPixK, idcol='Kind')
+    coordPix = data.table::rbindlist(coordPixK, idcol='Kind')
     # Order along coordPix$id for further use in noise, mnf
     setorder(coordPix, 'id')
   }else{
-    coordPix = data.table(row = Row, col = Column, id = 1:length(Row))
+    coordPix = data.table::data.table(row = Row, col = Column, id = 1:length(Row))
   }
   # sort based on .bil dim order, i.e. band.x.y or band.col.row
   # TODO: sorting may not be necessary anymore, neither unique coordinates
@@ -533,7 +735,7 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Pe
   # TODO: if coordPix can be a data.frame it would be easier
   # Sample_Sel <- biodivMapR:::extract_samples_from_image(ImPath, ucoordPix)
   Sample_Sel <- extract.big_raster(ImPath, ucoordPix[,1:2])
-  samplePixIndex = merge(coordPix, ucoordPix, by=c('row', 'col'), sort = FALSE)
+  samplePixIndex <- merge(coordPix, ucoordPix, by=c('row', 'col'), sort = FALSE)
   # randomize! It should already be random from the sample operation on mask valid pixels
   Sample_Sel <- Sample_Sel[samplePixIndex$sampleIndex, ]
   samplePixIndex[['sampleIndex']]=NULL
@@ -556,10 +758,12 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions, Pix_Pe
   return(my_list)
 }
 
-# does the system work with little endians or big endians?
+#' does the system work with little endians or big endians?
 #
-# @return ByteOrder
+#' @return ByteOrder
 #' @import tools
+#' @export
+
 get_byte_order <- function() {
   if (.Platform$endian == "little") {
     ByteOrder <- 0
@@ -571,12 +775,14 @@ get_byte_order <- function() {
 
 #' get hdr name from image file name, assuming it is BIL format
 #'
-#' @param ImPath path of the image
+#' @param ImPath character. ath of the image
+#' @param showWarnings boolean. set TRUE if warning because HDR does not exist
 #'
 #' @return corresponding hdr
 #' @import tools
 #' @export
-get_HDR_name <- function(ImPath) {
+
+get_HDR_name <- function(ImPath,showWarnings=TRUE) {
   if (file_ext(ImPath) == "") {
     ImPathHDR <- paste(ImPath, ".hdr", sep = "")
   } else if (file_ext(ImPath) == "bil") {
@@ -586,21 +792,25 @@ get_HDR_name <- function(ImPath) {
   } else {
     ImPathHDR <- paste(file_path_sans_ext(ImPath), ".hdr", sep = "")
   }
-
-  if (!file.exists(ImPathHDR)) {
-    message("WARNING : COULD NOT FIND HDR FILE")
-    print(ImPathHDR)
-    message("Process may stop")
+  if (showWarnings==TRUE){
+    if (!file.exists(ImPathHDR)) {
+      message("WARNING : COULD NOT FIND HDR FILE")
+      print(ImPathHDR)
+      message("Process may stop")
+    }
   }
   return(ImPathHDR)
 }
 
-# gets rank of spectral bands in an image
-#
-# @param Spectral_Bands wavelength (nm) of the spectral bands to be found
-# @param wavelength wavelength (nm) of all wavelengths in the image
-#
-# @return rank of all spectral bands of interest in the image and corresponding wavelength
+#' gets rank of spectral bands in an image
+#'
+#' @param Spectral_Bands wavelength (nm) of the spectral bands to be found
+#' @param wavelength wavelength (nm) of all wavelengths in the image
+#'
+#' @return rank of all spectral bands of interest in the image and corresponding wavelength
+#' and distance to wavelength
+#' @export
+
 get_image_bands <- function(Spectral_Bands, wavelength) {
   ImBand <- c()
   Distance2WL <- c()
@@ -622,8 +832,9 @@ get_image_bands <- function(Spectral_Bands, wavelength) {
 #' @return list. vector_coordinates and vector_ID for each element in the vector file
 #' @importFrom tools file_path_sans_ext
 #' @importFrom rgdal readOGR
-#' @import raster
+#' @importFrom raster compareCRS
 #' @export
+
 get_polygonCoord_from_Shp <- function(path_SHP,path_Raster,IDshp=NULL){
   # prepare for possible reprojection
   Dir_Vector <- dirname(path_SHP)
@@ -646,7 +857,7 @@ get_polygonCoord_from_Shp <- function(path_SHP,path_Raster,IDshp=NULL){
   vector_ID <- c()
   for (elem in 1:length(vector_coordinates)){
     if (!is.null(IDshp)){
-      vector_ID <- c(vector_ID,Plot[[IDshp]])
+      vector_ID <- c(vector_ID,as.character(Plot[[IDshp]]))
     } else {
       vector_ID <- c(vector_ID,'No ID Available')
     }
@@ -655,10 +866,12 @@ get_polygonCoord_from_Shp <- function(path_SHP,path_Raster,IDshp=NULL){
   return(my_list)
 }
 
-# convert image coordinates from index to X-Y
-#
-# @param Raster image raster object
-# @param Image_Index coordinates corresponding to the raster
+#' convert image coordinates from index to X-Y
+#'
+#' @param Raster image raster object
+#' @param Image_Index coordinates corresponding to the raster
+#' @export
+
 ind2sub <- function(Raster, Image_Index) {
   c <- ((Image_Index - 1) %% Raster@ncols) + 1
   r <- floor((Image_Index - 1) / Raster@ncols) + 1
@@ -666,11 +879,14 @@ ind2sub <- function(Raster, Image_Index) {
   return(my_list)
 }
 
-# convert image coordinates from index to X-Y
-# image coordinates are given as index = (ID.col-1) * total.lines + ID.row
-#
-# @param Raster image raster object
-# @param Image_Index coordinates corresponding to the raster
+#' convert image coordinates from index to X-Y
+#' image coordinates are given as index = (ID.col-1) * total.lines + ID.row
+#'
+#' @param Raster raster obj. image raster object
+#' @param Image_Index numeric. coordinates corresponding to the raster
+#' @return list. list of columns and rows corresponding to index number
+#' @export
+
 ind2sub2 <- function(Raster, Image_Index) {
   r <- ((Image_Index - 1) %% Raster@nrows) + 1
   c <- floor((Image_Index - 1) / Raster@nrows) + 1
@@ -678,15 +894,34 @@ ind2sub2 <- function(Raster, Image_Index) {
   return(my_list)
 }
 
-# applies mean filter to an image
-#
-# @param ImageInit image defined as 2d matrix
-# @param nbi number of lines in image
-# @param nbj number of columns in image
-# @param SizeFilt size of the window to compute mean filter
-#
-# @return rank of all spectral bands of interest in the image and corresponding wavelength
+#' This function computes interquartile range (IQR) criterion, which can be used
+#' as a criterion for outlier detection
+#'
+#' @param DistVal numeric. vector of distribution of values
+#' @param weightIRQ numeric. weighting factor appplied to IRQ to define lower and upper boudaries for outliers
+#'
+#' @return outlier_IQR numeric. band numbers of original sensor corresponding to S2
+#' @importFrom stats IQR quantile
+#' @export
+
+IQR_outliers <- function(DistVal,weightIRQ = 1.5){
+  iqr <- stats::IQR(DistVal, na.rm=TRUE)
+  range_IQR <- c(stats::quantile(DistVal, 0.25,na.rm=TRUE),stats::quantile(DistVal, 0.75,na.rm=TRUE))
+  outlier_IQR <- c(range_IQR[1]-weightIRQ*iqr,range_IQR[2]+weightIRQ*iqr)
+  return(outlier_IQR)
+}
+
+#' applies mean filter to an image
+#'
+#' @param Image numeric. image defined as 2d matrix
+#' @param SizeFilt numeric. size of the window to compute mean filter
+#' @param NA_remove boolean. Should NA be removed?
+#'
+#' @return rank of all spectral bands of interest in the image and corresponding wavelength
 #' @importFrom matlab padarray
+#' @importFrom utils tail
+#' @export
+
 mean_filter <- function(Image, SizeFilt,NA_remove = FALSE) {
   nbi <- dim(Image)[1]
   nbj <- dim(Image)[2]
@@ -704,7 +939,7 @@ mean_filter <- function(Image, SizeFilt,NA_remove = FALSE) {
     for (i in (SizeFilt + 1):(nbi + SizeFilt)) {
       for (j in 1:((2 * SizeFilt) + 1)) {
         # create a 2D matrix
-        Mat2D[, spl[[j]]] <- matrix(E[(i - SizeFilt):(i + SizeFilt), (spl[[j]][1]):(tail(spl[[j]], n = 1) + 2 * SizeFilt)], nrow = ((2 * SizeFilt) + 1)^2)
+        Mat2D[, spl[[j]]] <- matrix(E[(i - SizeFilt):(i + SizeFilt), (spl[[j]][1]):(utils::tail(spl[[j]], n = 1) + 2 * SizeFilt)], nrow = ((2 * SizeFilt) + 1)^2)
       }
       ImageSmooth_tmp[(i - SizeFilt), ] <- colMeans(Mat2D, na.rm = TRUE)
     }
@@ -716,18 +951,20 @@ mean_filter <- function(Image, SizeFilt,NA_remove = FALSE) {
   return(ImageSmooth)
 }
 
-# reads a subset from a binary image
-#
-# @param Byte_Start location of byte where to start reading in the image
-# @param nbLines number of lines to read
-# @param lenBin number of elements to read
-# @param ImPath path for the image
-# @param ImBand bands of interest
-# @param jpix number of columns in the image
-# @param nbChannels total number of channels in the image
-# @param Image_Format type of data (INT/FLOAT)
-#
-# @return data corresponding to the subset in original 3D format
+#' reads a subset from a binary image
+#'
+#' @param Byte_Start numeric. location of byte where to start reading in the image
+#' @param nbLines numeric. number of lines to read
+#' @param lenBin numeric. number of elements to read
+#' @param ImPath character. path for the image
+#' @param ImBand numeric. bands of interest
+#' @param jpix numeric. number of columns in the image
+#' @param nbChannels numeric. total number of channels in the image
+#' @param Image_Format character. type of data (INT/FLOAT)
+#'
+#' @return data corresponding to the subset in original 3D format
+#' @export
+
 read_bin_subset <- function(Byte_Start, nbLines, lenBin, ImPath, ImBand, jpix, nbChannels, Image_Format) {
   # number of bands to be kept
   nbSubset <- length(ImBand)
@@ -761,6 +998,7 @@ read_bin_subset <- function(Byte_Start, nbLines, lenBin, ImPath, ImBand, jpix, n
 #'
 #' @return list of the content of the hdr file
 #' @export
+
 read_ENVI_header <- function(HDRpath) {
   # header <- paste(header, collapse = "\n")
   if (!grepl(".hdr$", HDRpath)) {
@@ -814,14 +1052,15 @@ read_ENVI_header <- function(HDRpath) {
   return(HDR)
 }
 
-# read specific image bands from image
-#
-# @param ImPath Path of the image to read
-# @param HDR Header for the image
-# @param ImBand Bands to be read
-#
-# @return Image_Subset information corresponding to ImBand
-#' @import stars
+#' read specific image bands from image
+#'
+#' @param ImPath Path of the image to read
+#' @param HDR Header for the image
+#' @param ImBand Bands to be read
+#'
+#' @return Image_Subset information corresponding to ImBand
+#' @importFrom raster raster
+#' @export
 
 read_image_bands <- function(ImPath, HDR, ImBand) {
   # first get image format
@@ -834,20 +1073,23 @@ read_image_bands <- function(ImPath, HDR, ImBand) {
   i <- 0
   for (band in ImBand){
     i <- i+1
-    bndtmp = t(matrix(raster(ImPath, band = ImBand[i]),nrow = HDR$samples,ncol = HDR$lines))
+    bndtmp = t(matrix(raster::raster(ImPath, band = ImBand[i]),nrow = HDR$samples,ncol = HDR$lines))
     Image_Subset[,,i] <- array(bndtmp,c(ipix,jpix,1))
   }
   return(Image_Subset)
 }
 
-# reads subset of lines from an image
-#
-# @param ImPath path for the image
-# @param HDR header information corresponding to the image
-# @param Line_Start which line to start reading
-# @param Lines_To_Read number of lines to read
-#
-# @return data corresponding to the subset in original 3D format
+#' reads subset of lines from an image
+#'
+#' @param ImPath path for the image
+#' @param HDR header information corresponding to the image
+#' @param Line_Start which line to start reading
+#' @param Lines_To_Read number of lines to read
+#' @param ImgFormat character. is it a matrix (2D) or a raster (3D)?
+#'
+#' @return data corresponding to the subset in original 3D format
+#' @export
+
 read_image_subset <- function(ImPath, HDR, Line_Start,Lines_To_Read,ImgFormat='3D'){
   # list of pixels to be extracted
   ListRows <- seq(Line_Start,Line_Start+Lines_To_Read-1)
@@ -868,17 +1110,19 @@ read_image_subset <- function(ImPath, HDR, Line_Start,Lines_To_Read,ImgFormat='3
   return(Sample_Sel)
 }
 
-# reads subset of an ENVI BIL image
-#
-# @param ImPath path for the image
-# @param HDR header information corresponding to the image
-# @param Byte_Start location of byte where to start reading in the image
-# @param lenBin number of elements to read
-# @param nbLines number of lines to read
-# @param Image_Format type of data (INT/FLOAT)
-# @param ImgFormat should output be 2D or 3D (original image format)?
-#
-# @return data corresponding to the subset in original 3D format
+#' reads subset of an ENVI BIL image
+#'
+#' @param ImPath path for the image
+#' @param HDR header information corresponding to the image
+#' @param Byte_Start location of byte where to start reading in the image
+#' @param lenBin number of elements to read
+#' @param nbLines number of lines to read
+#' @param Image_Format type of data (INT/FLOAT)
+#' @param ImgFormat should output be 2D or 3D (original image format)?
+#'
+#' @return data corresponding to the subset in original 3D format
+#' @export
+
 read_BIL_image_subset <- function(ImPath, HDR, Byte_Start, lenBin, nbLines, Image_Format, ImgFormat) {
   fidIm <- file(
     description = ImPath, open = "rb", blocking = TRUE,
@@ -913,6 +1157,76 @@ read_BIL_image_subset <- function(ImPath, HDR, Byte_Start, lenBin, nbLines, Imag
   return(Image_Chunk)
 }
 
+#' This function produces a raster stack which can be directly processed with
+#' biodivMapR to produce spectral diversity maps.
+#' Input variables can be spectral indices, biophysical variables...
+#' @param ListRasters list. list of rasters to be stacked
+#' @param path_vector path for a vector file
+#' @param resampling numeric. resampling factor (default = 1, set to resampling = 2 to convert 20m into 10m resolution)
+#' @param interpolation character. method for resampling. default = 'bilinear'
+#'
+#' @return StarsObj list. contains stack of S2 bands
+#'
+#' @importFrom stars read_stars
+#' @importFrom sf st_bbox st_read st_crop
+#' @export
+
+read_ListRasters <- function(ListRasters, path_vector = NULL,
+                             resampling = 1, interpolation = 'bilinear'){
+  # get bounding box corresponding to footprint of image or image subset
+  BB_XYcoords <- get_BB(path_raster = ListRasters[[1]],
+                        path_vector = path_vector, Buffer = 0)
+
+  # prepare reading data for extent defined by bounding box
+  nXOff <- BB_XYcoords$UL$col
+  nYOff <- BB_XYcoords$UL$row
+  nXSize <- BB_XYcoords$UR$col-BB_XYcoords$UL$col+1
+  nYSize <- BB_XYcoords$LR$row-BB_XYcoords$UR$row+1
+  nBufXSize <- resampling*nXSize
+  nBufYSize <- resampling*nYSize
+  if (resampling==1){
+    interpolation = 'nearest_neighbour'
+  }
+  StarsObj <- stars::read_stars(ListRasters, along = 'band',
+                                RasterIO = list(nXOff = nXOff, nYOff = nYOff,
+                                                nXSize = nXSize, nYSize = nYSize,
+                                                nBufXSize = nBufXSize, nBufYSize = nBufYSize,
+                                                resample=interpolation),proxy = FALSE)
+  return(StarsObj)
+}
+
+#' Check spectral band units and convert from nanometer to micrometer or from
+#' micrometer to nanometer
+#'
+#' @param HDR list. header file for a raster
+#' @param Spectral_Bands numeric. spectral band of interest.
+#'
+#' @return Image numeric. full size in 3 dimensions
+#' @export
+
+spectral_band_unit <- function(HDR,Spectral_Bands){
+  # distance between expected bands defining red, blue and NIR info and available band from sensor
+  Dist2Band <- 25
+  # in case micrometers
+  if (!is.null(HDR$`wavelength units`)){
+    if (max(HDR$wavelength)<100 | HDR$`wavelength units` == "micrometers"){
+      Spectral_Bands <- 0.001*Spectral_Bands
+      Dist2Band <- 0.001*Dist2Band
+    }
+  } else if (is.null(HDR$`wavelength units`)){
+    message('wavelength units not provided in the header of the image')
+    if (max(HDR$wavelength)<100){
+      message('assuming wavelengths are expressed in micrometers')
+      Spectral_Bands <- 0.001*Spectral_Bands
+      Dist2Band <- 0.001*Dist2Band
+    } else {
+      message('assuming wavelengths are expressed in nanometers')
+    }
+  }
+  return(Spectral_Bands)
+}
+
+
 #' ENVI functions
 #'
 #' based on https://github.com/cran/hyperSpec/blob/master/R/read.ENVI.R
@@ -940,12 +1254,14 @@ split_line <- function(x, separator, trim.blank = TRUE) {
   return(value)
 }
 
-# splits a set of pixels to be sampled in an image based on number of lines, not number of samples
-#
-# @param coordPix coordinates of pixels to sample
-# @param Lines_Per_Read max number of lines per read for memory concerns
-#
-# @return coordPix_List list of pixel coordinates
+#' splits a set of pixels to be sampled in an image based on number of lines, not number of samples
+#'
+#' @param coordPix numeric. coordinates of pixels to sample
+#' @param Lines_Per_Read numeric. max number of lines per read for memory concerns
+#'
+#' @return coordPix_List list of pixel coordinates
+#' @export
+
 split_pixel_samples <- function(coordPix, Lines_Per_Read) {
   # maximum Lines_Per_Read
   if (dim(coordPix)[1] > 1) {
@@ -984,14 +1300,16 @@ split_pixel_samples <- function(coordPix, Lines_Per_Read) {
   return(coordPix_List)
 }
 
-# updates an existing mask
-#
-# @param MaskPath original mask (may not exist)
-# @param HDR header correpondingproviding general info about data format
-# @param Mask data to be used in the mask
-# @param MaskPath_Update path for teh updated mask
-#
-# @return MaskPath_Update
+#' updates an existing mask
+#'
+#' @param MaskPath character. path for original mask (may not exist)
+#' @param HDR list. header correpondingproviding general info about data format
+#' @param Mask numeric. data to be used in the mask
+#' @param MaskPath_Update character. path for the updated mask
+#'
+#' @return MaskPath_Update
+#' @export
+
 update_shademask <- function(MaskPath, HDR, Mask, MaskPath_Update) {
   ipix <- HDR$lines
   jpix <- HDR$samples
@@ -1038,19 +1356,118 @@ update_shademask <- function(MaskPath, HDR, Mask, MaskPath_Update) {
   return(MaskPath_Update)
 }
 
-# defines which byte should be read for each part of an image split in nbPieces
-#
-# @param HDR header info
-# @param nbPieces number of pieces resulting from image split
-#
-# @return location of the bytes corresponding to beginning and end of each piece, and corresponding number of lines
+
+#' check if the format of the mask is as expected: integer, coded in Bytes, same
+#' dimensions as input image
+#'
+#' @param Input_Mask_File character. path for original mask
+#' @param Input_Image_File character. path for image file corresponding to the mask
+#'
+#' @return MaskPath_Update
+#' @importFrom stars read_stars
+#' @export
+
+check_update_mask_format <- function(Input_Mask_File, Input_Image_File){
+  Mask <-  stars::read_stars(Input_Mask_File,proxy = F)
+  ncols <- as.integer(ncol(Mask[[1]]))
+  nrows <- as.integer(nrow(Mask[[1]]))
+
+  Mask <- t(matrix(as.integer(Mask[[1]]), nrow = nrows, ncol = ncols))
+  MaskPath_Update <- paste(file_path_sans_ext(Input_Mask_File),'_byte',sep = '')
+  HDR <- read_ENVI_header(get_HDR_name(Input_Image_File))
+
+  if (!ncols == HDR$samples | !nrows == HDR$lines){
+    message('Warning: image and corresponding mask do not have the same dimensions')
+    message('Please make sure dimensions match between image and mask')
+    stop()
+  } else {
+    MaskPath_Update <- update_shademask(MaskPath = FALSE,
+                                        HDR = HDR,
+                                        Mask = Mask,
+                                        MaskPath_Update = MaskPath_Update)
+  }
+  rm(Mask)
+  gc()
+  return(MaskPath_Update)
+}
+
+#' This function identify plots from a shapefile matching with a raster footprint
+#'
+#' @param PathVect character. path for input vector file
+#' @param PathRaster character. path for a raster file
+#' @param buffer numeric. buffer to be applied around the original points/polygons, in meters
+#' @param PathVectOut character. path for output vector file
+#' @param WriteShp boolean. Set TRUE to write file
+#'
+#' @return vectSP list. OGR object corresponding to final vector data
+#' @importFrom tools file_ext file_path_sans_ext
+#' @importFrom rgdal readOGR writeOGR
+#' @importFrom raster projection
+#' @importFrom sf st_read
+#' @importFrom methods as
+#' @importFrom sp spTransform
+#' @export
+
+VectorInRasterFootprint <- function(PathVect, PathRaster, buffer=NULL, PathVectOut=NULL, WriteShp = TRUE){
+
+  DirVect <- dirname(PathVect)
+  # shapefile extension
+  fileext <- file_ext(basename(PathVect))
+  if (fileext=='shp'){
+    NameVect <- file_path_sans_ext(basename(PathVect))
+    VectOGR <- rgdal::readOGR(dsn = DirVect,
+                              layer = NameVect, verbose = FALSE)
+  } else if (fileext=='kml'){
+    VectOGR <- rgdal::readOGR(PathVect, verbose = FALSE)
+  }
+  # get projection vector
+  VectOGR_proj <- raster::projection(VectOGR)
+  # get projection raster
+  RastOGR_proj <- raster::projection(raster(PathRaster))
+  # reproject if not same projection
+  if (!VectOGR_proj==RastOGR_proj){
+    VectOGR <- sp::spTransform(VectOGR, RastOGR_proj)
+  }
+  # identify and select plots included in the raster
+  XY <- extract_pixels_coordinates.From.OGR(PathRaster,VectOGR)
+  nbVects <- length(VectOGR)
+  plotsinraster <- which(!is.na(XY[[1]]$col))
+  namePlots <- VectOGR$ID[plotsinraster]
+  vectSF <- st_read(PathVect)[plotsinraster,]
+  vectSP <- as(vectSF, "Spatial")
+  if (is.null(buffer)){
+    buffer <- 0
+  }
+  if (buffer>0){
+    vectSP <- rgeos::gBuffer(spgeom = vectSP,
+                             width = buffer,
+                             byid = TRUE)
+  }
+  # save polygons in a shapefile
+  if (WriteShp==TRUE){
+    if (is.null(PathVectOut)){
+      PathVectOut <- paste(file_path_sans_ext(PathVect),'_buffer',sep = '')
+    }
+    rgdal::writeOGR(obj = vectSP, dsn = dirname(PathVectOut),layer = basename(PathVectOut), driver="ESRI Shapefile",overwrite_layer = TRUE)
+  }
+  return(vectSP)
+}
+
+#' defines which byte should be read for each part of an image split in nbPieces
+#'
+#' @param HDR list. header info
+#' @param nbPieces numeric. number of pieces resulting from image split
+#'
+#' @return location of the bytes corresponding to beginning and end of each piece, and corresponding number of lines
+#' @export
+
 where_to_read <- function(HDR, nbPieces) {
-  Data.Per.Line <- as.double(HDR$samples) * as.double(HDR$bands)
-  lenTot <- as.double(HDR$lines) * Data.Per.Line
+  Data_Per_Line <- as.double(HDR$samples) * as.double(HDR$bands)
+  lenTot <- as.double(HDR$lines) * Data_Per_Line
   # starting line for each chunk
   Start_Per_Chunk <- ceiling(seq(1, (HDR$lines + 1), length.out = nbPieces + 1))
   # elements in input data
-  lb <- 1 + ((Start_Per_Chunk - 1) * Data.Per.Line)
+  lb <- 1 + ((Start_Per_Chunk - 1) * Data_Per_Line)
   ub <- lb - 1
   ReadByte_Start <- lb[1:nbPieces]
   ReadByte_End <- ub[2:(nbPieces + 1)]
@@ -1059,19 +1476,25 @@ where_to_read <- function(HDR, nbPieces) {
   return(my_list)
 }
 
-# defines which byte should be read for each part of an image split in nbPieces
-#
-# @param HDR header info
-# @param nbPieces number of pieces resulting from image split
-# @return location of the bytes corresponding to beginning and end of each piece, and corresponding number of lines
-where_to_read_kernel <- function(HDR, nbPieces, SE.Size) {
-  Data.Per.Line <- as.double(HDR$samples) * as.double(HDR$bands)
-  lenTot <- as.double(HDR$lines) * Data.Per.Line
+#' defines which byte should be read for each part of an image split in nbPieces
+#'
+#' @param HDR list. header info
+#' @param nbPieces numeric. number of pieces resulting from image split
+#' @param SE_Size numeric. size of structuring element (window)
+#'
+#' @return location of the bytes corresponding to beginning and end of each piece, and corresponding number of lines
+#' @export
+
+where_to_read_kernel <- function(HDR, nbPieces, SE_Size) {
+  Data_Per_Line <- as.double(HDR$samples) * as.double(HDR$bands)
+  lenTot <- as.double(HDR$lines) * Data_Per_Line
   # starting line for each chunk
   Start_Per_Chunk <- ceiling(seq(1, (HDR$lines + 1), length.out = nbPieces + 1))
-  Start_Per_Chunk <- Start_Per_Chunk - Start_Per_Chunk %% SE.Size + 1
+  # Start_Per_Chunk <- Start_Per_Chunk - Start_Per_Chunk %% SE_Size + 1
+  Start_Per_Chunk2 <- Start_Per_Chunk - Start_Per_Chunk %% SE_Size + 1
+  Start_Per_Chunk[1:nbPieces] <- Start_Per_Chunk2[1:nbPieces]
   # elements in input data
-  lb <- 1 + ((Start_Per_Chunk - 1) * Data.Per.Line)
+  lb <- 1 + ((Start_Per_Chunk - 1) * Data_Per_Line)
   ub <- lb - 1
   ReadByte_Start <- lb[1:nbPieces]
   ReadByte_End <- ub[2:(nbPieces + 1)]
@@ -1080,26 +1503,30 @@ where_to_read_kernel <- function(HDR, nbPieces, SE.Size) {
   return(my_list)
 }
 
-# defines which byte should be written for each part of an image split in nbPieces
-#
-# @param HDR_SS header info for SpectralSpecies file
-# @param HDR_SSD header info for SpectralSpecies_Distribution file
-# @param nbPieces number of pieces resulting from image split
-# @param SE.Size
-#
-# @return location of the bytes corresponding to beginning and end of each piece, and corresponding number of lines
-where_to_write_kernel <- function(HDR_SS, HDR_SSD, nbPieces, SE.Size) {
-  Data.Per.Line_SS <- as.double(HDR_SS$samples) * as.double(HDR_SS$bands)
-  Data.Per.Line_SSD <- as.double(HDR_SSD$samples) * as.double(HDR_SSD$bands)
+#' defines which byte should be written for each part of an image split in nbPieces
+#'
+#' @param HDR_SS list. header info for SpectralSpecies file
+#' @param HDR_SSD list. header info for SpectralSpecies_Distribution file
+#' @param nbPieces numeric. number of pieces resulting from image split
+#' @param SE_Size numeric.
+#'
+#' @return location of the bytes corresponding to beginning and end of each piece, and corresponding number of lines
+#' @export
+
+where_to_write_kernel <- function(HDR_SS, HDR_SSD, nbPieces, SE_Size) {
+  Data_Per_Line_SS <- as.double(HDR_SS$samples) * as.double(HDR_SS$bands)
+  Data_Per_Line_SSD <- as.double(HDR_SSD$samples) * as.double(HDR_SSD$bands)
 
   # starting line for each chunk of spectral species
   Start_Per_Chunk <- ceiling(seq(1, (HDR_SS$lines + 1), length.out = nbPieces + 1))
-  Start_Per_Chunk <- Start_Per_Chunk - Start_Per_Chunk %% SE.Size
-  Start_Per_Chunk.SSD <- (Start_Per_Chunk / SE.Size) + 1
+  Start_Per_Chunk2 <- Start_Per_Chunk - Start_Per_Chunk %% SE_Size + 1
+  Start_Per_Chunk[1:nbPieces] <- Start_Per_Chunk2[1:nbPieces]
+  # Start_Per_Chunk <- Start_Per_Chunk - Start_Per_Chunk %% SE_Size
+  Start_Per_Chunk.SSD <- ceiling((Start_Per_Chunk-1) / SE_Size) + 1
 
   # elements in input data
   Image_Format <- ENVI_type2bytes(HDR_SSD)
-  lb_SSD <- 1 + (((Start_Per_Chunk.SSD - 1) * Data.Per.Line_SSD) * Image_Format$Bytes)
+  lb_SSD <- 1 + (((Start_Per_Chunk.SSD - 1) * Data_Per_Line_SSD) * Image_Format$Bytes)
   ub_SSD <- lb_SSD - 1
   ReadByte_Start.SSD <- lb_SSD[1:nbPieces]
   ReadByte_End.SSD <- ub_SSD[2:(nbPieces + 1)]
@@ -1111,23 +1538,23 @@ where_to_write_kernel <- function(HDR_SS, HDR_SSD, nbPieces, SE.Size) {
 
 #' writes ENVI hdr file
 #'
-#' @param HDR content to be written
-#' @param HDRpath Path of the hdr file
+#' @param HDR list. content to be written
+#' @param HDRpath character. Path of the hdr file
 #'
-#' @return
+#' @return None
 #' @importFrom stringr str_count
 #' @export
 
 write_ENVI_header <- function(HDR, HDRpath) {
   h <- lapply(HDR, function(x) {
-    if (length(x) > 1 || (is.character(x) && str_count(x, "\\w+") > 1)) {
-      x <- paste0("{", paste(x, collapse = ","), "}")
+    if (length(x) > 1 || (is.character(x) && str_count(x, '\\w+') > 1)) {
+      x <- paste0('{', paste(x, collapse = ','), '}')
     }
     # convert last numerics
     x <- as.character(x)
   })
-  writeLines(c("ENVI", paste(names(HDR), h, sep = " = ")), con = HDRpath)
-  return("")
+  writeLines(c('ENVI', paste(names(HDR), h, sep = ' = ')), con = HDRpath)
+  return(invisible())
 }
 
 #' write an image which size is > 2**31-1
@@ -1138,6 +1565,7 @@ write_ENVI_header <- function(HDR, HDRpath) {
 #' @param Image_Format list. description of data format corresponding to ENVI type
 #'
 #' @return None
+#' @importFrom progress progress_bar
 #' @export
 
 Write_Big_Image <- function(ImgWrite,ImagePath,HDR,Image_Format){
@@ -1149,8 +1577,11 @@ Write_Big_Image <- function(ImgWrite,ImagePath,HDR,Image_Format){
   )
   close(fidOUT)
   # for each piece of image
+  pb <- progress_bar$new(
+    format = 'Writing raster [:bar] :percent in :elapsedfull',
+    total = nbPieces, clear = FALSE, width= 100)
+
   for (i in 1:nbPieces) {
-    print(paste("Writing Image, piece #", i, "/", nbPieces))
     # read image and mask data
     Byte_Start <- SeqRead_Image$ReadByte_Start[i]
     Line_Start <- SeqRead_Image$Line_Start[i]
@@ -1178,6 +1609,7 @@ Write_Big_Image <- function(ImgWrite,ImagePath,HDR,Image_Format){
       writeBin(c(as.integer(ImgChunk)), fidOUT, size = Image_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
     }
     close(fidOUT)
+    pb$tick()
   }
   rm(ImgWrite)
   rm(ImgChunk)
@@ -1240,6 +1672,7 @@ Write_Image_NativeRes <- function(Image,ImagePath,HDR,window_size){
 #' @param SmoothImage boolean. set TRUE if you want smooting filter applied to resulting diversity rasters
 #
 #' @return None
+#' @export
 
 write_raster <- function(Image, HDR, ImagePath, window_size, FullRes = TRUE, LowRes = FALSE,SmoothImage = FALSE) {
 
@@ -1285,24 +1718,56 @@ write_raster <- function(Image, HDR, ImagePath, window_size, FullRes = TRUE, Low
   return("")
 }
 
+#' This function writes a stars object into a raster file
+#'
+#' @param StarsObj list. stars object containing raster data. Can be produced with function Crop_n_resample_S2
+#' @param dsn character. path where to store the image produced
+#' @param BandNames character. vector of band names to be assigned to the raster
+#' @param datatype character. should be Int16 or Float64 for example
+#'
+#' @return None
+#' @export
 
-# convert image coordinates from X-Y to index
-#
-# @param HDR_Raster
-# @param Pixels coordinates corresponding to the raster
-#
-# @return Image_Index
+write_StarsStack <- function(StarsObj, dsn, BandNames=NULL, datatype='Float32'){
+
+  write_stars(StarsObj, dsn=dsn,driver =  "EHdr",type=datatype)
+  raster::hdr(raster(dsn), format = "ENVI")
+  # Edit HDR file to add metadata
+  HDR <- read_ENVI_header(get_HDR_name(dsn))
+  HDR$`band names` <- BandNames
+  HDR$`coordinate system string` <- read.table(paste(dsn, ".prj", sep = ""))
+  write_ENVI_header(HDR = HDR,HDRpath = get_HDR_name(dsn))
+  # remove unnecessary files
+  File2Remove <- paste(dsn, ".aux.xml", sep = "")
+  if (file.exists(File2Remove)) file.remove(File2Remove)
+  File2Remove <- paste(dsn, ".prj", sep = "")
+  if (file.exists(File2Remove)) file.remove(File2Remove)
+  File2Remove <- paste(dsn, ".stx", sep = "")
+  if (file.exists(File2Remove)) file.remove(File2Remove)
+  return(invisible())
+}
+
+#' convert image coordinates from X-Y to index
+#'
+#' @param HDR_Raster list. Header file
+#' @param Pixels list. row/col coordinates corresponding to the raster
+#'
+#' @return Image_Index
+#' @export
+
 sub2ind <- function(HDR_Raster, Pixels) {
   Image_Index <- (Pixels$col - 1) * HDR_Raster$lines + Pixels$row
   return(Image_Index)
 }
 
-# defines the number of pieces resulting from image split
-#
-# @param HDR information extracted from a header
-# @param LimitSizeGb maximum size of individual pieces of an image (in Gb)
-#
-# @return nbPieces number of pieces
+#' defines the number of pieces resulting from image split
+#'
+#' @param HDR list. Header file
+#' @param LimitSizeGb numeric. maximum size of individual pieces of an image (in Gb)
+#'
+#' @return nbPieces number of pieces
+#' @export
+
 split_image <- function(HDR, LimitSizeGb = FALSE) {
   Image_Format <- ENVI_type2bytes(HDR)
   lenTot <- as.double(HDR$samples) * as.double(HDR$lines) * as.double(HDR$bands)
@@ -1324,12 +1789,14 @@ split_image <- function(HDR, LimitSizeGb = FALSE) {
   return(nbPieces)
 }
 
-# revert resolution in a HDR file
-#
-# @param HDR information read from a header file
-# @param window_size multiplying factor for initial resolution
-#
-# @return updated HDR information
+#' revert resolution in a HDR file
+#'
+#' @param HDR information read from a header file
+#' @param window_size numeric. multiplying factor for initial resolution
+#'
+#' @return updated HDR information
+#' @export
+
 revert_resolution_HDR <- function(HDR, window_size) {
   MapInfo <- strsplit(HDR$`map info`, split = ",")
   MapInfo[[1]][6] <- as.numeric(MapInfo[[1]][6]) / window_size
@@ -1338,10 +1805,12 @@ revert_resolution_HDR <- function(HDR, window_size) {
   return(HDR)
 }
 
-# Zips an image file
-#
-# @param ImagePath path for the image
-# @return None
+#' Zips an image file
+#'
+#' @param ImagePath character. path for the image
+#' @return None
+#' @export
+
 ZipFile <- function(ImagePath) {
 
 

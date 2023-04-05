@@ -31,10 +31,17 @@
 #' @importFrom raster brick
 #' @export
 #'
-map_partition_div <- function(Original_Image_File,Partition_File = FALSE,
-                              Selected_Features = FALSE,Output_Dir, window_size,
-                              TypePCA = "SPCA", MinSun = 0.25,
-                              FullRes = TRUE,LowRes = FALSE, nbCPU = FALSE, MaxRAM = FALSE,
+map_partition_div <- function(Original_Image_File,
+                              Partition_File = FALSE,
+                              Selected_Features = FALSE,
+                              Output_Dir,
+                              window_size,
+                              TypePCA = "SPCA",
+                              MinSun = 0.25,
+                              FullRes = FALSE,
+                              LowRes = TRUE,
+                              nbCPU = FALSE,
+                              MaxRAM = FALSE,
                               SmoothImage = TRUE) {
 
   if (Partition_File==FALSE){
@@ -43,8 +50,10 @@ map_partition_div <- function(Original_Image_File,Partition_File = FALSE,
   # check if selected features match with image dimensions
   HDRname <- get_HDR_name(Partition_File)
   HDR <- read_ENVI_header(HDRname)
-  if (Selected_Features==FALSE){
-    Selected_Features = seq(1,HDR$bands)
+  if (length(Selected_Features)==1){
+    if (Selected_Features==FALSE){
+      Selected_Features = seq(1,HDR$bands)
+    }
   } else {
     if (max(Selected_Features)>HDR$bands){
       message("")
@@ -61,10 +70,8 @@ map_partition_div <- function(Original_Image_File,Partition_File = FALSE,
   # define output directory
   Output_Dir_Partition <- define_output_subdir(Output_Dir, Original_Image_File, TypePCA, "PARTITION_SPECTRAL")
   print("Partitioning spectral diversity following Laliberte, Schweiger & Legendre (2020)")
-  brick_SelPC <- brick(Partition_File)
-  if (!Selected_Features == FALSE){
-    brick_SelPC <- brick(brick_SelPC[[Selected_Features]])
-  }
+  brick_SelPC <- raster::brick(Partition_File)
+  brick_SelPC <- raster::brick(brick_SelPC[[Selected_Features]])
   len <- window_size*window_size
   Partition_Spectral <- specdiv(brick_SelPC, fact = window_size, prop = MinSun)
 
@@ -79,7 +86,7 @@ map_partition_div <- function(Original_Image_File,Partition_File = FALSE,
   HDR_Partition$`band names` <- c('Alpha_spectral_diversity')
   # Write image
   RasterPart <- t(matrix(raster::values(Partition_Spectral$rasters$alpha_sdiv), nrow = HDR_Partition$samples, ncol = HDR_Partition$lines))
-  Alpha_Map_Path <- paste(Output_Dir_Partition, "Alpha_SpectralDiv", sep = "")
+  Alpha_Map_Path <- file.path(Output_Dir_Partition, "Alpha_SpectralDiv")
   write_raster(RasterPart, HDR_Partition, Alpha_Map_Path, window_size, FullRes = FullRes, LowRes = LowRes,SmoothImage = SmoothImage)
 
   print("Writing local contribution to spectral gamma-diversity")
@@ -87,7 +94,7 @@ map_partition_div <- function(Original_Image_File,Partition_File = FALSE,
   HDR_Partition$`band names` <- c('LCSD')
   # Write image
   RasterPart <- t(matrix(raster::values(Partition_Spectral$rasters$beta_lcsd), nrow = HDR_Partition$samples, ncol = HDR_Partition$lines))
-  LCSD_Map_Path <- paste(Output_Dir_Partition, "LCSD", sep = "")
+  LCSD_Map_Path <- file.path(Output_Dir_Partition, "LCSD")
   write_raster(RasterPart, HDR_Partition, LCSD_Map_Path, window_size, FullRes = FullRes, LowRes = LowRes,SmoothImage = SmoothImage)
 
   print("Writing LCSS")
@@ -95,7 +102,7 @@ map_partition_div <- function(Original_Image_File,Partition_File = FALSE,
   HDR_Partition$`band names` <- c('LCSS')
   # Write image
   RasterPart <- t(matrix(raster::values(Partition_Spectral$rasters$beta_lcss), nrow = HDR_Partition$samples, ncol = HDR_Partition$lines))
-  LCSS_Map_Path <- paste(Output_Dir_Partition, "LCSS", sep = "")
+  LCSS_Map_Path <- file.path(Output_Dir_Partition, "LCSS")
   write_raster(RasterPart, HDR_Partition, LCSS_Map_Path, window_size, FullRes = FullRes, LowRes = LowRes,SmoothImage = SmoothImage)
 
   print("Writing feature contribution to spectral alpha diversity")
@@ -104,7 +111,7 @@ map_partition_div <- function(Original_Image_File,Partition_File = FALSE,
   HDR_Partition$`band names` <- paste('Contribution_Feature', 1:HDR_Partition$bands, collapse = ", ")
   # Write image
   RasterPart <- aperm(array(raster::values(Partition_Spectral$rasters$alpha_fcsd), c(HDR_Partition$samples, HDR_Partition$lines, HDR_Partition$bands)),c(2,1,3))
-  FCSD_Map_Path <- paste(Output_Dir_Partition, "FCSD", sep = "")
+  FCSD_Map_Path <- file.path(Output_Dir_Partition, "FCSD")
   write_raster(RasterPart, HDR_Partition, FCSD_Map_Path, window_size, FullRes = FullRes, LowRes = LowRes,SmoothImage = SmoothImage)
   my_list <- list("Sum_Squares" = Partition_Spectral$ss,
                   "Spectral_Div" = Partition_Spectral$sdiv,

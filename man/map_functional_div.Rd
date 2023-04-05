@@ -12,11 +12,11 @@ map_functional_div(
   window_size,
   TypePCA = "SPCA",
   MinSun = 0.25,
-  FullRes = TRUE,
-  LowRes = FALSE,
-  MapSTD = FALSE,
-  nbCPU = FALSE,
-  MaxRAM = FALSE,
+  FullRes = FALSE,
+  LowRes = TRUE,
+  MapSTD = TRUE,
+  nbCPU = 1,
+  MaxRAM = 0.25,
   SmoothImage = TRUE
 )
 }

@@ -26,9 +26,10 @@
 #'
 #' @return list of paths corresponding to resulting PCA files
 #' @export
-perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuum_Removal=TRUE, TypePCA="SPCA",
-                         NbPCs_To_Keep=30,FilterPCA = FALSE, Excluded_WL = FALSE, nb_partitions = 20,
-                         nbCPU = 1, MaxRAM = 0.25) {
+perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir,
+                         Continuum_Removal = TRUE, TypePCA = "SPCA",
+                         NbPCs_To_Keep = 30, FilterPCA = FALSE, Excluded_WL = FALSE,
+                         nb_partitions = 20, nbCPU = 1, MaxRAM = 0.25) {
   # check if format of raster data is as expected
   check_data(Input_Image_File)
   if (!Input_Mask_File==FALSE){
@@ -36,7 +37,7 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
   }
   # define the path corresponding to image, mask and output directory
   ImNames <- list()
-  ImNames$Input.Image <- Input_Image_File
+  ImNames$Input_Image <- Input_Image_File
   ImNames$Mask_list <- Input_Mask_File
   Output_Dir_Full <- define_output_directory(Output_Dir, Input_Image_File, TypePCA)
   # Identify water vapor absorption bands in image and possibly other spectral domains to discard
@@ -83,15 +84,13 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
   SpectralFilter <- CleanData$Spectral
 
   # Compute PCA #1 on DataSubset
-  print("perform PCA#1 on the subset image")
+  print(paste('perform',TypePCA,'on the subset image'))
   if (TypePCA == "PCA" | TypePCA == "SPCA") {
     PCA_model <- pca(DataSubset, TypePCA)
   # } else if (TypePCA == "NLPCA") {
   #   print("performing NL-PCA with autoencoder")
   #   print("Make sure you properly installed and defined python environment if using this functionality")
-  #   tic()
   #   PCA_model <- nlpca(DataSubset)
-  #   toc()
   } else if(TypePCA=="MNF"){
     PCA_model <- mnf(DataSubset, Subset$coordPix)
   }
@@ -100,18 +99,18 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
   if (FilterPCA == TRUE) {
     # Perform PCA-based pixels filtering
     # the shade mask helps discarding most unwanted pixels: Shade, clouds, soil,
-    # water...). However some unwanted pixels remain. Here we hypothese that
+    # water...). However some unwanted pixels remain. Here we assume that
     # such pixels which do not correspond to vegetation will take extreme values
     # after PCA transformation.
     # In order to exclude these pixels, we compute mean and SD for the 3 first
     # components and exclude all pixels showing values ouside "mean+-3SD" range
-    print("perform 2nd filtering: Exclude extreme PCA values")
+    print("Exclude extreme PCA values")
     if (dim(PCA_model$x)[2] > 5) {
       PCsel <- 1:5
     } else {
       PCsel <- 1:dim(PCA_model$x)[2]
     }
-    Shade_Update <- paste(Output_Dir_Full, "ShadeMask_Update_PCA", sep = "")
+    Shade_Update <- file.path(Output_Dir_Full, "ShadeMask_Update_PCA")
     Input_Mask_File <- filter_PCA(Input_Image_File, HDR, Input_Mask_File, Shade_Update,
                                   Spectral = SpectralFilter,Continuum_Removal, PCA_model,
                                   PCsel, TypePCA,nbCPU = nbCPU, MaxRAM = MaxRAM)
@@ -142,14 +141,12 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
     CleanData <- rm_invariant_bands(DataSubset, SpectralFilter)
     DataSubset <- CleanData$DataMatrix
     SpectralFilter <- CleanData$Spectral
-    print("perform PCA#2 on the subset image")
+    print(paste('perform',TypePCA,'#2 on the subset image'))
     if (TypePCA == "PCA" | TypePCA == "SPCA") {
       PCA_model <- pca(DataSubset, TypePCA)
     # } else if (TypePCA == "NLPCA") {
     #   print("performing NL-PCA with autoencoder")
-    #   tic()
     #   PCA_model <- nlpca(DataSubset)
-    #   toc()
     }
   }
   # Number of PCs computed and written in the PCA file: 30 if hyperspectral
@@ -158,41 +155,47 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir, Continuu
     Nb_PCs <- NbPCs_To_Keep
   }
   PCA_model$Nb_PCs <- Nb_PCs
-  PCA_model$x <- NULL
+  # PCA_model$x <- NULL
   # CREATE PCA FILE CONTAINING ONLY SELECTED PCs
-  print("Apply PCA model to the whole image")
   Output_Dir_PCA <- define_output_subdir(Output_Dir, Input_Image_File, TypePCA, "PCA")
-  PCA_Files <- paste(Output_Dir_PCA, "OutputPCA_", Nb_PCs, "_PCs", sep = "")
-  write_PCA_raster(Input_Image_File = Input_Image_File, Input_Mask_File = Input_Mask_File,
-                   PCA_Path = PCA_Files, PCA_model = PCA_model, Spectral = SpectralFilter,
-                   Nb_PCs = Nb_PCs, Continuum_Removal = Continuum_Removal, TypePCA = TypePCA,
-                   nbCPU = nbCPU, MaxRAM = MaxRAM)
+  PCA_Files <- file.path(Output_Dir_PCA, paste("OutputPCA_", Nb_PCs, "_PCs", sep = ""))
+  write_PCA_raster(Input_Image_File = Input_Image_File,
+                   Input_Mask_File = Input_Mask_File,
+                   PCA_Path = PCA_Files, PCA_model = PCA_model,
+                   Spectral = SpectralFilter,
+                   Nb_PCs = Nb_PCs, Continuum_Removal = Continuum_Removal,
+                   TypePCA = TypePCA, nbCPU = nbCPU, MaxRAM = MaxRAM)
   # save workspace for this stage
-  WS_Save <- paste(Output_Dir_PCA, "PCA_Info.RData", sep = "")
-  my_list <- list("PCA_Files" = PCA_Files,"Pix_Per_Partition" =Pix_Per_Partition, "nb_partitions" = nb_partitions,
-                  "MaskPath" = Input_Mask_File, "PCA_model" =PCA_model,"SpectralFilter"=   SpectralFilter)
-  MaskPath = Input_Mask_File
-  save(PCA_Files,Pix_Per_Partition, nb_partitions, MaskPath, PCA_model, SpectralFilter,file = WS_Save)
+  WS_Save <- file.path(Output_Dir_PCA, "PCA_Info.RData")
+  my_list <- list("PCA_Files" = PCA_Files, "Pix_Per_Partition" = Pix_Per_Partition,
+                  "nb_partitions" = nb_partitions, "MaskPath" = Input_Mask_File,
+                  "PCA_model" = PCA_model, "SpectralFilter" = SpectralFilter,
+                  "TypePCA" = TypePCA)
+  MaskPath <- Input_Mask_File
+  save(PCA_Files,Pix_Per_Partition, nb_partitions, MaskPath, PCA_model,
+       SpectralFilter, TypePCA, file = WS_Save)
   return(my_list)
 }
 
-# perform filtering based on extreme values PCA identified through PCA
+#' perform filtering based on extreme values PCA identified through PCA
+#'
+#' @param Input_Image_File character. Path of the image to be processed
+#' @param HDR character. Path of the header file corresponding to the image to be processed
+#' @param Input_Mask_File character. Path of the mask raster corresponding to the image (keeps pixels = 1)
+#' @param Shade_Update character. Path of the updated mask raster corresponding to the image (keeps pixels = 1)
+#' @param Spectral list. spectral information from data
+#' @param Continuum_Removal boolean. set TRUE if continuum removal should be applied
+#' @param PCA_model dataframe. general parameters of the PCA
+#' @param PCsel numeric. PCs used to filter out extreme values
+#' @param TypePCA character. Set to PCA, SPCA or MNF
+#' @param nbCPU numeric. number of CPUs to be used in parallel
+#' @param MaxRAM numeric. indicator of RAM to be used to read image file
 #
-# @param Input_Image_File character. Path of the image to be processed
-# @param HDR character. Path of the header file corresponding to the image to be processed
-# @param Input_Mask_File character. Path of the mask raster corresponding to the image (keeps pixels = 1)
-# @param Shade_Update character. Path of the updated mask raster corresponding to the image (keeps pixels = 1)
-# @param Spectral list. spectral information from data
-# @param Continuum_Removal boolean. set TRUE if continuum removal should be applied
-# @param PCA_model dataframe. general parameters of the PCA
-# @param PCsel numeric. PCs used to filter out extreme values
-# @param TypePCA character. Set to PCA, SPCA or MNF
-# @param nbCPU numeric. number of CPUs to be used in parallel
-# @param MaxRAM numeric. indicator of RAM to be used to read image file
-#
-# @return Shade_Update = updated shade mask
-# ' @importFrom stats sd
-# ' @importFrom matlab ones
+#' @return Shade_Update = updated shade mask
+#' @importFrom stats sd
+#' @importFrom matlab ones
+#' @export
+
 filter_PCA <- function(Input_Image_File, HDR, Input_Mask_File, Shade_Update,
                        Spectral, Continuum_Removal, PCA_model, PCsel, TypePCA,
                        nbCPU = 1, MaxRAM = 0.25) {
@@ -324,24 +327,27 @@ filter_PCA <- function(Input_Image_File, HDR, Input_Mask_File, Shade_Update,
   return(Shade_Update)
 }
 
-# writes an ENVI image corresponding to PCA
-#
-# @param Input_Image_File path for the raster on which PCA is applied
-# @param Input_Mask_File path for the corresponding mask
-# @param PCA_Path path for resulting PCA
-# @param PCA_model PCA model description
-# @param Spectral spectral information to be used in the image
-# @param Nb_PCs number of components kept in the resulting PCA raster
-# @param CR boolean. If TRUE continuum removal is performed.
-# @param TypePCA PCA, SPCA, NLPCA
-# @param nbCPU number of CPUs to process data
-# @param MaxRAM max RAM when initial image is read (in Gb)
-#
-# @return None
+#' writes an ENVI image corresponding to PCA
+#'
+#' @param Input_Image_File path for the raster on which PCA is applied
+#' @param Input_Mask_File path for the corresponding mask
+#' @param PCA_Path path for resulting PCA
+#' @param PCA_model PCA model description
+#' @param Spectral spectral information to be used in the image
+#' @param Nb_PCs number of components kept in the resulting PCA raster
+#' @param Continuum_Removal boolean. If TRUE continuum removal is performed.
+#' @param TypePCA PCA, SPCA, NLPCA
+#' @param nbCPU number of CPUs to process data
+#' @param MaxRAM max RAM when initial image is read (in Gb)
+#'
+#' @return None
+#' @importFrom progress progress_bar
+#' @export
+
 write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_model,
                              Spectral, Nb_PCs, Continuum_Removal, TypePCA, nbCPU = 1, MaxRAM = 0.25) {
-  ImPathHDR <- get_HDR_name(Input_Image_File)
-  HDR <- read_ENVI_header(ImPathHDR)
+
+
   if (is.character(Input_Mask_File) && (Input_Mask_File != "")) {
     ShadeHDR <- get_HDR_name(Input_Mask_File)
     HDR_Shade <- read_ENVI_header(ShadeHDR)
@@ -349,33 +355,11 @@ write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_mo
     HDR_Shade <- FALSE
   }
   # 1- create hdr and binary files corresponding to PCA file
-  HDR_PCA <- HDR
-  HDR_PCA$bands <- Nb_PCs
-  HDR_PCA$`data type` <- 4
-  HDR_PCA$interleave <- 'BIL'
-  HDR_PCA$`default bands` <- NULL
-  HDR_PCA$`wavelength units` <- NULL
-  HDR_PCA$`z plot titles` <- NULL
-  HDR_PCA$`data gain values` <- NULL
-  HDR_PCA$`file type` <- NULL
-  HDR_PCA$`band names` <- paste('PC', 1:Nb_PCs, collapse = ", ")
-  HDR_PCA$wavelength <- NULL
-  HDR_PCA$fwhm <- NULL
-  HDR_PCA$resolution <- NULL
-  HDR_PCA$bandwidth <- NULL
-  HDR_PCA$purpose <- NULL
-  HDR_PCA$`default stretch` <- NULL
-  HDR_PCA$`byte order` <- get_byte_order()
-  headerFpath <- paste(PCA_Path, ".hdr", sep = "")
-  write_ENVI_header(HDR_PCA, headerFpath)
-  # create updated shade mask
-  fidPCA <- file(
-    description = PCA_Path, open = "wb", blocking = TRUE,
-    encoding = getOption("encoding"), raw = FALSE
-  )
-  close(fidPCA)
+  ImPathHDR <- get_HDR_name(Input_Image_File)
+  HDR <- read_ENVI_header(ImPathHDR)
+  HDR_PCA <- prepare_HDR_PCA(HDR, Nb_PCs, PCA_Path)
+
   # apply PCA to the image
-  # read image file sequentially
   Image_Format <- ENVI_type2bytes(HDR)
   PCA_Format <- ENVI_type2bytes(HDR_PCA)
 
@@ -384,11 +368,7 @@ write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_mo
   } else if (typeof(HDR_Shade) == 'logical'){
     Shade_Format <- FALSE
   }
-  # if (!HDR_Shade == FALSE) {
-  #   Shade_Format <- ENVI_type2bytes(HDR_Shade)
-  # } else {
-  #   Shade_Format <- FALSE
-  # }
+
   # prepare for sequential processing: SeqRead_Image informs about byte location to read
   nbPieces <- split_image(HDR, LimitSizeGb = MaxRAM)
   SeqRead_Image <- where_to_read(HDR, nbPieces)
@@ -396,8 +376,9 @@ write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_mo
   SeqRead_PCA <- where_to_read(HDR_PCA, nbPieces)
 
   # for each piece of image
+  print(paste('Apply PCA model to the full raster:',nbPieces,'chunks distributed on',nbCPU,'CPU'))
   for (i in 1:nbPieces) {
-    print(paste("PCA Piece #", i, "/", nbPieces))
+    message(paste('Computing PCA for image subset #',i,' / ',nbPieces))
     # read image and mask data
     nbLines <- SeqRead_Image$Lines_Per_Chunk[i]
     ImgFormat <- "2D"
@@ -434,7 +415,6 @@ write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_mo
     if (TypePCA == "PCA" | TypePCA == "SPCA" | TypePCA == "MNF") {
       Image_Chunk <- scale(Image_Chunk, PCA_model$center, PCA_model$scale) %*% PCA_model$rotation[, 1:Nb_PCs]
     }
-
     # get PCA of the group of line and rearrange the data to write it correctly in the output file
     PCA_Chunk <- matrix(NA, ncol = Nb_PCs, nrow = (HDR$samples * nbLines))
     if (length(keepShade) > 0) {
@@ -460,34 +440,38 @@ write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_mo
   return(invisible())
 }
 
-# Function to perform PCA on a matrix
-#
-# @param X matrix to apply PCA on
-# @param type PCA (no rescale) or SPCA (rescale)
-#
-# @return list of PCA parameters (PCs from X, mean, eigenvectors and values)
+#' Function to perform PCA on a matrix
+#'
+#' @param X matrix to apply PCA on
+#' @param type PCA (no rescale) or SPCA (rescale)
+#'
+#' @return list of PCA parameters (PCs from X, mean, eigenvectors and values)
 #' @importFrom stats prcomp
+#' @export
+
 pca <- function(X, type) {
   p <- ncol(X)
   if (type == "SPCA") {
-    modPCA <- prcomp(X, scale = TRUE)
+    modPCA <- stats::prcomp(X, scale = TRUE)
 
   } else if (type == "PCA") {
-    modPCA <- prcomp(X, scale = FALSE)
+    modPCA <- stats::prcomp(X, scale = FALSE)
 
   }
 
   return(modPCA)
 }
 
-# defines the number of pixels per iteration based on a trade-off between image size and sample size per iteration
-#
-# @param ImNames Path and name of the images to be processed
-# @param nb_partitions number of iterations peformed to average diversity indices
-#
-# @return Pix_Per_Partition number of pixels per iteration
-define_pixels_per_iter <- function(ImNames, nb_partitions = nb_partitions) {
-  Input_Image_File <- ImNames$Input.Image
+#' defines the number of pixels per iteration based on a trade-off between image size and sample size per iteration
+#'
+#' @param ImNames Path and name of the images to be processed
+#' @param nb_partitions number of iterations peformed to average diversity indices
+#'
+#' @return Pix_Per_Partition number of pixels per iteration
+#' @export
+
+define_pixels_per_iter <- function(ImNames, nb_partitions) {
+  Input_Image_File <- ImNames$Input_Image
   Input_Mask_File <- ImNames$Mask_list
   # define dimensions of the image
   ImPathHDR <- get_HDR_name(Input_Image_File)
@@ -496,8 +480,6 @@ define_pixels_per_iter <- function(ImNames, nb_partitions = nb_partitions) {
   ipix <- as.double(HDR$lines)
   jpix <- as.double(HDR$samples)
   nbPixels <- ipix * jpix
-  lenTot <- nbPixels * as.double(HDR$bands)
-  ImSizeGb <- (lenTot * Image_Format$Bytes) / (1024^3)
   # if shade mask, update number of pixels
   if (is.character(Input_Mask_File) && (Input_Mask_File != "")) {
     # read shade mask
@@ -550,16 +532,18 @@ define_pixels_per_iter <- function(ImNames, nb_partitions = nb_partitions) {
 #'
 #' @return Sel_PC
 #' @importFrom utils file.edit
+#' @importFrom tools file_path_sans_ext
 #' @export
-select_PCA_components <- function(Input_Image_File, Output_Dir, PCA_Files, TypePCA = "SPCA", File_Open = FALSE) {
+select_PCA_components <- function(Input_Image_File, Output_Dir, PCA_Files,
+                                  TypePCA = "SPCA", File_Open = FALSE) {
   message("")
   message("*********************************************************")
   message("Please check following PCA file:")
   print(PCA_Files)
   message("*********************************************************")
-  Image_Name <- strsplit(basename(Input_Image_File), "\\.")[[1]][1]
-  Output_Dir_Full <- paste(Output_Dir, "/", Image_Name, "/", TypePCA, "/", sep = "")
-  Sel_PC <- paste(Output_Dir_Full, "/PCA/Selected_Components.txt", sep = "")
+  Image_Name <- file_path_sans_ext(basename(Input_Image_File))
+  Output_Dir_Full <- file.path(Output_Dir, Image_Name, TypePCA)
+  Sel_PC <- file.path(Output_Dir_Full, "PCA","Selected_Components.txt")
   message("list the principal components that will be used to estimate biodiversity in the file")
   message("")
   print(Sel_PC)
@@ -577,7 +561,7 @@ select_PCA_components <- function(Input_Image_File, Output_Dir, PCA_Files, TypeP
     # } else {
     #   file.edit(Sel_PC, title=basename(Sel_PC))
     # }
-    file.edit(Sel_PC, title=basename(Sel_PC))
+    utils::file.edit(Sel_PC, title=basename(Sel_PC))
   }
   message("*********************************************************")
   message("")
@@ -622,7 +606,7 @@ minmax <- function(x, mode = "define", MinX = FALSE, MaxX = FALSE) {
 # i.e. coordPix[1, ] corresponds to X[1, ], coordPix[2, ] corresponds to X[2, ], ...
 noise <- function(X, coordPix=NULL){
   if(is.null(coordPix)){
-    if(ndims(X)!=3)
+    if(matlab::ndims(X)!=3)
       stop('X is expected to be a 3D array: y,x,band for row,col,depth.')
     Xdim = dim(X)
     # Shift x/y difference
@@ -690,21 +674,21 @@ mnf <- function(X, coordPix=NULL, retx=TRUE){
     stop('X has more than 3 dimensions.')
 
   nz <- noise(X, coordPix)
-  Xdim = dim(X)
+  Xdim <- dim(X)
 
   if(is.null(coordPix) && length(dim(X))>2){
-    X = matrix(X[1:(Xdim[1]-1), 1:(Xdim[2]-1),], nrow = Xdim[1]*Xdim[2])
-    nz = matrix(nz, nrow = Xdim[1]*Xdim[2])
+    X <- matrix(X[1:(Xdim[1]-1), 1:(Xdim[2]-1),], nrow = Xdim[1]*Xdim[2])
+    nz <- matrix(nz, nrow = Xdim[1]*Xdim[2])
   }
 
   Xc = scale(X, center = T, scale = F)
 
-  covNoise = cov(nz)
-  covXc = cov(Xc)
-  eig = eigen(solve(covNoise)%*%covXc)
+  covNoise <- stats::cov(nz)
+  covXc <- stats::cov(Xc)
+  eig <- eigen(solve(covNoise)%*%covXc)
   colnames(eig$vectors) = paste0('PC', 1:ncol(eig$vectors))
-  modMNF = list(sdev = sqrt(eig$values), rotation = eig$vectors,
-                center = colMeans(X), scale = FALSE)
+  modMNF <- list(sdev = sqrt(eig$values), rotation = eig$vectors,
+                 center = colMeans(X), scale = FALSE)
   attr(modMNF, 'class') <- 'prcomp'
   #   eig_pairs = tofsims:::EigenDecompose(covXc, covNoise, 1, nrow(covNoise))
   #   vord = order(Re(eig_pairs$eigval), decreasing = T)
@@ -718,4 +702,43 @@ mnf <- function(X, coordPix=NULL, retx=TRUE){
     modMNF$x= array(Xc %*% modMNF$rotation, dim = Xdim)
 
   return(modMNF)
+}
+
+
+# prepares PCA file and header
+#
+# @param HDR list. header of the image file used as template
+# @param Nb_PCs numeric. number of PCs to be written
+# @param PCA_Path character. path for PCA file
+# @param window_size numeric. window size
+#
+# @return HDR_PCA
+prepare_HDR_PCA <- function(HDR, Nb_PCs, PCA_Path){
+  HDR_PCA <- HDR
+  HDR_PCA$bands <- Nb_PCs
+  HDR_PCA$`data type` <- 4
+  HDR_PCA$interleave <- 'BIL'
+  HDR_PCA$`default bands` <- NULL
+  HDR_PCA$`wavelength units` <- NULL
+  HDR_PCA$`z plot titles` <- NULL
+  HDR_PCA$`data gain values` <- NULL
+  HDR_PCA$`file type` <- NULL
+  HDR_PCA$`band names` <- paste('PC', 1:Nb_PCs, collapse = ", ")
+  HDR_PCA$wavelength <- NULL
+  HDR_PCA$fwhm <- NULL
+  HDR_PCA$resolution <- NULL
+  HDR_PCA$bandwidth <- NULL
+  HDR_PCA$purpose <- NULL
+  HDR_PCA$`default stretch` <- NULL
+  HDR_PCA$`byte order` <- get_byte_order()
+  headerFpath <- paste(PCA_Path, ".hdr", sep = "")
+  write_ENVI_header(HDR_PCA, headerFpath)
+  # create updated shade mask
+  fidPCA <- file(
+    description = PCA_Path, open = "wb", blocking = TRUE,
+    encoding = getOption("encoding"), raw = FALSE
+  )
+  close(fidPCA)
+
+  return(HDR_PCA)
 }

@@ -5,18 +5,18 @@
 \title{maps beta diversity indicator based on spectral species distribution}
 \usage{
 map_beta_div(
-  Input_Image_File,
-  Output_Dir,
-  window_size,
+  Input_Image_File = FALSE,
+  Output_Dir = "",
+  window_size = 10,
   TypePCA = "SPCA",
-  nb_partitions = 20,
   nbclusters = 50,
   Nb_Units_Ordin = 2000,
   MinSun = 0.25,
   pcelim = 0.02,
   scaling = "PCO",
-  FullRes = TRUE,
-  LowRes = FALSE,
+  dimMDS = 3,
+  FullRes = FALSE,
+  LowRes = TRUE,
   nbCPU = 1,
   MaxRAM = 0.25,
   ClassifMap = FALSE
@@ -31,8 +31,6 @@ map_beta_div(
 
 \item{TypePCA}{character. Type of PCA (PCA, SPCA, NLPCA...).}
 
-\item{nb_partitions}{numeric. Number of partitions (repetitions) to be computed then averaged.}
-
 \item{nbclusters}{numeric. Number of clusters defined in k-Means.}
 
 \item{Nb_Units_Ordin}{numeric. Maximum number of spatial units to be processed in NMDS.
@@ -41,9 +39,11 @@ map_beta_div(
 
 \item{MinSun}{numeric. Minimum proportion of sunlit pixels required to consider plot.}
 
-\item{pcelim}{numeric. Minimum contribution (in \%) required for a spectral species}
+\item{pcelim}{numeric. Minimum contribution in percent required for a spectral species.}
 
-\item{scaling}{character. "PCO" or "NMDS".}
+\item{scaling}{character. PCO or NMDS}
+
+\item{dimMDS}{numeric. number of dimensions for the scaling.}
 
 \item{FullRes}{boolean.}
 
@@ -57,7 +57,7 @@ map_beta_div(
 else corresponds to path for a classification map.}
 }
 \value{
-None
+PCoA_model
 }
 \description{
 maps beta diversity indicator based on spectral species distribution

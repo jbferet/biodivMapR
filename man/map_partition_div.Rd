@@ -12,8 +12,8 @@ map_partition_div(
   window_size,
   TypePCA = "SPCA",
   MinSun = 0.25,
-  FullRes = TRUE,
-  LowRes = FALSE,
+  FullRes = FALSE,
+  LowRes = TRUE,
   nbCPU = FALSE,
   MaxRAM = FALSE,
   SmoothImage = TRUE

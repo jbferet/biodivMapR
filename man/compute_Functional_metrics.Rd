@@ -10,8 +10,8 @@ compute_Functional_metrics(
   Selected_Features,
   window_size,
   MinSun,
-  nbCPU = FALSE,
-  MaxRAM = FALSE
+  nbCPU = 1,
+  MaxRAM = 0.25
 )
 }
 \arguments{
