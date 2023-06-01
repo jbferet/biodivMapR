@@ -39,6 +39,9 @@ create_mask_from_threshold(
 
 \item{NIR}{numeric. spectral band corresponding to the NIR channel (in nanometers)}
 }
+\value{
+MaskPath path for the updated shademask produced
+}
 \description{
 create a mask based on NDVI, Green reflectance and NIR reflectance
 NDVI (min) threshold eliminates non vegetated pixels

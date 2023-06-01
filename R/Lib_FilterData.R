@@ -25,6 +25,7 @@
 #'
 #' @return MaskPath = updated mask file
 #' @export
+
 perform_radiometric_filtering <- function(Image_Path, Mask_Path = FALSE, Output_Dir,
                                           TypePCA = "SPCA",
                                           NDVI_Thresh = 0.8, Blue_Thresh = 500, NIR_Thresh = 1500,
@@ -66,7 +67,9 @@ perform_radiometric_filtering <- function(Image_Path, Mask_Path = FALSE, Output_
 #' @param Red numeric. spectral band corresponding to the red channel (in nanometers)
 #' @param NIR numeric. spectral band corresponding to the NIR channel (in nanometers)
 #
-# @return MaskPath path for the updated shademask produced
+#' @return MaskPath path for the updated shademask produced
+#' @export
+
 create_mask_from_threshold <- function(ImPath, MaskPath, MaskPath_Update,
                                        NDVI_Thresh, Blue_Thresh, NIR_Thresh,
                                        Blue = 480, Red = 690, NIR = 835) {
