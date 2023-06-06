@@ -51,7 +51,7 @@ url <- 'https://gitlab.com/jbferet/myshareddata/-/raw/master/biodivMapR_S2_Sampl
 tmpdir <- tempdir()
 # name your binary raster with the same name as the online file
 NameRaster <- 'S2A_T33NUD_20180104_Subset'
-destfile <- file.path(tmpdir,NameRaster,fsep = '\\')
+destfile <- file.path(tmpdir,NameRaster)
 download.file(url = url, destfile = destfile, method = 'auto', quiet = FALSE, mode = "wb")
 
 # url for the S2 subset header

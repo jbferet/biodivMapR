@@ -58,7 +58,7 @@ First, let's download the kml file corresponding to our area of interest from my
 Path_Data <- '../01_DATA'
 dir.create(Path_Data,showWarnings = F, recursive = T)
 # name zip file including plots located on the tile
-destkml <- file.path(Path_Data,'Suriname_Progysat_Workshop.kml',fsep = '\\')
+destkml <- file.path(Path_Data,'Suriname_Progysat_Workshop.kml')
 # url for the zip file
 url <- 'https://gitlab.com/jbferet/myshareddata/-/raw/master/PROGYSAT/01_DATA/Suriname_Progysat_Workshop.kml'
 download.file(url = url, destfile = destkml)
