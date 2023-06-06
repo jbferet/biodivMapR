@@ -128,7 +128,7 @@
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret</h4>
             
-            <h4 data-toc-skip class="date">2023-06-01</h4>
+            <h4 data-toc-skip class="date">2023-06-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_11.Rmd" class="external-link"><code>vignettes/biodivMapR_11.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_11.Rmd</code></div>
@@ -186,7 +186,7 @@ interest from my gitlab repository, and save it locally in the
 <span><span class="va">Path_Data</span> <span class="op">&lt;-</span> <span class="st">'../01_DATA'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">Path_Data</span>,showWarnings <span class="op">=</span> <span class="cn">F</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
 <span><span class="co"># name zip file including plots located on the tile</span></span>
-<span><span class="va">destkml</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">Path_Data</span>,<span class="st">'Suriname_Progysat_Workshop.kml'</span>,fsep <span class="op">=</span> <span class="st">'\\'</span><span class="op">)</span></span>
+<span><span class="va">destkml</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">Path_Data</span>,<span class="st">'Suriname_Progysat_Workshop.kml'</span><span class="op">)</span></span>
 <span><span class="co"># url for the zip file</span></span>
 <span><span class="va">url</span> <span class="op">&lt;-</span> <span class="st">'https://gitlab.com/jbferet/myshareddata/-/raw/master/PROGYSAT/01_DATA/Suriname_Progysat_Workshop.kml'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">url</span>, destfile <span class="op">=</span> <span class="va">destkml</span><span class="op">)</span></span></code></pre></div>
