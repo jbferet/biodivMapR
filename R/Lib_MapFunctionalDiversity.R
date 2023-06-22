@@ -274,7 +274,11 @@ compute_FUNCT <- function(Image_Chunk, window_size, MinSun) {
         # compute functional metrics
         # 1- Functional Richness
         # convex hull using geometry
-        FRicmap[ii,jj] <- 100*geometry::convhulln(ij, output.options = 'FA')$vol
+        if (nbTraits >1){
+          FRicmap[ii,jj] <- 100*geometry::convhulln(ij, output.options = 'FA')$vol
+        } else {
+          FRicmap[ii,jj] <- NA
+        }
         # 2- Functional Divergence
         # mean distance from centroid
         Centroid <- colMeans(ij)
