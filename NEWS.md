@@ -1,3 +1,12 @@
+# biodivMapR v1.10.4
+
+## Changes
+- removed unused functions (VectorInRasterFootprint, get_BB, get_BB_from_fullImagem get_BB_from_Vector, get_polygonCoord_from_Shp, read_ListRasters, VectorInRasterFootprint, gdal_polygonizeR) in order to reduce dependency to rgeos
+- these functions can be found in R package preprocS2
+
+## Fix
+- fixed bug when computing functional diversity metrics from 1 component only
+
 # biodivMapR v1.10.3
 
 ## Changes
