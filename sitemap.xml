@@ -85,9 +85,6 @@
     <loc>/reference/Normalize_SSD.html</loc>
   </url>
   <url>
-    <loc>/reference/VectorInRasterFootprint.html</loc>
-  </url>
-  <url>
     <loc>/reference/WeightedCoordsNN.html</loc>
   </url>
   <url>
@@ -202,19 +199,7 @@
     <loc>/reference/filter_prior_CR.html</loc>
   </url>
   <url>
-    <loc>/reference/gdal_polygonizeR.html</loc>
-  </url>
-  <url>
     <loc>/reference/getBCdiss.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_BB.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_BB_from_Vector.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_BB_from_fullImage.html</loc>
   </url>
   <url>
     <loc>/reference/get_HDR_name.html</loc>
@@ -236,9 +221,6 @@
   </url>
   <url>
     <loc>/reference/get_image_bands.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_polygonCoord_from_Shp.html</loc>
   </url>
   <url>
     <loc>/reference/get_random_subset_from_image.html</loc>
@@ -319,9 +301,6 @@
     <loc>/reference/read_ENVI_header.html</loc>
   </url>
   <url>
-    <loc>/reference/read_ListRasters.html</loc>
-  </url>
-  <url>
     <loc>/reference/read_bin_subset.html</loc>
   </url>
   <url>
@@ -329,9 +308,6 @@
   </url>
   <url>
     <loc>/reference/read_image_subset.html</loc>
-  </url>
-  <url>
-    <loc>/reference/reproject_vector.html</loc>
   </url>
   <url>
     <loc>/reference/revert_resolution_HDR.html</loc>
