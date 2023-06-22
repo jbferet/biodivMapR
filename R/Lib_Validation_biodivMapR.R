@@ -152,7 +152,7 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
           Pixel_Hellinger[[i]] <- Pixel_Inventory[[i]]
           Pixel_Hellinger[[i]]$Freq <- sqrt(Pixel_Hellinger[[i]]$Freq/sum(Pixel_Hellinger[[i]]$Freq))
         }
-        Pixel_Hellinger_All[[plot]] <- Pixel_Hellinger
+        Pixel_Hellinger_All[[ip]] <- Pixel_Hellinger
       }
     }
   }
@@ -307,33 +307,6 @@ list_shp <- function(x){
   return(List.Shp)
 }
 
-#' reprojects a vector file and saves it
-#' @param Initial.File path for a shapefile to be reprojected
-#' @param Projection projection to be applied to Initial.File
-#' @param Reprojected.File path for the reprojected shapefile
-#'
-#' @return None
-#' @importFrom rgdal readOGR writeOGR
-#' @importFrom sp spTransform
-#' @importFrom raster projection
-#' @importFrom tools file_path_sans_ext
-#' @export
-reproject_vector <-  function(Initial.File,Projection,Reprojected.File){
-
-  Shp.Path <- dirname(Initial.File)
-  Shp.Name <- tools::file_path_sans_ext(basename(Initial.File))
-  Vect.Init <- rgdal::readOGR(Shp.Path,Shp.Name,verbose = FALSE)
-  Proj.init <- raster::projection(Vect.Init)
-
-  if (!Proj.init==Projection){
-    Shp.Path <- dirname(Reprojected.File)
-    Shp.Name <- tools::file_path_sans_ext(basename(Reprojected.File))
-    Vect.reproj <- sp::spTransform(Vect.Init, Projection)
-    rgdal::writeOGR(obj = Vect.reproj, dsn = Shp.Path,layer = Shp.Name, driver="ESRI Shapefile",overwrite_layer = TRUE) #also you were missing the driver argument
-  }
-  return(invisible())
-}
-
 #' Extracts pixels coordinates from raster corresponding to an area defined by a vector
 #' @param Path.Raster path for the raster file. !! BIL expected
 #' @param Path.Vector path for the vector file. !! SHP expected
@@ -403,53 +376,53 @@ get_alpha_metrics = function(Distrib){
   return(list("Richness" = RichnessPlot,"fisher"=FisherPlot,"Shannon"=ShannonPlot,"Simpson"=SimpsonPlot))
 }
 
-#' build a vector file from raster footprint
-#' borrowed from https://johnbaumgartner.wordpress.com/2012/07/26/getting-rasters-into-shape-from-r/
-#' @param x path for a raster or raster object
-#' @param outshape path for a vector to be written
-#' @param gdalformat character. gdal format for shapefile
-#' @param pypath character. path for python
-#' @param readpoly boolean. should polygons be read once produced?
-#' @param quiet boolean. set T to avoid verbose
+#' #' build a vector file from raster footprint
+#' #' borrowed from https://johnbaumgartner.wordpress.com/2012/07/26/getting-rasters-into-shape-from-r/
+#' #' @param x path for a raster or raster object
+#' #' @param outshape path for a vector to be written
+#' #' @param gdalformat character. gdal format for shapefile
+#' #' @param pypath character. path for python
+#' #' @param readpoly boolean. should polygons be read once produced?
+#' #' @param quiet boolean. set T to avoid verbose
+#' #'
+#' #' @return NULL
+#' #' @importFrom rgdal readOGR
+#' #' @importFrom raster writeRaster
+#' #' @importFrom methods is
+#' gdal_polygonizeR = function(x, outshape=NULL, gdalformat = 'ESRI Shapefile',
+#'                             pypath=NULL, readpoly=TRUE, quiet=TRUE) {
 #'
-#' @return NULL
-#' @importFrom rgdal readOGR
-#' @importFrom raster writeRaster
-#' @importFrom methods is
-gdal_polygonizeR = function(x, outshape=NULL, gdalformat = 'ESRI Shapefile',
-                            pypath=NULL, readpoly=TRUE, quiet=TRUE) {
-
-  if (is.null(pypath)) {
-    pypath <- Sys.which('gdal_polygonize.py')
-  }
-  if (!file.exists(pypath)) stop("Can't find gdal_polygonize.py on your system.")
-  owd <- getwd()
-  on.exit(setwd(owd))
-  setwd(dirname(pypath))
-  if (!is.null(outshape)) {
-    outshape  = sub('\\.shp$', '', outshape)
-    f.exists  = file.exists(paste(outshape, c('shp', 'shx', 'dbf'), sep='.'))
-    if (any(f.exists)){
-      print('Footprint of raster file already defined')
-    }
-    # stop(sprintf('File already exists: %s',
-    #              toString(paste(outshape, c('shp', 'shx', 'dbf'),
-    #                             sep='.')[f.exists])), call.=FALSE)
-  } else outshape <- tempfile()
-  if (is(x, 'Raster')) {
-    raster::writeRaster(x, {f <- tempfile(fileext='.tif')})
-    rastpath <- normalizePath(f)
-  } else if (is.character(x)) {
-    rastpath <- normalizePath(x)
-  } else stop('x must be a file path (character string), or a Raster object.')
-  outshape.Shp = paste(outshape,'.shp',sep='')
-  if (!file.exists(outshape.Shp)){
-    system2('python', args=(sprintf('"%1$s" "%2$s" -f "%3$s" "%4$s.shp"',
-                                    pypath, rastpath, gdalformat, outshape)))
-  }
-  if (readpoly==TRUE) {
-    shp <- rgdal::readOGR(dirname(outshape), layer = basename(outshape), verbose=!quiet)
-    return(shp)
-  }
-  return(NULL)
-}
+#'   if (is.null(pypath)) {
+#'     pypath <- Sys.which('gdal_polygonize.py')
+#'   }
+#'   if (!file.exists(pypath)) stop("Can't find gdal_polygonize.py on your system.")
+#'   owd <- getwd()
+#'   on.exit(setwd(owd))
+#'   setwd(dirname(pypath))
+#'   if (!is.null(outshape)) {
+#'     outshape  = sub('\\.shp$', '', outshape)
+#'     f.exists  = file.exists(paste(outshape, c('shp', 'shx', 'dbf'), sep='.'))
+#'     if (any(f.exists)){
+#'       print('Footprint of raster file already defined')
+#'     }
+#'     # stop(sprintf('File already exists: %s',
+#'     #              toString(paste(outshape, c('shp', 'shx', 'dbf'),
+#'     #                             sep='.')[f.exists])), call.=FALSE)
+#'   } else outshape <- tempfile()
+#'   if (is(x, 'Raster')) {
+#'     raster::writeRaster(x, {f <- tempfile(fileext='.tif')})
+#'     rastpath <- normalizePath(f)
+#'   } else if (is.character(x)) {
+#'     rastpath <- normalizePath(x)
+#'   } else stop('x must be a file path (character string), or a Raster object.')
+#'   outshape.Shp = paste(outshape,'.shp',sep='')
+#'   if (!file.exists(outshape.Shp)){
+#'     system2('python', args=(sprintf('"%1$s" "%2$s" -f "%3$s" "%4$s.shp"',
+#'                                     pypath, rastpath, gdalformat, outshape)))
+#'   }
+#'   if (readpoly==TRUE) {
+#'     shp <- rgdal::readOGR(dirname(outshape), layer = basename(outshape), verbose=!quiet)
+#'     return(shp)
+#'   }
+#'   return(NULL)
+#' }

@@ -226,6 +226,9 @@ Get_FunctionalMetrics_From_Traits <- function(ReadWrite, Functional_File, Select
                                    ReadWrite$RW_FUNCT$Byte_Start, ReadWrite$RW_FUNCT$lenBin,
                                    ReadWrite$RW_FUNCT$nbLines, FunctIN_Format, ImgFormat)
   Image_Chunk <- Image_Chunk[,,Selected_Features]
+  if (length(Selected_Features)==1){
+    Image_Chunk <- array(Image_Chunk,dim = c(nrow(Image_Chunk), ncol(Image_Chunk),1))
+  }
   # standardize data
   for (i in 1:length(Selected_Features)){
     Image_Chunk[,,i] <- (Image_Chunk[,,i]-MinMaxRaster$MinRaster[i])/(MinMaxRaster$MaxRaster[i]-MinMaxRaster$MinRaster[i])

@@ -553,90 +553,6 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.50){
   return(samples)
 }
 
-#' This function gets coordinates of a bounding box defined by a vector (optional) and a raster
-#'
-#' @param path_raster character. path for raster file
-#' @param path_vector character. path for vector file
-#' @param Buffer numeric. buffer applied to vector file (in meters)
-#'
-#' @return BB_XYcoords list. Coordinates (in pixels) of the upper/lower right/left corners of bounding box
-#' @export
-
-get_BB <- function(path_raster,path_vector=NULL,Buffer = 0){
-
-  if (!is.null(path_vector)){
-    # get bounding box with a 50m buffer in order to allow for interpolation
-    BB_XYcoords <- get_BB_from_Vector(path_raster = path_raster,
-                                      path_vector = path_vector,
-                                      Buffer = Buffer)
-  } else if (is.null(path_vector)){
-    BB_XYcoords <- get_BB_from_fullImage(path_raster)
-  }
-  return(BB_XYcoords)
-}
-
-#' This function gets extreme coordinates of a bounding box corresponding to a full image
-#'
-#' @param path_raster character. path for raster file
-#'
-#' @return BB_XYcoords list. Coordinates (in pixels) of the upper/lower right/left corners of bounding box
-#' @importFrom raster raster
-#' @export
-
-get_BB_from_fullImage <- function(path_raster){
-  # get raster coordinates corresponding to Full image
-  rasterobj <- raster::raster(path_raster)
-  BB_XYcoords <- list()
-  BB_XYcoords[['UL']] <- data.frame('row'=1,'col'=1)
-  BB_XYcoords[['UR']] <- data.frame('row'=1,'col'=dim(rasterobj)[2])
-  BB_XYcoords[['LL']] <- data.frame('row'=dim(rasterobj)[1],'col'=1)
-  BB_XYcoords[['LR']] <- data.frame('row'=dim(rasterobj)[1],'col'=dim(rasterobj)[2])
-  return(BB_XYcoords)
-}
-
-#' This gets bounding box corresponding to a vector from a raster (UL, UR, LL, LR corners)
-#'
-#' @param path_raster character. path for raster file
-#' @param path_vector character. path for vector file
-#' @param Buffer numeric. buffer applied to vector file (in meters)
-#'
-#' @return BB_XYcoords list. Coordinates (in pixels) of the upper/lower right/left corners of bounding box
-#' @importFrom sf st_read
-#' @importFrom rgeos gBuffer
-#' @importFrom sp SpatialPoints
-#' @importFrom raster projection extract extent raster
-#' @importFrom methods as
-#' @export
-
-get_BB_from_Vector <- function(path_raster,path_vector,Buffer = 0){
-
-  Raster <- raster::raster(path_raster)
-  # xmin <- xmax <- ymin <- ymax <- c()
-  # extract BB coordinates from vector
-  BB <- rgeos::gBuffer(spgeom = as(st_read(dsn = path_vector,quiet = T), "Spatial"),width=Buffer,byid = TRUE)
-  BBext <- raster::extent(BB)
-  xmin <- BBext[1]
-  xmax <- BBext[2]
-  ymin <- BBext[3]
-  ymax <- BBext[4]
-  # get coordinates of bounding box corresponding to vector
-  Corners <- list()
-  Corners[['UR']] <- sp::SpatialPoints(coords = cbind(xmax, ymax))
-  Corners[['LR']] <- sp::SpatialPoints(coords = cbind(xmax, ymin))
-  Corners[['UL']] <- sp::SpatialPoints(coords = cbind(xmin, ymax))
-  Corners[['LL']] <- sp::SpatialPoints(coords = cbind(xmin, ymin))
-  raster::projection(Corners[['UL']]) <- raster::projection(Corners[['UR']]) <-
-    raster::projection(Corners[['LL']]) <- raster::projection(Corners[['LR']]) <- raster::projection(st_read(dsn = path_vector,quiet = T))
-  # get coordinates for corners of bounding box
-  BB_XYcoords <- list()
-  for (corner in names(Corners)){
-    ex.df <- as.data.frame(raster::extract(Raster,Corners[[corner]],cellnumbers=T))
-    ColRow <- ind2sub(Raster,ex.df$cell)
-    BB_XYcoords[[corner]] <- data.frame('row'=ColRow$row,'col'=ColRow$col)
-  }
-  return(BB_XYcoords)
-}
-
 #' extract random subset of pixels from an image
 #'
 #' @param ImPath character. path for the image to sample
@@ -823,48 +739,6 @@ get_image_bands <- function(Spectral_Bands, wavelength) {
   return(my_list)
 }
 
-#' extract coordinates of the footprint of elements of a shapefile in a raster
-#'
-#' @param path_SHP character. path for the shapefile
-#' @param path_Raster character. path for the raster
-#' @param IDshp character. field in the shapefile determining ID of element
-#'
-#' @return list. vector_coordinates and vector_ID for each element in the vector file
-#' @importFrom tools file_path_sans_ext
-#' @importFrom rgdal readOGR
-#' @importFrom raster compareCRS
-#' @export
-
-get_polygonCoord_from_Shp <- function(path_SHP,path_Raster,IDshp=NULL){
-  # prepare for possible reprojection
-  Dir_Vector <- dirname(path_SHP)
-  Name_Vector <- tools::file_path_sans_ext(basename(path_SHP))
-  print(paste('Reading pixels coordinates for polygons in ',Name_Vector,sep=''))
-  # File.Vector.reproject <- paste(Dir_Vector.reproject,'/',Name_Vector,'.shp','sep'='')
-  if (file.exists(paste(file_path_sans_ext(path_SHP),'.shp',sep=''))){
-    Plot <- rgdal::readOGR(Dir_Vector,Name_Vector,verbose = FALSE)
-    # check if vector and rasters are in the same referential
-    # if not, convert vector file
-    if (!raster::compareCRS(raster(path_Raster), Plot)){
-      stop('Raster and Plots have different projection. Plots should be reprojected to Raster CRS')
-    }
-  } else if (file.exists(paste(path_SHP,'kml','sep'='.'))){
-    print('Please convert vector file to shpfile')
-  }
-  # extract data corresponding to the Raster_SpectralSpecies
-  vector_coordinates <- extract_pixels_coordinates.From.OGR(path_Raster,Plot)
-  # if the different elements can be identified
-  vector_ID <- c()
-  for (elem in 1:length(vector_coordinates)){
-    if (!is.null(IDshp)){
-      vector_ID <- c(vector_ID,as.character(Plot[[IDshp]]))
-    } else {
-      vector_ID <- c(vector_ID,'No ID Available')
-    }
-  }
-  my_list <- list("vector_coordinates" = vector_coordinates, "vector_ID" = vector_ID)
-  return(my_list)
-}
 
 #' convert image coordinates from index to X-Y
 #'
@@ -1048,7 +922,6 @@ read_ENVI_header <- function(HDRpath) {
   HDR [tmp] <- lapply(HDR [tmp], function(x) {
     as.numeric(unlist(strsplit(x, ",")))
   })
-
   return(HDR)
 }
 
@@ -1155,44 +1028,6 @@ read_BIL_image_subset <- function(ImPath, HDR, Byte_Start, lenBin, nbLines, Imag
   }
   close(fidIm)
   return(Image_Chunk)
-}
-
-#' This function produces a raster stack which can be directly processed with
-#' biodivMapR to produce spectral diversity maps.
-#' Input variables can be spectral indices, biophysical variables...
-#' @param ListRasters list. list of rasters to be stacked
-#' @param path_vector path for a vector file
-#' @param resampling numeric. resampling factor (default = 1, set to resampling = 2 to convert 20m into 10m resolution)
-#' @param interpolation character. method for resampling. default = 'bilinear'
-#'
-#' @return StarsObj list. contains stack of S2 bands
-#'
-#' @importFrom stars read_stars
-#' @importFrom sf st_bbox st_read st_crop
-#' @export
-
-read_ListRasters <- function(ListRasters, path_vector = NULL,
-                             resampling = 1, interpolation = 'bilinear'){
-  # get bounding box corresponding to footprint of image or image subset
-  BB_XYcoords <- get_BB(path_raster = ListRasters[[1]],
-                        path_vector = path_vector, Buffer = 0)
-
-  # prepare reading data for extent defined by bounding box
-  nXOff <- BB_XYcoords$UL$col
-  nYOff <- BB_XYcoords$UL$row
-  nXSize <- BB_XYcoords$UR$col-BB_XYcoords$UL$col+1
-  nYSize <- BB_XYcoords$LR$row-BB_XYcoords$UR$row+1
-  nBufXSize <- resampling*nXSize
-  nBufYSize <- resampling*nYSize
-  if (resampling==1){
-    interpolation = 'nearest_neighbour'
-  }
-  StarsObj <- stars::read_stars(ListRasters, along = 'band',
-                                RasterIO = list(nXOff = nXOff, nYOff = nYOff,
-                                                nXSize = nXSize, nYSize = nYSize,
-                                                nBufXSize = nBufXSize, nBufYSize = nBufYSize,
-                                                resample=interpolation),proxy = FALSE)
-  return(StarsObj)
 }
 
 #' Check spectral band units and convert from nanometer to micrometer or from
@@ -1391,68 +1226,6 @@ check_update_mask_format <- function(Input_Mask_File, Input_Image_File){
   return(MaskPath_Update)
 }
 
-#' This function identify plots from a shapefile matching with a raster footprint
-#'
-#' @param PathVect character. path for input vector file
-#' @param PathRaster character. path for a raster file
-#' @param buffer numeric. buffer to be applied around the original points/polygons, in meters
-#' @param PathVectOut character. path for output vector file
-#' @param WriteShp boolean. Set TRUE to write file
-#'
-#' @return vectSP list. OGR object corresponding to final vector data
-#' @importFrom tools file_ext file_path_sans_ext
-#' @importFrom rgdal readOGR writeOGR
-#' @importFrom raster projection
-#' @importFrom sf st_read
-#' @importFrom methods as
-#' @importFrom sp spTransform
-#' @export
-
-VectorInRasterFootprint <- function(PathVect, PathRaster, buffer=NULL, PathVectOut=NULL, WriteShp = TRUE){
-
-  DirVect <- dirname(PathVect)
-  # shapefile extension
-  fileext <- file_ext(basename(PathVect))
-  if (fileext=='shp'){
-    NameVect <- file_path_sans_ext(basename(PathVect))
-    VectOGR <- rgdal::readOGR(dsn = DirVect,
-                              layer = NameVect, verbose = FALSE)
-  } else if (fileext=='kml'){
-    VectOGR <- rgdal::readOGR(PathVect, verbose = FALSE)
-  }
-  # get projection vector
-  VectOGR_proj <- raster::projection(VectOGR)
-  # get projection raster
-  RastOGR_proj <- raster::projection(raster(PathRaster))
-  # reproject if not same projection
-  if (!VectOGR_proj==RastOGR_proj){
-    VectOGR <- sp::spTransform(VectOGR, RastOGR_proj)
-  }
-  # identify and select plots included in the raster
-  XY <- extract_pixels_coordinates.From.OGR(PathRaster,VectOGR)
-  nbVects <- length(VectOGR)
-  plotsinraster <- which(!is.na(XY[[1]]$col))
-  namePlots <- VectOGR$ID[plotsinraster]
-  vectSF <- st_read(PathVect)[plotsinraster,]
-  vectSP <- as(vectSF, "Spatial")
-  if (is.null(buffer)){
-    buffer <- 0
-  }
-  if (buffer>0){
-    vectSP <- rgeos::gBuffer(spgeom = vectSP,
-                             width = buffer,
-                             byid = TRUE)
-  }
-  # save polygons in a shapefile
-  if (WriteShp==TRUE){
-    if (is.null(PathVectOut)){
-      PathVectOut <- paste(file_path_sans_ext(PathVect),'_buffer',sep = '')
-    }
-    rgdal::writeOGR(obj = vectSP, dsn = dirname(PathVectOut),layer = basename(PathVectOut), driver="ESRI Shapefile",overwrite_layer = TRUE)
-  }
-  return(vectSP)
-}
-
 #' defines which byte should be read for each part of an image split in nbPieces
 #'
 #' @param HDR list. header info
@@ -1614,7 +1387,7 @@ Write_Big_Image <- function(ImgWrite,ImagePath,HDR,Image_Format){
   rm(ImgWrite)
   rm(ImgChunk)
   gc()
-  return("")
+  return(invisible())
 }
 
 #' write an image resulting from "window processing" at native spatial resolution
@@ -1657,7 +1430,7 @@ Write_Image_NativeRes <- function(Image,ImagePath,HDR,window_size){
                   HDR = HDR_Full,Image_Format = Image_Format)
   # zip resulting file
   ZipFile(ImagePath_FullRes)
-  return("")
+  return(invisible())
 }
 
 
@@ -1715,7 +1488,7 @@ write_raster <- function(Image, HDR, ImagePath, window_size, FullRes = TRUE, Low
       }
     }
   }
-  return("")
+  return(invisible())
 }
 
 #' This function writes a stars object into a raster file
@@ -1809,15 +1582,13 @@ revert_resolution_HDR <- function(HDR, window_size) {
 #'
 #' @param ImagePath character. path for the image
 #' @return None
+#' @importFrom zip zipr
 #' @export
 
 ZipFile <- function(ImagePath) {
 
-
   ImagePath <- normalizePath(ImagePath)
-
   zip::zipr(zipfile = paste0(ImagePath, ".zip"), files = ImagePath)
   file.remove(ImagePath)
-
   return(invisible())
 }
