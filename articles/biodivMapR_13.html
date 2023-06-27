@@ -129,7 +129,7 @@ indices</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret</h4>
             
-            <h4 data-toc-skip class="date">2023-06-22</h4>
+            <h4 data-toc-skip class="date">2023-06-27</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_13.Rmd" class="external-link"><code>vignettes/biodivMapR_13.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_13.Rmd</code></div>
@@ -176,7 +176,7 @@ tutorial</a>.</p>
 <span></span>
 <span><span class="co"># set parameters</span></span>
 <span><span class="va">Continuum_Removal</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span></span>
-<span><span class="va">NDVI_Thresh</span> <span class="op">&lt;-</span> <span class="fl">0.5</span></span>
+<span><span class="va">NDVI_Thresh</span> <span class="op">&lt;-</span> <span class="fl">0.8</span></span>
 <span><span class="va">Blue_Thresh</span> <span class="op">&lt;-</span> <span class="fl">500</span></span>
 <span><span class="va">NIR_Thresh</span> <span class="op">&lt;-</span> <span class="fl">1500</span></span>
 <span><span class="va">TypePCA</span> <span class="op">&lt;-</span> <span class="st">'SI'</span></span>
@@ -184,10 +184,7 @@ tutorial</a>.</p>
 <span><span class="va">window_size</span> <span class="op">&lt;-</span> <span class="fl">10</span></span>
 <span><span class="va">nbCPU</span> <span class="op">&lt;-</span> <span class="fl">4</span></span>
 <span><span class="va">MaxRAM</span> <span class="op">&lt;-</span> <span class="fl">0.1</span></span>
-<span><span class="va">nbclusters</span> <span class="op">&lt;-</span> <span class="fl">50</span></span>
-<span><span class="co"># these parameters will be defined internally at some point, so users do not have to define them</span></span>
-<span><span class="va">nb_partitions</span> <span class="op">&lt;-</span> <span class="fl">20</span></span>
-<span><span class="va">Pix_Per_Partition</span> <span class="op">&lt;-</span> <span class="fl">250000</span> </span></code></pre></div>
+<span><span class="va">nbclusters</span> <span class="op">&lt;-</span> <span class="fl">50</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="perform-radiometric-filtering">Perform radiometric filtering<a class="anchor" aria-label="anchor" href="#perform-radiometric-filtering"></a>
@@ -216,9 +213,12 @@ computed from Sentinel-2 images with the function
 <span><span class="va">SensorBands</span> <span class="op">&lt;-</span> <span class="va">HDR</span><span class="op">$</span><span class="va">wavelength</span></span>
 <span></span>
 <span><span class="co"># 2. compute a list of spectral indices using spinR package</span></span>
-<span><span class="va">Sel_Indices</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'EVI'</span>,<span class="st">'CR_SWIR'</span>,<span class="st">'CRI1'</span>,<span class="st">'NDVI'</span><span class="op">)</span></span>
-<span><span class="va">Spectral_Indices</span> <span class="op">&lt;-</span> <span class="fu">spinR</span><span class="fu">::</span><span class="fu">ComputeSpectralIndices_Raster</span><span class="op">(</span><span class="va">ImBrick</span>, <span class="va">SensorBands</span>, Sel_Indices<span class="op">=</span><span class="va">Sel_Indices</span>, </span>
-<span>                                                           StackOut<span class="op">=</span><span class="cn">T</span>,ReflFactor <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">Sel_Indices</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'EVI'</span>,<span class="st">'CR_SWIR'</span>,<span class="st">'NDVI'</span><span class="op">)</span></span>
+<span><span class="va">Spectral_Indices</span> <span class="op">&lt;-</span> <span class="fu">spinR</span><span class="fu">::</span><span class="fu">compute_S2SI_Raster</span><span class="op">(</span>Refl <span class="op">=</span> <span class="va">ImBrick</span>, </span>
+<span>                                               SensorBands <span class="op">=</span> <span class="va">SensorBands</span>, </span>
+<span>                                               Sel_Indices <span class="op">=</span> <span class="va">Sel_Indices</span>, </span>
+<span>                                               StackOut <span class="op">=</span> <span class="cn">T</span>, </span>
+<span>                                               ReflFactor <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="write-raster-stack-of-spectral-indices-and-udated-shade-mask">Write raster stack of spectral indices and udated shade mask<a class="anchor" aria-label="anchor" href="#write-raster-stack-of-spectral-indices-and-udated-shade-mask"></a>
@@ -274,12 +274,18 @@ may impact the resulting diversity maps. Therefore, in the perspective
 of operational application, the optimization of the number of clusters
 based on ground information is critical.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># use all spectral indices to compute diversity</span></span>
+<code class="sourceCode R"><span><span class="co"># define SpectralSpace_Output, a list expected by map_spectral_species</span></span>
+<span><span class="va">SpectralSpace_Output</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">'PCA_Files'</span> <span class="op">=</span> <span class="va">Input_SI_File</span>, </span>
+<span>                             <span class="st">'TypePCA'</span> <span class="op">=</span> <span class="va">TypePCA</span><span class="op">)</span></span>
+<span><span class="co"># use all spectral indices to compute diversity</span></span>
 <span><span class="va">SelectedPCs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">Sel_Indices</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">Kmeans_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/map_spectral_species.html">map_spectral_species</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>,</span>
-<span>                                    PCA_Files <span class="op">=</span> <span class="va">Input_SI_File</span>, Input_Mask_File <span class="op">=</span> <span class="va">Input_Mask_File</span>,</span>
-<span>                                    Pix_Per_Partition <span class="op">=</span> <span class="va">Pix_Per_Partition</span>, nb_partitions <span class="op">=</span> <span class="va">nb_partitions</span>,</span>
-<span>                                    nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>, nbclusters <span class="op">=</span> <span class="va">nbclusters</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
+<span></span>
+<span><span class="va">Kmeans_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/map_spectral_species.html">map_spectral_species</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, </span>
+<span>                                    Input_Mask_File <span class="op">=</span> <span class="va">Input_Mask_File</span>,</span>
+<span>                                    Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>,</span>
+<span>                                    SpectralSpace_Output <span class="op">=</span> <span class="va">SpectralSpace_Output</span>,</span>
+<span>                                    nbclusters <span class="op">=</span> <span class="va">nbclusters</span>, </span>
+<span>                                    nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,</span>
 <span>                                    SelectedPCs <span class="op">=</span> <span class="va">SelectedPCs</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -290,10 +296,16 @@ distribution.</p>
 <p>Several alpha diversity metrics are available (currently Richness,
 Shannon, Simpson).</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">Index_Alpha</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Shannon'</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/map_alpha_div.html">map_alpha_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
-<span>              window_size <span class="op">=</span> <span class="va">window_size</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,</span>
-<span>              Index_Alpha <span class="op">=</span> <span class="va">Index_Alpha</span>, nbclusters <span class="op">=</span> <span class="va">nbclusters</span>,FullRes <span class="op">=</span> <span class="cn">F</span>, LowRes <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"MAP ALPHA DIVERSITY"</span><span class="op">)</span></span>
+<span><span class="va">Index_Alpha</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Shannon'</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/map_alpha_div.html">map_alpha_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, </span>
+<span>              Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>, </span>
+<span>              TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
+<span>              window_size <span class="op">=</span> <span class="va">window_size</span>, </span>
+<span>              nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, </span>
+<span>              MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,</span>
+<span>              Index_Alpha <span class="op">=</span> <span class="va">Index_Alpha</span>, </span>
+<span>              nbclusters <span class="op">=</span> <span class="va">nbclusters</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="map-beta-diversity">Map beta diversity<a class="anchor" aria-label="anchor" href="#map-beta-diversity"></a>
@@ -319,9 +331,15 @@ subset is computed, and the coordinates of each window in this PCoA
 space is defined based on a weighted nearest neighbors rule.</p></li>
 </ul>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/map_beta_div.html">map_beta_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
-<span>             window_size <span class="op">=</span> <span class="va">window_size</span>, nb_partitions<span class="op">=</span><span class="va">nb_partitions</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,</span>
-<span>             nbclusters <span class="op">=</span> <span class="va">nbclusters</span>, FullRes <span class="op">=</span> <span class="cn">F</span>, LowRes <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"MAP BETA DIVERSITY"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/map_beta_div.html">map_beta_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, </span>
+<span>             Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>, </span>
+<span>             TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
+<span>             window_size <span class="op">=</span> <span class="va">window_size</span>,</span>
+<span>             nb_partitions <span class="op">=</span> <span class="va">nb_partitions</span>, </span>
+<span>             nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, </span>
+<span>             MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,</span>
+<span>             nbclusters <span class="op">=</span> <span class="va">nbclusters</span><span class="op">)</span></span></code></pre></div>
 </div>
   </div>
 

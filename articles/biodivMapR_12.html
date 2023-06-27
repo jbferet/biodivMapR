@@ -129,7 +129,7 @@ data</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret</h4>
             
-            <h4 data-toc-skip class="date">2023-06-22</h4>
+            <h4 data-toc-skip class="date">2023-06-27</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_12.Rmd" class="external-link"><code>vignettes/biodivMapR_12.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_12.Rmd</code></div>
@@ -162,7 +162,7 @@ tutorial</a>.</p>
 <span></span>
 <span><span class="co"># set parameters</span></span>
 <span><span class="va">Continuum_Removal</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span> <span class="co"># relevant only when using continuous spectral data</span></span>
-<span><span class="va">NDVI_Thresh</span> <span class="op">&lt;-</span> <span class="fl">0.5</span>        <span class="co"># radiometric filter: all pixels with NDVI &lt; NDVI_Thresh are masked</span></span>
+<span><span class="va">NDVI_Thresh</span> <span class="op">&lt;-</span> <span class="fl">0.8</span>        <span class="co"># radiometric filter: all pixels with NDVI &lt; NDVI_Thresh are masked</span></span>
 <span><span class="va">Blue_Thresh</span> <span class="op">&lt;-</span> <span class="fl">500</span>        <span class="co"># radiometric filter: all pixels with reflectance at B02 (Blue) &gt; Blue_Thresh are masked</span></span>
 <span><span class="va">NIR_Thresh</span> <span class="op">&lt;-</span> <span class="fl">1500</span>        <span class="co"># radiometric filter: all pixels with reflectance at B08 (NIR) &lt; NIR_Thresh are masked</span></span>
 <span><span class="va">TypePCA</span> <span class="op">&lt;-</span> <span class="st">'SPCA'</span>         <span class="co"># choose between PPCA, standardized PCA, or MNF (relevant with imaging spectroscopy, not Sentinel-2)</span></span>
@@ -218,9 +218,14 @@ transformation are then visually selected in order to discard those
 containing noise or artifacts, and selecting those showing patterns
 related to vegetation types.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">PCA_Output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/perform_PCA.html">perform_PCA</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Input_Mask_File <span class="op">=</span> <span class="va">Input_Mask_File</span>,</span>
-<span>                          Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>, FilterPCA<span class="op">=</span><span class="va">FilterPCA</span>,</span>
-<span>                          nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>, Continuum_Removal <span class="op">=</span> <span class="va">Continuum_Removal</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">PCA_Output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/perform_PCA.html">perform_PCA</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, </span>
+<span>                          Input_Mask_File <span class="op">=</span> <span class="va">Input_Mask_File</span>,</span>
+<span>                          Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>, </span>
+<span>                          TypePCA <span class="op">=</span> <span class="va">TypePCA</span>, </span>
+<span>                          FilterPCA<span class="op">=</span><span class="va">FilterPCA</span>,</span>
+<span>                          nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>, </span>
+<span>                          Continuum_Removal <span class="op">=</span> <span class="va">Continuum_Removal</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># path of the raster resulting from dimensionality reduction</span></span>
 <span><span class="va">PCA_Files</span> <span class="op">&lt;-</span> <span class="va">PCA_Output</span><span class="op">$</span><span class="va">PCA_Files</span></span>
 <span><span class="co"># number of pixels used for each partition used for k-means clustering</span></span>
@@ -233,7 +238,8 @@ related to vegetation types.</p>
 <span><span class="co"># Select components from the PCA/SPCA/MNF raster</span></span>
 <span><span class="co"># Sel_PC = path of the file where selected components are stored</span></span>
 <span><span class="va">Sel_PC</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_PCA_components.html">select_PCA_components</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>,</span>
-<span>                                Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>, PCA_Files <span class="op">=</span> <span class="va">PCA_Files</span>,</span>
+<span>                                Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>, </span>
+<span>                                PCA_Files <span class="op">=</span> <span class="va">PCA_Files</span>,</span>
 <span>                                TypePCA <span class="op">=</span> <span class="va">TypePCA</span>, File_Open <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Components are then selected in order to discard those showing
 artifacts or too much noise. Components 1, 4 and 5 are then selected,
@@ -260,12 +266,11 @@ of operational application, the optimization of the number of clusters
 based on ground information is critical.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Kmeans_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/map_spectral_species.html">map_spectral_species</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, </span>
+<span>                                    Input_Mask_File <span class="op">=</span> <span class="va">PCA_Output</span><span class="op">$</span><span class="va">MaskPath</span>,</span>
 <span>                                    Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>,</span>
-<span>                                    PCA_Files <span class="op">=</span> <span class="va">PCA_Files</span>, Input_Mask_File <span class="op">=</span> <span class="va">Input_Mask_File</span>,</span>
-<span>                                    Pix_Per_Partition <span class="op">=</span> <span class="va">Pix_Per_Partition</span>, </span>
-<span>                                    nb_partitions <span class="op">=</span> <span class="va">nb_partitions</span>,</span>
-<span>                                    nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>, nbclusters <span class="op">=</span> <span class="va">nbclusters</span>, </span>
-<span>                                    TypePCA <span class="op">=</span> <span class="va">TypePCA</span><span class="op">)</span></span></code></pre></div>
+<span>                                    SpectralSpace_Output <span class="op">=</span> <span class="va">PCA_Output</span>,</span>
+<span>                                    nbclusters <span class="op">=</span> <span class="va">nbclusters</span>, </span>
+<span>                                    nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="map-alpha-diversity">Map alpha diversity<a class="anchor" aria-label="anchor" href="#map-alpha-diversity"></a>
@@ -275,10 +280,16 @@ distribution.</p>
 <p>Several alpha diversity metrics are available (currently Richness,
 Shannon, Simpson).</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">Index_Alpha</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Shannon'</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/map_alpha_div.html">map_alpha_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
-<span>              window_size <span class="op">=</span> <span class="va">window_size</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,</span>
-<span>              Index_Alpha <span class="op">=</span> <span class="va">Index_Alpha</span>, nbclusters <span class="op">=</span> <span class="va">nbclusters</span>,FullRes <span class="op">=</span> <span class="cn">T</span>, LowRes <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"MAP ALPHA DIVERSITY"</span><span class="op">)</span></span>
+<span><span class="va">Index_Alpha</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Shannon'</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/map_alpha_div.html">map_alpha_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, </span>
+<span>              Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>, </span>
+<span>              TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
+<span>              window_size <span class="op">=</span> <span class="va">window_size</span>, </span>
+<span>              nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, </span>
+<span>              MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,</span>
+<span>              Index_Alpha <span class="op">=</span> <span class="va">Index_Alpha</span>, </span>
+<span>              nbclusters <span class="op">=</span> <span class="va">nbclusters</span><span class="op">)</span></span></code></pre></div>
 <p>The Shannon index obtained from this process is displayed in the
 following figure:</p>
 <p>
@@ -315,9 +326,14 @@ subset is computed, and the coordinates of each window in this PCoA
 space is defined based on a weighted nearest neighbors rule.</p></li>
 </ul>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/map_beta_div.html">map_beta_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
-<span>             window_size <span class="op">=</span> <span class="va">window_size</span>, nb_partitions<span class="op">=</span><span class="va">nb_partitions</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, </span>
-<span>             MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>, nbclusters <span class="op">=</span> <span class="va">nbclusters</span>, FullRes <span class="op">=</span> <span class="cn">T</span>, LowRes <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"MAP BETA DIVERSITY"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/map_beta_div.html">map_beta_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>, </span>
+<span>             Output_Dir <span class="op">=</span> <span class="va">biodivMapR_Dir</span>, </span>
+<span>             TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
+<span>             window_size <span class="op">=</span> <span class="va">window_size</span>,</span>
+<span>             nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, </span>
+<span>             MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,</span>
+<span>             nbclusters <span class="op">=</span> <span class="va">nbclusters</span><span class="op">)</span></span></code></pre></div>
 <p>The beta diversity map obtained from this process is displayed in the
 following figure:</p>
 <p>
