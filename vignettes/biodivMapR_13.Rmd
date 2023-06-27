@@ -53,7 +53,7 @@ dir.create(path = biodivMapR_Dir,showWarnings = FALSE,recursive = TRUE)
 
 # set parameters
 Continuum_Removal <- FALSE
-NDVI_Thresh <- 0.5
+NDVI_Thresh <- 0.8
 Blue_Thresh <- 500
 NIR_Thresh <- 1500
 TypePCA <- 'SI'
@@ -62,10 +62,6 @@ window_size <- 10
 nbCPU <- 4
 MaxRAM <- 0.1
 nbclusters <- 50
-# these parameters will be defined internally at some point, so users do not have to define them
-nb_partitions <- 20
-Pix_Per_Partition <- 250000 
-
 ```
 
 
@@ -94,9 +90,12 @@ HDR <- read_ENVI_header(get_HDR_name(Input_Image_File))
 SensorBands <- HDR$wavelength
 
 # 2. compute a list of spectral indices using spinR package
-Sel_Indices <- c('EVI','CR_SWIR','CRI1','NDVI')
-Spectral_Indices <- spinR::ComputeSpectralIndices_Raster(ImBrick, SensorBands, Sel_Indices=Sel_Indices, 
-                                                           StackOut=T,ReflFactor = 10000)
+Sel_Indices <- c('EVI','CR_SWIR','NDVI')
+Spectral_Indices <- spinR::compute_S2SI_Raster(Refl = ImBrick, 
+                                               SensorBands = SensorBands, 
+                                               Sel_Indices = Sel_Indices, 
+                                               StackOut = T, 
+                                               ReflFactor = 10000)
 ```
 
 ### Write raster stack of spectral indices and udated shade mask
@@ -145,12 +144,18 @@ write_StarsStack(StarsObj = StarsObj, dsn = Input_SI_File, BandNames =Sel_Indice
 The spectral species are then defined based on the selected components. These spectral species result from the application of a K-Means clustering of the selected components. The number of clusters may impact the resulting diversity maps. Therefore, in the perspective of operational application, the optimization of the number of clusters based on ground information is critical. 
 
 ```{r map_spectral_species_SI}
+# define SpectralSpace_Output, a list expected by map_spectral_species
+SpectralSpace_Output <- list('PCA_Files' = Input_SI_File, 
+                             'TypePCA' = TypePCA)
 # use all spectral indices to compute diversity
 SelectedPCs <- seq(1,length(Sel_Indices))
-Kmeans_info <- map_spectral_species(Input_Image_File = Input_Image_File, Output_Dir = biodivMapR_Dir,
-                                    PCA_Files = Input_SI_File, Input_Mask_File = Input_Mask_File,
-                                    Pix_Per_Partition = Pix_Per_Partition, nb_partitions = nb_partitions,
-                                    nbCPU = nbCPU, MaxRAM = MaxRAM, nbclusters = nbclusters, TypePCA = TypePCA,
+
+Kmeans_info <- map_spectral_species(Input_Image_File = Input_Image_File, 
+                                    Input_Mask_File = Input_Mask_File,
+                                    Output_Dir = biodivMapR_Dir,
+                                    SpectralSpace_Output = SpectralSpace_Output,
+                                    nbclusters = nbclusters, 
+                                    nbCPU = nbCPU, MaxRAM = MaxRAM,
                                     SelectedPCs = SelectedPCs)
 ```
 
@@ -162,10 +167,16 @@ Alpha diversity maps can then be computed from the spectral species distribution
 Several alpha diversity metrics are available (currently Richness, Shannon, Simpson). 
 
 ```{r alpha_diversity_SI}
+print("MAP ALPHA DIVERSITY")
 Index_Alpha <- c('Shannon')
-map_alpha_div(Input_Image_File = Input_Image_File, Output_Dir = biodivMapR_Dir, TypePCA = TypePCA,
-              window_size = window_size, nbCPU = nbCPU, MaxRAM = MaxRAM,
-              Index_Alpha = Index_Alpha, nbclusters = nbclusters,FullRes = F, LowRes = T)
+map_alpha_div(Input_Image_File = Input_Image_File, 
+              Output_Dir = biodivMapR_Dir, 
+              TypePCA = TypePCA,
+              window_size = window_size, 
+              nbCPU = nbCPU, 
+              MaxRAM = MaxRAM,
+              Index_Alpha = Index_Alpha, 
+              nbclusters = nbclusters)
 ```
 
 ### Map beta diversity
@@ -181,8 +192,13 @@ Beta diversity is based on a 2-steps (or 3-steps depending on image size) proces
 - The explicit computation of the matrix becomes unmanageable for large amount of windows: in this case, the dissimilarity matrix is computed on a random subset of windows, followed by PCoA on this subset matrix. Then the dissimilarity between each window and this random subset is computed, and the coordinates of each window in this PCoA space is defined based on a weighted nearest neighbors rule.
 
 ```{r beta_diversity_SI}
-map_beta_div(Input_Image_File = Input_Image_File, Output_Dir = biodivMapR_Dir, TypePCA = TypePCA,
-             window_size = window_size, nb_partitions=nb_partitions, nbCPU = nbCPU, MaxRAM = MaxRAM,
-             nbclusters = nbclusters, FullRes = F, LowRes = T)
+print("MAP BETA DIVERSITY")
+map_beta_div(Input_Image_File = Input_Image_File, 
+             Output_Dir = biodivMapR_Dir, 
+             TypePCA = TypePCA,
+             window_size = window_size,
+             nb_partitions = nb_partitions, 
+             nbCPU = nbCPU, 
+             MaxRAM = MaxRAM,
+             nbclusters = nbclusters)
 ```
-
