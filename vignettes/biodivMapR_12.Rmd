@@ -40,7 +40,7 @@ dir.create(path = biodivMapR_Dir,showWarnings = FALSE,recursive = TRUE)
 
 # set parameters
 Continuum_Removal <- TRUE # relevant only when using continuous spectral data
-NDVI_Thresh <- 0.5        # radiometric filter: all pixels with NDVI < NDVI_Thresh are masked
+NDVI_Thresh <- 0.8        # radiometric filter: all pixels with NDVI < NDVI_Thresh are masked
 Blue_Thresh <- 500        # radiometric filter: all pixels with reflectance at B02 (Blue) > Blue_Thresh are masked
 NIR_Thresh <- 1500        # radiometric filter: all pixels with reflectance at B08 (NIR) < NIR_Thresh are masked
 TypePCA <- 'SPCA'         # choose between PPCA, standardized PCA, or MNF (relevant with imaging spectroscopy, not Sentinel-2)
@@ -80,9 +80,14 @@ Once pixels are masked based on the radiometric filter combined with the cloud m
 Once radiometric thresholding is done, a dimensionality reduction is performed, based on the computation of Principal Component Analysis (PCA) or standardized PCA (SPCA), with the function `perform_PCA`. The components from the resulting spectral transformation are then visually selected in order to discard those containing noise or artifacts, and selecting those showing patterns related to vegetation types. 
 
 ```{r dimensionality_reduction}
-PCA_Output <- perform_PCA(Input_Image_File = Input_Image_File, Input_Mask_File = Input_Mask_File,
-                          Output_Dir = biodivMapR_Dir, TypePCA = TypePCA, FilterPCA=FilterPCA,
-                          nbCPU = nbCPU, MaxRAM = MaxRAM, Continuum_Removal = Continuum_Removal)
+PCA_Output <- perform_PCA(Input_Image_File = Input_Image_File, 
+                          Input_Mask_File = Input_Mask_File,
+                          Output_Dir = biodivMapR_Dir, 
+                          TypePCA = TypePCA, 
+                          FilterPCA=FilterPCA,
+                          nbCPU = nbCPU, MaxRAM = MaxRAM, 
+                          Continuum_Removal = Continuum_Removal)
+
 # path of the raster resulting from dimensionality reduction
 PCA_Files <- PCA_Output$PCA_Files
 # number of pixels used for each partition used for k-means clustering
@@ -95,7 +100,8 @@ Input_Mask_File <- PCA_Output$MaskPath
 # Select components from the PCA/SPCA/MNF raster
 # Sel_PC = path of the file where selected components are stored
 Sel_PC <- select_PCA_components(Input_Image_File = Input_Image_File,
-                                Output_Dir = biodivMapR_Dir, PCA_Files = PCA_Files,
+                                Output_Dir = biodivMapR_Dir, 
+                                PCA_Files = PCA_Files,
                                 TypePCA = TypePCA, File_Open = TRUE)
 ```
 
@@ -114,12 +120,11 @@ The spectral species are then defined based on the selected components. These sp
 
 ```{r map_spectral_species}
 Kmeans_info <- map_spectral_species(Input_Image_File = Input_Image_File, 
+                                    Input_Mask_File = PCA_Output$MaskPath,
                                     Output_Dir = biodivMapR_Dir,
-                                    PCA_Files = PCA_Files, Input_Mask_File = Input_Mask_File,
-                                    Pix_Per_Partition = Pix_Per_Partition, 
-                                    nb_partitions = nb_partitions,
-                                    nbCPU = nbCPU, MaxRAM = MaxRAM, nbclusters = nbclusters, 
-                                    TypePCA = TypePCA)
+                                    SpectralSpace_Output = PCA_Output,
+                                    nbclusters = nbclusters, 
+                                    nbCPU = nbCPU, MaxRAM = MaxRAM)
 ```
 
 ### Map alpha diversity
@@ -129,10 +134,16 @@ Alpha diversity maps can then be computed from the spectral species distribution
 Several alpha diversity metrics are available (currently Richness, Shannon, Simpson). 
 
 ```{r alpha_diversity}
+print("MAP ALPHA DIVERSITY")
 Index_Alpha <- c('Shannon')
-map_alpha_div(Input_Image_File = Input_Image_File, Output_Dir = biodivMapR_Dir, TypePCA = TypePCA,
-              window_size = window_size, nbCPU = nbCPU, MaxRAM = MaxRAM,
-              Index_Alpha = Index_Alpha, nbclusters = nbclusters,FullRes = T, LowRes = T)
+map_alpha_div(Input_Image_File = Input_Image_File, 
+              Output_Dir = biodivMapR_Dir, 
+              TypePCA = TypePCA,
+              window_size = window_size, 
+              nbCPU = nbCPU, 
+              MaxRAM = MaxRAM,
+              Index_Alpha = Index_Alpha, 
+              nbclusters = nbclusters)
 ```
 
 The Shannon index obtained from this process is displayed in the following figure: 
@@ -159,9 +170,14 @@ Beta diversity is based on a 2-steps (or 3-steps depending on image size) proces
 - The explicit computation of the matrix becomes unmanageable for large amount of windows: in this case, the dissimilarity matrix is computed on a random subset of windows, followed by PCoA on this subset matrix. Then the dissimilarity between each window and this random subset is computed, and the coordinates of each window in this PCoA space is defined based on a weighted nearest neighbors rule.
 
 ```{r beta_diversity}
-map_beta_div(Input_Image_File = Input_Image_File, Output_Dir = biodivMapR_Dir, TypePCA = TypePCA,
-             window_size = window_size, nb_partitions=nb_partitions, nbCPU = nbCPU, 
-             MaxRAM = MaxRAM, nbclusters = nbclusters, FullRes = T, LowRes = T)
+print("MAP BETA DIVERSITY")
+map_beta_div(Input_Image_File = Input_Image_File, 
+             Output_Dir = biodivMapR_Dir, 
+             TypePCA = TypePCA,
+             window_size = window_size,
+             nbCPU = nbCPU, 
+             MaxRAM = MaxRAM,
+             nbclusters = nbclusters)
 ```
 
 The beta diversity map obtained from this process is displayed in the following figure: 
