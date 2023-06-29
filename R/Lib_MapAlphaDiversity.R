@@ -665,9 +665,9 @@ compute_ALPHA_SSD_per_window_list <- function(listAlpha, nb_partitions, nbcluste
                      nb_partitions = nb_partitions, nbclusters = nbclusters,
                      alphaIdx = alphaIdx, MinSun = MinSun, pcelim = pcelim)
 
-  shannonIter <- lapply(alphaSSD,'[[',1)
-  SimpsonAlpha <- lapply(alphaSSD,'[[',2)
-  FisherAlpha <- lapply(alphaSSD,'[[',3)
+  shannonIter <- lapply(alphaSSD,'[[','shannonIter')
+  SimpsonAlpha <- lapply(alphaSSD,'[[','SimpsonAlpha')
+  FisherAlpha <- lapply(alphaSSD,'[[','FisherAlpha')
   SSDMap <- lapply(alphaSSD,'[[',4)
   list_assd <- list('shannonIter' = shannonIter, 'SimpsonAlpha' = SimpsonAlpha,
                     'FisherAlpha' = FisherAlpha, 'SSDMap' = SSDMap)
@@ -725,8 +725,8 @@ compute_ALPHA_SSD_per_window <- function(listAlpha, nb_partitions, nbclusters,
     SimpsonAlpha <- NA*vector(length = nb_partitions)
     SSDMap <- NA*vector(length = nb_partitions*nbclusters)
   }
-  res <- list('shannonIter' = shannonIter, 'FisherAlpha' = FisherAlpha,
-              'SimpsonAlpha' = SimpsonAlpha, 'SSDMap' = SSDMap)
+  res <- list('shannonIter' = shannonIter, 'SimpsonAlpha' = SimpsonAlpha, 
+              'FisherAlpha' = FisherAlpha, 'SSDMap' = SSDMap)
   return(res)
 }
 

@@ -14,7 +14,7 @@ apply_continuum_removal(Spectral_Data, Spectral, nbCPU = 1)
 \item{nbCPU}{numeric. number of CPUs to be used in parallel}
 }
 \value{
-samples from image and updated number of pixels to sampel if necessary
+samples from image and updated number of pixels to sample if necessary
 }
 \description{
 prepares data to run multithreaded continuum removal
