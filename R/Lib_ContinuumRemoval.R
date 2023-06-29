@@ -16,10 +16,11 @@
 #' @param Spectral list. information about spectral bands
 #' @param nbCPU numeric. number of CPUs to be used in parallel
 #
-#' @return samples from image and updated number of pixels to sampel if necessary
+#' @return samples from image and updated number of pixels to sample if necessary
 #' @importFrom snow splitRows
 #' @importFrom future plan multiprocess sequential
 #' @importFrom future.apply future_lapply
+#' @importFrom progressr progressor handlers with_progress
 #' @export
 
 apply_continuum_removal <- function(Spectral_Data, Spectral, nbCPU = 1) {
