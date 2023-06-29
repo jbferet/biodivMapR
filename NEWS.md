@@ -1,3 +1,10 @@
+# biodivMapR v1.10.5
+
+
+## Fix
+- fixed bug when producing simpson index from map_alpha_div function
+- added importFrom corresponding to progressr in continum removal
+
 # biodivMapR v1.10.4
 
 ## Changes
