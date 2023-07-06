@@ -1,5 +1,9 @@
-# biodivMapR v1.10.5
+# biodivMapR v1.10.6
 
+## Fix
+- removed reference to multiprocess, multisession used exclusively from future
+
+# biodivMapR v1.10.5
 
 ## Fix
 - fixed bug when producing simpson index from map_alpha_div function

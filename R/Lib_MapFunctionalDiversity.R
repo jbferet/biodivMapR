@@ -32,7 +32,7 @@
 #' @param SmoothImage boolean. set TRUE if you want smooting filter applied to resulting diversity rasters
 #'
 #' @return None
-#' @importFrom future plan multiprocess sequential
+#' @importFrom future plan multisession sequential
 #' @export
 #'
 map_functional_div <- function(Original_Image_File,Functional_File = FALSE,
@@ -94,7 +94,7 @@ map_functional_div <- function(Original_Image_File,Functional_File = FALSE,
 #' @param MaxRAM numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.
 #
 #' @return list of mean and SD of alpha diversity metrics
-#' @importFrom future plan multiprocess sequential
+#' @importFrom future plan multisession sequential
 #' @importFrom future.apply future_lapply
 #' @importFrom stats sd
 #' @importFrom raster brick values nbands
