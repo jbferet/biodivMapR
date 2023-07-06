@@ -8,7 +8,7 @@
 #' @param dimMDS numeric. number of dimensions of the NMDS
 #
 #' @return BetaNMDS_sel
-#' @importFrom future plan multiprocess multisession sequential
+#' @importFrom future plan multisession sequential
 #' @importFrom future.apply future_lapply
 #' @importFrom ecodist nmds
 #' @importFrom utils find
@@ -54,7 +54,7 @@ compute_NMDS <- function(MatBCdist,dimMDS=3) {
     nbCoresNMDS <- 4
   }
   # multiprocess of spectral species distribution and alpha diversity metrics
-  # plan(multiprocess, workers = nbCoresNMDS) ## Parallelize using four cores
+  # plan(multisession, workers = nbCoresNMDS) ## Parallelize using four cores
   plan(multisession, workers = nbCoresNMDS) ## Parallelize using four cores
 <<<<<<< HEAD
   BetaNMDS <- future_lapply(MatBCdist, FUN = nmds, mindim = dimMDS, maxdim = dimMDS, nits = 1, future.packages = c("ecodist"))

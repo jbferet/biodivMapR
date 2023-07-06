@@ -82,7 +82,7 @@ map_beta_div <- function(Input_Image_File = FALSE,
 #' #' @param dimMDS numeric. number of dimensions of the NMDS
 #' #
 #' #' @return BetaNMDS_sel
-#' #' @importFrom future plan multiprocess multisession sequential
+#' #' @importFrom future plan multisession sequential
 #' #' @importFrom future.apply future_lapply
 #' #' @importFrom ecodist nmds
 #' #' @importFrom utils find
@@ -96,7 +96,7 @@ map_beta_div <- function(Input_Image_File = FALSE,
 #'     nbCoresNMDS <- 4
 #'   }
 #'   # multiprocess of spectral species distribution and alpha diversity metrics
-#'   # plan(multiprocess, workers = nbCoresNMDS) ## Parallelize using four cores
+#'   # plan(multisession, workers = nbCoresNMDS) ## Parallelize using four cores
 #'   plan(multisession, workers = nbCoresNMDS) ## Parallelize using four cores
 #'   BetaNMDS <- future_lapply(MatBCdist,
 #'                             FUN = nmds,
@@ -135,7 +135,7 @@ map_beta_div <- function(Input_Image_File = FALSE,
 #' @return Ordination_est coordinates of each spatial unit in ordination space
 #' @import cli
 #' @importFrom snow splitRows
-#' @importFrom future plan multiprocess multisession sequential
+#' @importFrom future plan multisession sequential
 #' @importFrom future.apply future_lapply
 #' @importFrom progressr progressor handlers with_progress
 #' @export

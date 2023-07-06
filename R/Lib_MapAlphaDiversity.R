@@ -179,7 +179,7 @@ compute_ALPHA_FromPlot <- function(SpectralSpecies_Plot,pcelim = 0.02){
 #
 #' @return list of mean and SD of alpha diversity metrics
 #' @import cli
-#' @importFrom future plan multiprocess multisession sequential
+#' @importFrom future plan multisession sequential
 #' @importFrom future.apply future_lapply
 #' @importFrom progressr progressor handlers with_progress
 #' @importFrom stats sd
@@ -406,7 +406,7 @@ convert_PCA_to_SSD <- function(ReadWrite, Spectral_Species_Path,
 #' @import cli
 #' @importFrom vegan fisher.alpha
 #' @importFrom snow splitList
-#' @importFrom future plan multiprocess multisession sequential
+#' @importFrom future plan multisession sequential
 #' @importFrom future.apply future_lapply
 #' @export
 
