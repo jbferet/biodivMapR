@@ -92,7 +92,7 @@ jobs:
 
       - name: "[Stage] [macOS] Install gdal"
         if: runner.os == 'macOS'
-        run: brew install gdal-bin proj-bin libgdal-dev libproj-dev
+        run: brew install gdal
 
       - name: Install dissUtils
         run: Rscript -e "remotes::install_github('cran/dissUtils')"
