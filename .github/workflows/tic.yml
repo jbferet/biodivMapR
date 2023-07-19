@@ -95,7 +95,7 @@ jobs:
         run: brew install gdal
 
       - name: Install dissUtils
-        run: Rscript -e "remotes::install_github('cran/dissUtils')"
+        run: Rscript -e "remotes::install_git('https://github.com/cran/dissUtils')"
 
       - name: "[Stage] [macOS] Install binary dependencies"
         if: runner.os == 'macOS'
