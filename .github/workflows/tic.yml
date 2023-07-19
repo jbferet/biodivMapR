@@ -66,7 +66,7 @@ jobs:
       - name: "[Cache] Prepare daily timestamp for cache"
         if: runner.os != 'Windows'
         id: date
-        run: echo "::set-output name=date::$(date '+%d-%m')"
+        run: echo "date=$(date '+%d-%m')" >> $GITHUB_OUTPUT
 
       - name: "[Cache] Cache R packages"
         if: runner.os != 'Windows'
@@ -90,9 +90,9 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install libgit2
 
-#      - name: "[Stage] [macOS] Install rgdal"
-#        if: runner.os == 'macOS'
-#        run: brew install gdal-bin proj-bin libgdal-dev libproj-dev
+      - name: "[Stage] [macOS] Install gdal"
+        if: runner.os == 'macOS'
+        run: brew install gdal-bin proj-bin libgdal-dev libproj-dev
 
       - name: Install dissUtils
         run: Rscript -e "remotes::install_github('cran/dissUtils')"
