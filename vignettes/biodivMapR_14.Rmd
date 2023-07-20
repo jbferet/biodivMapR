@@ -1,5 +1,5 @@
 ---
-title: "Copernicus Academy biodiv#1: set working environment"
+title: "COPERNICUS & biodiv #1: set working environment"
 author: "Jean-Baptiste Féret"
 date: "`r Sys.Date()`"
 output:
@@ -13,7 +13,7 @@ output:
     toc_depth: 2
 vignette: >
   \usepackage[utf8]{inputenc}
-  %\VignetteIndexEntry{Copernicus Academy biodiv#1: set working environment}
+  %\VignetteIndexEntry{COPERNICUS & biodiv #1: set working environment}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 ---

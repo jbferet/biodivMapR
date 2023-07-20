@@ -145,7 +145,7 @@ Mask <- 0*Spectral_Indices$SpectralIndices$mNDVI705+1
 for (idx in Sel_Indices){
   rast <- Spectral_Indices$SpectralIndices[[idx]]
   IQRminmax <- biodivMapR::IQR_outliers(DistVal = raster::values(rast),weightIRQ = 3)
-  Mask[rast<IQRminmax[1] | rast>IQRminmax[2]] <- NA
+  Mask[raster::values(rast)<IQRminmax[1] | raster::values(rast)>IQRminmax[2]] <- NA
 }
 # apply mask on stack and convert as stars object
 StarsObj <- st_as_stars(Spectral_Indices$SpectralIndices*Mask)
