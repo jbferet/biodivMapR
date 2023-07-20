@@ -98,6 +98,9 @@
     <li>
       <a href="../articles/biodivMapR_13.html">PROGYSAT#3: Run biodivMapR on selected spectral indices</a>
     </li>
+    <li>
+      <a href="../articles/biodivMapR_14.html">COPERNICUS &amp; biodiv #1: set working environment</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -129,7 +132,7 @@ layers</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2023-07-06</h4>
+            <h4 data-toc-skip class="date">2023-07-20</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_09.Rmd" class="external-link"><code>vignettes/biodivMapR_09.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_09.Rmd</code></div>
@@ -285,7 +288,7 @@ indices<a class="anchor" aria-label="anchor" href="#mask-data-from-spectral-indi
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">idx</span> <span class="kw">in</span> <span class="va">Sel_Indices</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="va">rast</span> <span class="op">&lt;-</span> <span class="va">Spectral_Indices</span><span class="op">$</span><span class="va">SpectralIndices</span><span class="op">[[</span><span class="va">idx</span><span class="op">]</span><span class="op">]</span></span>
 <span>  <span class="va">IQRminmax</span> <span class="op">&lt;-</span> <span class="fu">biodivMapR</span><span class="fu">::</span><span class="fu"><a href="../reference/IQR_outliers.html">IQR_outliers</a></span><span class="op">(</span>DistVal <span class="op">=</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">rast</span><span class="op">)</span>,weightIRQ <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
-<span>  <span class="va">Mask</span><span class="op">[</span><span class="va">rast</span><span class="op">&lt;</span><span class="va">IQRminmax</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">|</span> <span class="va">rast</span><span class="op">&gt;</span><span class="va">IQRminmax</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
+<span>  <span class="va">Mask</span><span class="op">[</span><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">rast</span><span class="op">)</span><span class="op">&lt;</span><span class="va">IQRminmax</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">|</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">rast</span><span class="op">)</span><span class="op">&gt;</span><span class="va">IQRminmax</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
 <span><span class="op">}</span></span>
 <span><span class="co"># apply mask on stack and convert as stars object</span></span>
 <span><span class="va">StarsObj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_as_stars.html" class="external-link">st_as_stars</a></span><span class="op">(</span><span class="va">Spectral_Indices</span><span class="op">$</span><span class="va">SpectralIndices</span><span class="op">*</span><span class="va">Mask</span><span class="op">)</span></span></code></pre></div>

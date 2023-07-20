@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Perform spatial &amp; spectral filtering • biodivMapR</title>
+<title>COPERNICUS &amp; biodiv #1: set working environment • biodivMapR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Perform spatial &amp; spectral filtering">
+<script src="../pkgdown.js"></script><meta property="og:title" content="COPERNICUS &amp; biodiv #1: set working environment">
 <meta property="og:description" content="biodivMapR">
 <meta property="og:image" content="/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -127,79 +127,97 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Perform spatial &amp; spectral filtering</h1>
+      <h1 data-toc-skip>COPERNICUS &amp; biodiv #1: set working
+environment</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste
-Féret, Florian de Boissieu</h4>
+Féret</h4>
             
             <h4 data-toc-skip class="date">2023-07-20</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_03.Rmd" class="external-link"><code>vignettes/biodivMapR_03.Rmd</code></a></small>
-      <div class="hidden name"><code>biodivMapR_03.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_14.Rmd" class="external-link"><code>vignettes/biodivMapR_14.Rmd</code></a></small>
+      <div class="hidden name"><code>biodivMapR_14.Rmd</code></div>
 
     </div>
 
     
     
-<div class="section level3">
-<h3 id="produce-a-vegetation-cloud-shade-mask">Produce a vegetation / cloud / shade mask<a class="anchor" aria-label="anchor" href="#produce-a-vegetation-cloud-shade-mask"></a>
-</h3>
-<p>The full radiometric filtering can be peformed with a unique
-function, including:</p>
-<ul>
-<li><p><strong>NDVI filtering</strong>: allows filtering to eliminate
-non-vegetated pixels. Nothing fancy so you may need to deal with mixed
-pixels… <code>NDVI_Thresh</code> defines the minimum NDVI value to be
-kept. By default, the NDVI is computed based on the NIR spectral band
-closest to 835 nm, and the RED spectral band closest to 670 nm. These
-values can be adjusted as input variables for
-<code>perform_radiometric_filtering</code>.</p></li>
-<li><p><strong>NIR filtering</strong>: allows filtering of shadows and
-pixels with very low signal. <code>NIR_Thresh</code> defines the minimum
-NIR value to be kept. By default, the NIR spectral band closest to 835nm
-is used. This value can be adjusted as input variables for
-<code>perform_radiometric_filtering</code>.</p></li>
-<li><p><strong>BLUE filtering</strong>: allows filtering of clouds,
-based on the hypothesis that atmospheric scattering will lead to higher
-reflectance in the blue domain. <code>Blue_Thresh</code> defines the
-maximum Blue reflectance to be kept. By default, the Blue spectral band
-closest to 480nm is used. This value can be adjusted as input variables
-for <code>perform_radiometric_filtering</code>.</p></li>
-</ul>
-<p>The spectral bands corresponding to the Blue, Green and NIR spectral
-bands can be defined as optional parameters.</p>
+<p>Ce tutoriel accompagne la <strong>séquence 1</strong> de la section
+<strong>Cartographie de la biodiversité par imagerie satellite</strong>
+du module de formation <strong>COPERNICUS et biodiversité</strong> de la
+Copernicus Academy.</p>
+<p>Il permet de mettre en place un répertoire de travail et de
+télécharger l’arborescence de dossiers et les fichiers nécessaires au
+bon déroulement de cette section de formation.</p>
+<div class="section level2">
+<h2 id="séquence-1-importer-larborescence-des-dossiers-et-fichiers">Séquence 1: Importer l’arborescence des dossiers et fichiers<a class="anchor" aria-label="anchor" href="#s%C3%A9quence-1-importer-larborescence-des-dossiers-et-fichiers"></a>
+</h2>
+<p>Dans un premier temps, vous devez définir un répertoire de travail
+principal, dans lequel vous pourrez stocker vos données, vos scripts R,
+ainsi que les résultats des traitements que nous réaliserons
+ensemble.</p>
+<p>Ce répertoire de travail doit être sur un disque ayant suffisamment
+d’espace disponible. Comptez au <strong>minimum 10 Go d’espace
+disponible</strong> pour le bon déroulement de l’ensemble des
+tutoriels.</p>
+<p>Dans le script suivant, le chemin d’accès absolu de votre repertoire
+de travail est symbolisé par <code>your/working/directory</code>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"PERFORM RADIOMETRIC FILTERING"</span><span class="op">)</span></span>
-<span><span class="va">Input_Mask_File</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/perform_radiometric_filtering.html">perform_radiometric_filtering</a></span><span class="op">(</span>Image_Path <span class="op">=</span> <span class="va">Input_Image_File</span>, Mask_Path <span class="op">=</span> <span class="va">Input_Mask_File</span>,</span>
-<span>                                                 Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>, TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
-<span>                                                 NDVI_Thresh <span class="op">=</span> <span class="va">NDVI_Thresh</span>, Blue_Thresh <span class="op">=</span> <span class="va">Blue_Thresh</span>,</span>
-<span>                                                 NIR_Thresh <span class="op">=</span> <span class="va">NIR_Thresh</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="produce-a-spectral-filter">Produce a spectral filter<a class="anchor" aria-label="anchor" href="#produce-a-spectral-filter"></a>
-</h3>
-<p>Spectral bands or spectral domains can be discarded during the
-process. This is particularly useful when spectral domains with high SNR
-are includd in the image.</p>
-<p>By default, the spectral domains corresponding to atmospheric water
-absorption are masked.</p>
-<p>However, these spectral domains can be extended, or included with the
-variable <code>Excluded_WL</code>, which is an input variable for the
-function <code>perform_PCA</code>. The default values are the following
-for the spectral domains to exclude (in nanometers):</p>
+<code class="sourceCode R"><span><span class="co"># define working directory</span></span>
+<span><span class="va">setwd</span> <span class="op">&lt;-</span> <span class="st">'your/working/directory'</span></span></code></pre></div>
+<p>Le bon déroulement des tutoriels nécessite aussi d’adopter une
+arborescence de dossiers spécifique pour faciliter la gestion des
+nombreux fichiers qui seront lus et écrits par la suite.</p>
+<p>Cette arborescence, ainsi que l’ensemble des scripts utilisés durant
+cette formation, peuvent être téléchargés automatiquement à l’aide des
+instructions suivantes :</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">Excluded_WL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">400</span><span class="op">)</span></span>
-<span><span class="va">Excluded_WL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">Excluded_WL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">895</span>, <span class="fl">1005</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">Excluded_WL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">Excluded_WL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1180</span>, <span class="fl">1480</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">Excluded_WL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">Excluded_WL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1780</span>, <span class="fl">2040</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><br><br></p>
-<p>The PCA transformation and dimensional reduction are performed in the
-<a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_04.html" target="_blank" class="external-link">next step</a>.</p>
+<code class="sourceCode R"><span><span class="co"># library</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-lib/zip#readme" class="external-link">zip</a></span><span class="op">)</span></span>
+<span><span class="co"># define data directory</span></span>
+<span><span class="va">Path_Data</span> <span class="op">&lt;-</span> <span class="st">'./'</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">Path_Data</span>,showWarnings <span class="op">=</span> <span class="cn">F</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span><span class="co"># name zip file including plots located on the tile</span></span>
+<span><span class="va">zipfile</span> <span class="op">&lt;-</span> <span class="st">'arborescence.zip'</span></span>
+<span><span class="va">destzip</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">Path_Data</span>,<span class="va">zipfile</span>,fsep <span class="op">=</span> <span class="st">'\\'</span><span class="op">)</span></span>
+<span><span class="co"># url for the zip file</span></span>
+<span><span class="va">url</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">'https://gitlab.com/jbferet/myshareddata/-/raw/master/COPERNICUS_ACADEMY/BIODIVERSITE'</span>, <span class="va">zipfile</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">url</span>, destfile <span class="op">=</span> <span class="va">destzip</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/zip/man/unzip.html" class="external-link">unzip</a></span><span class="op">(</span>zipfile <span class="op">=</span> <span class="va">destzip</span>,exdir <span class="op">=</span> <span class="va">Path_Data</span><span class="op">)</span></span>
+<span><span class="co"># set directory where R scripts are as the working directory</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">setwd</a></span><span class="op">(</span><span class="st">'02_PROGRAMS'</span><span class="op">)</span></span></code></pre></div>
+<p>Cette arborescence contient les informations suivantes:</p>
+<ul>
+<li>dossier <code>01_DATA</code>: contient le fichier
+<code>T18MZB_PeruAmazon_Subset.kml</code> correspondant à l’emprise de
+la zone d’étude</li>
+<li>dossier <code>02_PROGRAMS</code> : contient les scripts R utilisés
+lors de ce tutoriel, notamment :
+<ul>
+<li>
+<code>Main_00_S2_availability.R</code>, qui contient les
+instructions pour interroger sur les données Sentinel-2 disponibles sur
+la zone d’étude</li>
+<li>
+<code>Main_01_Download_S2.R</code>, qui permet de télécharger et
+prétraiter les données Sentinel-2</li>
+<li>
+<code>Main_02_biodivMapR_S2.R</code>, qui permet de produire des
+cartes d’indicateurs de biodiversité à partir des données d’imagerie
+Sentinel-2</li>
+</ul>
+</li>
+</ul>
+<p>L’arborescence sera complétée au fur et à mesure par les données de
+référence, les données d’imagerie Sentinel-2, et les produits issus de
+l’analyse de ces données Sentinel-2.</p>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-      </div>
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
+</div>
 
 </div>
 
