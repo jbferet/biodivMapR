@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.0</span>
       </span>
     </div>
 
@@ -129,6 +129,10 @@ given spectral band and R at the following bands</p></td>
         </td>
         <td><p>get information corresponding to data type defined in ENVI</p></td>
       </tr><tr><td>
+          <p><code><a href="Get_FunctionalMetrics_From_Traits.html">Get_FunctionalMetrics_From_Traits()</a></code> </p>
+        </td>
+        <td><p>Prepare for the computation of the functional diversity metrics</p></td>
+      </tr><tr><td>
           <p><code><a href="IQR_outliers.html">IQR_outliers()</a></code> </p>
         </td>
         <td><p>This function computes interquartile range (IQR) criterion, which can be used
@@ -138,6 +142,10 @@ as a criterion for outlier detection</p></td>
         </td>
         <td><p>Performs normalization of spectral species distribution based on cumulative
 sum of spectral species</p></td>
+      </tr><tr><td>
+          <p><code><a href="RowToLinear.html">RowToLinear()</a></code> </p>
+        </td>
+        <td><p>get max index for each row and convert into linear index</p></td>
       </tr><tr><td>
           <p><code><a href="WeightedCoordsNN.html">WeightedCoordsNN()</a></code> </p>
         </td>
@@ -202,7 +210,7 @@ pcelim is the threshold for minimum contributin of a spctral species to be kept<
         <td><p>compute beta diversity from spectral species computed for a plot
 expecting a matrix of spectral species (n pixels x p repetitions)</p></td>
       </tr><tr><td>
-          <p><code><a href="compute_FUNCT.html">compute_FUNCT()</a></code> </p>
+          <p><code><a href="compute_FD.html">compute_FD()</a></code> </p>
         </td>
         <td><p>compute functional diversity metrics for an array, given a specific window size</p></td>
       </tr><tr><td>
@@ -240,10 +248,6 @@ corresponding to a polygon</p></td>
           <p><code><a href="convert_PCA_to_SSD.html">convert_PCA_to_SSD()</a></code> </p>
         </td>
         <td><p>Convert PCA into SSD based on previous clustering</p></td>
-      </tr><tr><td>
-          <p><code><a href="coordPix_kernel.html">coordPix_kernel()</a></code> </p>
-        </td>
-        <td><p>XXX</p></td>
       </tr><tr><td>
           <p><code><a href="create_hdr.html">create_hdr()</a></code> </p>
         </td>
@@ -312,6 +316,11 @@ NIR (min) threshold eliminates shadows
           <p><code><a href="getBCdiss.html">getBCdiss()</a></code> </p>
         </td>
         <td><p>Computes BC dissimilarity for a given matrix</p></td>
+      </tr><tr><td>
+          <p><code><a href="getFD.html">getFD()</a></code> </p>
+        </td>
+        <td><p>get functional diversity metrics from dataframe
+This function was inspired from FD package</p></td>
       </tr><tr><td>
           <p><code><a href="get_HDR_name.html">get_HDR_name()</a></code> </p>
         </td>
@@ -473,6 +482,10 @@ of the ordination, then gets the coordinates of each window in the ordination sp
           <p><code><a href="read_image_subset.html">read_image_subset()</a></code> </p>
         </td>
         <td><p>reads subset of lines from an image</p></td>
+      </tr><tr><td>
+          <p><code><a href="repmat.html">repmat()</a></code> </p>
+        </td>
+        <td><p>R equivalent of repmat (matlab)</p></td>
       </tr><tr><td>
           <p><code><a href="revert_resolution_HDR.html">revert_resolution_HDR()</a></code> </p>
         </td>

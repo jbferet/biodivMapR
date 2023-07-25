@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.0</span>
       </span>
     </div>
 
@@ -113,7 +113,8 @@
 <span>  Selected_Features <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  Name_Plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  Hellinger <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  pcelim <span class="op">=</span> <span class="fl">0.02</span></span>
+<span>  pcelim <span class="op">=</span> <span class="fl">0.02</span>,</span>
+<span>  FDmetric <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FRic"</span>, <span class="st">"FEve"</span>, <span class="st">"FDiv"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -149,6 +150,10 @@
 
 <dt>pcelim</dt>
 <dd><p>numeric. Discard spectral species when contribution is &lt; pcelim (between 0 and 1)</p></dd>
+
+
+<dt>FDmetric</dt>
+<dd><p>character. Functional diversity metric</p></dd>
 
 </dl></div>
     <div id="value">

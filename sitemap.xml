@@ -82,10 +82,16 @@
     <loc>/reference/ENVI_type2bytes.html</loc>
   </url>
   <url>
+    <loc>/reference/Get_FunctionalMetrics_From_Traits.html</loc>
+  </url>
+  <url>
     <loc>/reference/IQR_outliers.html</loc>
   </url>
   <url>
     <loc>/reference/Normalize_SSD.html</loc>
+  </url>
+  <url>
+    <loc>/reference/RowToLinear.html</loc>
   </url>
   <url>
     <loc>/reference/WeightedCoordsNN.html</loc>
@@ -130,7 +136,7 @@
     <loc>/reference/compute_BETA_FromPlots.html</loc>
   </url>
   <url>
-    <loc>/reference/compute_FUNCT.html</loc>
+    <loc>/reference/compute_FD.html</loc>
   </url>
   <url>
     <loc>/reference/compute_Functional_metrics.html</loc>
@@ -155,9 +161,6 @@
   </url>
   <url>
     <loc>/reference/convert_PCA_to_SSD.html</loc>
-  </url>
-  <url>
-    <loc>/reference/coordPix_kernel.html</loc>
   </url>
   <url>
     <loc>/reference/create_hdr.html</loc>
@@ -203,6 +206,9 @@
   </url>
   <url>
     <loc>/reference/getBCdiss.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getFD.html</loc>
   </url>
   <url>
     <loc>/reference/get_HDR_name.html</loc>
@@ -311,6 +317,9 @@
   </url>
   <url>
     <loc>/reference/read_image_subset.html</loc>
+  </url>
+  <url>
+    <loc>/reference/repmat.html</loc>
   </url>
   <url>
     <loc>/reference/revert_resolution_HDR.html</loc>
