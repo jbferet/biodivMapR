@@ -289,7 +289,6 @@ kmeans_progressr <- function(x, centers, iter.max, nstart,
 #' @param MaxRAM numeric. size of image pieces to be read at once
 #'
 #' @return None
-#' @importFrom progress progress_bar
 #' @export
 
 apply_kmeans <- function(PCA_Path, PC_Select, Input_Mask_File, Kmeans_info,
@@ -333,17 +332,6 @@ apply_kmeans <- function(PCA_Path, PC_Select, Input_Mask_File, Kmeans_info,
 
   # for each piece of image
   print(paste('Apply Kmeans to the full raster:',nbPieces,'chunks distributed on',nbCPU,'CPU'))
-  # pb <- progress_bar$new(
-  #   format = paste('Write spectral species file [:bar] :percent in :elapsedfull',sep = ''),
-  #   total = nbPieces, clear = FALSE, width= 100)
-  # lapply(X = Location_RW, FUN = compute_spectral_species,
-  #        PCA_Path = PCA_Path,
-  #        Input_Mask_File = Input_Mask_File,
-  #        Spectral_Species_Path = Spectral_Species_Path,
-  #        PC_Select = PC_Select,
-  #        Kmeans_info = Kmeans_info,
-  #        nbCPU = nbCPU)
-
   for (i in 1:nbPieces) {
     message(paste('Computing spectral species for image subset #',i,' / ',nbPieces))
     compute_spectral_species(PCA_Path = PCA_Path, Input_Mask_File = Input_Mask_File,

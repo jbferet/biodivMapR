@@ -21,17 +21,17 @@
 #' @param Name_Plot character. Name of the plots defined in the shapefiles
 #' @param Hellinger boolean. set TRUE to compute Hellinger distance matrices based on Euclidean distances
 #' @param pcelim numeric. Discard spectral species when contribution is < pcelim (between 0 and 1)
+#' @param FDmetric character. Functional diversity metric
 #'
 #' @return alpha and beta diversity metrics
 #' @importFrom raster raster projection compareCRS
 #' @importFrom rgdal readOGR
-#' @importFrom geometry convhulln
-#' @importFrom emstreeR ComputeMST
 #' @importFrom tools file_path_sans_ext
 #' @export
 diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
                                 Raster_Functional = FALSE, Selected_Features = FALSE,
-                                Name_Plot = FALSE, Hellinger = FALSE, pcelim = 0.02){
+                                Name_Plot = FALSE, Hellinger = FALSE, pcelim = 0.02,
+                                FDmetric = c('FRic', 'FEve', 'FDiv')){
 
   # get hdr from Raster_SpectralSpecies
   HDR <- read_ENVI_header(paste(Raster_SpectralSpecies,'.hdr',sep=''))
@@ -194,29 +194,14 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
         ij <- matrix(ij[which(!is.na(ij[,1])),], ncol = ncol(ExtractIm))
         nbPix_Sunlit <- dim(ij)[1]
         PCsun <- nbPix_Sunlit / nrow(ExtractIm)
+        spectraits <- data.frame(ij)
         if (nbPix_Sunlit>length(Selected_Features)){
-          FunctionalDiversity$FRic[ip] <- 100*geometry::convhulln(ij, output.options = 'FA')$vol
+          FD <- getFD(spectraits = spectraits, FDmetric = FDmetric)
+          FunctionalDiversity$FRic[ip] <- FD$FRic
+          FunctionalDiversity$FDiv[ip] <- FD$FDiv
+          FunctionalDiversity$FEve[ip] <- FD$FEve
         } else {
           FunctionalDiversity$FRic[ip] <- 0
-          if (!Name_Plot==FALSE){
-            message(paste('FRic cannot be computed from',Name_Plot[ip]))
-          } else {
-            message(paste('FRic cannot be computed from polygon #',ip))
-          }
-          message('Minimum number of pixel required to compute convex hull must be > nb selected features')
-        }
-        if (nbPix_Sunlit>1){
-          # 2- Functional Divergence
-          # mean distance from centroid
-          Centroid <- colMeans(ij)
-          FunctionalDiversity$FDiv[ip] <- 100*sum(sqrt(rowSums((t(t(ij) - Centroid)^2))))/nbPix_Sunlit
-          # FDivmap[ii,jj] <- 100*sum(sqrt(rowSums((t(t(ij) )^2))))/nbPix_Sunlit
-          # 3- Functional Evenness
-          # euclidean minimum spanning tree
-          # 20220112: wait for update of emstreeR and integration of mlpack
-          # FunctionalDiversity$FEve[ip] <- 0
-          FunctionalDiversity$FEve[ip] <- 100*sum(emstreeR::ComputeMST(ij,verbose = FALSE)$distance)/nbPix_Sunlit
-        } else {
           FunctionalDiversity$FDiv[ip] <- 0
           FunctionalDiversity$FEve[ip] <- 0
         }

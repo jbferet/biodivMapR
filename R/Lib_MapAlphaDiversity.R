@@ -403,8 +403,9 @@ convert_PCA_to_SSD <- function(ReadWrite, Spectral_Species_Path,
 #' @param Mask_Chunk numeric. 3D image chunk of mask (optional)
 #
 #' @return list of alpha diversity metrics for each iteration
-#' @import cli
 #' @importFrom vegan fisher.alpha
+#' @import cli
+#' @importFrom progressr progressor handlers with_progress
 #' @importFrom snow splitList
 #' @importFrom future plan multisession sequential
 #' @importFrom future.apply future_lapply

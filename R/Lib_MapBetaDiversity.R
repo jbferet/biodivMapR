@@ -497,7 +497,7 @@ compute_BCdiss <- function(SSDList, pcelim=0.02) {
   SSD <- lapply(SSDList,FUN = normalize_SSD, pcelim = pcelim)
   # matrix of bray curtis dissimilarity (size = nb kernels x nb kernels)
   # Here use the package "dissUtils" to compute dissimilarity matrices sequentially
-  MatBC <- diss(SSD[[1]], SSD[[2]], method = 'braycurtis')
+  MatBC <- dissUtils::diss(SSD[[1]], SSD[[2]], method = 'braycurtis')
   # EDIT 06-Feb-2019: added this to fix problem when empty kernels occur, leading to NA BC value
   BCNA <- which(is.na(MatBC) == TRUE)
   if (length(BCNA) > 0) {
