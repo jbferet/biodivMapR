@@ -562,7 +562,7 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.50){
 #' @param kernel numeric.
 #' @param MaxRAM numeric.
 #'
-#' @importFrom matlab ones
+#' @importFrom matlab padarray meshgrid
 #' @importFrom raster raster brick nbands ncell values
 #' @importFrom mmand erode
 #' @importFrom data.table data.table rbindlist setorder
@@ -603,9 +603,9 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions,
   if(is.matrix(kernel)){
     mask[which(is.na(c(mask)))] <- 0
     # erode mask with kernel, to keep valid central pixels and neighbours
-    mask = matlab::padarray(mask, c(1,1), padval=0, direction='both')
-    mask = mmand::erode(mask, (kernel!=0)*1)
-    mask = mask[2:(nrow(mask)-1), 2:(ncol(mask)-1)]
+    mask <- matlab::padarray(mask, c(1,1), padval=0, direction='both')
+    mask <- mmand::erode(mask, (kernel!=0)*1)
+    mask <- mask[2:(nrow(mask)-1), 2:(ncol(mask)-1)]
   }
 
   # get a list of samples among unmasked pixels
@@ -659,7 +659,7 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions,
   # remove NA and Inf pixels
   if(any(is.na(Sample_Sel) | is.infinite(Sample_Sel))){
     print('Removing pixels with NA values.')
-    rmrows <- rowAnys(is.na(Sample_Sel) | is.infinite(Sample_Sel))
+    rmrows <- matrixStats::rowAnys(is.na(Sample_Sel) | is.infinite(Sample_Sel))
     rmpix <- unique(samplePixIndex$id[rmrows])
     Sample_Sel = Sample_Sel[!(samplePixIndex$id %in% rmpix),]
     samplePixIndex = samplePixIndex[!(samplePixIndex$id %in% rmpix)]
@@ -805,7 +805,7 @@ mean_filter <- function(Image, SizeFilt,NA_remove = FALSE) {
   }
   ImageSmooth <- array(0,c(nbi,nbj,dim(Image)[3]))
   for (band in 1: dim(Image)[3]){
-    E <- padarray(Image[,,band], c(SizeFilt, SizeFilt), "symmetric", "both")
+    E <- matlab::padarray(Image[,,band], c(SizeFilt, SizeFilt), "symmetric", "both")
     ImageSmooth_tmp <- matrix(0, nrow = nbi, ncol = nbj)
     Mat2D <- MatSun <- matrix(0, nrow = ((2 * SizeFilt) + 1)^2, ncol = nbj)
     spl <- split(1:nbj, 1:((2 * SizeFilt) + 1))
@@ -1338,7 +1338,6 @@ write_ENVI_header <- function(HDR, HDRpath) {
 #' @param Image_Format list. description of data format corresponding to ENVI type
 #'
 #' @return None
-#' @importFrom progress progress_bar
 #' @export
 
 Write_Big_Image <- function(ImgWrite,ImagePath,HDR,Image_Format){
@@ -1350,9 +1349,7 @@ Write_Big_Image <- function(ImgWrite,ImagePath,HDR,Image_Format){
   )
   close(fidOUT)
   # for each piece of image
-  pb <- progress_bar$new(
-    format = 'Writing raster [:bar] :percent in :elapsedfull',
-    total = nbPieces, clear = FALSE, width= 100)
+  message(paste('Writing raster', ImagePath, sep = ' '))
 
   for (i in 1:nbPieces) {
     # read image and mask data
@@ -1382,7 +1379,6 @@ Write_Big_Image <- function(ImgWrite,ImagePath,HDR,Image_Format){
       writeBin(c(as.integer(ImgChunk)), fidOUT, size = Image_Format$Bytes, endian = .Platform$endian, useBytes = FALSE)
     }
     close(fidOUT)
-    pb$tick()
   }
   rm(ImgWrite)
   rm(ImgChunk)

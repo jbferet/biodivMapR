@@ -17,7 +17,8 @@ map_functional_div(
   MapSTD = TRUE,
   nbCPU = 1,
   MaxRAM = 0.25,
-  SmoothImage = TRUE
+  SmoothImage = TRUE,
+  FDmetric = c("FRic", "FEve", "FDiv")
 )
 }
 \arguments{
@@ -47,6 +48,8 @@ map_functional_div(
 \item{MaxRAM}{numeric. MaxRAM maximum size of chunk in GB to limit RAM allocation when reading image file.}
 
 \item{SmoothImage}{boolean. set TRUE if you want smooting filter applied to resulting diversity rasters}
+
+\item{FDmetric}{character. Functional diversity metric}
 }
 \value{
 None

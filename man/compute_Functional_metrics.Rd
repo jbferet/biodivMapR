@@ -8,6 +8,7 @@ compute_Functional_metrics(
   Functional_File,
   Functional_Map_Path,
   Selected_Features,
+  FDmetric = c("FRic", "FEve", "FDiv"),
   window_size,
   MinSun,
   nbCPU = 1,
@@ -20,6 +21,8 @@ compute_Functional_metrics(
 \item{Functional_Map_Path}{character. Path and name of the resulting functional diversity raster}
 
 \item{Selected_Features}{numeric. list of features from Functional_File to be included in the analysis}
+
+\item{FDmetric}{character. Functional diversity metric}
 
 \item{window_size}{numeric. size of spatial units (in pixels) to compute diversity}
 

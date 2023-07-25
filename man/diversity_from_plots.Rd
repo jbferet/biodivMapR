@@ -12,7 +12,8 @@ diversity_from_plots(
   Selected_Features = FALSE,
   Name_Plot = FALSE,
   Hellinger = FALSE,
-  pcelim = 0.02
+  pcelim = 0.02,
+  FDmetric = c("FRic", "FEve", "FDiv")
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ diversity_from_plots(
 \item{Hellinger}{boolean. set TRUE to compute Hellinger distance matrices based on Euclidean distances}
 
 \item{pcelim}{numeric. Discard spectral species when contribution is < pcelim (between 0 and 1)}
+
+\item{FDmetric}{character. Functional diversity metric}
 }
 \value{
 alpha and beta diversity metrics

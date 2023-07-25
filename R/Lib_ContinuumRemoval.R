@@ -189,7 +189,7 @@ filter_prior_CR <- function(Minit, Spectral_Bands) {
   # Minit[Minit<0] <- Minit + 100.0
   Minit[Minit < 0] <- 0
   # eliminate invariant spectra
-  SD <- rowSds(Minit)
+  SD <- matrixStats::rowSds(Minit)
   elim <- which(SD == 0 | is.na(SD))
   keep <- which(!SD == 0 & !is.na(SD))
   nbi0 <- nrow(Minit)
@@ -212,27 +212,31 @@ filter_prior_CR <- function(Minit, Spectral_Bands) {
   return(my_list)
 }
 
-#
-# @param MM
-# @param nbi
-# @param nbj
-#
-# @return
+#' get max index for each row and convert into linear index
+#' @param MM numeric.
+#' @param nbi numeric.
+#' @param nbj numeric.
+#'
+#' @return MaxCont
+#' @export
+
 RowToLinear <- function(MM, nbi, nbj) {
   adj <- seq(1:nbi)
   MaxCont <- ((MM - 1) * (nbi)) + adj
   return(MaxCont)
 }
 
-# R equivalent of repmat (matlab)
-#
-# @param X initial matrix
-# @param m nb of replications in row dimension
-# @param n nb of replications in column dimension
-#
-# @return
+#' R equivalent of repmat (matlab)
+#'
+#' @param X initial matrix
+#' @param m nb of replications in row dimension
+#' @param n nb of replications in column dimension
+#'
+#' @return matrix with values replicated and tiles
+#' @export
+
 repmat <- function(X, m, n) {
   mx <- dim(X)[1]
   nx <- dim(X)[2]
-  matrix(t(matrix(X, mx, nx * n)), mx * m, nx * n, byrow = T)
+  return(matrix(t(matrix(X, mx, nx * n)), mx * m, nx * n, byrow = T))
 }

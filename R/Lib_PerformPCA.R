@@ -52,7 +52,7 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir,
   # extract a random selection of pixels from image
   if (TypePCA=='MNF'){
     FilterPCA <- FALSE
-    kernel = matrix(0, 3, 3)
+    kernel <- matrix(0, 3, 3)
     kernel[c(5, 6, 8)]=c(1, -1/2, -1/2)
     Subset <- get_random_subset_from_image(ImPath = Input_Image_File,
                                            MaskPath = Input_Mask_File, nb_partitions = nb_partitions,
@@ -341,7 +341,6 @@ filter_PCA <- function(Input_Image_File, HDR, Input_Mask_File, Shade_Update,
 #' @param MaxRAM max RAM when initial image is read (in Gb)
 #'
 #' @return None
-#' @importFrom progress progress_bar
 #' @export
 
 write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_model,
@@ -600,15 +599,15 @@ minmax <- function(x, mode = "define", MinX = FALSE, MaxX = FALSE) {
 #' @param coordPix numeric.
 #'
 #' @return rescaled data, min and max values
-#' @importFrom matlab ndims
 #' @export
 # If coordPix is not NULL, X and coordPix are exepected to have the same order,
 # i.e. coordPix[1, ] corresponds to X[1, ], coordPix[2, ] corresponds to X[2, ], ...
 noise <- function(X, coordPix=NULL){
   if(is.null(coordPix)){
-    if(matlab::ndims(X)!=3)
-      stop('X is expected to be a 3D array: y,x,band for row,col,depth.')
-    Xdim = dim(X)
+    # if(matlab::ndims(X)!=3)
+    if(length(dim(X))!=3)
+        stop('X is expected to be a 3D array: y,x,band for row,col,depth.')
+    Xdim <- dim(X)
     # Shift x/y difference
     Y = ((X[2:Xdim[1],2:Xdim[2],]-X[1:(Xdim[1]-1),2:Xdim[2],]) +
                (X[2:Xdim[1],2:Xdim[2],]-X[2:Xdim[1],1:(Xdim[2]-1),]))/2
@@ -627,30 +626,6 @@ noise <- function(X, coordPix=NULL){
     }
   }
   return(Y)
-}
-
-#' XXX
-#'
-#' @param X numeric.
-#' @param kernel numeric.
-#'
-#' @return coordinates of the pixels
-#' @export
-# used in noise
-coordPix_kernel <- function(X, kernel){
-  mesh = matlab::meshgrid(1:nrow(X), 1:ncol(X))
-  Row <- as.numeric(mesh$y) # row
-  Column <- as.numeric(mesh$x) # column
-
-  coordPixK = list()
-  mesh=matlab::meshgrid(-(ncol(kernel)%/%2):(ncol(kernel)%/%2), -(nrow(kernel)%/%2):(nrow(kernel)%/%2))
-  for(p in which(kernel!=0)){
-    coordPixK[[p]] = data.table(row = Row+mesh$y[p], col = Column+mesh$x[p], id=1:length(Row))
-  }
-  coordPix = rbindlist(coordPixK, idcol='Kind')
-  # Order along coordPix$id for further use in noise, mnf
-  setorder(coordPix, 'id')
-  return(coordPix)
 }
 
 #' Function to perform MNF
