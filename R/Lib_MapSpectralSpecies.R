@@ -194,7 +194,8 @@ map_spectral_species <- function(Input_Image_File, Output_Dir,
 #' @param dataPCA numeric. initial dataset sampled from PCA image
 #' @param nb_partitions numeric. number of k-means then averaged
 #' @param nbCPU numeric. Number of CPUs available
-#' @param nbclusters numeric.number of clusters used in kmeans
+#' @param nbclusters numeric. number of clusters used in kmeans
+#' @param progressbar boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)
 #'
 #' @return list of centroids and parameters needed to center/reduce data
 #' @import cli
@@ -207,7 +208,7 @@ map_spectral_species <- function(Input_Image_File, Output_Dir,
 #'
 #' @export
 
-init_kmeans <- function(dataPCA, nb_partitions, nbclusters, nbCPU = 1) {
+init_kmeans <- function(dataPCA, nb_partitions, nbclusters, nbCPU = 1, progressbar = TRUE) {
 
   # define boundaries defining outliers based on IQR
   m0 <- M0 <- c()
@@ -230,27 +231,42 @@ init_kmeans <- function(dataPCA, nb_partitions, nbclusters, nbCPU = 1) {
     dataPCA <- snow::splitRows(x = dataPCA, ncl = nb_partitions)
     if (nbCPU>1){
       plan(multisession, workers = nbCPU) ## Parallelize using four cores
-      handlers(global = TRUE)
-      handlers("cli")
-      with_progress({
-        p <- progressr::progressor(steps = nb_partitions)
+      if (progressbar==TRUE){
+        handlers(global = TRUE)
+        handlers("cli")
+        with_progress({
+          p <- progressr::progressor(steps = nb_partitions)
+          res <- future_lapply(X = dataPCA,
+                               FUN = kmeans_progressr,
+                               centers = nbclusters,
+                               iter.max = 50, nstart = 10,
+                               algorithm = c("Hartigan-Wong"), p = p)
+        })
+      } else {
         res <- future_lapply(X = dataPCA,
                              FUN = kmeans_progressr,
                              centers = nbclusters,
                              iter.max = 50, nstart = 10,
-                             algorithm = c("Hartigan-Wong"), p = p)
-      })
+                             algorithm = c("Hartigan-Wong"))
+      }
       plan(sequential)
     } else {
-      handlers(global = TRUE)
-      handlers("cli")
-      with_progress({
-        p <- progressr::progressor(steps = nb_partitions)
+      if (progressbar==TRUE){
+        handlers(global = TRUE)
+        handlers("cli")
+        with_progress({
+          p <- progressr::progressor(steps = nb_partitions)
+          res <- lapply(X = dataPCA,
+                        FUN = kmeans_progressr,
+                        centers = nbclusters, iter.max = 50, nstart = 10,
+                        algorithm = c("Hartigan-Wong"), p = p)
+        })
+      } else {
         res <- lapply(X = dataPCA,
                       FUN = kmeans_progressr,
                       centers = nbclusters, iter.max = 50, nstart = 10,
-                      algorithm = c("Hartigan-Wong"), p = p)
-      })
+                      algorithm = c("Hartigan-Wong"))
+      }
     }
     Centroids <- lapply(res,'[[',2)
     my_list <- list("Centroids" = Centroids, "MinVal" = m0, "MaxVal" = M0, "Range" = d0, "Error" = FALSE)
@@ -457,12 +473,14 @@ compute_spectral_species <- function(PCA_Path, Input_Mask_File, Spectral_Species
 #' @param nbclusters numeric. number of clusters / spectral species
 #' @param PC_Select numeric. selection of components from subset_Raster and List_FieldPlot on which spctral species are computed
 #' @param nbCPU numeric. number of CPU on which kmeans is computed
+#' @param progressbar boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)
 #'
 #' @return list. vector_coordinates and vector_ID for each element in the vector file
 #' @export
 
 compute_spectral_species_FieldPlots <- function(subset_Raster, List_FieldPlot, nb_partitions,
-                                                Pix_Per_Partition, nbclusters, PC_Select=NULL, nbCPU=1){
+                                                Pix_Per_Partition, nbclusters, PC_Select=NULL, nbCPU=1,
+                                                progressbar = FALSE){
   # COMPUTE KMEANS
   nbFieldPlots <- length(List_FieldPlot)
   if (!is.null(PC_Select)){
@@ -471,7 +489,9 @@ compute_spectral_species_FieldPlots <- function(subset_Raster, List_FieldPlot, n
       List_FieldPlot[[ll]] <- matrix(List_FieldPlot[[ll]][, PC_Select],ncol = length(PC_Select))
     }
   }
-  Kmeans_info <- init_kmeans(subset_Raster, nb_partitions, nbclusters, nbCPU)
+  Kmeans_info <- init_kmeans(subset_Raster, nb_partitions,
+                             nbclusters, nbCPU,
+                             progressbar = progressbar)
   # APPLY KMEANS ON THE FIELD DATA
   Nearest_Cluster <- list()
   # prepare to save spectral species for each plot, for this band combination

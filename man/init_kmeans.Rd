@@ -4,16 +4,18 @@
 \alias{init_kmeans}
 \title{computes k-means from nb_partitions subsets taken from dataPCA}
 \usage{
-init_kmeans(dataPCA, nb_partitions, nbclusters, nbCPU = 1)
+init_kmeans(dataPCA, nb_partitions, nbclusters, nbCPU = 1, progressbar = TRUE)
 }
 \arguments{
 \item{dataPCA}{numeric. initial dataset sampled from PCA image}
 
 \item{nb_partitions}{numeric. number of k-means then averaged}
 
-\item{nbclusters}{numeric.number of clusters used in kmeans}
+\item{nbclusters}{numeric. number of clusters used in kmeans}
 
 \item{nbCPU}{numeric. Number of CPUs available}
+
+\item{progressbar}{boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)}
 }
 \value{
 list of centroids and parameters needed to center/reduce data
