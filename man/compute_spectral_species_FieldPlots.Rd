@@ -12,7 +12,8 @@ compute_spectral_species_FieldPlots(
   Pix_Per_Partition,
   nbclusters,
   PC_Select = NULL,
-  nbCPU = 1
+  nbCPU = 1,
+  progressbar = FALSE
 )
 }
 \arguments{
@@ -29,6 +30,8 @@ compute_spectral_species_FieldPlots(
 \item{PC_Select}{numeric. selection of components from subset_Raster and List_FieldPlot on which spctral species are computed}
 
 \item{nbCPU}{numeric. number of CPU on which kmeans is computed}
+
+\item{progressbar}{boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)}
 }
 \value{
 list. vector_coordinates and vector_ID for each element in the vector file

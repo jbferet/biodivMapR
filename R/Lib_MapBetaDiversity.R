@@ -244,6 +244,7 @@ ordination_to_NN_list <- function(SSD_subset,
 
 compute_BETA_FromPlots <- function(SpectralSpecies_Plots,nbclusters,Hellinger = FALSE, pcelim = 0.02){
 
+  Hellinger_mean <- Hellmat <- NULL
   nbPolygons<- length(SpectralSpecies_Plots)
   Pixel_Inventory_All <- Pixel_Hellinger_All <- list()
   nb_partitions <- dim(SpectralSpecies_Plots[[1]])[2]

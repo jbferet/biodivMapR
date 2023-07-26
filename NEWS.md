@@ -1,3 +1,14 @@
+# biodivMapR v1.11.1
+
+## Change
+- possibility to enable / disable progressbar in compute_spectral_species_FieldPlots and init_kmeans
+
+# biodivMapR v1.11.0
+
+## Fix
+- fixed computation of FD metrics
+- removed import progress and emstreeR
+
 # biodivMapR v1.10.6
 
 ## Fix

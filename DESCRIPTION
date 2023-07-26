@@ -1,6 +1,6 @@
 Package: biodivMapR
 Title: biodivMapR: an R package for a- and ß-diversity mapping using remotely-sensed images
-Version: 1.11.0
+Version: 1.11.1
 Authors@R: c(person(given = "Jean-Baptiste", 
 					family = "Feret", 
 					email = "jb.feret@teledetection.fr", 
