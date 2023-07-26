@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.1</span>
       </span>
     </div>
 
@@ -105,7 +105,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">init_kmeans</span><span class="op">(</span><span class="va">dataPCA</span>, <span class="va">nb_partitions</span>, <span class="va">nbclusters</span>, nbCPU <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">init_kmeans</span><span class="op">(</span><span class="va">dataPCA</span>, <span class="va">nb_partitions</span>, <span class="va">nbclusters</span>, nbCPU <span class="op">=</span> <span class="fl">1</span>, progressbar <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -119,11 +119,15 @@
 
 
 <dt>nbclusters</dt>
-<dd><p>numeric.number of clusters used in kmeans</p></dd>
+<dd><p>numeric. number of clusters used in kmeans</p></dd>
 
 
 <dt>nbCPU</dt>
 <dd><p>numeric. Number of CPUs available</p></dd>
+
+
+<dt>progressbar</dt>
+<dd><p>boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)</p></dd>
 
 </dl></div>
     <div id="value">
