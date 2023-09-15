@@ -696,7 +696,7 @@ get_byte_order <- function() {
 #' @importFrom jsonlite fromJSON
 #' @export
 get_gdal_info <- function(x){
-  gdalUtilities::gdalinfo(x, json = TRUE, quiet = TRUE) %>%
+  gdalUtilities::gdalinfo(normalizePath(x), json = TRUE, quiet = TRUE) %>%
     jsonlite::fromJSON()
 }
 
