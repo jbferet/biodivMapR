@@ -533,9 +533,8 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.50){
     nXSize <- max(rc$col)
     # stars data cube dimension order is x*y*band
     ipix_stars <- (rc$rowInBlock-min(rc$rowInBlock))*nXSize+rc$col
-    # get driver
-    driver <- attr(rgdal::GDALinfo(ImPath,returnStats = FALSE), 'driver')
-    values <- read_stars(ImPath, RasterIO =list(nXSize=nXSize, nYOff=rr[1], nYSize=nYSize),proxy = FALSE, driver=driver)[[1]]
+    driver <- get_gdal_info(ImPath)$driverShortName
+    values <- read_stars(ImPath, RasterIO =list(nXSize=nXSize, nYOff=rr[1], nYSize=nYSize), proxy = FALSE, driver = driver)[[1]]
     values <- matrix(values, nrow=nYSize*nXSize)
     if (length(ipix_stars)>1){
       res <- cbind(rc$sampleIndex, values[ipix_stars, ])
@@ -687,6 +686,18 @@ get_byte_order <- function() {
     ByteOrder <- 1
   }
   return(ByteOrder)
+}
+
+#' Get GDAL info as a nested list
+#' @param x character. Raster image path.
+#' @return list. Nested list of raster characteristics.
+#' @import magrittr
+#' @importFrom gdalUtilities gdalinfo
+#' @importFrom jsonlite fromJSON
+#' @export
+get_gdal_info <- function(x){
+  gdalUtilities::gdalinfo(x, json = TRUE, quiet = TRUE) %>%
+    jsonlite::fromJSON()
 }
 
 #' get hdr name from image file name, assuming it is BIL format

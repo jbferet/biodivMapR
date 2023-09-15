@@ -471,7 +471,7 @@ The same procedure as in the [previous tutorial](https://jbferet.github.io/biodi
 # list vector data
 Path_Vector <- list_shp(VectorDir)
 Name_Vector <- tools::file_path_sans_ext(basename(Path_Vector))
-NamePlots <- rgdal::readOGR(VectorDir,Name_Vector,verbose = FALSE)$ID
+NamePlots <- terra::vect(Path_Vector)$ID
 # location of the spectral species raster needed for validation
 Path_SpectralSpecies <- Kmeans_info$SpectralSpecies
 # get diversity indicators corresponding to shapefiles (no partitioning of spectral dibversity based on field plots so far...)
@@ -482,7 +482,7 @@ Biodiv_Indicators <- diversity_from_plots(Raster_SpectralSpecies = Path_Spectral
 # identify which plots were in the image
 WhichPlots <- which(!is.na(Biodiv_Indicators$Shannon) & !Biodiv_Indicators$Shannon==0)
 NamePlot <- Biodiv_Indicators$Name_Plot[WhichPlots]
-TypeCommunity <- rgdal::readOGR(VectorDir,Name_Vector,verbose = FALSE)$COMM[WhichPlots]
+TypeCommunity <- terra::vect(Path_Vector)$COMM[WhichPlots]
 
 Richness_RS <- Biodiv_Indicators$Richness[[1]][WhichPlots]
 Shannon_RS <- Biodiv_Indicators$Shannon[[1]][WhichPlots]

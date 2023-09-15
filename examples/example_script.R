@@ -248,7 +248,7 @@ BetaPCO <- labdsv::pco(MatBCdist, k = 3)
 nbSamples <- shpName <- c()
 for (i in 1:length(Path_Vector)){
   shp <- Path_Vector[i]
-  nbSamples[i] <- length(rgdal::readOGR(shp,verbose = FALSE))
+  nbSamples[i] <- nrow(sf::read_sf(shp))
   shpName[i] <- tools::file_path_sans_ext(basename(shp))
 }
 
