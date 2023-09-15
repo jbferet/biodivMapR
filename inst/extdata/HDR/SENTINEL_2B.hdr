@@ -17,4 +17,4 @@ band names 		= {band 02, band 03, band 04, band 05, band 06, band 07, band 08, b
 purpose 		= {blue, green, red, vegetation classification, vegetation classification, vegetation classification, near infrared, vegetation classification, snow/ice/cloud discimination, snow/ice/cloud discrimination}
 wavelength	 	= {492.1, 559.0, 665.0, 703.8, 739.1, 779.7, 833.0, 864.0, 1610.4, 2185.7}
 bandwidth 		= {98, 46, 39, 20, 18, 28, 133, 32, 141, 238}
-resolution 		= {10, 10, 10, 10, 20, 20, 20, 10, 20, 20, 20}
+resolution 		= {10, 10, 10, 20, 20, 20, 10, 20, 20, 20}
