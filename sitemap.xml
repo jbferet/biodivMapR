@@ -190,9 +190,6 @@
     <loc>/reference/extract_pixels.html</loc>
   </url>
   <url>
-    <loc>/reference/extract_pixels_coordinates.From.OGR.html</loc>
-  </url>
-  <url>
     <loc>/reference/extract_pixels_coordinates.html</loc>
   </url>
   <url>
@@ -227,6 +224,9 @@
   </url>
   <url>
     <loc>/reference/get_byte_order.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_gdal_info.html</loc>
   </url>
   <url>
     <loc>/reference/get_image_bands.html</loc>
