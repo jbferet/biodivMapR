@@ -116,8 +116,6 @@ map_functional_div <- function(Original_Image_File,Functional_File = FALSE,
 #' @importFrom future.apply future_lapply
 #' @importFrom stats sd
 #' @import cli
-#' @importFrom future plan multisession sequential
-#' @importFrom future.apply future_lapply
 #' @importFrom terra rast values
 #' @export
 
