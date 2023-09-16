@@ -542,7 +542,6 @@ compute_SSD <- function(Image_Chunk, window_size, nbclusters,
 #'
 #' @return list. includes Spectral_Species_Path
 #' @importFrom stars read_stars write_stars
-#' @importFrom rgdal GDALinfo
 #' @importFrom tools file_path_sans_ext
 #' @export
 
@@ -583,8 +582,9 @@ get_SSpath <- function(Output_Dir, Input_Image_File, TypePCA, ClassifMap, nbclus
     }
     # save classification map in proper format in output directory
     # if not expected file format for Spectral Species map
-    driver <- attr(rgdal::GDALinfo(ClassifMap,returnStats = FALSE), 'driver')
-    df <- unique(attr(rgdal::GDALinfo(ClassifMap,returnStats = FALSE),"df")$GDType)
+    info <- get_gdal_info(ClassifMap)
+    driver <- info$driverShortName
+    df <- unique(info$bands$type)
     if (driver=='ENVI' & df =='Byte'){
       if (Input_Image_File==FALSE){
         Input_Image_File <- tools::file_path_sans_ext(basename(ClassifMap))
@@ -726,7 +726,7 @@ compute_ALPHA_SSD_per_window <- function(listAlpha, nb_partitions, nbclusters,
     SimpsonAlpha <- NA*vector(length = nb_partitions)
     SSDMap <- NA*vector(length = nb_partitions*nbclusters)
   }
-  res <- list('shannonIter' = shannonIter, 'SimpsonAlpha' = SimpsonAlpha, 
+  res <- list('shannonIter' = shannonIter, 'SimpsonAlpha' = SimpsonAlpha,
               'FisherAlpha' = FisherAlpha, 'SSDMap' = SSDMap)
   return(res)
 }

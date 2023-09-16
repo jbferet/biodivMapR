@@ -1,3 +1,8 @@
+# biodivMapR v1.12.0
+
+## Fix
+- remove dependency to rgdal and rgeos (issue #18) 
+
 # biodivMapR v1.11.1
 
 ## Change

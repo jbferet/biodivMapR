@@ -2,18 +2,18 @@
 % Please edit documentation in R/Lib_Validation_biodivMapR.R
 \name{extract_pixels_coordinates}
 \alias{extract_pixels_coordinates}
-\title{Extracts pixels coordinates from raster corresponding to an area defined by a vector}
+\title{Extracts pixels coordinates from raster intersecting a vector.}
 \usage{
-extract_pixels_coordinates(Path.Raster, Path.Vector)
+extract_pixels_coordinates(x, y)
 }
 \arguments{
-\item{Path.Raster}{path for the raster file. !! BIL expected}
+\item{x}{terra::SpatRaster or character. Raster or raster path.}
 
-\item{Path.Vector}{path for the vector file. !! SHP expected}
+\item{y}{terra::SpatVector or character. Vector or vector path.}
 }
 \value{
-ColRow list of coordinates of pixels corresponding to each polygon in shp
+data.frame. Pixel indices row, col of intersecting parts.
 }
 \description{
-Extracts pixels coordinates from raster corresponding to an area defined by a vector
+Extracts pixels coordinates from raster intersecting a vector.
 }
