@@ -56,14 +56,10 @@ compute_NMDS <- function(MatBCdist,dimMDS=3) {
   # multiprocess of spectral species distribution and alpha diversity metrics
   # plan(multisession, workers = nbCoresNMDS) ## Parallelize using four cores
   plan(multisession, workers = nbCoresNMDS) ## Parallelize using four cores
-<<<<<<< HEAD
-  BetaNMDS <- future_lapply(MatBCdist, FUN = nmds, mindim = dimMDS, maxdim = dimMDS, nits = 1, future.packages = c("ecodist"))
-=======
   BetaNMDS <- future_lapply(MatBCdist,
                             FUN = nmds,
                             mindim = dimMDS, maxdim = dimMDS, nits = 1,
                             future.packages = c("ecodist"))
->>>>>>> dev
   plan(sequential)
   # find iteration with minimum stress
   Stress <- vector(length = nbiterNMDS)
