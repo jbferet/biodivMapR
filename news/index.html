@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.12.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.12.1</span>
       </span>
     </div>
 
@@ -100,10 +100,25 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="1.12.1" id="biodivmapr-v1121">biodivMapR v1.12.1<a class="anchor" aria-label="anchor" href="#biodivmapr-v1121"></a></h2>
+<div class="section level3">
+<h3 id="fix-1-12-1">Fix<a class="anchor" aria-label="anchor" href="#fix-1-12-1"></a></h3>
+<ul><li>update example_script and vignettes to fulfill removal to rgdal dependency in the package</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="1.12.0" id="biodivmapr-v1120">biodivMapR v1.12.0<a class="anchor" aria-label="anchor" href="#biodivmapr-v1120"></a></h2>
 <div class="section level3">
 <h3 id="fix-1-12-0">Fix<a class="anchor" aria-label="anchor" href="#fix-1-12-0"></a></h3>
-<ul><li>remove dependency to rgdal and rgeos (issue <a href="https://github.com/jbferet/biodivMapR/issues/18" class="external-link">#18</a>)</li>
+<ul><li>issue <a href="https://github.com/jbferet/biodivMapR/issues/18" class="external-link">#18</a>: remove the dependency to rgdal and rgeos using terra and gdalUtilities instead</li>
+</ul></div>
+<div class="section level3">
+<h3 id="change-1-12-0">Change<a class="anchor" aria-label="anchor" href="#change-1-12-0"></a></h3>
+<ul><li>remove extract_pixels_coordinates.From.OGR, a unique extract_pixels_coordinates now works for both character or rast/vect inputs</li>
+</ul></div>
+<div class="section level3">
+<h3 id="addition-1-12-0">Addition<a class="anchor" aria-label="anchor" href="#addition-1-12-0"></a></h3>
+<ul><li>add get_gdal_info to get raster gdal info as a nested list.</li>
 </ul></div>
 </div>
     <div class="section level2">

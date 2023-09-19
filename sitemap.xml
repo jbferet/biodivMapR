@@ -67,18 +67,6 @@
     <loc>/news/index.html</loc>
   </url>
   <url>
-    <loc>/reference/Compute_ALPHA_SSD_per_window.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Compute_ALPHA_SSD_per_window_list.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Compute_ALPHA_per_window.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ContinuumRemoval.html</loc>
-  </url>
-  <url>
     <loc>/reference/ENVI_type2bytes.html</loc>
   </url>
   <url>
@@ -86,9 +74,6 @@
   </url>
   <url>
     <loc>/reference/IQR_outliers.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Normalize_SSD.html</loc>
   </url>
   <url>
     <loc>/reference/RowToLinear.html</loc>
@@ -158,6 +143,9 @@
   </url>
   <url>
     <loc>/reference/compute_spectral_species_FieldPlots.html</loc>
+  </url>
+  <url>
+    <loc>/reference/continuumRemoval.html</loc>
   </url>
   <url>
     <loc>/reference/convert_PCA_to_SSD.html</loc>
