@@ -27,14 +27,10 @@
     nbCoresNMDS &amp;lt;- 4  # multiprocess of spectral species distribution and alpha diversity metrics
   # plan(multisession, workers = nbCoresNMDS) ## Parallelize using four cores
   plan(multisession, workers = nbCoresNMDS) ## Parallelize using four cores
-&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt; HEAD
-  BetaNMDS &amp;lt;- future_lapply(MatBCdist, FUN = nmds, mindim = dimMDS, maxdim = dimMDS, nits = 1, future.packages = c("ecodist"))
-=======
   BetaNMDS &amp;lt;- future_lapply(MatBCdist,
                             FUN = nmds,
                             mindim = dimMDS, maxdim = dimMDS, nits = 1,
                             future.packages = c("ecodist"))
-&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt; dev
   plan(sequential)
   # find iteration with minimum stress
   Stress &amp;lt;- vector(length = nbiterNMDS)
@@ -171,14 +167,10 @@ Identifies ordination coordinates based on nearest neighbors'><meta property="og
     nbCoresNMDS &lt;- 4  # multiprocess of spectral species distribution and alpha diversity metrics
   # plan(multisession, workers = nbCoresNMDS) ## Parallelize using four cores
   plan(multisession, workers = nbCoresNMDS) ## Parallelize using four cores
-&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
-  BetaNMDS &lt;- future_lapply(MatBCdist, FUN = nmds, mindim = dimMDS, maxdim = dimMDS, nits = 1, future.packages = c("ecodist"))
-=======
   BetaNMDS &lt;- future_lapply(MatBCdist,
                             FUN = nmds,
                             mindim = dimMDS, maxdim = dimMDS, nits = 1,
                             future.packages = c("ecodist"))
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; dev
   plan(sequential)
   # find iteration with minimum stress
   Stress &lt;- vector(length = nbiterNMDS)
