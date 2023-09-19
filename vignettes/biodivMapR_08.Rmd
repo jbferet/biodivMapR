@@ -95,14 +95,14 @@ Here, we produce figures in order to locate the different types of vegetation in
 ```{r plot PCoA & Shannon}
 # assign a type of vegetation to each plot, assuming that the type of vegetation 
 # is defined by the name of the shapefile
-library(rgdal)
+library(terra)
 library(tools)
 library(ggplot2)
 library(gridExtra)
 nbSamples <- shpName <- c()
 for (i in 1:length(Path_Vector)){
   shp <- Path_Vector[i]
-  nbSamples[i] <- length(rgdal::readOGR(shp,verbose = FALSE))
+  nbSamples[i] <- nrow(vect(shp))
   shpName[i] <- file_path_sans_ext(basename(shp))
 }
 

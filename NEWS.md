@@ -1,7 +1,22 @@
+# biodivMapR v1.12.1
+
+## Fix
+
+- update example_script and vignettes to fulfill removal to rgdal dependency in the package
+
 # biodivMapR v1.12.0
 
 ## Fix
-- remove dependency to rgdal and rgeos (issue #18) 
+
+- issue #18: remove the dependency to rgdal and rgeos using terra and gdalUtilities instead
+
+## Change
+
+- remove extract_pixels_coordinates.From.OGR, a unique extract_pixels_coordinates now works for both character or rast/vect inputs
+
+## Addition
+
+- add get_gdal_info to get raster gdal info as a nested list.
 
 # biodivMapR v1.11.1
 
