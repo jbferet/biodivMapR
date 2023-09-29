@@ -24,8 +24,9 @@
 #' @param FDmetric character. Functional diversity metric
 #'
 #' @return alpha and beta diversity metrics
-#' @importFrom terra rast vect same.crs
+#' @importFrom terra rast vect same.crs project
 #' @importFrom tools file_path_sans_ext
+#' @importFrom progress progress_bar
 #' @export
 diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
                                 Raster_Functional = FALSE, Selected_Features = FALSE,
@@ -41,7 +42,6 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
   Richness.AllRep <- Shannon.AllRep <- Fisher.AllRep <- Simpson.AllRep <- list()
   # initialize alpha diversity for each plot
   Richness <- Shannon <- Fisher <- Simpson <- data.frame()
-  Name.Vector <- list()
 
   ## ______________________________________________________##
   ###       Read pixel coordinates for each polygon       ###
@@ -51,34 +51,36 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
   Raster <- terra::rast(Raster_SpectralSpecies, lyrs=1)
   XY <- list()
   for (ip in 1:nbPlots){
-    File.Vector <- Plots[[ip]]
-    Name.Vector[[ip]] <- tools::file_path_sans_ext(basename(File.Vector))
-    print(paste('Reading pixels coordinates for polygons in ',Name.Vector[[ip]],sep=''))
-
-    if (file.exists(paste(tools::file_path_sans_ext(File.Vector),'.shp',sep=''))){
-      Plot <- terra::vect(Plots[[ip]])
-      # check if vector and rasters are in the same referential
-      # if not, convert vector file
-      if (!same.crs(Raster, Plot)){
-        stop('Raster and Plots have different projection. Plots should be reprojected to Raster CRS')
-      }
-    } else if (file.exists(paste(File.Vector,'kml','sep'='.'))){
-      print('Please convert vector file to shpfile')
+    vector_file <- Plots[[ip]]
+    # print(paste('Reading pixels coordinates for polygons in',
+    #             basename(vector_file)))
+    # if (file.exists(paste(tools::file_path_sans_ext(vector_file),'.shp',sep=''))){
+    if (file.exists(vector_file)){
+      Plot <- terra::vect(vector_file)
+      # matching crs between vector and raster ?
+      if (!terra::same.crs(Raster, Plot)) Plot <- terra::project(x = Plot, y = Raster)
+    } else {
+      print(paste(vector_file, 'cannot be found'))
     }
     # extract data corresponding to the Raster_SpectralSpecies
-    XY0 <- extract_pixels_coordinates(Raster,Plot)
+    XY0 <- extract_pixels_coordinates(x = Raster,
+                                      y = Plot)
     XY <- c(XY, XY0)
   }
   # total number of plots among all files
   nbPolygons <- length(XY)
-  message(paste('Number of polygons: ',nbPolygons))
+  message(paste('Number of validation plots : ',nbPolygons))
 
   ## ______________________________________________________##
   ###                 Compute alpha diversity             ###
   ## ______________________________________________________##
   # for each polygon
   Pixel_Inventory_All <- Pixel_Hellinger_All <- list()
+  pb <- progress_bar$new(
+    format = "computing alpha diversity [:bar] :percent in :elapsed",
+    total = nbPolygons, clear = FALSE, width= 100)
   for (ip in 1:nbPolygons){
+    pb$tick()
     # if only one polygon in the shapefile and if the polyon is not included in the Raster_SpectralSpecies
     if (all(is.na(XY[[ip]]$col))){
       # if list of individual plots provided
@@ -113,6 +115,15 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
           Pixel_Inventory[[i]] <- Pixel_Inventory[[i]][-which(Pixel_Inventory[[i]]$Var1==0),]
         }
         SumPix <- sum(Pixel_Inventory[[i]]$Freq)
+        if (SumPix<25) {
+          message('Less than 25 pixels for validation plot')
+          if (length(Name_Plot)==nbPolygons){
+            message(Name_Plot[ip])
+          }
+          message('Please consider applying a buffer')
+          message('We recommend at least 25 pixels per plot to compute diversity metrics')
+        }
+
         ThreshElim <- pcelim*SumPix
         ElimZeros <- which(Pixel_Inventory[[i]]$Freq<ThreshElim)
         if (length(ElimZeros)>=1){
@@ -162,7 +173,11 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
                                       'FRic'=vector(length = nbPolygons),
                                       'FDiv'=vector(length = nbPolygons))
     # for each polygon
+    pb <- progress_bar$new(
+      format = "computing functional diversity [:bar] :percent in :elapsed",
+      total = nbPolygons, clear = FALSE, width= 100)
     for (ip in 1:nbPolygons){
+      pb$tick()
       # if only one polygon in the shapefile and if the polyon is not included in the raster
       if (all(is.na(XY[[ip]]$col))){
         FunctionalDiversity$FRic[ip] <- NA
@@ -206,7 +221,11 @@ diversity_from_plots = function(Raster_SpectralSpecies, Plots, nbclusters = 50,
   ## ______________________________________________________##
   # for each pair of plot, compute beta diversity indices
   BC <- list()
+  pb <- progress_bar$new(
+    format = "computing beta diversity [:bar] :percent in :elapsed",
+    total = nbRepetitions, clear = FALSE, width= 100)
   for(i in 1:nbRepetitions){
+    pb$tick()
     MergeDiversity <- matrix(0,nrow = nbclusters,ncol = nbPolygons)
     for(j in 1:nbPolygons){
       if (nbRepetitions>1){

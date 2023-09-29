@@ -1,3 +1,10 @@
+# biodivMapR v1.13.0
+
+## Change
+
+- allow use of any vector format (including gpkg, shp... ) for validation plots provided in diversity_from_plots
+- allow different crs between raster and vector layers
+
 # biodivMapR v1.12.1
 
 ## Fix
