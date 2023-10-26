@@ -1,0 +1,58 @@
+---
+title: "COPERNICUS & biodiv #3: check S2 availability"
+author: "Jean-Baptiste Féret"
+date: "`r Sys.Date()`"
+output:
+  html_vignette:
+    number_sections: true
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+    toc_depth: 2
+vignette: >
+  \usepackage[utf8]{inputenc}
+  %\VignetteIndexEntry{COPERNICUS & biodiv #3: check S2 availability}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+  
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval=FALSE
+)
+```
+
+Ce tutoriel accompagne la __séquence 3__ de la section __Cartographie de la biodiversité par imagerie satellite__ du module de formation __COPERNICUS et biodiversité__ de la Copernicus Academy.
+
+Il permet de vérifier la disponibilité des données Sentinel-2.
+
+# Séquence 3: interroger Copernicus hub sur la disponibilité des données Sentinel-2
+
+Le code ci-dessous permet d'interroger le Copernicus hub pour connaitre la disponibilité des données Sentinel-2 répondant aux critères (période d'acquisition, ennuagement).
+
+La premiere instruction permet de vérifier si l'ensemble des composants nécessaires au bon fonctionnement de sen2r est correctement installé, et de les installer si ce n'est pas le cas. 
+
+```{r list S2 from copernicus hub}
+library(sen2r)
+library(sf)
+# first, check dependencies to make sure everything is properly set up
+sen2r::check_sen2r_deps()
+# check data availability for tutorial
+# copernicus hub ('scihub') and google cloud ('gcloud') are requested here. 
+# specify "scihub" only if you did not parameterize access to gcloud
+spatial_extent <- '../01_DATA/T18MZB_PeruAmazon_Subset.kml'
+spatial_extent_sf <- sf::st_read(dsn = spatial_extent)
+tile <- '18MZB'
+time_interval <- as.Date(c('2022-01-01', '2023-01-01'))
+server <- c("scihub","gcloud")
+level <- 'L2A'
+max_cloud <- 10
+list_safe <- sen2r::s2_list(spatial_extent = spatial_extent_sf,
+                            tile = tile, time_interval = time_interval,
+                            server = server, availability = 'check', 
+                            level = level, max_cloud = max_cloud)
+```
