@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>COPERNICUS &amp; biodiv #5: Apply biodivMapR on S2 • biodivMapR</title>
+<title>COPERNICUS &amp; biodiv #5/6: Apply biodivMapR on S2 • biodivMapR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="COPERNICUS &amp; biodiv #5: Apply biodivMapR on S2">
+<script src="../pkgdown.js"></script><meta property="og:title" content="COPERNICUS &amp; biodiv #5/6: Apply biodivMapR on S2">
 <meta property="og:description" content="biodivMapR">
 <meta property="og:image" content="/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -111,7 +111,7 @@
       <a href="../articles/biodivMapR_17.html">COPERNICUS &amp; biodiv #4: download</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_18.html">COPERNICUS &amp; biodiv #5: Apply biodivMapR on S2</a>
+      <a href="../articles/biodivMapR_18.html">COPERNICUS &amp; biodiv #5/6: Apply biodivMapR on S2</a>
     </li>
   </ul>
 </li>
@@ -139,8 +139,8 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>COPERNICUS &amp; biodiv #5: Apply biodivMapR on
-S2</h1>
+      <h1 data-toc-skip>COPERNICUS &amp; biodiv #5/6: Apply biodivMapR
+on S2</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret</h4>
             
@@ -163,134 +163,189 @@ Sentinel-2 précédemment téléchargées et pré-traitées.</p>
 <h2 id="séquence-6-1-appliquer-biodivmapr-directement-aux-données-de-réflectance">Séquence 6.1: Appliquer biodivMapR directement aux données de
 réflectance<a class="anchor" aria-label="anchor" href="#s%C3%A9quence-6-1-appliquer-biodivmapr-directement-aux-donn%C3%A9es-de-r%C3%A9flectance"></a>
 </h2>
-<p>Le script suivant permet de télécharger les données Sentinel-2
-correspondant à l’image identifiée lors de la séquence précédente. La
-requête nécessite de définir l’emprise de la zone d’étude à l’aide du
-fichier <code>T18MZB_PeruAmazon_Subset.kml</code>, ainsi que la date
-d’acquisition. L’identifiant de la tuile <code>18MZB</code> est aussi
-fourni afin d’éviter de télécharger les tuiles voisines, dans le cas où
-l’emprise de la zone d’étude soit à cheval sur plusieurs tuiles.</p>
-<p>Ici, l’option <code>GoogleCloud = TRUE</code> permet d’effectuer le
-téléchargement à partir de Google Cloud si les données Sentinel-2 au
-niveau L2A ne sont pas disponibles sur le Copernicus Open Access Hub,
-mais qu’elles le sont sur Google Cloud.</p>
+<p>Plusieurs modalites d’utilisation sont possibles avec biodivMapR. Ces
+modalités d’utilisation diffèrent dans le type de données à partir
+duquel son calculées les espèces spectrales:</p>
+<ul>
+<li><p>composantes sélectionnées à l’issue d’une transformation
+spectrale (PCA, SPCA, MNF…). C’est la modalité décrite dans les
+publications de référence présentant la méthode. La transformation
+spectrale est non supervisée et peut permettre de produire des
+composantes moins impactees par le bruit que les bandes spectrales
+originales. Cependant, elle nécessite une étape de selection de
+composantes par l’utilisateur. De plus, étant guidée par les données,
+elle ne permet pas d’assurer une reproductibilité des résultats si
+l’emprise d’analyse est modifiée.</p></li>
+<li><p>Selection d’indices spectraux jugés pertinents par l’utilisateur.
+Cette modalité permet de produire des indicateurs de diversité à partir
+d’informations potentiellement plus proches de traits de végétation
+pertinents (cf. <a href="https://doi.org/10.1038/s41467-017-01530-3" class="external-link">Schneider et al.,
+2017</a>). Potentiellement moins demandeuse en terme de temps de calcul
+que les autres modalités, elle permet de tester des hypothèses relatives
+à l’importance d’indicateurs associés à des propriétés de
+végétation.</p></li>
+<li><p>Selection de variables biophysiques jugées pertinentes par
+l’utilisateur. Les <a href="https://jbferet.gitlab.io/prosail/articles/prosail4.html" class="external-link">méthodes
+d’inversion de modèles de transfert radiatif</a> permetttent d’estimer
+un certain nombre de variables biophysiques de la vegetation (structure
+de canopee, chimie foliaire…). Il est ainsi possible d’utiliser ces
+variables biophysiques comme source d’information avec
+<code>biodivMapR</code>. De la même manière qu’avec les indices
+spectraux, la sélection des variables biophysiques pertinentes necessite
+de prendre en compte i) les caracteristiques spectrales du capteur (la
+variable biophysique est-elle accessible ?), et ii) la pertinence des
+variables comme source d’information relative a la cartographie de la
+biodiversité.</p></li>
+</ul>
+<p>Nous allons ici illustrer les deux premieres approches, basées sur
+une transformation spectrale des données, et sur la sélection d’indices
+spectraux.</p>
+<div class="section level3">
+<h3 id="définition-des-paramètres-necessaires-à-biodivmapr">Définition des paramètres necessaires à <code>biodivMapR</code><a class="anchor" aria-label="anchor" href="#d%C3%A9finition-des-param%C3%A8tres-necessaires-%C3%A0-biodivmapr"></a>
+</h3>
+<p>Les variables définies lors du <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_17.html" class="external-link">précédent
+tutoriel</a> sont rappelées ici.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">##____________________________________________________________________##</span></span>
-<span><span class="co">##      Download Sentinel-2 image corresponding to the study area     ##</span></span>
-<span><span class="co">##--------------------------------------------------------------------##</span></span>
-<span><span class="co"># load preprocS2 package</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">preprocS2</span><span class="op">)</span></span>
-<span><span class="co"># define date of S2 acquisition</span></span>
-<span><span class="va">dateAcq</span> <span class="op">&lt;-</span> <span class="st">'2022-09-14'</span></span>
-<span><span class="co"># define path for vector file defining the study area and corresponding tile</span></span>
-<span><span class="va">path_vector</span> <span class="op">&lt;-</span> <span class="st">'../01_DATA/T18MZB_PeruAmazon_Subset.kml'</span></span>
-<span><span class="va">tile</span> <span class="op">&lt;-</span> <span class="st">'18MZB'</span></span>
-<span><span class="co"># define output directory where SAFE file is stored</span></span>
-<span><span class="va">DirWrite</span> <span class="op">&lt;-</span> <span class="st">'../01_DATA/S2_Images'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">DirWrite</span>,showWarnings <span class="op">=</span> <span class="cn">F</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">Path_S2</span> <span class="op">&lt;-</span> <span class="fu">preprocS2</span><span class="fu">::</span><span class="fu">get_S2_L2A_Image</span><span class="op">(</span>l2a_path <span class="op">=</span> <span class="va">DirWrite</span>, </span>
-<span>                                       spatial_extent <span class="op">=</span> <span class="va">path_vector</span>, </span>
-<span>                                       tile <span class="op">=</span> <span class="va">tile</span>, </span>
-<span>                                       dateAcq <span class="op">=</span> <span class="va">dateAcq</span>,</span>
-<span>                                       GoogleCloud <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>Une fois ces lignes exécutées, les données Sentinel-2 sont écrites
-dans le répertoire <code>01_DATA\S2_Images</code>.</p>
-<p>Les données Sentinel-2 sont fournies par l’ESA sous forme d’un
-répertoire <a href="https://sentinels.copernicus.eu/web/sentinel/user-guides/sentinel-2-msi/data-formats" class="external-link"><code>.SAFE</code></a>,
-qui contient l’ensemble des données et métadonnées associées à la
-tuile.</p>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jbferet/biodivMapR" class="external-link">biodivMapR</a></span><span class="op">)</span></span>
+<span><span class="va">Input_Image_File</span> <span class="op">&lt;-</span> <span class="va">Refl_path</span> </span>
+<span><span class="va">Input_Mask_File</span> <span class="op">&lt;-</span> <span class="va">cloudmasks</span><span class="op">$</span><span class="va">BinaryMask</span></span>
+<span><span class="va">Output_Dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">result_path</span>,<span class="st">'biodivMapR'</span><span class="op">)</span></span>
+<span><span class="co"># Apply normalization with continuum removal</span></span>
+<span><span class="va">Continuum_Removal</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></span>
+<span><span class="co"># spectral transformation with standardized PCA</span></span>
+<span><span class="va">TypePCA</span> <span class="op">&lt;-</span> <span class="st">'SPCA'</span></span>
+<span><span class="co"># number of clusters (spectral species)</span></span>
+<span><span class="va">nbclusters</span> <span class="op">&lt;-</span> <span class="fl">50</span></span>
+<span><span class="co"># window size: RS diversity will be computed for this window size over the raster</span></span>
+<span><span class="va">window_size</span> <span class="op">&lt;-</span> <span class="fl">10</span></span>
+<span><span class="co"># computational parameters</span></span>
+<span><span class="va">nbCPU</span> <span class="op">&lt;-</span> <span class="fl">4</span></span>
+<span><span class="va">MaxRAM</span> <span class="op">&lt;-</span> <span class="fl">0.2</span></span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="séquence-4-2-prétraiter-les-données-sentinel-2">Séquence 4.2: prétraiter les données Sentinel-2<a class="anchor" aria-label="anchor" href="#s%C3%A9quence-4-2-pr%C3%A9traiter-les-donn%C3%A9es-sentinel-2"></a>
-</h2>
-<p>Le prétraitement des données Sentinel-2 consiste à extraire
-l’ensemble des données de reflectance du répertoire SAFE, ainsi qu’un
-certain nombre de métadonnées, puis à effectuer les opérations suivantes
-:</p>
+<div class="section level3">
+<h3 id="application-dun-filtre-radiométrique">Application d’un filtre radiométrique<a class="anchor" aria-label="anchor" href="#application-dun-filtre-radiom%C3%A9trique"></a>
+</h3>
+<p>Cette étape permet de réaliser un filtre pour eliminer les pixels
+ennuagés, ombragés ou non végétalisés. C’est un filtre assez grossier
+car basé sur des règles de décision très simplifiées:</p>
 <ul>
-<li><p>Découpage de la tuile pour ne conserver que la zone
-d’étude</p></li>
-<li><p>Harmonisation de la résolution spatiale : les bandes acquises
-avec une résolution spatiale de 20 m sont échantillonnées à 10 m à
-l’aide d’une interpolation (bilinéaire par défaut).</p></li>
-<li><p>Empilement des bandes spectrales : un stack est préparé afin de
-produire un fichier raster unique contenant les 10 bandes spectrales
-Sentinel-2</p></li>
+<li><p>le seuillage du NDVI permet d’éliminer les pixels non
+végétalisés.</p></li>
+<li><p>le seuillage dans le domaine visible correspondant au bleu permet
+d’éliminer les pixels présentant une réflectance particulièrement forte
+pour de la végétation, laissant supposer la présence de brumes ou de
+nuages non identifiés par le masque nuage produit par la méthode de
+correction atmosphérique.</p></li>
+<li><p>le seuillage dans le domaine proche infrarouge permet d’éliminer
+les pixels présentant une réflectance particulièrement faible pour de la
+végétation, laissant supposer que le pixel est situé à l’ombre.</p></li>
 </ul>
+<p>A l’issue de cette étape, le masque défini par
+<code>Input_Mask_File</code> est mis à jour.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">##____________________________________________________________________##</span></span>
-<span><span class="co">##                  Extract, resample &amp; stack data                    ##</span></span>
-<span><span class="co">##--------------------------------------------------------------------##</span></span>
-<span><span class="co"># define resolution</span></span>
-<span><span class="va">resolution</span> <span class="op">&lt;-</span> <span class="fl">10</span></span>
-<span><span class="co"># define source of data</span></span>
-<span><span class="va">S2source</span> <span class="op">&lt;-</span> <span class="st">'SAFE'</span></span>
-<span><span class="va">S2obj</span> <span class="op">&lt;-</span> <span class="fu">preprocS2</span><span class="fu">::</span><span class="fu">extract_from_S2_L2A</span><span class="op">(</span>Path_dir_S2 <span class="op">=</span> <span class="va">Path_S2</span>,</span>
-<span>                                        path_vector <span class="op">=</span> <span class="va">path_vector</span>,</span>
-<span>                                        S2source <span class="op">=</span> <span class="va">S2source</span>,</span>
-<span>                                        resolution <span class="op">=</span> <span class="va">resolution</span><span class="op">)</span></span></code></pre></div>
-<p>L’exécution du script ci-dessus fournit un objet
-<code>stars_proxy</code>, qui contient l’ensemble des informations
-nécessaires à la production d’un fichier correspondant aux données
-Sentinel-2 prétraitées, ainsi que le masque nuage associé.</p>
-<p>L’intérêt d’utiliser un tel objet <code>stars_proxy</code> est que
-l’emplacement des données sources sur le disque ainsi que l’ensemble des
-prétraitements à réaliser sont enregistrés dans cet objet, mais les
-données ne sont pas lues. Les ressources nécessaires en terme de mémoire
-sont réduites: l’application des prétraitements après lecture des
-données, leur enchainement avec d’autres traitements et l’écriture des
-résultats obtenus sur un espace de stockage local peuvent alors être
-réalisées de manière séquentielle en découpant les données initiales en
-un ensemble d’éléments de taille individuelle réduite.</p>
+<code class="sourceCode R"><span><span class="co"># Define levels for radiometric filtering</span></span>
+<span><span class="va">NDVI_Thresh</span> <span class="op">&lt;-</span> <span class="fl">0.8</span></span>
+<span><span class="va">Blue_Thresh</span> <span class="op">&lt;-</span> <span class="fl">500</span></span>
+<span><span class="va">NIR_Thresh</span> <span class="op">&lt;-</span> <span class="fl">1500</span></span>
+<span><span class="va">Input_Mask_File</span> <span class="op">&lt;-</span> <span class="fu">biodivMapR</span><span class="fu">::</span><span class="fu"><a href="../reference/perform_radiometric_filtering.html">perform_radiometric_filtering</a></span><span class="op">(</span>Image_Path <span class="op">=</span> <span class="va">Input_Image_File</span>,</span>
+<span>                                                             Mask_Path <span class="op">=</span> <span class="va">Input_Mask_File</span>,</span>
+<span>                                                             Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>,</span>
+<span>                                                             TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
+<span>                                                             NDVI_Thresh <span class="op">=</span> <span class="va">NDVI_Thresh</span>,</span>
+<span>                                                             Blue_Thresh <span class="op">=</span> <span class="va">Blue_Thresh</span>,</span>
+<span>                                                             NIR_Thresh <span class="op">=</span> <span class="va">NIR_Thresh</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="transformation-spectrale-et-sélection-de-composantes">Transformation spectrale et sélection de composantes<a class="anchor" aria-label="anchor" href="#transformation-spectrale-et-s%C3%A9lection-de-composantes"></a>
+</h3>
+<p>une ACP est appliquée sur les données de réflectance normalisées:
+normalisation spectrale par continuum removal, puis normalisation de la
+réflectance entre 0 et 1 pour chaque bande spectrale.</p>
+<p>A l’issue de cette transformation, un fichier raster est crée, et
+l’utilisateur doit alors sélectionner les bandes spectrales
+‘pertinentes’. La pertinence de ces bandes doit s’appuyer sur une
+analyse des motifs presents dans les composantes, afin d’eliminer celles
+presentant des artefacts ou du bruit, et de selectionner uniquement
+celles faisant apparaitre des motifs d’interet (contrastes entre types
+de végétation, entre espèces…).</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">PCA_Output</span> <span class="op">&lt;-</span> <span class="fu">biodivMapR</span><span class="fu">::</span><span class="fu"><a href="../reference/perform_PCA.html">perform_PCA</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>,</span>
+<span>                                      Input_Mask_File <span class="op">=</span> <span class="va">Input_Mask_File</span>,</span>
+<span>                                      Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>,</span>
+<span>                                      TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
+<span>                                      nbCPU <span class="op">=</span> <span class="va">nbCPU</span>,</span>
+<span>                                      MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,</span>
+<span>                                      Continuum_Removal <span class="op">=</span> <span class="va">Continuum_Removal</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># path for the updated mask</span></span>
+<span><span class="va">Input_Mask_File</span> <span class="op">&lt;-</span> <span class="va">PCA_Output</span><span class="op">$</span><span class="va">MaskPath</span></span>
+<span></span>
+<span><span class="co"># Select components from the PCA/SPCA/MNF raster</span></span>
+<span><span class="co"># Sel_PC = path of the file where selected components are stored</span></span>
+<span><span class="va">Sel_PC</span> <span class="op">&lt;-</span> <span class="fu">biodivMapR</span><span class="fu">::</span><span class="fu"><a href="../reference/select_PCA_components.html">select_PCA_components</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>,</span>
+<span>                                            Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>,</span>
+<span>                                            PCA_Files <span class="op">=</span> <span class="va">PCA_Output</span><span class="op">$</span><span class="va">PCA_Files</span>,</span>
+<span>                                            TypePCA <span class="op">=</span> <span class="va">PCA_Output</span><span class="op">$</span><span class="va">TypePCA</span>,</span>
+<span>                                            File_Open <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="definition-de-la-carte-despeces-spectrales">Definition de la carte d’especes spectrales<a class="anchor" aria-label="anchor" href="#definition-de-la-carte-despeces-spectrales"></a>
+</h3>
+<p>Une fois les composantes sélectionnées, la carte d’espèces spectrales
+peut être calculée. Ces espèces spectrales sont définies à l’aide d’un
+algorithme de k-means clustering.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">Kmeans_info</span> <span class="op">&lt;-</span> <span class="fu">biodivMapR</span><span class="fu">::</span><span class="fu"><a href="../reference/map_spectral_species.html">map_spectral_species</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>,</span>
+<span>                                                Input_Mask_File <span class="op">=</span> <span class="va">PCA_Output</span><span class="op">$</span><span class="va">MaskPath</span>,</span>
+<span>                                                Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>,</span>
+<span>                                                SpectralSpace_Output <span class="op">=</span> <span class="va">PCA_Output</span>,</span>
+<span>                                                nbclusters <span class="op">=</span> <span class="va">nbclusters</span>,</span>
+<span>                                                nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="calcul-de-la-diversité-spectrale-alpha">Calcul de la diversité spectrale <span class="math inline">\(\alpha\)</span><a class="anchor" aria-label="anchor" href="#calcul-de-la-diversit%C3%A9-spectrale-alpha"></a>
+</h3>
+<p>Une carte de diversité <span class="math inline">\(\alpha\)</span>
+(ici correspondant à l’indice de Shannon) peut alors être calculée.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">Index_Alpha</span> <span class="op">&lt;-</span> <span class="st">'Shannon'</span></span>
+<span><span class="fu">biodivMapR</span><span class="fu">::</span><span class="fu"><a href="../reference/map_alpha_div.html">map_alpha_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>,</span>
+<span>                          Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>,</span>
+<span>                          TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
+<span>                          window_size <span class="op">=</span> <span class="va">window_size</span>,</span>
+<span>                          nbCPU <span class="op">=</span> <span class="va">nbCPU</span>,</span>
+<span>                          MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,</span>
+<span>                          Index_Alpha <span class="op">=</span> <span class="va">Index_Alpha</span>,</span>
+<span>                          nbclusters <span class="op">=</span> <span class="va">nbclusters</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="calcul-de-la-diversité-spectrale-beta">Calcul de la diversité spectrale <span class="math inline">\(\beta\)</span><a class="anchor" aria-label="anchor" href="#calcul-de-la-diversit%C3%A9-spectrale-beta"></a>
+</h3>
+<p>De la même manière, une carte de diversité <span class="math inline">\(\beta\)</span> est aussi calculée.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">biodivMapR</span><span class="fu">::</span><span class="fu"><a href="../reference/map_beta_div.html">map_beta_div</a></span><span class="op">(</span>Input_Image_File <span class="op">=</span> <span class="va">Input_Image_File</span>,</span>
+<span>                         Output_Dir <span class="op">=</span> <span class="va">Output_Dir</span>,</span>
+<span>                         TypePCA <span class="op">=</span> <span class="va">TypePCA</span>,</span>
+<span>                         window_size <span class="op">=</span> <span class="va">window_size</span>,</span>
+<span>                         nbCPU <span class="op">=</span> <span class="va">nbCPU</span>,</span>
+<span>                         MaxRAM <span class="op">=</span> <span class="va">MaxRAM</span>,</span>
+<span>                         nbclusters <span class="op">=</span> <span class="va">nbclusters</span><span class="op">)</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
-<h2 id="séquence-4-3-ecrire-les-données-dimagerie-sentinel-2-dans-des-fichiers-dédiés-">Séquence 4.3: Ecrire les données d’imagerie Sentinel-2 dans des
-fichiers dédiés.<a class="anchor" aria-label="anchor" href="#s%C3%A9quence-4-3-ecrire-les-donn%C3%A9es-dimagerie-sentinel-2-dans-des-fichiers-d%C3%A9di%C3%A9s-"></a>
+<h2 id="séquence-6-2-appliquer-biodivmapr-à-une-sélection-dindices-spectraux-">Séquence 6.2: Appliquer biodivMapR à une sélection d’indices
+spectraux.<a class="anchor" aria-label="anchor" href="#s%C3%A9quence-6-2-appliquer-biodivmapr-%C3%A0-une-s%C3%A9lection-dindices-spectraux-"></a>
 </h2>
-<p>Les données contenues dans l’objet <code>stars_proxy</code> peuvent
-alors être écrites sur disque dur sous forme de fichiers raster.</p>
-<p>Ici, par défaut les données sont enregistrées au format ‘ENVI BIL’,
-mais d’autres formats pris en charge par GDAL sont possibles.</p>
-<p>A l’issue du script ci-dessous,</p>
-<ul>
-<li>un fichier raster correspondant au stack des 10 bandes spectrales
-Sentinel-2 est écrit à l’emplacement suivant :</li>
-</ul>
-<p><code>03_RESULTS/L2A_T18MZB_A028851_20220914T150957/Reflectance/L2A_T18MZB_A028851_20220914T150957_Refl</code></p>
-<ul>
-<li>le masque nuage correspondant est écrit à l’emplacement suivant
-:</li>
-</ul>
-<p><code>03_RESULTS/L2A_T18MZB_A028851_20220914T150957/CloudMask/CloudMask_Binary</code></p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co">##____________________________________________________________________##</span></span>
-<span><span class="co">##                Write reflectance and cloudmask files               ##</span></span>
-<span><span class="co">##--------------------------------------------------------------------##</span></span>
-<span><span class="co"># create result directory corresponding to Sentinel-2 acquisition</span></span>
-<span><span class="va">result_path</span> <span class="op">&lt;-</span> <span class="st">'../03_RESULTS'</span></span>
-<span><span class="va">results_site_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">result_path</span>,<span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">S2obj</span><span class="op">$</span><span class="va">S2_Bands</span><span class="op">$</span><span class="va">GRANULE</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">results_site_path</span>,showWarnings <span class="op">=</span> <span class="cn">FALSE</span>,recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># directory for Reflectance</span></span>
-<span><span class="va">Refl_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">results_site_path</span>,<span class="st">'Reflectance'</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">Refl_dir</span>,showWarnings <span class="op">=</span> <span class="cn">FALSE</span>,recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co"># filename for Reflectance</span></span>
-<span><span class="va">Refl_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">Refl_dir</span>,<span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">S2obj</span><span class="op">$</span><span class="va">S2_Bands</span><span class="op">$</span><span class="va">GRANULE</span><span class="op">)</span>,<span class="st">'_Refl'</span>,sep <span class="op">=</span> <span class="st">''</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co"># Save Reflectance file and corresponding metadata files</span></span>
-<span><span class="fu">preprocS2</span><span class="fu">::</span><span class="fu">save_reflectance_s2</span><span class="op">(</span>S2_stars <span class="op">=</span> <span class="va">S2obj</span><span class="op">$</span><span class="va">S2_Stack</span>, </span>
-<span>                               Refl_path <span class="op">=</span> <span class="va">Refl_path</span>,</span>
-<span>                               MTD <span class="op">=</span> <span class="va">S2obj</span><span class="op">$</span><span class="va">S2_Bands</span><span class="op">$</span><span class="va">metadata</span>, </span>
-<span>                               MTD_MSI <span class="op">=</span> <span class="va">S2obj</span><span class="op">$</span><span class="va">S2_Bands</span><span class="op">$</span><span class="va">metadata_MSI</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># directory for cloud mask</span></span>
-<span><span class="va">Cloud_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">results_site_path</span>,<span class="st">'CloudMask'</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">Cloud_path</span>,showWarnings <span class="op">=</span> <span class="cn">FALSE</span>,recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co"># Save cloud mask</span></span>
-<span><span class="va">cloudmasks</span> <span class="op">&lt;-</span> <span class="fu">preprocS2</span><span class="fu">::</span><span class="fu">save_cloud_s2</span><span class="op">(</span>S2_stars <span class="op">=</span> <span class="va">S2obj</span><span class="op">$</span><span class="va">S2_Stack</span>,</span>
-<span>                                       Cloud_path <span class="op">=</span> <span class="va">Cloud_path</span>,</span>
-<span>                                       S2source <span class="op">=</span> <span class="va">S2source</span>, SaveRaw <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+<p>Un tutoriel dédié à l’application de biodivMapR sur des indices
+spectraux issus de données Sentinel-2 est également disponible. Ce
+tutoriel intitulé <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_09.html" class="external-link">Compute
+diversity from user-defined set of layers</a> décrit pas à pas comment
+calculer ces indices spectraux, puis les utiliser avec les mêmes
+fonctions que précédemment, en evitant toutefois la phase de
+transformation spectrale et la sélection de composantes. Le travail de
+sélection de variables pertinentes est donc attendu en amont de la part
+de l’utilisateur, ou peut faire l’objet de tests et de selection
+d’indices si des données de terrain sont disponibles.</p>
 </div>
   </div>
 
