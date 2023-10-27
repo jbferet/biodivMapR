@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Produce diversity maps from optical images with biodivMapR • biodivMapR</title>
+<title>COPERNICUS &amp; biodiv #3: check S2 availability • biodivMapR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Produce diversity maps from optical images with biodivMapR">
+<script src="../pkgdown.js"></script><meta property="og:title" content="COPERNICUS &amp; biodiv #3: check S2 availability">
 <meta property="og:description" content="biodivMapR">
 <meta property="og:image" content="/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -139,76 +139,62 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Produce diversity maps from optical images with
-biodivMapR</h1>
+      <h1 data-toc-skip>COPERNICUS &amp; biodiv #3: check S2
+availability</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste
-Féret, Florian de Boissieu</h4>
+Féret</h4>
             
             <h4 data-toc-skip class="date">2023-10-27</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR.Rmd" class="external-link"><code>vignettes/biodivMapR.Rmd</code></a></small>
-      <div class="hidden name"><code>biodivMapR.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_16.Rmd" class="external-link"><code>vignettes/biodivMapR_16.Rmd</code></a></small>
+      <div class="hidden name"><code>biodivMapR_16.Rmd</code></div>
 
     </div>
 
     
     
-<p>This tutorial aims at describing the processing workflow and
-providing a script aiming at producing diversity maps on a Sentinel-2
-subset image acquired over the Cameroonese forest. The workflow is
-divided into three steps:</p>
-<ul>
-<li>
-<p>Definition of the processing parameters:</p>
-<ul>
-<li>input / output files paths</li>
-<li>output spatial resolution</li>
-<li>preprocessing and processing options</li>
-</ul>
-</li>
-<li>
-<p>Computation of the diversity maps. This includes several
-diversity metrics which can be computed independently:</p>
-<ul>
-<li>
-<span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps as defined in <a href="https://doi.org/10.1890/13-1824.1" title="Feret&amp;Asner2014" class="external-link">Feret &amp; Asner (2014)</a> and <a href="https://doi.org/10.1111/2041-210X.13310" title="Feret&amp;deBoissieu2019" class="external-link">Feret &amp; de Boissieu (2019)</a>
-</li>
-<li>Functional diversity maps, including Richnes, Evenness and
-Divergence as defined in <a href="https://doi.org/10.1890/07-1206.1" title="Villeger2008" class="external-link">Villeger et al. (2008)</a>
-<!-- * Partitioning of spectral diversity into $\alpha$ and $\beta$ components following an adaptation of the method proposed by [Laliberte et al. (2020)](https://doi.org/10.1111/ele.13429 "Laliberte2020") -->
-</li>
-</ul>
-</li>
-<li><p>Validation of the resulting diversity metrics if field plots
-measurements are available</p></li>
-</ul>
-<p>The computation of the diversity maps is based on a certain number of
-prepocessing steps including: * Spectral normalization with continuum
-removal (relevant if woring with multi or hypersepctral images) *
-dimensionality reduction based on PCA, SPCA or MNF and component
-selection</p>
-<p>Below is the typical flow chart of the computation of diversity maps
-with <strong>biodivMapR</strong> :</p>
-<p><img align="bottom" width="100%" height="100%" src="../reference/figures/Figure1_FlowChart_biodivMapR_Process_600DPI.png"></p>
-<p><a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_01.html" target="_blank" class="external-link">Please check the full tutorial pages to get
-instructions, data and code examples to run <code>biodivMapR</code></a>
-can be applied.</p>
-<!-- ## Partitioning of spectral diversity into $\alpha$ and $\beta$ components -->
-<!-- The partitioning of spectral diversity is based on the `specdiv` function provided by [Etienne Laliberte on Github](https://github.com/elaliberte/specdiv "specdiv"). The original method does not use the exact same normalization, and only the framework starting from component selection is used here. Future versions will include the full original framework.  -->
-<!-- ```{r Partitioning spectral diversity} -->
-<!-- ################################################################################ -->
-<!-- ## MAP PARTITIONING OF PLANT SPECTRAL DIVERSITY INTO ALPHA & BETA COMPONENTS  ## -->
-<!-- ##        (Laliberte et al, 2020 https://doi.org/10.1111/ele.13429)           ## -->
-<!-- ################################################################################ -->
-<!-- PartitionSpectralDiversity <- map_partition_div(Original_Image_File = Input_Image_File, Partition_File = PCA_Files, -->
-<!--                                                 Selected_Features = Selected_Features, Output_Dir = Output_Dir, -->
-<!--                                                 window_size = window_size, TypePCA = TypePCA) -->
-<!-- ``` -->
+<p>Ce tutoriel accompagne la <strong>séquence 3</strong> de la section
+<strong>Cartographie de la biodiversité par imagerie satellite</strong>
+du module de formation <strong>COPERNICUS et biodiversité</strong> de la
+Copernicus Academy.</p>
+<p>Il permet de vérifier la disponibilité des données Sentinel-2.</p>
+<div class="section level2">
+<h2 id="séquence-3-interroger-copernicus-hub-sur-la-disponibilité-des-données-sentinel-2">Séquence 3: interroger Copernicus hub sur la disponibilité des
+données Sentinel-2<a class="anchor" aria-label="anchor" href="#s%C3%A9quence-3-interroger-copernicus-hub-sur-la-disponibilit%C3%A9-des-donn%C3%A9es-sentinel-2"></a>
+</h2>
+<p>Le code ci-dessous permet d’interroger le Copernicus hub pour
+connaitre la disponibilité des données Sentinel-2 répondant aux critères
+(période d’acquisition, ennuagement).</p>
+<p>La premiere instruction permet de vérifier si l’ensemble des
+composants nécessaires au bon fonctionnement de sen2r est correctement
+installé, et de les installer si ce n’est pas le cas.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sen2r.ranghetti.info" class="external-link">sen2r</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
+<span><span class="co"># first, check dependencies to make sure everything is properly set up</span></span>
+<span><span class="fu">sen2r</span><span class="fu">::</span><span class="fu">check_sen2r_deps</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># check data availability for tutorial</span></span>
+<span><span class="co"># copernicus hub ('scihub') and google cloud ('gcloud') are requested here. </span></span>
+<span><span class="co"># specify "scihub" only if you did not parameterize access to gcloud</span></span>
+<span><span class="va">spatial_extent</span> <span class="op">&lt;-</span> <span class="st">'../01_DATA/T18MZB_PeruAmazon_Subset.kml'</span></span>
+<span><span class="va">spatial_extent_sf</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="va">spatial_extent</span><span class="op">)</span></span>
+<span><span class="va">tile</span> <span class="op">&lt;-</span> <span class="st">'18MZB'</span></span>
+<span><span class="va">time_interval</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'2022-01-01'</span>, <span class="st">'2023-01-01'</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">server</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"scihub"</span>,<span class="st">"gcloud"</span><span class="op">)</span></span>
+<span><span class="va">level</span> <span class="op">&lt;-</span> <span class="st">'L2A'</span></span>
+<span><span class="va">max_cloud</span> <span class="op">&lt;-</span> <span class="fl">10</span></span>
+<span><span class="va">list_safe</span> <span class="op">&lt;-</span> <span class="fu">sen2r</span><span class="fu">::</span><span class="fu">s2_list</span><span class="op">(</span>spatial_extent <span class="op">=</span> <span class="va">spatial_extent_sf</span>,</span>
+<span>                            tile <span class="op">=</span> <span class="va">tile</span>, time_interval <span class="op">=</span> <span class="va">time_interval</span>,</span>
+<span>                            server <span class="op">=</span> <span class="va">server</span>, availability <span class="op">=</span> <span class="st">'check'</span>, </span>
+<span>                            level <span class="op">=</span> <span class="va">level</span>, max_cloud <span class="op">=</span> <span class="va">max_cloud</span><span class="op">)</span></span></code></pre></div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-      </div>
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
+</div>
 
 </div>
 

@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Produce diversity maps from optical images with biodivMapR • biodivMapR</title>
+<title>COPERNICUS &amp; biodiv #2: Get reference data • biodivMapR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Produce diversity maps from optical images with biodivMapR">
+<script src="../pkgdown.js"></script><meta property="og:title" content="COPERNICUS &amp; biodiv #2: Get reference data">
 <meta property="og:description" content="biodivMapR">
 <meta property="og:image" content="/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -139,76 +139,66 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Produce diversity maps from optical images with
-biodivMapR</h1>
+      <h1 data-toc-skip>COPERNICUS &amp; biodiv #2: Get reference
+data</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste
-Féret, Florian de Boissieu</h4>
+Féret</h4>
             
             <h4 data-toc-skip class="date">2023-10-27</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR.Rmd" class="external-link"><code>vignettes/biodivMapR.Rmd</code></a></small>
-      <div class="hidden name"><code>biodivMapR.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_15.Rmd" class="external-link"><code>vignettes/biodivMapR_15.Rmd</code></a></small>
+      <div class="hidden name"><code>biodivMapR_15.Rmd</code></div>
 
     </div>
 
     
     
-<p>This tutorial aims at describing the processing workflow and
-providing a script aiming at producing diversity maps on a Sentinel-2
-subset image acquired over the Cameroonese forest. The workflow is
-divided into three steps:</p>
+<p>Ce tutoriel accompagne la <strong>séquence 2</strong> de la section
+<strong>Cartographie de la biodiversité par imagerie satellite</strong>
+du module de formation <strong>COPERNICUS et biodiversité</strong> de la
+Copernicus Academy.</p>
+<p>Il permet de télécharger les données de reference utilisées lors du
+module. Ces données de références sont issues d’une publication
+scientifique produite par <a href="https://doi.org/10.3390/rs12091523" class="external-link">Chaves et al. (2020)</a> et
+publiée dans la revue Remote Sensing. Elles sont disponibles librement
+sur le site <a href="https://www.pangaea.de/" class="external-link">pangaea.de</a>, en suivant
+<a href="https://doi.pangaea.de/10.1594/PANGAEA.921729" class="external-link">ce lien</a>. Les
+données correspondent à des cartes de composition floristiques produites
+sur la forêt péruvienne à partir de différentes sources de données
+comprenant:</p>
 <ul>
-<li>
-<p>Definition of the processing parameters:</p>
-<ul>
-<li>input / output files paths</li>
-<li>output spatial resolution</li>
-<li>preprocessing and processing options</li>
+<li><p>l’inventaire forestier péruvien</p></li>
+<li><p>des données d’imagerie satellite Landsat</p></li>
+<li><p>des variables climatiques, édaphiques et d’élévation</p></li>
 </ul>
-</li>
-<li>
-<p>Computation of the diversity maps. This includes several
-diversity metrics which can be computed independently:</p>
-<ul>
-<li>
-<span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> diversity maps as defined in <a href="https://doi.org/10.1890/13-1824.1" title="Feret&amp;Asner2014" class="external-link">Feret &amp; Asner (2014)</a> and <a href="https://doi.org/10.1111/2041-210X.13310" title="Feret&amp;deBoissieu2019" class="external-link">Feret &amp; de Boissieu (2019)</a>
-</li>
-<li>Functional diversity maps, including Richnes, Evenness and
-Divergence as defined in <a href="https://doi.org/10.1890/07-1206.1" title="Villeger2008" class="external-link">Villeger et al. (2008)</a>
-<!-- * Partitioning of spectral diversity into $\alpha$ and $\beta$ components following an adaptation of the method proposed by [Laliberte et al. (2020)](https://doi.org/10.1111/ele.13429 "Laliberte2020") -->
-</li>
-</ul>
-</li>
-<li><p>Validation of the resulting diversity metrics if field plots
-measurements are available</p></li>
-</ul>
-<p>The computation of the diversity maps is based on a certain number of
-prepocessing steps including: * Spectral normalization with continuum
-removal (relevant if woring with multi or hypersepctral images) *
-dimensionality reduction based on PCA, SPCA or MNF and component
-selection</p>
-<p>Below is the typical flow chart of the computation of diversity maps
-with <strong>biodivMapR</strong> :</p>
-<p><img align="bottom" width="100%" height="100%" src="../reference/figures/Figure1_FlowChart_biodivMapR_Process_600DPI.png"></p>
-<p><a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_01.html" target="_blank" class="external-link">Please check the full tutorial pages to get
-instructions, data and code examples to run <code>biodivMapR</code></a>
-can be applied.</p>
-<!-- ## Partitioning of spectral diversity into $\alpha$ and $\beta$ components -->
-<!-- The partitioning of spectral diversity is based on the `specdiv` function provided by [Etienne Laliberte on Github](https://github.com/elaliberte/specdiv "specdiv"). The original method does not use the exact same normalization, and only the framework starting from component selection is used here. Future versions will include the full original framework.  -->
-<!-- ```{r Partitioning spectral diversity} -->
-<!-- ################################################################################ -->
-<!-- ## MAP PARTITIONING OF PLANT SPECTRAL DIVERSITY INTO ALPHA & BETA COMPONENTS  ## -->
-<!-- ##        (Laliberte et al, 2020 https://doi.org/10.1111/ele.13429)           ## -->
-<!-- ################################################################################ -->
-<!-- PartitionSpectralDiversity <- map_partition_div(Original_Image_File = Input_Image_File, Partition_File = PCA_Files, -->
-<!--                                                 Selected_Features = Selected_Features, Output_Dir = Output_Dir, -->
-<!--                                                 window_size = window_size, TypePCA = TypePCA) -->
-<!-- ``` -->
+<div class="section level2">
+<h2 id="séquence-2-télécharger-les-données-de-référence">Séquence 2: télécharger les données de référence<a class="anchor" aria-label="anchor" href="#s%C3%A9quence-2-t%C3%A9l%C3%A9charger-les-donn%C3%A9es-de-r%C3%A9f%C3%A9rence"></a>
+</h2>
+<p>Le téléchargement des données de référence peut s’effectuer
+manuellement en visitant les pages citées ci-dessus. Il est aussi
+possible de réaliser ce téléchargement à l’aide d’un script R fourni
+ci-dessous. Une fois téléchargée, l’archive est dézippée.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># load library</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">utils</span><span class="op">)</span></span>
+<span><span class="co"># define file name to be downloaded from resource online</span></span>
+<span><span class="va">zipfile</span> <span class="op">&lt;-</span> <span class="st">'maps_flora_Peru.zip'</span></span>
+<span><span class="co"># source: zipfile online</span></span>
+<span><span class="va">url</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">'https://download.pangaea.de/dataset/921729/files'</span>, <span class="va">zipfile</span><span class="op">)</span></span>
+<span><span class="co"># destination: local directory</span></span>
+<span><span class="va">Path_Data</span> <span class="op">&lt;-</span> <span class="st">'../01_DATA'</span></span>
+<span><span class="va">destzip</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">Path_Data</span>,<span class="va">zipfile</span><span class="op">)</span></span>
+<span><span class="co"># download and unzip data </span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">url</span>, destfile <span class="op">=</span> <span class="va">destzip</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span>zipfile <span class="op">=</span> <span class="va">destzip</span>,exdir <span class="op">=</span> <span class="va">Path_Data</span><span class="op">)</span></span></code></pre></div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-      </div>
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
+</div>
 
 </div>
 
