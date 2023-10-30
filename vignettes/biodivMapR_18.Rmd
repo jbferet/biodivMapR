@@ -1,5 +1,5 @@
 ---
-title: "COPERNICUS & biodiv #5/6: Apply biodivMapR on S2"
+title: "COPERNICUS & biodiv #5/6: Apply biodivMapR on S2 reflectance"
 author: "Jean-Baptiste Féret"
 date: "`r Sys.Date()`"
 output:
@@ -13,7 +13,7 @@ output:
     toc_depth: 2
 vignette: >
   \usepackage[utf8]{inputenc}
-  %\VignetteIndexEntry{COPERNICUS & biodiv #5: Apply biodivMapR on S2}
+  %\VignetteIndexEntry{COPERNICUS & biodiv #5: Apply biodivMapR on S2 reflectance}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 ---
@@ -185,6 +185,6 @@ biodivMapR::map_beta_div(Input_Image_File = Input_Image_File,
 # Séquence 6.2: Appliquer biodivMapR à une sélection d'indices spectraux. 
 
 Un tutoriel dédié à l'application de biodivMapR sur des indices spectraux issus de données Sentinel-2 est également disponible. 
-Ce tutoriel intitulé  [Compute diversity from user-defined set of layers](https://jbferet.github.io/biodivMapR/articles/biodivMapR_09.html) décrit pas à pas comment calculer ces indices spectraux, puis les utiliser avec les mêmes fonctions que précédemment, en evitant toutefois la phase de transformation spectrale et la sélection de composantes. 
+Ce [tutoriel](https://jbferet.github.io/biodivMapR/articles/biodivMapR_19.html) décrit pas à pas comment calculer ces indices spectraux, puis les utiliser avec les mêmes fonctions que précédemment, en evitant toutefois la phase de transformation spectrale et la sélection de composantes. 
 Le travail de sélection de variables pertinentes est donc attendu en amont de la part de l'utilisateur, ou peut faire l'objet de tests et de selection d'indices si des données de terrain sont disponibles. 
 
