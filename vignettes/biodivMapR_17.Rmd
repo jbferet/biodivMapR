@@ -36,7 +36,7 @@ Le script suivant permet de télécharger les données Sentinel-2 correspondant 
 La requête nécessite de définir l'emprise de la zone d'étude à l’aide du fichier `T18MZB_PeruAmazon_Subset.kml`, ainsi que la date d’acquisition. 
 L’identifiant de la tuile `18MZB` est aussi fourni afin d’éviter de télécharger les tuiles voisines, dans le cas où l’emprise de la zone d’étude soit à cheval sur plusieurs tuiles.
 
-Ici, l’option `GoogleCloud = TRUE` permet d’effectuer le téléchargement à partir de Google Cloud si les données Sentinel-2 au niveau L2A ne sont pas disponibles sur le Copernicus Open Access Hub, mais qu’elles le sont sur Google Cloud. 
+En raison de l'arrêt des services Copernicus hub qui permettait le téléchargement automatique des données Sentinel-2 par sen2r, ce téléchargement est obligatoirement effectue via google cloud SDK (cf. documentation sen2r pour assurer le parametrage du service). 
 
 
 ```{r download S2 tile}
@@ -57,13 +57,12 @@ dir.create(DirWrite,showWarnings = F, recursive = T)
 Path_S2 <- preprocS2::get_S2_L2A_Image(l2a_path = DirWrite, 
                                        spatial_extent = path_vector, 
                                        tile = tile, 
-                                       dateAcq = dateAcq,
-                                       GoogleCloud = TRUE)
+                                       dateAcq = dateAcq)
 ```
 
 Une fois ces lignes exécutées, les données Sentinel-2 sont écrites dans le répertoire `01_DATA\S2_Images`. 
 
-Les données Sentinel-2 sont fournies par l’ESA sous forme d’un répertoire [`.SAFE`](https://sentinels.copernicus.eu/web/sentinel/user-guides/sentinel-2-msi/data-formats), qui contient l’ensemble des données et métadonnées associées à la tuile. 
+Les données Sentinel-2 sont produites par l’ESA sous forme d’un répertoire [`.SAFE`](https://sentinels.copernicus.eu/web/sentinel/user-guides/sentinel-2-msi/data-formats), qui contient l’ensemble des données et métadonnées associées à la tuile. 
 
 
 # Séquence 4.2: prétraiter les données Sentinel-2
@@ -89,7 +88,6 @@ S2obj <- preprocS2::extract_from_S2_L2A(Path_dir_S2 = Path_S2,
                                         path_vector = path_vector,
                                         S2source = S2source,
                                         resolution = resolution)
-
 ```
 
 L’exécution du script ci-dessus fournit un objet `stars_proxy`, qui contient l’ensemble des informations nécessaires à la production d’un fichier correspondant aux données Sentinel-2 prétraitées, ainsi que le masque nuage associé.
