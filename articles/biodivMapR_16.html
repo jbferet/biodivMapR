@@ -147,7 +147,7 @@ availability</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret</h4>
             
-            <h4 data-toc-skip class="date">2023-10-30</h4>
+            <h4 data-toc-skip class="date">2023-11-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_16.Rmd" class="external-link"><code>vignettes/biodivMapR_16.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_16.Rmd</code></div>
@@ -162,10 +162,10 @@ du module de formation <strong>COPERNICUS et biodiversité</strong> de la
 Copernicus Academy.</p>
 <p>Il permet de vérifier la disponibilité des données Sentinel-2.</p>
 <div class="section level2">
-<h2 id="séquence-3-interroger-copernicus-hub-sur-la-disponibilité-des-données-sentinel-2">Séquence 3: interroger Copernicus hub sur la disponibilité des
-données Sentinel-2<a class="anchor" aria-label="anchor" href="#s%C3%A9quence-3-interroger-copernicus-hub-sur-la-disponibilit%C3%A9-des-donn%C3%A9es-sentinel-2"></a>
+<h2 id="séquence-3-interroger-google-cloud-sdk-sur-la-disponibilité-des-données-sentinel-2">Séquence 3: interroger Google Cloud SDK sur la disponibilité des
+données Sentinel-2<a class="anchor" aria-label="anchor" href="#s%C3%A9quence-3-interroger-google-cloud-sdk-sur-la-disponibilit%C3%A9-des-donn%C3%A9es-sentinel-2"></a>
 </h2>
-<p>Le code ci-dessous permet d’interroger le Copernicus hub pour
+<p>Le code ci-dessous permet d’interroger le google cloud SDK pour
 connaitre la disponibilité des données Sentinel-2 répondant aux critères
 (période d’acquisition, ennuagement).</p>
 <p>La premiere instruction permet de vérifier si l’ensemble des
@@ -177,13 +177,12 @@ installé, et de les installer si ce n’est pas le cas.</p>
 <span><span class="co"># first, check dependencies to make sure everything is properly set up</span></span>
 <span><span class="fu">sen2r</span><span class="fu">::</span><span class="fu">check_sen2r_deps</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co"># check data availability for tutorial</span></span>
-<span><span class="co"># copernicus hub ('scihub') and google cloud ('gcloud') are requested here. </span></span>
-<span><span class="co"># specify "scihub" only if you did not parameterize access to gcloud</span></span>
+<span><span class="co"># Please make sure google cloud SDK is properly parameterized  </span></span>
 <span><span class="va">spatial_extent</span> <span class="op">&lt;-</span> <span class="st">'../01_DATA/T18MZB_PeruAmazon_Subset.kml'</span></span>
 <span><span class="va">spatial_extent_sf</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="va">spatial_extent</span><span class="op">)</span></span>
 <span><span class="va">tile</span> <span class="op">&lt;-</span> <span class="st">'18MZB'</span></span>
 <span><span class="va">time_interval</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'2022-01-01'</span>, <span class="st">'2023-01-01'</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">server</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"scihub"</span>,<span class="st">"gcloud"</span><span class="op">)</span></span>
+<span><span class="va">server</span> <span class="op">&lt;-</span> <span class="st">'gcloud'</span></span>
 <span><span class="va">level</span> <span class="op">&lt;-</span> <span class="st">'L2A'</span></span>
 <span><span class="va">max_cloud</span> <span class="op">&lt;-</span> <span class="fl">10</span></span>
 <span><span class="va">list_safe</span> <span class="op">&lt;-</span> <span class="fu">sen2r</span><span class="fu">::</span><span class="fu">s2_list</span><span class="op">(</span>spatial_extent <span class="op">=</span> <span class="va">spatial_extent_sf</span>,</span>

@@ -146,7 +146,7 @@
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret</h4>
             
-            <h4 data-toc-skip class="date">2023-10-30</h4>
+            <h4 data-toc-skip class="date">2023-11-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_17.Rmd" class="external-link"><code>vignettes/biodivMapR_17.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_17.Rmd</code></div>
@@ -171,10 +171,10 @@ fichier <code>T18MZB_PeruAmazon_Subset.kml</code>, ainsi que la date
 d’acquisition. L’identifiant de la tuile <code>18MZB</code> est aussi
 fourni afin d’éviter de télécharger les tuiles voisines, dans le cas où
 l’emprise de la zone d’étude soit à cheval sur plusieurs tuiles.</p>
-<p>Ici, l’option <code>GoogleCloud = TRUE</code> permet d’effectuer le
-téléchargement à partir de Google Cloud si les données Sentinel-2 au
-niveau L2A ne sont pas disponibles sur le Copernicus Open Access Hub,
-mais qu’elles le sont sur Google Cloud.</p>
+<p>En raison de l’arrêt des services Copernicus hub qui permettait le
+téléchargement automatique des données Sentinel-2 par sen2r, ce
+téléchargement est obligatoirement effectue via google cloud SDK
+(cf. documentation sen2r pour assurer le parametrage du service).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">##____________________________________________________________________##</span></span>
 <span><span class="co">##      Download Sentinel-2 image corresponding to the study area     ##</span></span>
@@ -193,11 +193,10 @@ mais qu’elles le sont sur Google Cloud.</p>
 <span><span class="va">Path_S2</span> <span class="op">&lt;-</span> <span class="fu">preprocS2</span><span class="fu">::</span><span class="fu">get_S2_L2A_Image</span><span class="op">(</span>l2a_path <span class="op">=</span> <span class="va">DirWrite</span>, </span>
 <span>                                       spatial_extent <span class="op">=</span> <span class="va">path_vector</span>, </span>
 <span>                                       tile <span class="op">=</span> <span class="va">tile</span>, </span>
-<span>                                       dateAcq <span class="op">=</span> <span class="va">dateAcq</span>,</span>
-<span>                                       GoogleCloud <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span>                                       dateAcq <span class="op">=</span> <span class="va">dateAcq</span><span class="op">)</span></span></code></pre></div>
 <p>Une fois ces lignes exécutées, les données Sentinel-2 sont écrites
 dans le répertoire <code>01_DATA\S2_Images</code>.</p>
-<p>Les données Sentinel-2 sont fournies par l’ESA sous forme d’un
+<p>Les données Sentinel-2 sont produites par l’ESA sous forme d’un
 répertoire <a href="https://sentinels.copernicus.eu/web/sentinel/user-guides/sentinel-2-msi/data-formats" class="external-link"><code>.SAFE</code></a>,
 qui contient l’ensemble des données et métadonnées associées à la
 tuile.</p>
