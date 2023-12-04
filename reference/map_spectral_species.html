@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.14.0</span>
       </span>
     </div>
 
@@ -130,7 +130,9 @@
 <span>  MaxRAM <span class="op">=</span> <span class="fl">0.25</span>,</span>
 <span>  Kmeans_Only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  SelectedPCs <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  SpectralFilter <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  SpectralFilter <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  Kmeans_info_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  Kmeans_info <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -173,7 +175,15 @@
 
 
 <dt>SpectralFilter</dt>
-<dd><p>list. information about spectral band location
+<dd><p>list. information about spectral band location</p></dd>
+
+
+<dt>Kmeans_info_path</dt>
+<dd><p>character. path to a Kmeans_info Rdata file computed from previous process</p></dd>
+
+
+<dt>Kmeans_info</dt>
+<dd><p>list. Kmeans_info list computed from previous process
 (central wavelength), bands to keep...</p></dd>
 
 </dl></div>

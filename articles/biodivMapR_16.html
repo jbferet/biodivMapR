@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.14.0</span>
       </span>
     </div>
 
@@ -147,7 +147,7 @@ availability</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret</h4>
             
-            <h4 data-toc-skip class="date">2023-11-15</h4>
+            <h4 data-toc-skip class="date">2023-12-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_16.Rmd" class="external-link"><code>vignettes/biodivMapR_16.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_16.Rmd</code></div>
@@ -177,6 +177,7 @@ installé, et de les installer si ce n’est pas le cas.</p>
 <span><span class="co"># first, check dependencies to make sure everything is properly set up</span></span>
 <span><span class="fu">sen2r</span><span class="fu">::</span><span class="fu">check_sen2r_deps</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co"># check data availability for tutorial</span></span>
+<span><span class="co"># https://github.com/ranghetti/sen2r/issues/464</span></span>
 <span><span class="co"># Please make sure google cloud SDK is properly parameterized  </span></span>
 <span><span class="va">spatial_extent</span> <span class="op">&lt;-</span> <span class="st">'../01_DATA/T18MZB_PeruAmazon_Subset.kml'</span></span>
 <span><span class="va">spatial_extent_sf</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="va">spatial_extent</span><span class="op">)</span></span>
