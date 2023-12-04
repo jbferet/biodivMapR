@@ -1,3 +1,9 @@
+# biodivMapR v1.14.0
+
+## Change
+
+- added input variables Kmeans_info_path and Kmeans_info in map_spectral_species to allow production from previously computed clusters
+
 # biodivMapR v1.13.0
 
 ## Change

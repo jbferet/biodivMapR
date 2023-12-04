@@ -24,6 +24,8 @@
 #' @param Kmeans_Only boolean. set to TRUE if computation of kmeans without production of spectral species map
 #' @param SelectedPCs numeric. Define PCs to be selected. Set to FALSE if you want to use the "Selected_Components.txt" file
 #' @param SpectralFilter list. information about spectral band location
+#' @param Kmeans_info_path character. path to a Kmeans_info Rdata file computed from previous process
+#' @param Kmeans_info list. Kmeans_info list computed from previous process
 #' (central wavelength), bands to keep...
 #'
 #' @return Kmeans_info
@@ -35,7 +37,9 @@ map_spectral_species <- function(Input_Image_File, Output_Dir,
                                  nbclusters = 50,
                                  nbCPU = 1, MaxRAM = 0.25,
                                  Kmeans_Only = FALSE, SelectedPCs = FALSE,
-                                 SpectralFilter = NULL) {
+                                 SpectralFilter = NULL,
+                                 Kmeans_info_path = NULL,
+                                 Kmeans_info = NULL) {
 
   # check if input mask file has expected format
   if (!Input_Mask_File==FALSE){
@@ -62,7 +66,6 @@ map_spectral_species <- function(Input_Image_File, Output_Dir,
                                         MaskPath_Update = MaskPath_Update)
   }
 
-  Kmeans_info <- NULL
   # if no prior diversity map has been produced --> need PCA file
   if (is.null(SpectralSpace_Output$PCA_Files) | is.null(SpectralSpace_Output$TypePCA)){
     message('Please define input variable SpectralSpace_Output as a list including')
@@ -74,10 +77,8 @@ map_spectral_species <- function(Input_Image_File, Output_Dir,
     stop()
   }
   if (!file.exists(SpectralSpace_Output$PCA_Files)) {
-    error_no_PCA_file(SpectralSpace_Output$PCA_Files)
-    stop()
+    print_error_message('error_no_PCA_file', optarg = SpectralSpace_Output$PCA_Files)
   }
-
   # define directories
   Output_Dir_SS <- define_output_subdir(Output_Dir, Input_Image_File, SpectralSpace_Output$TypePCA, "SpectralSpecies")
   Output_Dir_PCA <- define_output_subdir(Output_Dir, Input_Image_File, SpectralSpace_Output$TypePCA, "PCA")
@@ -101,43 +102,49 @@ map_spectral_species <- function(Input_Image_File, Output_Dir,
   } else if (is.numeric(SelectedPCs)){
     PC_Select <- SelectedPCs
   } else {
-    error_PC_sel(Output_Dir_PCA)
-    stop()
+    print_error_message('error_PC_sel', optarg = Output_Dir_PCA)
   }
   message("Selected components:")
   print(PC_Select)
 
-  # 2- sample data from PCA image
-  ImNames <- list(Input_Image = Input_Image_File,
-                  Mask_list = Input_Mask_File)
-  if (is.null(SpectralSpace_Output$nb_partitions)){
-    nb_partitions <- 20
-  } else {
-    nb_partitions <- SpectralSpace_Output$nb_partitions
+  # if kmeans info from previous process (image?) is not provided
+  if (is.null(Kmeans_info) & is.null(Kmeans_info_path)){
+    # 2- sample data from PCA image
+    ImNames <- list(Input_Image = Input_Image_File,
+                    Mask_list = Input_Mask_File)
+    if (is.null(SpectralSpace_Output$nb_partitions)){
+      nb_partitions <- 20
+    } else {
+      nb_partitions <- SpectralSpace_Output$nb_partitions
+    }
+    Pix_Per_Partition <- define_pixels_per_iter(ImNames, nb_partitions = nb_partitions)
+
+    ImPathHDR <- get_HDR_name(SpectralSpace_Output$PCA_Files)
+    HDR <- read_ENVI_header(ImPathHDR)
+    Subset <- get_random_subset_from_image(ImPath = SpectralSpace_Output$PCA_Files,
+                                           MaskPath = Input_Mask_File,
+                                           nb_partitions = nb_partitions,
+                                           Pix_Per_Partition = Pix_Per_Partition,
+                                           kernel = NULL,MaxRAM = MaxRAM)
+    SubsetInit <- Subset
+    dataPCA <- Subset$DataSubset[, PC_Select]
+    if (length(PC_Select) == 1) {
+      dataPCA <- matrix(dataPCA, ncol = 1)
+    }
+
+    # 3- PERFORM KMEANS FOR EACH ITERATION & DEFINE SPECTRAL SPECIES
+    print("perform k-means clustering for each subset and define centroids")
+    Kmeans_info <- init_kmeans(dataPCA = dataPCA,
+                               nb_partitions = nb_partitions,
+                               nbclusters = nbclusters,
+                               nbCPU = nbCPU)
+    Kmeans_info$SpectralSpecies <- Spectral_Species_Path
+  } else if (!is.null(Kmeans_info_path) & file.exists(Kmeans_info_path)){
+    load(Kmeans_info_path)
+  } else if (!is.null(Kmeans_info)){
+    if (!identical(names(Kmeans_info), c('Centroids', 'MinVal', 'MaxVal', 'Range', 'Error', 'SpectralSpecies')))
+      message('Kmeans_info does not contain expected values. Please make sure you provide proper info')
   }
-  Pix_Per_Partition <- define_pixels_per_iter(ImNames, nb_partitions = nb_partitions)
-
-  ImPathHDR <- get_HDR_name(SpectralSpace_Output$PCA_Files)
-  HDR <- read_ENVI_header(ImPathHDR)
-  Subset <- get_random_subset_from_image(ImPath = SpectralSpace_Output$PCA_Files,
-                                         MaskPath = Input_Mask_File,
-                                         nb_partitions = nb_partitions,
-                                         Pix_Per_Partition = Pix_Per_Partition,
-                                         kernel = NULL,MaxRAM = MaxRAM)
-  SubsetInit <- Subset
-  dataPCA <- Subset$DataSubset[, PC_Select]
-  if (length(PC_Select) == 1) {
-    dataPCA <- matrix(dataPCA, ncol = 1)
-  }
-
-  # 3- PERFORM KMEANS FOR EACH ITERATION & DEFINE SPECTRAL SPECIES
-  print("perform k-means clustering for each subset and define centroids")
-  Kmeans_info <- init_kmeans(dataPCA = dataPCA,
-                             nb_partitions = nb_partitions,
-                             nbclusters = nbclusters,
-                             nbCPU = nbCPU)
-  Kmeans_info$SpectralSpecies <- Spectral_Species_Path
-
   if (Kmeans_info$Error==FALSE){
     if (Kmeans_Only==FALSE){
       ##    3- ASSIGN SPECTRAL SPECIES TO EACH PIXEL
@@ -199,7 +206,6 @@ map_spectral_species <- function(Input_Image_File, Output_Dir,
 #' @importFrom stats kmeans
 #' @importFrom snow splitRows
 #'
-#'
 #' @export
 
 init_kmeans <- function(dataPCA, nb_partitions, nbclusters, nbCPU = 1, progressbar = TRUE) {
@@ -217,7 +223,7 @@ init_kmeans <- function(dataPCA, nb_partitions, nbclusters, nbCPU = 1, progressb
   # M0 <- apply(dataPCA, 2, function(x) max(x))
   # d0 <- M0 - m0
   if (length(which(is.na(m0)))>0 | length(which(is.na(M0)))>0 | length(which(is.infinite(m0)))>0 | length(which(is.infinite(M0)))>0){
-    error_input()
+    print_error_message('error_input')
     my_list <- list("Centroids" = NULL, "MinVal" = m0, "MaxVal" = M0, "Range" = d0, "Error" = TRUE)
     return(my_list)
   } else {
@@ -543,43 +549,91 @@ create_HDR_SS <- function(HDR_tempate, nbBands, Spectral_Species_Path){
   return()
 }
 
-# prints an error message if problems occur
-error_input <- function() {
-  message("")
-  message("*********************************************************")
-  message("WARNING: the processing resulted in NA or infinite values")
-  message("     This may be due to noisy spectral domains or        ")
-  message(" individual pixels showing Inf or Na values in input data")
-  message("               Please check input data                   ")
-  message("                                                         ")
-  message("   if nothing wrong identified with input data, please   ")
-  message("   submit a bug report, reproduce the bug with reduced   ")
-  message("     dataset and contact the authors of the package      ")
-  message("                   process aborted                       ")
-  message("*********************************************************")
-  message("")
+#' prints an error message if problems occur
+#'
+#' @param def_error character. nature of the error
+#' @param optarg character. optional additional info required for the error message
+#'
+#' @return none.
+#' @export
+print_error_message <- function(def_error, optarg) {
+  if (def_error=='error_input'){
+    message("")
+    message("*********************************************************")
+    message("WARNING: the processing resulted in NA or infinite values")
+    message("     This may be due to noisy spectral domains or        ")
+    message(" individual pixels showing Inf or Na values in input data")
+    message("               Please check input data                   ")
+    message("                                                         ")
+    message("   if nothing wrong identified with input data, please   ")
+    message("   submit a bug report, reproduce the bug with reduced   ")
+    message("     dataset and contact the authors of the package      ")
+    message("                   process aborted                       ")
+    message("*********************************************************")
+    message("")
+  }
+  if (def_error=='error_no_PCA_file'){
+    PCA_Files <- optarg
+    message("")
+    message("*********************************************************")
+    message("WARNING: This file required to compute spectral species is missing")
+    print(PCA_Files)
+    message("process aborted")
+    message("*********************************************************")
+    message("")
+    stop()
+  }
+  if (def_error=='error_PC_sel'){
+    Output_Dir_PCA <- optarg
+    print("PC SELECTION MUST BE PERFORMED FIRST")
+    print("Please identify selected components either in this file:")
+    PC_Select_Path <- file.path(Output_Dir_PCA, "Selected_Components.txt")
+    print(PC_Select_Path)
+    print("or in the 'SelectedPCs' variable of map_spectral_species")
+    print("Image processing aborted")
+    stop()
+  }
   return()
 }
 
 
-# prints an error message if no PCA file is found
-error_no_PCA_file <- function(PCA_Files){
-  message("")
-  message("*********************************************************")
-  message("WARNING: This file required to compute spectral species is missing")
-  print(PCA_Files)
-  message("process aborted")
-  message("*********************************************************")
-  message("")
-  return()
-}
-
-# prints an error message if no PCA file is found
-error_PC_sel <- function(Output_Dir_PCA){
-  print("PC SELECTION MUST BE PERFORMED FIRST")
-  print("Please identify selected components either in this file:")
-  PC_Select_Path <- file.path(Output_Dir_PCA, "Selected_Components.txt")
-  print(PC_Select_Path)
-  print("or in the 'SelectedPCs' variable of map_spectral_species")
-  print("Image processing aborted")
-}
+# # prints an error message if problems occur
+# error_input <- function() {
+#   message("")
+#   message("*********************************************************")
+#   message("WARNING: the processing resulted in NA or infinite values")
+#   message("     This may be due to noisy spectral domains or        ")
+#   message(" individual pixels showing Inf or Na values in input data")
+#   message("               Please check input data                   ")
+#   message("                                                         ")
+#   message("   if nothing wrong identified with input data, please   ")
+#   message("   submit a bug report, reproduce the bug with reduced   ")
+#   message("     dataset and contact the authors of the package      ")
+#   message("                   process aborted                       ")
+#   message("*********************************************************")
+#   message("")
+#   return()
+# }
+#
+#
+# # prints an error message if no PCA file is found
+# error_no_PCA_file <- function(PCA_Files){
+#   message("")
+#   message("*********************************************************")
+#   message("WARNING: This file required to compute spectral species is missing")
+#   print(PCA_Files)
+#   message("process aborted")
+#   message("*********************************************************")
+#   message("")
+#   return()
+# }
+#
+# # prints an error message if no PCA file is found
+# error_PC_sel <- function(Output_Dir_PCA){
+#   print("PC SELECTION MUST BE PERFORMED FIRST")
+#   print("Please identify selected components either in this file:")
+#   PC_Select_Path <- file.path(Output_Dir_PCA, "Selected_Components.txt")
+#   print(PC_Select_Path)
+#   print("or in the 'SelectedPCs' variable of map_spectral_species")
+#   print("Image processing aborted")
+# }

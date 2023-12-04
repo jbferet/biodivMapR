@@ -42,6 +42,7 @@ library(sf)
 # first, check dependencies to make sure everything is properly set up
 sen2r::check_sen2r_deps()
 # check data availability for tutorial
+# https://github.com/ranghetti/sen2r/issues/464
 # Please make sure google cloud SDK is properly parameterized  
 spatial_extent <- '../01_DATA/T18MZB_PeruAmazon_Subset.kml'
 spatial_extent_sf <- sf::st_read(dsn = spatial_extent)

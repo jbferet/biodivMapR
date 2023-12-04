@@ -14,7 +14,9 @@ map_spectral_species(
   MaxRAM = 0.25,
   Kmeans_Only = FALSE,
   SelectedPCs = FALSE,
-  SpectralFilter = NULL
+  SpectralFilter = NULL,
+  Kmeans_info_path = NULL,
+  Kmeans_info = NULL
 )
 }
 \arguments{
@@ -36,7 +38,11 @@ map_spectral_species(
 
 \item{SelectedPCs}{numeric. Define PCs to be selected. Set to FALSE if you want to use the "Selected_Components.txt" file}
 
-\item{SpectralFilter}{list. information about spectral band location
+\item{SpectralFilter}{list. information about spectral band location}
+
+\item{Kmeans_info_path}{character. path to a Kmeans_info Rdata file computed from previous process}
+
+\item{Kmeans_info}{list. Kmeans_info list computed from previous process
 (central wavelength), bands to keep...}
 }
 \value{
