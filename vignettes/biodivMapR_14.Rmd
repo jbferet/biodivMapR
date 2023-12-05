@@ -40,7 +40,8 @@ Dans le script suivant, le chemin d'accès absolu de votre repertoire de travail
 
 ```{r set working directory}
 # define working directory
-setwd <- 'your/working/directory'
+your_WD <- 'your/working/directory'
+setwd(your_WD)
 ```
 
 Le bon déroulement des tutoriels nécessite aussi d'adopter une arborescence de dossiers spécifique pour faciliter la gestion des nombreux fichiers qui seront lus et écrits par la suite.
