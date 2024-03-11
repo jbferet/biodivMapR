@@ -468,7 +468,9 @@ compute_SSD <- function(Image_Chunk, window_size, nbclusters,
 
   if (nbCPU > 1){
     listAlpha <- snow::splitList(listAlpha,ncl = nbCPU)
-    plan(multisession, workers = nbCPU)
+    # plan(multisession, workers = nbCPU)
+    cl <- parallel::makeCluster(nbCPU)
+    plan("cluster", workers = cl)  ## same as plan(multisession, workers = nbCPU)
     # add a progress bar if the image was read in one piece only
     if (nbPieces ==1){
       handlers(global = TRUE)
@@ -490,6 +492,7 @@ compute_SSD <- function(Image_Chunk, window_size, nbclusters,
                                               alphaIdx = alphaIdx,
                                               MinSun = MinSun, pcelim = pcelim, p = NULL)
     }
+    parallel::stopCluster(cl)
     plan(sequential)
     shannonIter_list <- SimpsonAlpha_list <- FisherAlpha_list <- SSDMap_list <- list()
     for (i in 1:nbCPU){

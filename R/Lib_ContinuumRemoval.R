@@ -38,7 +38,9 @@ apply_continuum_removal <- function(Spectral_Data, Spectral, nbCPU = 1) {
     Spectral_Data <- snow::splitRows(Spectral_Data, nb_CR)
     # perform multithread continuum removal
     if (nbCPU>1){
-      future::plan(multisession, workers = nbCPU)
+      # future::plan(multisession, workers = nbCPU)
+      cl <- parallel::makeCluster(nbCPU)
+      plan("cluster", workers = cl)  ## same as plan(multisession, workers = nbCPU)
       handlers(global = TRUE)
       handlers("cli")
       with_progress({
@@ -48,6 +50,7 @@ apply_continuum_removal <- function(Spectral_Data, Spectral, nbCPU = 1) {
                                                          Spectral_Bands = Spectral$Wavelength,
                                                          p = p)
       })
+      parallel::stopCluster(cl)
       future::plan(sequential)
     } else {
       Spectral_Data_tmp <- lapply(Spectral_Data, FUN = continuumRemoval,
