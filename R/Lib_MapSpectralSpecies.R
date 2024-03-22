@@ -230,7 +230,9 @@ init_kmeans <- function(dataPCA, nb_partitions, nbclusters, nbCPU = 1, progressb
     dataPCA <- center_reduce(dataPCA, m0, d0)
     dataPCA <- snow::splitRows(x = dataPCA, ncl = nb_partitions)
     if (nbCPU>1){
-      plan(multisession, workers = nbCPU) ## Parallelize using four cores
+      # plan(multisession, workers = nbCPU) ## Parallelize using four cores
+      cl <- parallel::makeCluster(nbCPU)
+      plan("cluster", workers = cl)  ## same as plan(multisession, workers = nbCPU)
       if (progressbar==TRUE){
         handlers(global = TRUE)
         handlers("cli")
@@ -249,6 +251,7 @@ init_kmeans <- function(dataPCA, nb_partitions, nbclusters, nbCPU = 1, progressb
                              iter.max = 50, nstart = 10,
                              algorithm = c("Hartigan-Wong"))
       }
+      parallel::stopCluster(cl)
       plan(sequential)
     } else {
       if (progressbar==TRUE){
