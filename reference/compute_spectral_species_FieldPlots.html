@@ -130,7 +130,8 @@ corresponding to a polygon</p>
 <span>  <span class="va">nbclusters</span>,</span>
 <span>  PC_Select <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  nbCPU <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  progressbar <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  progressbar <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  algorithm <span class="op">=</span> <span class="st">"Hartigan-Wong"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -166,6 +167,10 @@ corresponding to a polygon</p>
 
 <dt>progressbar</dt>
 <dd><p>boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)</p></dd>
+
+
+<dt>algorithm</dt>
+<dd><p>character. algorithm used in the kmeans clustering</p></dd>
 
 </dl></div>
     <div id="value">
