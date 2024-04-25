@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.14.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.14.1</span>
       </span>
     </div>
 
@@ -147,7 +147,7 @@ layers</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2023-12-05</h4>
+            <h4 data-toc-skip class="date">2024-04-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/HEAD/vignettes/biodivMapR_09.Rmd" class="external-link"><code>vignettes/biodivMapR_09.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_09.Rmd</code></div>
@@ -273,7 +273,7 @@ with a correlation of 1.</p>
 <span>                                           Sel_Indices <span class="op">=</span> <span class="va">Index</span>, </span>
 <span>                                           StackOut <span class="op">=</span> <span class="cn">F</span>,</span>
 <span>                                           ReflFactor <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/stats/cor.test.html" class="external-link">cor.test</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">NDVI</span><span class="op">)</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">NDVI_Precomp</span><span class="op">$</span><span class="va">SpectralIndices</span><span class="op">$</span><span class="va">NDVI</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/cor.test.html" class="external-link">cor.test</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">NDVI</span><span class="op">)</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">NDVI_Precomp</span><span class="op">$</span><span class="va">SpectralIndices</span><span class="op">$</span><span class="va">NDVI</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -302,8 +302,8 @@ indices<a class="anchor" aria-label="anchor" href="#mask-data-from-spectral-indi
 <span><span class="co"># remove outliers from spectral indices</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">idx</span> <span class="kw">in</span> <span class="va">Sel_Indices</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="va">rast</span> <span class="op">&lt;-</span> <span class="va">Spectral_Indices</span><span class="op">$</span><span class="va">SpectralIndices</span><span class="op">[[</span><span class="va">idx</span><span class="op">]</span><span class="op">]</span></span>
-<span>  <span class="va">IQRminmax</span> <span class="op">&lt;-</span> <span class="fu">biodivMapR</span><span class="fu">::</span><span class="fu"><a href="../reference/IQR_outliers.html">IQR_outliers</a></span><span class="op">(</span>DistVal <span class="op">=</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">rast</span><span class="op">)</span>,weightIRQ <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
-<span>  <span class="va">Mask</span><span class="op">[</span><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">rast</span><span class="op">)</span><span class="op">&lt;</span><span class="va">IQRminmax</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">|</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">rast</span><span class="op">)</span><span class="op">&gt;</span><span class="va">IQRminmax</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
+<span>  <span class="va">IQRminmax</span> <span class="op">&lt;-</span> <span class="fu">biodivMapR</span><span class="fu">::</span><span class="fu"><a href="../reference/IQR_outliers.html">IQR_outliers</a></span><span class="op">(</span>DistVal <span class="op">=</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">rast</span><span class="op">)</span>,weightIRQ <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span>  <span class="va">Mask</span><span class="op">[</span><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">rast</span><span class="op">)</span><span class="op">&lt;</span><span class="va">IQRminmax</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">|</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">rast</span><span class="op">)</span><span class="op">&gt;</span><span class="va">IQRminmax</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
 <span><span class="op">}</span></span>
 <span><span class="co"># apply mask on stack and convert as stars object</span></span>
 <span><span class="va">StarsObj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_as_stars.html" class="external-link">st_as_stars</a></span><span class="op">(</span><span class="va">Spectral_Indices</span><span class="op">$</span><span class="va">SpectralIndices</span><span class="op">*</span><span class="va">Mask</span><span class="op">)</span></span></code></pre></div>
@@ -354,7 +354,7 @@ indices<a class="anchor" aria-label="anchor" href="#mask-data-from-spectral-indi
 <span><span class="co"># use 10% of image to sample pixels and partition it in 20 runs of kmeans</span></span>
 <span><span class="va">NbPix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">Mask</span><span class="op">[</span>,,,<span class="fl">1</span><span class="op">]</span>,na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
 <span><span class="va">nb_partitions</span> <span class="op">&lt;-</span> <span class="fl">20</span></span>
-<span><span class="va">Pix_Per_Partition</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">*</span><span class="va">NbPix</span><span class="op">/</span><span class="va">nb_partitions</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">Pix_Per_Partition</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/math-generics.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">*</span><span class="va">NbPix</span><span class="op">/</span><span class="va">nb_partitions</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="perform-spectral-species-mapping">Perform Spectral species mapping<a class="anchor" aria-label="anchor" href="#perform-spectral-species-mapping"></a>
@@ -439,7 +439,7 @@ indices<a class="anchor" aria-label="anchor" href="#mask-data-from-spectral-indi
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
 </div>
 
       </footer>

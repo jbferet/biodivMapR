@@ -1,8 +1,7 @@
-pandoc: 2.19.2
-pkgdown: 2.0.7
+pandoc: 3.1.11
+pkgdown: 2.0.9
 pkgdown_sha: ~
 articles:
-  biodivMapR: biodivMapR.html
   biodivMapR_01: biodivMapR_01.html
   biodivMapR_02: biodivMapR_02.html
   biodivMapR_03: biodivMapR_03.html
@@ -22,5 +21,6 @@ articles:
   biodivMapR_17: biodivMapR_17.html
   biodivMapR_18: biodivMapR_18.html
   biodivMapR_19: biodivMapR_19.html
-last_built: 2023-12-05T06:40Z
+  biodivMapR: biodivMapR.html
+last_built: 2024-04-25T13:14Z
 
