@@ -131,6 +131,7 @@ map_beta_div <- function(Input_Image_File = FALSE,
 #' @param pcelim numeric. Minimum contribution in percent required for a spectral species
 #' @param nbCPU numeric. number of CPUs available
 #' @param SamplesPerThread numeric. number of samples to be processed per thread for dissimilarity matrix
+#' @param progressbar boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)
 #'
 #' @return Ordination_est coordinates of each spatial unit in ordination space
 #' @import cli
@@ -138,6 +139,7 @@ map_beta_div <- function(Input_Image_File = FALSE,
 #' @importFrom future plan multisession sequential
 #' @importFrom future.apply future_lapply
 #' @importFrom progressr progressor handlers with_progress
+#' @importFrom parallel makeCluster stopCluster
 #' @export
 
 ordination_to_NN <- function(SSD_subset,
@@ -145,7 +147,7 @@ ordination_to_NN <- function(SSD_subset,
                              Sample_Sel,
                              nb_partitions, nbclusters,
                              pcelim = 0.02, nbCPU = 1,
-                             SamplesPerThread = 2000) {
+                             SamplesPerThread = 2000, progressbar = FALSE) {
 
   # define number of samples to be sampled each time during parallel processing
   # (set to 2000 to keep reasonable size of dissimilarity matrix)
@@ -154,33 +156,56 @@ ordination_to_NN <- function(SSD_subset,
   SSD_subset <- snow::splitRows(SSD_subset, ncl = nb_subsets)
   # compute ordination coordinates from each SSD_subset
   if (nbCPU>1){
-    plan(multisession, workers = nbCPU) ## Parallelize using four cores
-    handlers(global = TRUE)
-    handlers("cli")
-    with_progress({
-      p <- progressr::progressor(steps = nb_subsets)
+    # future::plan(multisession, workers = nbCPU) ## Parallelize using four cores
+    cl <- parallel::makeCluster(nbCPU)
+    plan("cluster", workers = cl)
+    if (progressbar == T){
+      handlers(global = TRUE)
+      handlers("cli")
+      with_progress({
+        p <- progressr::progressor(steps = nb_subsets)
+        OutPut <- future_lapply(SSD_subset,
+                                FUN = ordination_to_NN_list,
+                                Sample_Sel = Sample_Sel,
+                                Beta_Ordination_sel = Beta_Ordination_sel,
+                                nb_partitions = nb_partitions,
+                                nbclusters = nbclusters, pcelim = pcelim, p = p,
+                                future.packages = c("vegan", "dissUtils", "tools",
+                                                    "snow", "matlab"))
+      })
+    } else {
       OutPut <- future_lapply(SSD_subset,
                               FUN = ordination_to_NN_list,
                               Sample_Sel = Sample_Sel,
                               Beta_Ordination_sel = Beta_Ordination_sel,
                               nb_partitions = nb_partitions,
-                              nbclusters = nbclusters, pcelim = pcelim, p = p,
+                              nbclusters = nbclusters, pcelim = pcelim, p = NULL,
                               future.packages = c("vegan", "dissUtils", "tools",
                                                   "snow", "matlab"))
-      })
+    }
+    parallel::stopCluster(cl)
     plan(sequential)
   } else {
-    handlers(global = TRUE)
-    handlers("cli")
-    with_progress({
-      p <- progressr::progressor(steps = nb_subsets)
+    if (progressbar == T){
+      handlers(global = TRUE)
+      handlers("cli")
+      with_progress({
+        p <- progressr::progressor(steps = nb_subsets)
+        OutPut <- lapply(SSD_subset,
+                         FUN = ordination_to_NN_list,
+                         Sample_Sel = Sample_Sel,
+                         Beta_Ordination_sel = Beta_Ordination_sel,
+                         nb_partitions = nb_partitions,
+                         nbclusters = nbclusters, pcelim = pcelim, p = p)
+      })
+    } else {
       OutPut <- lapply(SSD_subset,
                        FUN = ordination_to_NN_list,
                        Sample_Sel = Sample_Sel,
                        Beta_Ordination_sel = Beta_Ordination_sel,
                        nb_partitions = nb_partitions,
-                       nbclusters = nbclusters, pcelim = pcelim, p = p)
-    })
+                       nbclusters = nbclusters, pcelim = pcelim, p = NULL)
+    }
   }
   Ordination_est <- do.call("rbind", OutPut)
   gc()
@@ -339,6 +364,8 @@ compute_BETA_FromPlots <- function(SpectralSpecies_Plots,nbclusters,Hellinger = 
 #' @importFrom stats as.dist
 #' @import cli
 #' @importFrom progressr progressor handlers with_progress
+#' @importFrom parallel makeCluster stopCluster
+#' @importFrom future plan multisession sequential
 #' @export
 
 compute_beta_metrics <- function(ClusterMap_Path,
@@ -380,7 +407,9 @@ compute_beta_metrics <- function(ClusterMap_Path,
   # create a Bray curtis dissimilarity matrix for each iteration
   print("compute BC dissimilarity for selected kernels")
   Sample_Sel_list <- snow::splitCols(x = Sample_Sel,ncl = nb_partitions)
-  plan(multisession, workers = nbCPU)
+  # plan(multisession, workers = nbCPU)
+  cl <- parallel::makeCluster(nbCPU)
+  future::plan("cluster", workers = cl)
   handlers(global = TRUE)
   handlers("cli")
   with_progress({
@@ -389,7 +418,8 @@ compute_beta_metrics <- function(ClusterMap_Path,
                                              FUN = getBCdiss,
                                              pcelim = pcelim, p = p)
   })
-  plan(sequential)
+  parallel::stopCluster(cl)
+  future::plan(sequential)
   MatBC <- Reduce('+', MatBCtmp0)/nb_partitions
   rm(MatBCtmp0)
   gc()

@@ -21,7 +21,8 @@ convert_PCA_to_SSD(
   Sunlit_Path,
   p = NULL,
   nbCPU = 1,
-  nbPieces = 1
+  nbPieces = 1,
+  progressbar = FALSE
 )
 }
 \arguments{
@@ -58,6 +59,8 @@ convert_PCA_to_SSD(
 \item{nbCPU}{numeric. Number of CPUs to use in parallel.}
 
 \item{nbPieces}{numeric. number of pieces to split file read into}
+
+\item{progressbar}{boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)}
 }
 \description{
 Convert PCA into SSD based on previous clustering

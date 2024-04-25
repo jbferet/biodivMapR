@@ -22,7 +22,8 @@ ordination_to_NN(
   nbclusters,
   pcelim = 0.02,
   nbCPU = 1,
-  SamplesPerThread = 2000
+  SamplesPerThread = 2000,
+  progressbar = FALSE
 )
 }
 \arguments{
@@ -41,6 +42,8 @@ ordination_to_NN(
 \item{nbCPU}{numeric. number of CPUs available}
 
 \item{SamplesPerThread}{numeric. number of samples to be processed per thread for dissimilarity matrix}
+
+\item{progressbar}{boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)}
 }
 \value{
 Ordination_est coordinates of each spatial unit in ordination space

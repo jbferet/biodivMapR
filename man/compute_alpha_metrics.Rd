@@ -14,7 +14,8 @@ compute_alpha_metrics(
   pcelim = 0.02,
   nbCPU = 1,
   MaxRAM = 0.25,
-  Index_Alpha = "Shannon"
+  Index_Alpha = "Shannon",
+  progressbar = FALSE
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ compute_alpha_metrics(
 \item{MaxRAM}{numeric. maximum RAM available}
 
 \item{Index_Alpha}{list. list of alpha diversity indices to be computed from spectral species}
+
+\item{progressbar}{boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)}
 }
 \value{
 list of mean and SD of alpha diversity metrics

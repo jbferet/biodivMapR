@@ -4,7 +4,7 @@
 \alias{init_kmeans}
 \title{computes k-means from nb_partitions subsets taken from dataPCA}
 \usage{
-init_kmeans(dataPCA, nb_partitions, nbclusters, nbCPU = 1, progressbar = TRUE)
+init_kmeans(dataPCA, nb_partitions, nbclusters, nbCPU = 1, progressbar = FALSE)
 }
 \arguments{
 \item{dataPCA}{numeric. initial dataset sampled from PCA image}

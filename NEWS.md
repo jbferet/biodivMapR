@@ -1,3 +1,15 @@
+# biodivMapR v1.14.1
+
+## Fix
+
+- fixed problem occurring when performing PCA without mask
+- fixed issue related to plan(multisession), suggested by @rnedelec on github, 
+following documented issue in https://github.com/ropensci/drake/issues/255#issuecomment-365799680
+
+## Addition
+
+- option added to display progress bar. Set to FALSE as default
+
 # biodivMapR v1.14.0
 
 ## Change

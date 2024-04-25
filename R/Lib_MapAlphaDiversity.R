@@ -176,6 +176,7 @@ compute_ALPHA_FromPlot <- function(SpectralSpecies_Plot,pcelim = 0.02){
 #' @param nbCPU numeric. number of CPUs available
 #' @param MaxRAM numeric. maximum RAM available
 #' @param Index_Alpha list. list of alpha diversity indices to be computed from spectral species
+#' @param progressbar boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)
 #
 #' @return list of mean and SD of alpha diversity metrics
 #' @import cli
@@ -194,7 +195,7 @@ compute_alpha_metrics <- function(Spectral_Species_Path,
                                   pcelim = 0.02,
                                   nbCPU = 1,
                                   MaxRAM = 0.25,
-                                  Index_Alpha = "Shannon") {
+                                  Index_Alpha = 'Shannon', progressbar = FALSE) {
 
   # Prepare files to read and write: spectral species (R), spectral species
   # distribution (W) and sunlit proportion per window (W)
@@ -232,7 +233,7 @@ compute_alpha_metrics <- function(Spectral_Species_Path,
   # for each piece of image
   ReadWrite <- RW_bytes_all(SeqRead_SS, SeqWrite_SSD, SeqWrite_Sunlit, SeqRead_Mask)
 
-  if (nbPieces>1){
+  if (nbPieces>1 & progressbar == TRUE){
     handlers(global = TRUE)
     handlers("cli")
     with_progress({
@@ -310,6 +311,7 @@ compute_alpha_metrics <- function(Spectral_Species_Path,
 #' @param p list. progressor object for progress bar
 #' @param nbCPU numeric. Number of CPUs to use in parallel.
 #' @param nbPieces numeric. number of pieces to split file read into
+#' @param progressbar boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)
 
 convert_PCA_to_SSD <- function(ReadWrite, Spectral_Species_Path,
                                HDR_SS, HDR_SSD, HDR_Sunlit,
@@ -318,7 +320,8 @@ convert_PCA_to_SSD <- function(ReadWrite, Spectral_Species_Path,
                                MinSun = 0.25, pcelim = 0.02,
                                Index_Alpha = c('Shannon'),
                                SSD_Path, Sunlit_Path,
-                               p = NULL, nbCPU = 1, nbPieces= 1) {
+                               p = NULL, nbCPU = 1, nbPieces= 1,
+                               progressbar = FALSE) {
 
   ImgFormat <- "3D"
   SSD_Format <- ENVI_type2bytes(HDR_SSD)
@@ -345,7 +348,7 @@ convert_PCA_to_SSD <- function(ReadWrite, Spectral_Species_Path,
   SSD_Alpha <- compute_SSD(Image_Chunk = SS_Chunk, window_size = window_size,
                            nbclusters = nbclusters, MinSun = MinSun, pcelim = pcelim,
                            Index_Alpha = Index_Alpha, nbCPU = nbCPU, nbPieces = nbPieces,
-                           Mask_Chunk = Mask_Chunk)
+                           Mask_Chunk = Mask_Chunk, progressbar = progressbar)
 
   # write spectral Species ditribution file
   fidSSD <- file(description = SSD_Path, open = "r+b", blocking = TRUE,
@@ -401,6 +404,7 @@ convert_PCA_to_SSD <- function(ReadWrite, Spectral_Species_Path,
 #' @param nbCPU numeric. Number of CPUs to use in parallel.
 #' @param nbPieces numeric. number of pieces in which original image is split
 #' @param Mask_Chunk numeric. 3D image chunk of mask (optional)
+#' @param progressbar boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)
 #
 #' @return list of alpha diversity metrics for each iteration
 #' @importFrom vegan fisher.alpha
@@ -413,7 +417,8 @@ convert_PCA_to_SSD <- function(ReadWrite, Spectral_Species_Path,
 
 compute_SSD <- function(Image_Chunk, window_size, nbclusters,
                         MinSun = 0.25, pcelim = 0.02,
-                        Index_Alpha = "Shannon", nbCPU = 1, nbPieces = 1, Mask_Chunk = FALSE) {
+                        Index_Alpha = "Shannon", nbCPU = 1, nbPieces = 1,
+                        Mask_Chunk = FALSE, progressbar = FALSE) {
 
   nbi <- ceiling(dim(Image_Chunk)[1] / window_size)
   nbj <- ceiling(dim(Image_Chunk)[2] / window_size)
@@ -468,20 +473,31 @@ compute_SSD <- function(Image_Chunk, window_size, nbclusters,
 
   if (nbCPU > 1){
     listAlpha <- snow::splitList(listAlpha,ncl = nbCPU)
-    plan(multisession, workers = nbCPU)
+    # plan(multisession, workers = nbCPU)
+    cl <- parallel::makeCluster(nbCPU)
+    plan("cluster", workers = cl)  ## same as plan(multisession, workers = nbCPU)
     # add a progress bar if the image was read in one piece only
     if (nbPieces ==1){
-      handlers(global = TRUE)
-      handlers("cli")
-      with_progress({
-        p <- progressr::progressor(steps = nbCPU)
+      if (progressbar==TRUE){
+        handlers(global = TRUE)
+        handlers("cli")
+        with_progress({
+          p <- progressr::progressor(steps = nbCPU)
+          alphaSSD <- future.apply::future_lapply(X = listAlpha,
+                                                  FUN = compute_ALPHA_SSD_per_window_list,
+                                                  nb_partitions = nb_partitions,
+                                                  nbclusters = nbclusters,
+                                                  alphaIdx = alphaIdx,
+                                                  MinSun = MinSun, pcelim = pcelim, p = p)
+        })
+      } else {
         alphaSSD <- future.apply::future_lapply(X = listAlpha,
                                                 FUN = compute_ALPHA_SSD_per_window_list,
                                                 nb_partitions = nb_partitions,
                                                 nbclusters = nbclusters,
                                                 alphaIdx = alphaIdx,
-                                                MinSun = MinSun, pcelim = pcelim, p = p)
-      })
+                                                MinSun = MinSun, pcelim = pcelim)
+      }
     } else {
       alphaSSD <- future.apply::future_lapply(X = listAlpha,
                                               FUN = compute_ALPHA_SSD_per_window_list,
@@ -490,9 +506,10 @@ compute_SSD <- function(Image_Chunk, window_size, nbclusters,
                                               alphaIdx = alphaIdx,
                                               MinSun = MinSun, pcelim = pcelim, p = NULL)
     }
+    parallel::stopCluster(cl)
     plan(sequential)
     shannonIter_list <- SimpsonAlpha_list <- FisherAlpha_list <- SSDMap_list <- list()
-    for (i in 1:nbCPU){
+    for (i in seq_len(nbCPU)){
       shannonIter_list <- append(shannonIter_list,alphaSSD[[i]]$shannonIter)
       SimpsonAlpha_list <- append(SimpsonAlpha_list,alphaSSD[[i]]$SimpsonAlpha  )
       FisherAlpha_list <- append(FisherAlpha_list,alphaSSD[[i]]$FisherAlpha  )

@@ -27,6 +27,7 @@
 #' @param Kmeans_info_path character. path to a Kmeans_info Rdata file computed from previous process
 #' @param Kmeans_info list. Kmeans_info list computed from previous process
 #' (central wavelength), bands to keep...
+#' @param progressbar boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)
 #'
 #' @return Kmeans_info
 #' @importFrom utils read.table
@@ -39,7 +40,7 @@ map_spectral_species <- function(Input_Image_File, Output_Dir,
                                  Kmeans_Only = FALSE, SelectedPCs = FALSE,
                                  SpectralFilter = NULL,
                                  Kmeans_info_path = NULL,
-                                 Kmeans_info = NULL) {
+                                 Kmeans_info = NULL, progressbar = FALSE) {
 
   # check if input mask file has expected format
   if (!Input_Mask_File==FALSE){
@@ -137,7 +138,8 @@ map_spectral_species <- function(Input_Image_File, Output_Dir,
     Kmeans_info <- init_kmeans(dataPCA = dataPCA,
                                nb_partitions = nb_partitions,
                                nbclusters = nbclusters,
-                               nbCPU = nbCPU)
+                               nbCPU = nbCPU,
+                               progressbar = progressbar)
     Kmeans_info$SpectralSpecies <- Spectral_Species_Path
   } else if (!is.null(Kmeans_info_path) & file.exists(Kmeans_info_path)){
     load(Kmeans_info_path)
@@ -208,7 +210,8 @@ map_spectral_species <- function(Input_Image_File, Output_Dir,
 #'
 #' @export
 
-init_kmeans <- function(dataPCA, nb_partitions, nbclusters, nbCPU = 1, progressbar = TRUE) {
+init_kmeans <- function(dataPCA, nb_partitions, nbclusters, nbCPU = 1,
+                        progressbar = FALSE) {
 
   # define boundaries defining outliers based on IQR
   m0 <- M0 <- c()
@@ -230,7 +233,9 @@ init_kmeans <- function(dataPCA, nb_partitions, nbclusters, nbCPU = 1, progressb
     dataPCA <- center_reduce(dataPCA, m0, d0)
     dataPCA <- snow::splitRows(x = dataPCA, ncl = nb_partitions)
     if (nbCPU>1){
-      plan(multisession, workers = nbCPU) ## Parallelize using four cores
+      # plan(multisession, workers = nbCPU) ## Parallelize using four cores
+      cl <- parallel::makeCluster(nbCPU)
+      plan("cluster", workers = cl)
       if (progressbar==TRUE){
         handlers(global = TRUE)
         handlers("cli")
@@ -249,6 +254,7 @@ init_kmeans <- function(dataPCA, nb_partitions, nbclusters, nbCPU = 1, progressb
                              iter.max = 50, nstart = 10,
                              algorithm = c("Hartigan-Wong"))
       }
+      parallel::stopCluster(cl)
       plan(sequential)
     } else {
       if (progressbar==TRUE){
@@ -422,18 +428,26 @@ compute_spectral_species <- function(PCA_Path, Input_Mask_File, Spectral_Species
     nbSubsets <- ceiling(length(keepShade) / nbSamples_Per_Rdist)
     PCA_Chunk <- snow::splitRows(PCA_Chunk, nbSubsets)
     if (nbCPU>1){
-      plan(multisession, workers = nbCPU)
-      handlers(global = TRUE)
-      handlers("cli")
-      with_progress({
-        p <- progressr::progressor(steps = nbSubsets)
+      if (progressbar==T){
+        plan(multisession, workers = nbCPU)
+        handlers(global = TRUE)
+        handlers("cli")
+        with_progress({
+          p <- progressr::progressor(steps = nbSubsets)
+          res <- future_lapply(PCA_Chunk,
+                               FUN = RdistList,
+                               CentroidsArray = CentroidsArray,
+                               nbClusters = nrow(Kmeans_info$Centroids[[1]]),
+                               nb_partitions = nb_partitions, p = p)
+        })
+        plan(sequential)
+      } else {
         res <- future_lapply(PCA_Chunk,
                              FUN = RdistList,
                              CentroidsArray = CentroidsArray,
                              nbClusters = nrow(Kmeans_info$Centroids[[1]]),
-                             nb_partitions = nb_partitions, p = p)
-      })
-      plan(sequential)
+                             nb_partitions = nb_partitions)
+      }
     } else {
       res <- lapply(PCA_Chunk,
                     FUN = RdistList,

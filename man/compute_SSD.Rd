@@ -13,7 +13,8 @@ compute_SSD(
   Index_Alpha = "Shannon",
   nbCPU = 1,
   nbPieces = 1,
-  Mask_Chunk = FALSE
+  Mask_Chunk = FALSE,
+  progressbar = FALSE
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ compute_SSD(
 \item{nbPieces}{numeric. number of pieces in which original image is split}
 
 \item{Mask_Chunk}{numeric. 3D image chunk of mask (optional)}
+
+\item{progressbar}{boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)}
 }
 \value{
 list of alpha diversity metrics for each iteration

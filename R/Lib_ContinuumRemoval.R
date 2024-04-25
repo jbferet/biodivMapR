@@ -15,15 +15,18 @@
 #' @param Spectral_Data numeric. initial data matrix (nb samples x nb bands)
 #' @param Spectral list. information about spectral bands
 #' @param nbCPU numeric. number of CPUs to be used in parallel
+#' @param progressbar boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)
 #
 #' @return samples from image and updated number of pixels to sample if necessary
 #' @importFrom snow splitRows
 #' @importFrom future plan multisession sequential
 #' @importFrom future.apply future_lapply
 #' @importFrom progressr progressor handlers with_progress
+#' @importFrom parallel makeCluster stopCluster
 #' @export
 
-apply_continuum_removal <- function(Spectral_Data, Spectral, nbCPU = 1) {
+apply_continuum_removal <- function(Spectral_Data, Spectral, nbCPU = 1,
+                                    progressbar = F) {
   if (!length(Spectral$WaterVapor) == 0) {
     Spectral_Data <- Spectral_Data[, -Spectral$WaterVapor]
   }
@@ -38,17 +41,27 @@ apply_continuum_removal <- function(Spectral_Data, Spectral, nbCPU = 1) {
     Spectral_Data <- snow::splitRows(Spectral_Data, nb_CR)
     # perform multithread continuum removal
     if (nbCPU>1){
-      future::plan(multisession, workers = nbCPU)
-      handlers(global = TRUE)
-      handlers("cli")
-      with_progress({
-        p <- progressr::progressor(steps = nb_CR)
+      if (progressbar==T){
+        # future::plan(multisession, workers = nbCPU)
+        cl <- parallel::makeCluster(nbCPU)
+        plan("cluster", workers = cl)
+        handlers(global = TRUE)
+        handlers("cli")
+        with_progress({
+          p <- progressr::progressor(steps = nb_CR)
+          Spectral_Data_tmp <- future.apply::future_lapply(Spectral_Data,
+                                                           FUN = continuumRemoval,
+                                                           Spectral_Bands = Spectral$Wavelength,
+                                                           p = p)
+        })
+        parallel::stopCluster(cl)
+        future::plan(sequential)
+      } else {
         Spectral_Data_tmp <- future.apply::future_lapply(Spectral_Data,
                                                          FUN = continuumRemoval,
-                                                         Spectral_Bands = Spectral$Wavelength,
-                                                         p = p)
-      })
-      future::plan(sequential)
+                                                         Spectral_Bands = Spectral$Wavelength)
+      }
+
     } else {
       Spectral_Data_tmp <- lapply(Spectral_Data, FUN = continuumRemoval,
                                   Spectral_Bands = Spectral$Wavelength)

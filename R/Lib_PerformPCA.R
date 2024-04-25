@@ -64,7 +64,9 @@ perform_PCA  <- function(Input_Image_File, Input_Mask_File, Output_Dir,
   }
   # if needed, apply continuum removal
   if (Continuum_Removal == TRUE) {
-    Subset$DataSubset <- apply_continuum_removal(Subset$DataSubset, SpectralFilter, nbCPU = nbCPU)
+    Subset$DataSubset <- apply_continuum_removal(Spectral_Data = Subset$DataSubset,
+                                                 Spectral = SpectralFilter,
+                                                 nbCPU = nbCPU)
   } else {
     if (!length(SpectralFilter$WaterVapor) == 0) {
       Subset$DataSubset <- Subset$DataSubset[, -SpectralFilter$WaterVapor]
@@ -371,7 +373,7 @@ write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_mo
   # prepare for sequential processing: SeqRead_Image informs about byte location to read
   nbPieces <- split_image(HDR, LimitSizeGb = MaxRAM)
   SeqRead_Image <- where_to_read(HDR, nbPieces)
-  SeqRead_Shade <- where_to_read(HDR_Shade, nbPieces)
+  if (Shade_Format == T) SeqRead_Shade <- where_to_read(HDR_Shade, nbPieces)
   SeqRead_PCA <- where_to_read(HDR_PCA, nbPieces)
 
   # for each piece of image
@@ -392,7 +394,9 @@ write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_mo
       keepShade <- which(Shade_Chunk == 1)
       Image_Chunk <- Image_Chunk[keepShade, ]
     } else {
-      keepShade <- matrix(1,ncol = 1,nrow = nrow(Image_Chunk))
+	  # update 2024/04/24
+	  keepShade <- matrix(seq_len(nrow(Image_Chunk)),ncol = 1)
+      # keepShade <- matrix(1,ncol = 1,nrow = nrow(Image_Chunk))
     }
     # apply Continuum removal if needed
     if (Continuum_Removal) {
@@ -498,7 +502,7 @@ define_pixels_per_iter <- function(ImNames, nb_partitions) {
   # adjust the number of pixels per iteration
   # trade-off between number of pixels and total pixel size
   # maximum number of pixels to be used
-  Max_Pixel_Per_Iter <- 5000000/nb_partitions
+  Max_Pixel_Per_Iter <- min(c(nbPixels_Sunlit, 5000000))/nb_partitions
   Max_Pixel_Per_Iter_Size <- nb_partitions * (Max_Pixel_Per_Iter * as.double(HDR$bands) * Image_Format$Bytes) / (1024^3)
   # maximum amount of data (Gb) to be used
   Max_Size_Per_Iter <- 0.3

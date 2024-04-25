@@ -4,7 +4,7 @@
 \alias{apply_continuum_removal}
 \title{prepares data to run multithreaded continuum removal}
 \usage{
-apply_continuum_removal(Spectral_Data, Spectral, nbCPU = 1)
+apply_continuum_removal(Spectral_Data, Spectral, nbCPU = 1, progressbar = F)
 }
 \arguments{
 \item{Spectral_Data}{numeric. initial data matrix (nb samples x nb bands)}
@@ -12,6 +12,8 @@ apply_continuum_removal(Spectral_Data, Spectral, nbCPU = 1)
 \item{Spectral}{list. information about spectral bands}
 
 \item{nbCPU}{numeric. number of CPUs to be used in parallel}
+
+\item{progressbar}{boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)}
 }
 \value{
 samples from image and updated number of pixels to sample if necessary

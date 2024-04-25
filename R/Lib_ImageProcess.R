@@ -793,8 +793,8 @@ ind2sub2 <- function(Raster, Image_Index) {
 #' @export
 
 IQR_outliers <- function(DistVal,weightIRQ = 1.5){
-  iqr <- stats::IQR(DistVal, na.rm=TRUE)
   range_IQR <- c(stats::quantile(DistVal, 0.25,na.rm=TRUE),stats::quantile(DistVal, 0.75,na.rm=TRUE))
+  iqr <- diff(range_IQR)
   outlier_IQR <- c(range_IQR[1]-weightIRQ*iqr,range_IQR[2]+weightIRQ*iqr)
   return(outlier_IQR)
 }
