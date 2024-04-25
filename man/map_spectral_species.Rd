@@ -17,6 +17,7 @@ map_spectral_species(
   SpectralFilter = NULL,
   Kmeans_info_path = NULL,
   Kmeans_info = NULL,
+  algorithm = "Hartigan-Wong",
   progressbar = FALSE
 )
 }
@@ -45,6 +46,8 @@ map_spectral_species(
 
 \item{Kmeans_info}{list. Kmeans_info list computed from previous process
 (central wavelength), bands to keep...}
+
+\item{algorithm}{character. algorithm used in the kmeans clustering}
 
 \item{progressbar}{boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)}
 }

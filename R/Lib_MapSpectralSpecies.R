@@ -27,6 +27,7 @@
 #' @param Kmeans_info_path character. path to a Kmeans_info Rdata file computed from previous process
 #' @param Kmeans_info list. Kmeans_info list computed from previous process
 #' (central wavelength), bands to keep...
+#' @param algorithm character. algorithm used in the kmeans clustering
 #' @param progressbar boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)
 #'
 #' @return Kmeans_info
@@ -40,7 +41,8 @@ map_spectral_species <- function(Input_Image_File, Output_Dir,
                                  Kmeans_Only = FALSE, SelectedPCs = FALSE,
                                  SpectralFilter = NULL,
                                  Kmeans_info_path = NULL,
-                                 Kmeans_info = NULL, progressbar = FALSE) {
+                                 Kmeans_info = NULL, algorithm = 'Hartigan-Wong',
+                                 progressbar = FALSE) {
 
   # check if input mask file has expected format
   if (!Input_Mask_File==FALSE){
@@ -138,7 +140,7 @@ map_spectral_species <- function(Input_Image_File, Output_Dir,
     Kmeans_info <- init_kmeans(dataPCA = dataPCA,
                                nb_partitions = nb_partitions,
                                nbclusters = nbclusters,
-                               nbCPU = nbCPU,
+                               nbCPU = nbCPU, algorithm = algorithm,
                                progressbar = progressbar)
     Kmeans_info$SpectralSpecies <- Spectral_Species_Path
   } else if (!is.null(Kmeans_info_path) & file.exists(Kmeans_info_path)){
@@ -198,6 +200,7 @@ map_spectral_species <- function(Input_Image_File, Output_Dir,
 #' @param nb_partitions numeric. number of k-means then averaged
 #' @param nbCPU numeric. Number of CPUs available
 #' @param nbclusters numeric. number of clusters used in kmeans
+#' @param algorithm character. algorithm used in the kmeans clustering
 #' @param progressbar boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)
 #'
 #' @return list of centroids and parameters needed to center/reduce data
@@ -211,7 +214,7 @@ map_spectral_species <- function(Input_Image_File, Output_Dir,
 #' @export
 
 init_kmeans <- function(dataPCA, nb_partitions, nbclusters, nbCPU = 1,
-                        progressbar = FALSE) {
+                        algorithm = 'Hartigan-Wong',  progressbar = FALSE) {
 
   # define boundaries defining outliers based on IQR
   m0 <- M0 <- c()
@@ -245,14 +248,14 @@ init_kmeans <- function(dataPCA, nb_partitions, nbclusters, nbCPU = 1,
                                FUN = kmeans_progressr,
                                centers = nbclusters,
                                iter.max = 50, nstart = 10,
-                               algorithm = c("Hartigan-Wong"), p = p)
+                               algorithm = algorithm, p = p)
         })
       } else {
         res <- future_lapply(X = dataPCA,
                              FUN = kmeans_progressr,
                              centers = nbclusters,
                              iter.max = 50, nstart = 10,
-                             algorithm = c("Hartigan-Wong"))
+                             algorithm = algorithm)
       }
       parallel::stopCluster(cl)
       plan(sequential)
@@ -265,13 +268,13 @@ init_kmeans <- function(dataPCA, nb_partitions, nbclusters, nbCPU = 1,
           res <- lapply(X = dataPCA,
                         FUN = kmeans_progressr,
                         centers = nbclusters, iter.max = 50, nstart = 10,
-                        algorithm = c("Hartigan-Wong"), p = p)
+                        algorithm = algorithm, p = p)
         })
       } else {
         res <- lapply(X = dataPCA,
                       FUN = kmeans_progressr,
                       centers = nbclusters, iter.max = 50, nstart = 10,
-                      algorithm = c("Hartigan-Wong"))
+                      algorithm = algorithm)
       }
     }
     Centroids <- lapply(res,'[[',2)
@@ -294,8 +297,9 @@ init_kmeans <- function(dataPCA, nb_partitions, nbclusters, nbCPU = 1,
 #' @export
 
 kmeans_progressr <- function(x, centers, iter.max, nstart,
-                             algorithm = c("Hartigan-Wong"), p = NULL){
-  res <- kmeans(x = x, centers = centers, iter.max = iter.max, nstart = nstart)
+                             algorithm = "Hartigan-Wong", p = NULL){
+  res <- kmeans(x = x, centers = centers, iter.max = iter.max, nstart = nstart,
+                algorithm = algorithm)
   if (!is.null(p)){p()}
   return(res)
 }
@@ -374,6 +378,7 @@ apply_kmeans <- function(PCA_Path, PC_Select, Input_Mask_File, Kmeans_info,
 #' @param PC_Select numeric. PCs selected from PCA
 #' @param Kmeans_info list. information about kmeans computed in previous step
 #' @param nbCPU numeric. number of CPUs available
+#' @param progressbar boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)
 #'
 #' @return None
 #' @import cli
@@ -383,8 +388,10 @@ apply_kmeans <- function(PCA_Path, PC_Select, Input_Mask_File, Kmeans_info,
 #' @importFrom future.apply future_lapply
 #' @export
 
-compute_spectral_species <- function(PCA_Path, Input_Mask_File, Spectral_Species_Path,
-                                     Location_RW, PC_Select, Kmeans_info, nbCPU = 1) {
+compute_spectral_species <- function(PCA_Path, Input_Mask_File,
+                                     Spectral_Species_Path, Location_RW,
+                                     PC_Select, Kmeans_info, nbCPU = 1,
+                                     progressbar = FALSE) {
 
   # characteristics of the centroids computed during preprocessing
   nb_partitions <- length(Kmeans_info$Centroids)
@@ -488,13 +495,14 @@ compute_spectral_species <- function(PCA_Path, Input_Mask_File, Spectral_Species
 #' @param PC_Select numeric. selection of components from subset_Raster and List_FieldPlot on which spctral species are computed
 #' @param nbCPU numeric. number of CPU on which kmeans is computed
 #' @param progressbar boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)
+#' @param algorithm character. algorithm used in the kmeans clustering
 #'
 #' @return list. vector_coordinates and vector_ID for each element in the vector file
 #' @export
 
 compute_spectral_species_FieldPlots <- function(subset_Raster, List_FieldPlot, nb_partitions,
                                                 Pix_Per_Partition, nbclusters, PC_Select=NULL, nbCPU=1,
-                                                progressbar = FALSE){
+                                                progressbar = FALSE, algorithm = 'Hartigan-Wong'){
   # COMPUTE KMEANS
   nbFieldPlots <- length(List_FieldPlot)
   if (!is.null(PC_Select)){
@@ -504,7 +512,7 @@ compute_spectral_species_FieldPlots <- function(subset_Raster, List_FieldPlot, n
     }
   }
   Kmeans_info <- init_kmeans(subset_Raster, nb_partitions,
-                             nbclusters, nbCPU,
+                             nbclusters, nbCPU, algorithm = algorithm,
                              progressbar = progressbar)
   # APPLY KMEANS ON THE FIELD DATA
   Nearest_Cluster <- list()

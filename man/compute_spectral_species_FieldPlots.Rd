@@ -13,7 +13,8 @@ compute_spectral_species_FieldPlots(
   nbclusters,
   PC_Select = NULL,
   nbCPU = 1,
-  progressbar = FALSE
+  progressbar = FALSE,
+  algorithm = "Hartigan-Wong"
 )
 }
 \arguments{
@@ -32,6 +33,8 @@ compute_spectral_species_FieldPlots(
 \item{nbCPU}{numeric. number of CPU on which kmeans is computed}
 
 \item{progressbar}{boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)}
+
+\item{algorithm}{character. algorithm used in the kmeans clustering}
 }
 \value{
 list. vector_coordinates and vector_ID for each element in the vector file

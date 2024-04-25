@@ -13,7 +13,8 @@ compute_spectral_species(
   Location_RW,
   PC_Select,
   Kmeans_info,
-  nbCPU = 1
+  nbCPU = 1,
+  progressbar = FALSE
 )
 }
 \arguments{
@@ -30,6 +31,8 @@ compute_spectral_species(
 \item{Kmeans_info}{list. information about kmeans computed in previous step}
 
 \item{nbCPU}{numeric. number of CPUs available}
+
+\item{progressbar}{boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)}
 }
 \value{
 None

@@ -9,7 +9,7 @@ kmeans_progressr(
   centers,
   iter.max,
   nstart,
-  algorithm = c("Hartigan-Wong"),
+  algorithm = "Hartigan-Wong",
   p = NULL
 )
 }

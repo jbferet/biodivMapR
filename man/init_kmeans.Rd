@@ -4,7 +4,14 @@
 \alias{init_kmeans}
 \title{computes k-means from nb_partitions subsets taken from dataPCA}
 \usage{
-init_kmeans(dataPCA, nb_partitions, nbclusters, nbCPU = 1, progressbar = FALSE)
+init_kmeans(
+  dataPCA,
+  nb_partitions,
+  nbclusters,
+  nbCPU = 1,
+  algorithm = "Hartigan-Wong",
+  progressbar = FALSE
+)
 }
 \arguments{
 \item{dataPCA}{numeric. initial dataset sampled from PCA image}
@@ -14,6 +21,8 @@ init_kmeans(dataPCA, nb_partitions, nbclusters, nbCPU = 1, progressbar = FALSE)
 \item{nbclusters}{numeric. number of clusters used in kmeans}
 
 \item{nbCPU}{numeric. Number of CPUs available}
+
+\item{algorithm}{character. algorithm used in the kmeans clustering}
 
 \item{progressbar}{boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)}
 }
