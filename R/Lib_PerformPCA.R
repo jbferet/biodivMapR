@@ -373,7 +373,7 @@ write_PCA_raster <- function(Input_Image_File, Input_Mask_File, PCA_Path, PCA_mo
   # prepare for sequential processing: SeqRead_Image informs about byte location to read
   nbPieces <- split_image(HDR, LimitSizeGb = MaxRAM)
   SeqRead_Image <- where_to_read(HDR, nbPieces)
-  if (Shade_Format == T) SeqRead_Shade <- where_to_read(HDR_Shade, nbPieces)
+  # if (typeof(Shade_Format) == 'list') SeqRead_Shade <- where_to_read(HDR_Shade, nbPieces)
   SeqRead_PCA <- where_to_read(HDR_PCA, nbPieces)
 
   # for each piece of image

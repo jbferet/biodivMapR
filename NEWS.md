@@ -1,3 +1,9 @@
+# biodivMapR v1.14.2
+
+## Fix
+
+- update fixed problem occurring when performing PCA without mask
+
 # biodivMapR v1.14.1
 
 ## Fix
