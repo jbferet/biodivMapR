@@ -1,8 +1,7 @@
 #' Check if principal components are properly selected as expected by the method
 #'
-#' @param input_raster_path character. Path of the image to be processed
-#' @param output_dir character. Path for output directory
 #' @param pca_rast_path character. Path of the PCA image
+#' @param output_dir character. Path for output directory
 #' @param File_Open Boolean. Set to TRUE for file to open automatically
 #'
 #' @return Sel_PC
@@ -10,9 +9,8 @@
 #' @importFrom tools file_path_sans_ext
 #' @export
 
-select_PCA_components <- function(input_raster_path,
+select_PCA_components <- function(pca_rast_path,
                                   output_dir,
-                                  pca_rast_path,
                                   File_Open = TRUE) {
   message("Please check following PCA file:")
   print(pca_rast_path)

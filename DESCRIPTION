@@ -21,6 +21,7 @@ License: GPL-3 + file LICENSE
 LazyData: true
 Imports: 
     ape,
+    bigRaster,
     cli,
     data.table,
     dissUtils,
@@ -57,7 +58,6 @@ Imports:
     pracma,
     doParallel
 Suggests: 
-    bigRaster,
     knitr,
     rmarkdown,
     testthat (>= 2.0.0)
