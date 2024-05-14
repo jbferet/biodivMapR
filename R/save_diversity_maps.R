@@ -16,7 +16,7 @@ save_diversity_maps <- function(ab_div_metrics,
                                 input_rast,
                                 output_dir,
                                 window_size,
-                                filetype = 'COG'){
+                                filetype = 'GTiff'){
   # save alpha diversity indices
   for (idx in alphametrics) {
     # Mean value
@@ -29,6 +29,7 @@ save_diversity_maps <- function(ab_div_metrics,
     names(template_rast[[1]]) <- paste('mean', idx)
     # define output raster name
     output_raster <- file.path(output_dir, paste0(idx, '_mean'))
+    if (filetype%in%c('GTiff', 'COG')) output_raster <- paste0(output_raster, '.tif')
     terra::writeRaster(x = template_rast, filename = output_raster,
                        filetype = filetype, overwrite = T)
     # SD value
@@ -41,6 +42,7 @@ save_diversity_maps <- function(ab_div_metrics,
     names(template_rast[[1]]) <- paste('sd', idx)
     # define output raster name
     output_raster <- file.path(output_dir, paste0(idx, '_sd'))
+    if (filetype%in%c('GTiff', 'COG')) output_raster <- paste0(output_raster, '.tif')
     terra::writeRaster(x = template_rast, filename = output_raster,
                        filetype = filetype, overwrite = T)
   }
@@ -59,6 +61,7 @@ save_diversity_maps <- function(ab_div_metrics,
   }
   names(template_rast) <- paste0('PCoA#',seq(1,dimPCoA))
   output_raster <- file.path(output_dir, 'beta')
+  if (filetype%in%c('GTiff', 'COG')) output_raster <- paste0(output_raster, '.tif')
   terra::writeRaster(x = template_rast, filename = output_raster,
                      filetype = filetype, overwrite = T)
   return(invisible())

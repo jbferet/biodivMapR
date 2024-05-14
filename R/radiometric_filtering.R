@@ -21,7 +21,7 @@ radiometric_filtering <- function(input_raster_path, output_dir, spectralBands,
                                   input_mask_path = NULL, NDVI_Thresh = 0.8,
                                   Blue_Thresh = 500, NIR_Thresh = 1500,
                                   Blue = 480, Red = 670, NIR = 835,
-                                  maxRows = 1000, filetype = 'COG') {
+                                  maxRows = 1000, filetype = 'GTiff') {
 
   # produce SpatRaster
   input_rast <- terra::rast(input_raster_path)

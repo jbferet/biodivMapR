@@ -26,7 +26,8 @@
 #' @return Kmeans_info and Beta_info
 #' @export
 
-biodivMapR_full <- function(input_raster_path, output_dir, window_size, maxRows,
+biodivMapR_full <- function(input_raster_path, output_dir, window_size,
+                            maxRows = NULL,
                             Kmeans_info_save = NULL, Kmeans_info_read = NULL,
                             Beta_info_save = NULL, Beta_info_read = NULL,
                             input_mask_path = NULL,
@@ -34,7 +35,7 @@ biodivMapR_full <- function(input_raster_path, output_dir, window_size, maxRows,
                             SelectBands = NULL, alphametrics = 'shannon',
                             pcelim = 0.02, nbCPU = 1, nbIter = 20, MinSun = 0.25,
                             maxPixel_kmeans = 1e6, dimPCoA = 3,
-                            verbose = T, progressbar = T, filetype = 'COG'){
+                            verbose = T, progressbar = T, filetype = 'GTiff'){
 
   # read input rasters
   if (inherits(x = input_raster_path, what = 'character')){
