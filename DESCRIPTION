@@ -15,6 +15,9 @@ Description: this packages allows processing image data based on the method desc
     Féret, J.-B., Asner, G.P., 2014. Mapping tropical forest canopy diversity using high-fidelity imaging spectroscopy. Ecol. Appl. 24, 1289–1296. https://doi.org/10.1890/13-1824.1
     It expects a raster file as input, with ENVI HDR header file including spectral bands of the sensor, if optical sensor.
 Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.0
+
 License: GPL-3 + file LICENSE
 LazyData: true
 Imports: 
@@ -43,13 +46,24 @@ Imports:
     terra,
     tools,
     vegan,
-    zip
-RoxygenNote: 7.2.3
+    zip, 
+    purrr,
+    rlist,
+    sf,
+    stats,
+    terra,
+    tidyr,
+    doFuture,
+    foreach,
+    pracma,
+    doParallel
 Suggests: 
+    bigRaster,
     knitr,
     rmarkdown,
     testthat (>= 2.0.0)
+Remotes: gitlab::jbferet/bigRaster
 VignetteBuilder: knitr
 URL: https://github.com/jbferet/biodivMapR
 BugReports: https://github.com/jbferet/biodivMapR/issues
-Config/testthat/edition: 2
+Config/testthat/edition: 3
