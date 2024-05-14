@@ -3,7 +3,7 @@
 #' @param input_raster_path character. Path of the image to be processed
 #' @param output_dir character. Path for output directory
 #' @param input_mask_path character. Path of the mask corresponding to the image
-#' @param spectralBands numeric. spectral bands used to identify relevant bands
+#' @param input_rast_wl numeric. spectral bands used to identify relevant bands
 #' @param NDVI_Thresh numeric. NDVI threshold applied to produce a mask (select pixels with NDVI>NDVI_Thresh)
 #' @param Blue_Thresh numeric. Blue threshold applied to produce a mask (select pixels with Blue refl < Blue_Thresh --> filter clouds) refl expected between 0 and 10000
 #' @param NIR_Thresh numeric. NIR threshold applied to produce a mask (select pixels with NIR refl > NIR_Thresh) refl expected between 0 and 10000
@@ -17,7 +17,7 @@
 #' @importFrom terra rast blocks readStart writeStart writeValues readStop
 #' @export
 
-radiometric_filtering <- function(input_raster_path, output_dir, spectralBands,
+radiometric_filtering <- function(input_raster_path, output_dir, input_rast_wl,
                                   input_mask_path = NULL, NDVI_Thresh = 0.8,
                                   Blue_Thresh = 500, NIR_Thresh = 1500,
                                   Blue = 480, Red = 670, NIR = 835,
@@ -25,7 +25,7 @@ radiometric_filtering <- function(input_raster_path, output_dir, spectralBands,
 
   # produce SpatRaster
   input_rast <- terra::rast(input_raster_path)
-  names(input_rast) <- spectralBands
+  names(input_rast) <- input_rast_wl
   # check if format of raster data is as expected
   check_data(input_data = input_rast, arguments = 'input_rast')
   if (!is.null(input_mask_path)) {

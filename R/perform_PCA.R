@@ -24,7 +24,7 @@ perform_PCA  <- function(input_raster_path, output_dir, input_rast_wl = NULL,
                          input_mask_path = NULL, Continuum_Removal = TRUE,
                          TypePCA = 'SPCA', NbPCs_To_Keep = 30,
                          Excluded_WL = NULL, nbPix_PCA = 1e6,
-                         nbIter = 20, maxRows = 100, filetype = 'COG') {
+                         nbIter = 20, maxRows = 100, filetype = 'GTiff') {
   # check if format of raster data is as expected
   input_rast <- terra::rast(input_raster_path)
   if (!is.null(input_rast_wl))
