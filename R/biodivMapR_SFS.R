@@ -80,10 +80,13 @@ biodivMapR_SFS <- function(input_raster, obs_vect, obs2optimize,
                                       input_mask = input_mask,
                                       MinSun = MinSun)
     # update plot ID in collection
-    rast_sample_vect <- lapply(rastext,'[[','rast_sample_vect')
-    AttributeTable <- lapply(rastext,'[[','AttributeTable')
+    # rast_sample_vect <- lapply(rastext,'[[','rast_sample_vect')
+    # AttributeTable <- lapply(rastext,'[[','AttributeTable')
+    # rast_sample_vect <- rastext$rast_sample_vect
+    # AttributeTable <- rastext$AttributeTable
     rast_val <- rastext$rast_sample_vect
     Attributes <- rastext$AttributeTable
+    nbPlots_total <- length(Attributes$id)
   }
   print('plot extraction done')
   IDplot <- rast_val$ID

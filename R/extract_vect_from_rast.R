@@ -1,3 +1,17 @@
+#' extract pixel information from a raster based on vector footprint
+#'
+#' @param SpatVector SpatVector object SpatRaster or list of SpatRaster
+#' @param input_rast SpatRaster input raster
+#' @param input_mask SpatRaster optioal mask
+#' @param MinSun numeric. minimum sunlit/unmasked proportion
+#' @param prog boolean progressbar ?
+#'
+#' @return list including rast_sample_vect: dataframe corresponding to
+#' information extracted from input_rast, and AttributeTable from SpatVector
+
+#' @importFrom terra sources extract
+#' @export
+
 extract_vect_from_rast <- function(SpatVector, input_rast,
                                    input_mask = NULL, MinSun = 0.25,
                                    prog = T){
