@@ -1,6 +1,6 @@
 Package: biodivMapR
 Title: biodivMapR: an R package for a- and ß-diversity mapping using remotely-sensed images
-Version: 1.14.3
+Version: 2.0.0
 Authors@R: c(person(given = "Jean-Baptiste", 
 					family = "Feret", 
 					email = "jb.feret@teledetection.fr", 
@@ -16,47 +16,34 @@ Description: this packages allows processing image data based on the method desc
     It expects a raster file as input, with ENVI HDR header file including spectral bands of the sensor, if optical sensor.
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.0
+RoxygenNote: 7.3.1
 License: GPL-3 + file LICENSE
 LazyData: true
 Imports: 
-    ape,
     bigRaster,
     cli,
-    data.table,
     dissUtils,
+    doFuture,
+    doParallel,
     dplyr,
     fields,
+    foreach,
     future,
     future.apply,
-    gdalUtilities,
-    geometry,
-    jsonlite,
     labdsv,
-    magrittr,
-    matlab,
-    matrixStats,
-    mmand,
+    pracma,
     progress,
     progressr,
-    raster,
-    snow,
-    stars,
-    stringr,
-    terra,
-    tools,
-    vegan,
-    zip, 
     purrr,
     rlist,
     sf,
+    snow,
     stats,
     terra,
     tidyr,
-    doFuture,
-    foreach,
-    pracma,
-    doParallel
+    tools,
+    vegan,
+    zip
 Suggests: 
     knitr,
     rmarkdown,
