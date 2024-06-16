@@ -43,6 +43,7 @@ biodivMapR_full <- function(input_raster_path, output_dir, window_size,
   } else if (inherits(x = input_raster_path, what = 'list')){
     input_rast <- lapply(input_raster_path,terra::rast)
   }
+  input_mask <- NULL
   if (!is.null(input_mask_path)) input_mask <- terra::rast(input_mask_path)
   if (is.null(Kmeans_info_save)) Kmeans_info_save <- file.path(output_dir,'Kmeans_info.RData')
   if (is.null(Beta_info_save)) Beta_info_save <- file.path(output_dir,'Beta_info.RData')
