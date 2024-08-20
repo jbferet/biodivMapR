@@ -1,3 +1,16 @@
+# biodivMapR v2.1.0
+## Addition
+- added Hill numbers
+- added functional diversity
+
+## fix
+- initialize input_mask to NULL in biodivMapR_Full
+- handle chunk with pixels valid but no window valid
+
+# biodivMapR v2.0.0
+## Fix
+- fixed SFS function when using SpatVector instead of SpatVectorCollection
+
 # biodivMapR v1.14.3
 ## Fix
 - fixed SFS function when using SpatVector instead of SpatVectorCollection

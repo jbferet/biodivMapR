@@ -7,6 +7,7 @@
 #' @param Beta_info list. BC dissimilarity & associated beta metrics from training set
 #' @param alphametrics list. alpha diversity metrics: richness, shannon, simpson
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
+#' @param Hill_order numeric. Hill order
 #' @param p list. progressor object for progress bar
 #'
 #' @return list of alpha and beta diversity metrics
@@ -15,7 +16,9 @@
 
 alphabeta_window <- function(SSwindow, nbclusters,
                              Beta_info, alphametrics,
-                             pcelim = 0.02, p = NULL){
+                             pcelim = 0.02,
+                             Hill_order = 1,
+                             p = NULL){
   # get spectral species distribution from individual pixels within a window
   SSD <- lapply(X = SSwindow,FUN = table)
   # get ALPHA diversity
@@ -24,7 +27,8 @@ alphabeta_window <- function(SSwindow, nbclusters,
                   FUN = get_alpha_from_SSD,
                   alphametrics = alphametrics,
                   nbPix_Sunlit = nbPix_Sunlit,
-                  pcelim = pcelim)
+                  pcelim = pcelim,
+                  Hill_order = Hill_order)
   # get BETA diversity
   # full spectral species distribution = missing clusters set to 0
   SSD_full <- lapply(X = SSD, FUN = get_SSD_full,
@@ -49,5 +53,7 @@ alphabeta_window <- function(SSwindow, nbclusters,
               'simpson_sd' = stats::sd(unlist(lapply(alpha, '[[', 'simpson'))),
               'fisher_mean' = mean(unlist(lapply(alpha, '[[', 'fisher'))),
               'fisher_sd' = stats::sd(unlist(lapply(alpha, '[[', 'fisher'))),
+              'hill_mean' = mean(unlist(lapply(alpha, '[[', 'hill'))),
+              'hill_sd' = stats::sd(unlist(lapply(alpha, '[[', 'hill'))),
               'PCoA_BC' = PCoA_BC))
 }

@@ -12,6 +12,7 @@
 select_PCA_components <- function(pca_rast_path,
                                   output_dir,
                                   File_Open = TRUE) {
+
   message("Please check following PCA file:")
   print(pca_rast_path)
   message("and identify the components selected to compute spectral diversity")

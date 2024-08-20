@@ -26,7 +26,7 @@ init_kmeans <- function(input_rast,
                         nbIter = 20,
                         Kmeans_info_save = NULL,
                         Kmeans_info_read = NULL,
-                        maxPixel_kmeans = 100000, algorithm = 'Hartigan-Wong',
+                        maxPixel_kmeans = 1e5, algorithm = 'Hartigan-Wong',
                         nbCPU = 1, verbose = T, progressbar = T){
 
   # if Kmeans_info_read directs towards RData: read the variable if exists
@@ -59,11 +59,10 @@ init_kmeans <- function(input_rast,
     #                                    input_rast = input_rast,
     #                                    input_mask = input_mask)
     # rast_sample$ID <- NULL
-    if (verbose ==T) message('sampling done')
     if (is.null(SelectBands)) SelectBands <- seq_len(dim(rast_sample)[2])
     rast_sample <- rast_sample %>% select(all_of(SelectBands))
     # 3- PERFORM KMEANS FOR EACH ITERATION & DEFINE SPECTRAL SPECIES
-    print("perform k-means clustering for each subset and define centroids")
+    if (verbose ==T) message("perform k-means clustering for each subset and define centroids")
     Kmeans_info <- get_kmeans(rast_sample = rast_sample,
                               nbIter = nbIter,
                               nbclusters = nbclusters, algorithm = algorithm,

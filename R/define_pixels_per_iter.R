@@ -10,7 +10,7 @@
 #' @export
 
 define_pixels_per_iter <- function(input_rast, input_mask = NULL,
-                                   nbIter = 20, nbPix = 100000) {
+                                   nbIter = 20, nbPix = 1e5) {
   # check nb of pixels available from image or mask
   nbPixels_Sunlit <- dim(input_rast)[1] * dim(input_rast)[2]
   if (!is.null(input_mask)) nbPixels_Sunlit <- sum(terra::values(input_mask),na.rm = T)

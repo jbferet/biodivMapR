@@ -3,7 +3,7 @@
 #'
 #' @param Distrib Distribution
 #'
-#' @return Shannon index correspnding to the distribution
+#' @return Shannon index corresponding to the distribution
 #' @export
 
 get_Shannon <- function(Distrib) {

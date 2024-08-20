@@ -6,6 +6,8 @@
 #' @param input_mask_path character. path for mask file
 #' @param SelectBands numeric. bands selected from input_rast
 #' @param alphametrics list. alpha diversity metrics: richness, shannon, simpson
+#' @param Hill_order numeric. Hill order
+#' @param FDmetric character. list of functional metrics
 #' @param window_size numeric. window size for square plots
 #' @param maxRows numeric. max number of rows in each block
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
@@ -21,7 +23,7 @@
 get_raster_diversity <- function(input_raster_path, Kmeans_info, Beta_info,
                                  input_mask_path = NULL,
                                  SelectBands = NULL, alphametrics = 'shannon',
-                                 window_size, maxRows = NULL,
+                                 Hill_order = 1, FDmetric = NULL, window_size, maxRows = NULL,
                                  pcelim = 0.02, nbCPU = 1, MinSun = 0.25){
   message('Compute diversity metrics for full rasters')
   if (is.null(maxRows)) maxRows <- window_size
@@ -56,6 +58,8 @@ get_raster_diversity <- function(input_raster_path, Kmeans_info, Beta_info,
                              Kmeans_info = Kmeans_info,
                              Beta_info = Beta_info,
                              alphametrics = alphametrics,
+                             Hill_order = Hill_order,
+                             FDmetric = FDmetric,
                              r_in = r_in,
                              window_size = window_size,
                              SelectBands = SelectBands,
