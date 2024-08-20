@@ -1,3 +1,9 @@
+# biodivMapR v1.14.3
+
+## Fix
+
+- update fixed problem occurring when running map_alpha_div with default value nbCPU = 1
+
 # biodivMapR v1.14.2
 
 ## Fix

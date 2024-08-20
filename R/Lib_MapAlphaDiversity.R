@@ -265,7 +265,7 @@ compute_alpha_metrics <- function(Spectral_Species_Path,
   # create ful map from chunks
   Shannon_Mean_Chunk <- Fisher_Mean_Chunk <- Simpson_Mean_Chunk <- list()
   Shannon_SD_Chunk <- Fisher_SD_Chunk <- Simpson_SD_Chunk <- list()
-  for (i in 1:length(ALPHA)) {
+  for (i in seq_len(length(ALPHA))) {
     Shannon_Mean_Chunk[[i]] <- ALPHA[[i]]$Shannon
     Fisher_Mean_Chunk[[i]] <- ALPHA[[i]]$Fisher
     Simpson_Mean_Chunk[[i]] <- ALPHA[[i]]$Simpson
@@ -312,6 +312,9 @@ compute_alpha_metrics <- function(Spectral_Species_Path,
 #' @param nbCPU numeric. Number of CPUs to use in parallel.
 #' @param nbPieces numeric. number of pieces to split file read into
 #' @param progressbar boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)
+#'
+#' @return list of mean and SD of alpha diversity metrics
+#' @export
 
 convert_PCA_to_SSD <- function(ReadWrite, Spectral_Species_Path,
                                HDR_SS, HDR_SSD, HDR_Sunlit,
@@ -438,9 +441,9 @@ compute_SSD <- function(Image_Chunk, window_size, nbclusters,
   # split the image chunk into a list of windows
   listAlpha <- listIJ <- list()
   ij <- 0
-  for (ii in 1:nbi) {
+  for (ii in seq_len(nbi)) {
     # for each window in the column
-    for (jj in 1:nbj) {
+    for (jj in seq_len(nbj)) {
       li <- ((ii - 1) * window_size) + 1
       ui <- min(c(ii * window_size,dim(Image_Chunk)[1]))
       lj <- ((jj - 1) * window_size) + 1
@@ -517,19 +520,18 @@ compute_SSD <- function(Image_Chunk, window_size, nbclusters,
     }
 
   } else {
-
-    alphaSSD <- lapply(X = listAlpha,
-                       FUN = compute_ALPHA_SSD_per_window,
-                       nb_partitions = nb_partitions, nbclusters = nbclusters,
-                       alphaIdx = alphaIdx, MinSun = MinSun, pcelim = pcelim)
-
-    shannonIter_list <- alphaSSD[[i]]$shannonIter
-    SimpsonAlpha_list <- alphaSSD[[i]]$SimpsonAlpha
-    FisherAlpha_list <- alphaSSD[[i]]$FisherAlpha
-    SSDMap_list <- alphaSSD[[i]]$SSDMap
+    alphaSSD <- lapply(X = listAlpha, FUN = compute_ALPHA_SSD_per_window,
+                       nb_partitions = nb_partitions,
+                       nbclusters = nbclusters,
+                       alphaIdx = alphaIdx,
+                       MinSun = MinSun,
+                       pcelim = pcelim)
+    shannonIter_list <- lapply(alphaSSD,'[[', 'shannonIter')
+    SimpsonAlpha_list <- lapply(alphaSSD,'[[', 'SimpsonAlpha')
+    FisherAlpha_list <- lapply(alphaSSD,'[[', 'FisherAlpha')
+    SSDMap_list <- lapply(alphaSSD,'[[', 'SSDMap')
   }
-
-  for (i in 1:ij){
+  for (i in seq_len(ij)){
     ii <- listIJ[[i]]$i
     jj <- listIJ[[i]]$j
     SSDMap[ii, jj,] <- SSDMap_list[[i]]
@@ -837,6 +839,7 @@ prepare_HDR_SSD <- function(HDR_SS, SSD_Path, nbclusters, window_size){
 #' @param Sunlit_Path character. path for spectral species file
 #'
 #' @return HDR_Sunlit
+#' @export
 
 prepare_HDR_Sunlit <- function(HDR_SSD, Sunlit_Path){
   # prepare proportion of sunlit pixels from each spatial unit
@@ -856,14 +859,15 @@ prepare_HDR_Sunlit <- function(HDR_SSD, Sunlit_Path){
   return(HDR_Sunlit)
 }
 
-# identifies bytes where to read and write for each piece of image and all files
-#
-# @param SeqRead_SS list. coordinates corresponding to spectral species file
-# @param SeqWrite_SSD list. coordinates corresponding to spectral species distribution file
-# @param SeqWrite_Sunlit list. coordinates corresponding to sunlit proportion
-# @param SeqRead_Mask list. coordinates corresponding to optional mask file
-#
-# @return ReadWrite list of bytes coordinates for each read and write
+#' identifies bytes where to read and write for each piece of image and all files
+#'
+#' @param SeqRead_SS list. coordinates corresponding to spectral species file
+#' @param SeqWrite_SSD list. coordinates corresponding to spectral species distribution file
+#' @param SeqWrite_Sunlit list. coordinates corresponding to sunlit proportion
+#' @param SeqRead_Mask list. coordinates corresponding to optional mask file
+#'
+#' @return ReadWrite list of bytes coordinates for each read and write
+#' @export
 
 RW_bytes_all <- function(SeqRead_SS, SeqWrite_SSD, SeqWrite_Sunlit,
                          SeqRead_Mask = FALSE){
@@ -882,12 +886,14 @@ RW_bytes_all <- function(SeqRead_SS, SeqWrite_SSD, SeqWrite_Sunlit,
   return(ReadWrite)
 }
 
-# identifies bytes where to read or write for each piece of an image in a given file
-#
-# @param SeqRW list. coordinates corresponding to spectral species file
-# @param piece numeric. identifier of the piece of image
-#
-# @return RW0 list of bytes coordinates for each read and write
+#' identifies bytes where to read or write for each piece of an image in a given file
+#'
+#' @param SeqRW list. coordinates corresponding to spectral species file
+#' @param piece numeric. identifier of the piece of image
+#'
+#' @return RW0 list of bytes coordinates for each read and write
+#' @export
+
 RW_bytes <- function(SeqRW, piece){
   RW0 <- list()
   RW0$Byte_Start <- SeqRW$ReadByte_Start[piece]

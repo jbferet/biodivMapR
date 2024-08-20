@@ -62,6 +62,9 @@ convert_PCA_to_SSD(
 
 \item{progressbar}{boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)}
 }
+\value{
+list of mean and SD of alpha diversity metrics
+}
 \description{
 Convert PCA into SSD based on previous clustering
 }
