@@ -1,5 +1,6 @@
 # biodivMapR v2.1.1
 ## Fix
+- Fixed testthat
 - fixed maps for functional diversity metrics (center reduction of trait space)
 
 ## Change
