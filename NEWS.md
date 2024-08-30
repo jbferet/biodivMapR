@@ -1,3 +1,11 @@
+# biodivMapR v2.1.1
+## Fix
+- fixed maps for functional diversity metrics (center reduction of trait space)
+
+## Change
+- more systematic use of 'seq_len'
+
+
 # biodivMapR v2.1.0
 ## Addition
 - added Hill numbers

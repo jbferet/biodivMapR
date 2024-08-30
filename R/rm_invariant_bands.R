@@ -9,7 +9,7 @@
 
 rm_invariant_bands <- function(DataMatrix, Spectral) {
   # samples with inf value are eliminated
-  for (i in 1:ncol(DataMatrix)) {
+  for (i in seq_len(ncol(DataMatrix))) {
     elim <- which(DataMatrix[, i] == Inf)
     if (length(elim) > 0) DataMatrix <- DataMatrix[-elim, ]
   }

@@ -40,8 +40,8 @@ continuumRemoval <- function(Minit, Spectral_Bands, p = NULL) {
     nb.Intercept <- 0
     # continues until arbitrary stopping criterion:
     # stops when reach last spectral band (all values before last = 0)
-    # while (max(Still.Need.CR[, 1:(nbBands - 2)]) == 1 & (nb.Intercept <= (nbBands / 2))) {
-    while (max(Still.Need.CR[, 1:(nbBands - 2)]) == 1) {
+    # while (max(Still.Need.CR[, seq_len(nbBands - 2)]) == 1 & (nb.Intercept <= (nbBands / 2))) {
+    while (max(Still.Need.CR[, seq_len((nbBands - 2))]) == 1) {
       nb.Intercept <- nb.Intercept + 1
       # identify samples still needing continuum removal
       Sel <- which(Still.Need.CR[,(nbBands-2)]==1)

@@ -68,7 +68,7 @@ init_PCoA <- function(input_rast, output_dir, window_size, Kmeans_info,
                                                window_size = window_size)
       # eliminate extra samples
       keepBeta <- as.integer(names(which(table(rast_sample2$ID)>=MinSun*window_size**2)))
-      keepBeta <- keepBeta[1:min(c(length(keepBeta),nbSamplesExtra))]
+      keepBeta <- keepBeta[seq_len(min(c(length(keepBeta),nbSamplesExtra)))]
       keepLines <- which(rast_sample2$ID %in% keepBeta)
       # concatenate raster
       rast_sample2 <- rast_sample2[keepLines,]

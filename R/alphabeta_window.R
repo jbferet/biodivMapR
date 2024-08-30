@@ -37,7 +37,7 @@ alphabeta_window <- function(SSwindow, nbclusters,
   nbIter <- length(SSD_full)
   PCoA_BC <- NULL
   if (!is.null(Beta_info)){
-    for (i in 1:nbIter) MatBCtmp[[i]] <- list('mat1' = SSD_full[[i]],
+    for (i in seq_len(nbIter)) MatBCtmp[[i]] <- list('mat1' = SSD_full[[i]],
                                               'mat2' = Beta_info$SSD[[i]])
     MatBCtmp0 <- lapply(X = MatBCtmp, FUN = compute_BCdiss, pcelim)
     MatBCtmp <- Reduce('+', MatBCtmp0)/nbIter

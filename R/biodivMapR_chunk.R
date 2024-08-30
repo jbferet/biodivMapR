@@ -69,7 +69,12 @@ biodivMapR_chunk <- function(blk, r_in, window_size, Kmeans_info, Beta_info = NU
                                      SelectBands = SelectBands)
       # 5- split data chunk by window and by nbCPU to ensure parallel computing
       whichID <- which(names(inputdata) =='win_ID')
-      windows_per_CPU <- split_chunk(inputdata[c(SelectBands, whichID)], nbCPU)
+      inputdata <- cbind(center_reduce(X = inputdata[SelectBands],
+                                       m = Kmeans_info$MinVal,
+                                       sig = Kmeans_info$Range),
+                         'win_ID' = inputdata$win_ID)
+      windows_per_CPU <- split_chunk(inputdata, nbCPU)
+      # windows_per_CPU <- split_chunk(inputdata[c(SelectBands, whichID)], nbCPU)
       SSwindows_per_CPU <- split_chunk(SSchunk, nbCPU)
       # 6- compute diversity metrics
       nbclusters <- dim(Kmeans_info$Centroids[[1]])[1]

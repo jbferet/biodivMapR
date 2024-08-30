@@ -109,7 +109,7 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
   # 7- reshape alpha diversity metrics
   IDwindow <- unlist(windows_per_plot$IDwindow_perCPU)
   res_shapeChunk <- list()
-  for (i in 1:10) {
+  for (i in seq_len(10)) {
     restmp <- unlist(lapply(alphabetaIdx,'[[',i))
     res_shapeChunk[[i]] <- rep(x = NA,nbPlots_init)
     res_shapeChunk[[i]][IDwindow] <- restmp

@@ -36,7 +36,7 @@ wrapperBig_PCA<- function(input_data, input_args){
     if (length(BandsNoVar)>0) input_data[[1]] <- input_data[[1]][[-BandsNoVar]]
     PC_data <- scale(x = input_data[[1]],
                      center = PCA_model$center,
-                     scale = PCA_model$scale) %*% PCA_model$rotation[, 1:Nb_PCs]
+                     scale = PCA_model$scale) %*% PCA_model$rotation[, seq_len(Nb_PCs)]
     output_data$PCA[SelectPixels, ] <- PC_data
   }
   rm(list=setdiff(ls(), "output_data"));gc()

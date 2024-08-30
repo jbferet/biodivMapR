@@ -23,7 +23,7 @@ split_chunk <- function(SSchunk, nbCPU){
 
   # initialize
   SSwindow_perCPU <- IDwindow_perCPU <- list()
-  for (i in 1:length(lbWin)) {
+  for (i in seq_len(length(lbWin))) {
     SSwindow_perCPU[[i]] <- SSwindow$data[lbWin[i]:ubWin[i]]
     IDwindow_perCPU[[i]] <- SSwindow$win_ID[lbWin[i]:ubWin[i]]
   }

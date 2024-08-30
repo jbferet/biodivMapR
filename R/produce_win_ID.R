@@ -14,12 +14,12 @@ produce_win_ID <- function(inputdata, blk, window_size){
   if (blk$nrows%%window_size > 0) nbRows_piece[nbRows] <- blk$nrows%%window_size
   nbCols <- ceiling((nrow(inputdata)/blk$nrows)/window_size)
   win_ID <- win_ID_lowRes <- list()
-  for (i in 1:nbRows){
+  for (i in seq_len(nbRows)){
     # get window ID for 1 line of future product at original res x window_size res
     win_ID_lowRes[[i]] <- seq(1,nbCols)
     # get window ID for 1 line of current raster at original res
     widthwin_ID <- matrix(rep(win_ID_lowRes[[i]],
-                              each = window_size)[1:(nrow(inputdata)/blk$nrows)],
+                              each = window_size)[seq_len(nrow(inputdata)/blk$nrows)],
                           nrow = 1)
     # get window ID for a chunk of current raster at original res
     Chunkwin_ID <- widthwin_ID %x% rep(1, nbRows_piece[i])

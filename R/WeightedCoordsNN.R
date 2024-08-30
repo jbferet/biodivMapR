@@ -10,8 +10,8 @@
 WeightedCoordsNN <- function(NN, knn, PCoA_train) {
 
   # get distance and ID of NN samples
-  DistNN <- NN$x[1:knn]
-  IdNN <- NN$ix[1:knn]
+  DistNN <- NN$x[seq_len(knn)]
+  IdNN <- NN$ix[seq_len(knn)]
   # final location weighted by location of NN
   # if exact same location as nearest neighbor
   if (DistNN[1]==0){

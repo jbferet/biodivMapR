@@ -43,7 +43,7 @@ get_functional_diversity <- function(spectraits,
         baryv <- apply(trvertices, 2, mean)
         # euclidian dstances to Gv (dB)
         distbaryv <- rep(0, nbSpecies)
-        for (j in 1:nbSpecies) distbaryv[j] <- (sum((spectraits[j, ] - baryv)^2) ) ^0.5
+        for (j in seq_len(nbSpecies)) distbaryv[j] <- (sum((spectraits[j, ] - baryv)^2) ) ^0.5
         # mean of dB values
         meandB <- mean(distbaryv)
         # deviations to mean of db
@@ -61,7 +61,7 @@ get_functional_diversity <- function(spectraits,
     # computation of EW for the (nbSpecies - 1) segments to link the nbSpecies points
     EW <- rep(0, nbSpecies - 1)
     flag <- 1
-    for (m in 1 : ((nbSpecies - 1) * nbSpecies / 2)) {
+    for (m in seq_len((nbSpecies - 1) * nbSpecies / 2)) {
       if (mstvect[m] != 0) {
         EW[flag] <- tr.dist[m]
         flag <- flag + 1
@@ -70,7 +70,7 @@ get_functional_diversity <- function(spectraits,
     # computation of the PEW and comparison with 1 / nbSpecies - 1, finally computation of FEve
     minPEW <- rep(0, nbSpecies - 1)
     OdSmO <- 1 / (nbSpecies - 1)
-    for (l in 1 : (nbSpecies - 1)) {
+    for (l in seq_len(nbSpecies - 1)) {
       minPEW[l] <- min((EW[l] / sum(EW)), OdSmO)
     }
     FEve <- ((sum(minPEW)) - OdSmO) / (1 - OdSmO)

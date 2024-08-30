@@ -72,7 +72,7 @@ radiometric_filtering <- function(input_raster_path, output_dir, input_rast_wl,
 
   # produce a list of blocks to read and process
   blk_list <- list()
-  for (chunk in seq(1:length(blk$row))) blk_list[[chunk]] <- list('row'= blk$row[chunk],
+  for (chunk in seq_len(length(blk$row))) blk_list[[chunk]] <- list('row'= blk$row[chunk],
                                                                   'nrows' = blk$nrows[chunk])
   # compute diversity metrics for each block
   for (bloc in blk_list){

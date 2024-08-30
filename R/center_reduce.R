@@ -8,6 +8,6 @@
 #' @export
 
 center_reduce <- function(X, m, sig) {
-  for (i in 1:ncol(X)) X[, i] <- (X[, i] - m[i]) / sig[i]
+  for (i in seq_len(ncol(X))) X[, i] <- (X[, i] - m[i]) / sig[i]
   return(X)
 }

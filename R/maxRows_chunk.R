@@ -18,7 +18,7 @@ maxRows_chunk <- function(blk, maxRows = NULL){
       }
       blkud$row <- NULL
       blkud$n <- length(blkud$nrows)
-      blkud$row <- c(1,cumsum(blkud$nrows)+1)[1:blkud$n]
+      blkud$row <- c(1,cumsum(blkud$nrows)+1)[seq_len(blkud$n)]
       blk$row <- blkud$row
       blk$nrows <- blkud$nrows
       blk$n <- blkud$n
