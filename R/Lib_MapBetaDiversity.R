@@ -237,7 +237,7 @@ ordination_to_NN_list <- function(SSD_subset,
   SSD_subsub <- snow::splitCols(x = SSD_subset, ncl = nb_partitions)
   Sample_Sel2 <- snow::splitCols(x = Sample_Sel, ncl = nb_partitions)
   MatBCtmp <- list()
-  for (i in 1:nb_partitions){
+  for (i in seq_len(nb_partitions)){
     MatBCtmp[[i]] <- list()
     MatBCtmp[[i]]$mat1 <- SSD_subsub[[i]]
     MatBCtmp[[i]]$mat2 <- Sample_Sel2[[i]]
@@ -274,10 +274,10 @@ compute_BETA_FromPlots <- function(SpectralSpecies_Plots,nbclusters,Hellinger = 
   Pixel_Inventory_All <- Pixel_Hellinger_All <- list()
   nb_partitions <- dim(SpectralSpecies_Plots[[1]])[2]
   # for each plot
-  for (plot in 1:nbPolygons){
+  for (plot in seq_len(nbPolygons)){
     # for each repetition
     Pixel_Inventory <- Pixel_Hellinger <- list()
-    for (i in 1:nb_partitions){
+    for (i in seq_len(nb_partitions)){
       # compute distribution of spectral species
       Distritab <- table(SpectralSpecies_Plots[[plot]][,i])
       # compute distribution of spectral species
@@ -294,7 +294,7 @@ compute_BETA_FromPlots <- function(SpectralSpecies_Plots,nbclusters,Hellinger = 
     }
     Pixel_Inventory_All[[plot]] <- Pixel_Inventory
     if (Hellinger == TRUE){
-      for (i in 1:nb_partitions){
+      for (i in seq_len(nb_partitions)){
         # compute Hellinger distance
         Pixel_Hellinger[[i]] <- Pixel_Inventory[[i]]
         Pixel_Hellinger[[i]]$Freq <- sqrt(Pixel_Hellinger[[i]]$Freq/sum(Pixel_Hellinger[[i]]$Freq))
@@ -305,9 +305,9 @@ compute_BETA_FromPlots <- function(SpectralSpecies_Plots,nbclusters,Hellinger = 
 
   # for each pair of plot, compute beta diversity indices
   BC <- list()
-  for(i in 1:nb_partitions){
+  for(i in seq_len(nb_partitions)){
     MergeDiversity <- matrix(0,nrow = nbclusters,ncol = nbPolygons)
-    for(j in 1:nbPolygons){
+    for(j in seq_len(nbPolygons)){
       SelSpectralSpecies <- as.numeric(as.vector(Pixel_Inventory_All[[j]][[i]]$Var1))
       SelFrequency <- Pixel_Inventory_All[[j]][[i]]$Freq
       MergeDiversity[SelSpectralSpecies,j] = SelFrequency
@@ -315,7 +315,7 @@ compute_BETA_FromPlots <- function(SpectralSpecies_Plots,nbclusters,Hellinger = 
     BC[[i]] <- vegan::vegdist(t(MergeDiversity),method="bray")
   }
   BC_mean <- 0*BC[[1]]
-  for(i in 1:nb_partitions){
+  for(i in seq_len(nb_partitions)){
     BC_mean <- BC_mean+BC[[i]]
   }
   BC_mean <- BC_mean/nb_partitions
@@ -324,9 +324,9 @@ compute_BETA_FromPlots <- function(SpectralSpecies_Plots,nbclusters,Hellinger = 
   if (Hellinger==TRUE){
     # for each pair of plot, compute Euclidean distance on Hellinger
     Hellmat <- list()
-    for(i in 1:nb_partitions){
+    for(i in seq_len(nb_partitions)){
       MergeDiversity <- matrix(0,nrow = nbclusters,ncol = nbPolygons)
-      for(j in 1:nbPolygons){
+      for(j in seq_len(nbPolygons)){
         SelSpectralSpecies <- as.numeric(as.vector(Pixel_Hellinger_All[[j]][[i]]$Var1))
         SelFrequency <- Pixel_Hellinger_All[[j]][[i]]$Freq
         MergeDiversity[SelSpectralSpecies,j] = SelFrequency
@@ -334,7 +334,7 @@ compute_BETA_FromPlots <- function(SpectralSpecies_Plots,nbclusters,Hellinger = 
       Hellmat[[i]] <- vegan::vegdist(t(MergeDiversity),method="euclidean")
     }
     Hellinger_mean <- 0*Hellmat[[1]]
-    for(i in 1:nb_partitions){
+    for(i in seq_len(nb_partitions)){
       Hellinger_mean <- Hellinger_mean+Hellmat[[i]]
     }
     Hellinger_mean <- Hellinger_mean/nb_partitions
@@ -400,7 +400,7 @@ compute_beta_metrics <- function(ClusterMap_Path,
   }
 
   # read samples from spectral species distribution file
-  Kernels_Ordination <- RandPermKernels[1:Nb_Units_Ordin]
+  Kernels_Ordination <- RandPermKernels[seq_len(Nb_Units_Ordin)]
   Sample_Sel <- extract_samples_from_image(SSD_Path, Sunlit_Pixels$coordTotSort[Kernels_Ordination,])
   gc()
 
@@ -449,7 +449,7 @@ compute_beta_metrics <- function(ClusterMap_Path,
 
   coordTotSort <- snow::splitRows(x = Sunlit_Pixels$coordTotSort, ncl = nbPieces)
   Ordination_est <- list()
-  for (i in 1:nbPieces){
+  for (i in seq_len(nbPieces)){
     message(paste('Computing beta diversity for image subset #',i,' / ',nbPieces))
     # read SSD raster
     SSD_subset <- extract_samples_from_image(SSD_Path, coordTotSort[[i]])
@@ -469,7 +469,7 @@ compute_beta_metrics <- function(ClusterMap_Path,
   BetaDiversity <- as.matrix(Ordination_est, ncol = dimMDS)
   BetaDiversityRGB <- array(NA, c(as.double(HDR_Sunlit$lines), as.double(HDR_Sunlit$samples), dimMDS))
   BetaTmp <- matrix(NA, nrow = as.double(HDR_Sunlit$lines), ncol = as.double(HDR_Sunlit$samples))
-  for (i in 1:dimMDS) {
+  for (i in seq_len(dimMDS)) {
     BetaTmp[Select_Sunlit] <- BetaDiversity[, i]
     BetaDiversityRGB[, , i] <- BetaTmp
   }
@@ -479,7 +479,7 @@ compute_beta_metrics <- function(ClusterMap_Path,
   HDR_Beta$bands <- dimMDS
   HDR_Beta$`data type` <- 4
   PCs <- list()
-  for (i in 1:dimMDS) {
+  for (i in seq_len(dimMDS)) {
     PCs <- c(PCs, paste(PCname,'#', i,sep = ''))
   }
   PCs <- paste(PCs, collapse = ', ')
@@ -550,8 +550,8 @@ compute_BCdiss <- function(SSDList, pcelim=0.02) {
 WeightedCoordsNN <- function(NN, knn, BetaDiversity0) {
 
   # get distance and ID of NN samples
-  DistNN <- NN$x[1:knn]
-  IdNN <- NN$ix[1:knn]
+  DistNN <- NN$x[seq_len(knn)]
+  IdNN <- NN$ix[seq_len(knn)]
   # final location weighted by location of NN
   # if exact same location as nearest neighbor
   if (DistNN[1]==0){

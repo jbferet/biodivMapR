@@ -25,7 +25,7 @@ build_image_from_list <- function(Image_Subsets, ipix, jpix, nbBands) {
   Image <- array(NA, c(ipix, jpix, nbBands))
   Line_Begin <- 0
   Line_End <- 0
-  for (i in 1:length(Image_Subsets)) {
+  for (i in seq_len(length(Image_Subsets))) {
     Line_Begin <- Line_End + 1
     Line_End <- Line_End + dim(Image_Subsets[[i]])[1]
     Image[Line_Begin:Line_End, , ] <- Image_Subsets[[i]]
@@ -45,7 +45,7 @@ build_image_from_list <- function(Image_Subsets, ipix, jpix, nbBands) {
 #' @export
 
 center_reduce <- function(X, m, sig) {
-  for (i in 1:ncol(X)) {
+  for (i in seq_len(ncol(X))) {
     X[, i] <- (X[, i] - m[i]) / sig[i]
   }
   return(X)
@@ -149,7 +149,7 @@ create_hdr <- function(ImPath, Sensor = 'unknown', SpectralBands = NULL,
 
 rm_invariant_bands <- function(DataMatrix, Spectral) {
   # samples with inf value are eliminated
-  for (i in 1:ncol(DataMatrix)) {
+  for (i in seq_len(ncol(DataMatrix))) {
     elim <- which(DataMatrix[, i] == Inf)
     if (length(elim) > 0) {
       DataMatrix <- DataMatrix[-elim, ]
@@ -319,7 +319,7 @@ exclude_spectral_domains <- function(ImPath, Excluded_WL = FALSE) {
   if ("wavelength" %in% names(HDR)) {
     wl <- HDR$wavelength
     WaterVapor <- c()
-    for (w in 1:nrow(Excluded_WL)) {
+    for (w in seq_len(nrow(Excluded_WL))) {
       WaterVapor <- c(WaterVapor, which(wl > Excluded_WL[w, 1] & wl < Excluded_WL[w, 2]))
     }
     if (!length(WaterVapor) == 0) {
@@ -454,7 +454,7 @@ extract_samples_from_image <- function(ImPath, coordPix, MaxRAM = FALSE, Already
   # problems if target pixels  unevenly distributed in image
   coordPix_List <- split_pixel_samples(coordPix, Lines_Per_Read)
   Sample_Sel <- list()
-  for (i in 1:length(coordPix_List)) {
+  for (i in seq_len(length(coordPix_List))) {
     Sample_Sel[[i]] <- extract_pixels(coordPix_List[[i]], ImPath, HDR)
   }
   Sample_Sel <- do.call("rbind", Sample_Sel)
@@ -524,7 +524,7 @@ extract.big_raster <- function(ImPath, rowcol, MaxRAM=.50){
   LinesBlock <- floor(MaxRAM/LineSizeGb)
   rowcol$rowInBlock <- ((rowcol$row-1) %% LinesBlock)+1  # row in block number
   rowcol$block <- floor((rowcol$row-1)/LinesBlock)+1  # block number
-  rowcol$sampleIndex <- 1:nrow(rowcol)  # sample index to reorder result
+  rowcol$sampleIndex <- seq_len(nrow(rowcol))  # sample index to reorder result
 
   sampleList = lapply(unique(rowcol$block), function(iblock){
     rc <- rowcol[rowcol$block==iblock,]
@@ -629,15 +629,15 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions,
   Column <- floor((pixselected - 1) / nlines) + 1 # column
   if(is.matrix(kernel)){
     coordPixK = list()
-    mesh=matlab::meshgrid(-(ncol(kernel)%/%2):(ncol(kernel)%/%2), -(nrow(kernel)%/%2):(nrow(kernel)%/%2))
+    mesh <- matlab::meshgrid(-(ncol(kernel)%/%2):(ncol(kernel)%/%2), -(nrow(kernel)%/%2):(nrow(kernel)%/%2))
     for(p in which(kernel!=0)){
-      coordPixK[[p]] = data.table::data.table(row = Row+mesh$y[p], col = Column+mesh$x[p], id=1:length(Row))
+      coordPixK[[p]] <- data.table::data.table(row = Row+mesh$y[p], col = Column+mesh$x[p], id=seq_len(length(Row)))
     }
     coordPix = data.table::rbindlist(coordPixK, idcol='Kind')
     # Order along coordPix$id for further use in noise, mnf
     setorder(coordPix, 'id')
   }else{
-    coordPix = data.table::data.table(row = Row, col = Column, id = 1:length(Row))
+    coordPix <- data.table::data.table(row = Row, col = Column, id = seq_len(length(Row)))
   }
   # sort based on .bil dim order, i.e. band.x.y or band.col.row
   # TODO: sorting may not be necessary anymore, neither unique coordinates
@@ -645,7 +645,7 @@ get_random_subset_from_image <- function(ImPath, MaskPath, nb_partitions,
 
   # make unique
   ucoordPix <- unique(coordPix[,c('row','col')])
-  ucoordPix[['sampleIndex']] = 1:nrow(ucoordPix)
+  ucoordPix[['sampleIndex']] <- seq_len(nrow(ucoordPix))
 
   # 2- Extract samples from image
   # TODO: if coordPix can be a data.frame it would be easier
@@ -818,14 +818,14 @@ mean_filter <- function(Image, SizeFilt,NA_remove = FALSE) {
     Image <- array(Image,dim = c(nbi,nbj,1))
   }
   ImageSmooth <- array(0,c(nbi,nbj,dim(Image)[3]))
-  for (band in 1: dim(Image)[3]){
+  for (band in seq_len(dim(Image)[3])){
     E <- matlab::padarray(Image[,,band], c(SizeFilt, SizeFilt), "symmetric", "both")
     ImageSmooth_tmp <- matrix(0, nrow = nbi, ncol = nbj)
     Mat2D <- MatSun <- matrix(0, nrow = ((2 * SizeFilt) + 1)^2, ncol = nbj)
-    spl <- split(1:nbj, 1:((2 * SizeFilt) + 1))
+    spl <- split(seq_len(nbj), seq_len(((2 * SizeFilt) + 1)))
     mid <- ceiling((((2 * SizeFilt) + 1)^2) / 2)
     for (i in (SizeFilt + 1):(nbi + SizeFilt)) {
-      for (j in 1:((2 * SizeFilt) + 1)) {
+      for (j in seq_len(((2 * SizeFilt) + 1))) {
         # create a 2D matrix
         Mat2D[, spl[[j]]] <- matrix(E[(i - SizeFilt):(i + SizeFilt), (spl[[j]][1]):(utils::tail(spl[[j]], n = 1) + 2 * SizeFilt)], nrow = ((2 * SizeFilt) + 1)^2)
       }
@@ -984,7 +984,7 @@ read_image_subset <- function(ImPath, HDR, Line_Start,Lines_To_Read,ImgFormat='3
   # list pixels
   coordPix <- expand.grid(ListRows,ListCols)
   names(coordPix) <- c('row','col')
-  coordPix[['sampleIndex']] = 1:nrow(coordPix)
+  coordPix[['sampleIndex']] <- seq_len(nrow(coordPix))
   # 2- Extract samples from image
   Sample_Sel <- extract.big_raster(ImPath, coordPix[,1:2])
   Sample_Sel <- array(matrix(as.numeric(unlist(Sample_Sel)),ncol = HDR$bands),c(Lines_To_Read,HDR$samples,HDR$bands))
@@ -1132,7 +1132,7 @@ split_pixel_samples <- function(coordPix, Lines_Per_Read) {
   Max.Line[length(Max.Line)] <- Max.Line[length(Max.Line)] + 1
   coordPix_List <- list()
   ii <- 0
-  for (i in 1:length(Min.Line)) {
+  for (i in seq_len(length(Min.Line))) {
     if (dim(coordPix)[1] > 1) {
       selpix <- which(coordPix[, 1] >= Min.Line[i] & coordPix[, 1] <= Max.Line[i])
     } else if (dim(coordPix)[1] == 1) {
@@ -1256,8 +1256,8 @@ where_to_read <- function(HDR, nbPieces) {
   # elements in input data
   lb <- 1 + ((Start_Per_Chunk - 1) * Data_Per_Line)
   ub <- lb - 1
-  ReadByte_Start <- lb[1:nbPieces]
-  ReadByte_End <- ub[2:(nbPieces + 1)]
+  ReadByte_Start <- lb[seq_len(nbPieces)]
+  ReadByte_End <- ub[seq_len(nbPieces)+1]
   Lines_Per_Chunk <- diff(Start_Per_Chunk)
   my_list <- list("ReadByte_Start" = ReadByte_Start, "ReadByte_End" = ReadByte_End, "Lines_Per_Chunk" = Lines_Per_Chunk,'Line_Start'=Start_Per_Chunk)
   return(my_list)
@@ -1279,12 +1279,12 @@ where_to_read_kernel <- function(HDR, nbPieces, SE_Size) {
   Start_Per_Chunk <- ceiling(seq(1, (HDR$lines + 1), length.out = nbPieces + 1))
   # Start_Per_Chunk <- Start_Per_Chunk - Start_Per_Chunk %% SE_Size + 1
   Start_Per_Chunk2 <- Start_Per_Chunk - Start_Per_Chunk %% SE_Size + 1
-  Start_Per_Chunk[1:nbPieces] <- Start_Per_Chunk2[1:nbPieces]
+  Start_Per_Chunk[seq_len(nbPieces)] <- Start_Per_Chunk2[seq_len(nbPieces)]
   # elements in input data
   lb <- 1 + ((Start_Per_Chunk - 1) * Data_Per_Line)
   ub <- lb - 1
-  ReadByte_Start <- lb[1:nbPieces]
-  ReadByte_End <- ub[2:(nbPieces + 1)]
+  ReadByte_Start <- lb[seq_len(nbPieces)]
+  ReadByte_End <- ub[seq_len(nbPieces) + 1]
   Lines_Per_Chunk <- diff(Start_Per_Chunk)
   my_list <- list("ReadByte_Start" = ReadByte_Start, "ReadByte_End" = ReadByte_End, "Lines_Per_Chunk" = Lines_Per_Chunk)
   return(my_list)
@@ -1307,7 +1307,7 @@ where_to_write_kernel <- function(HDR_SS, HDR_SSD, nbPieces, SE_Size) {
   # starting line for each chunk of spectral species
   Start_Per_Chunk <- ceiling(seq(1, (HDR_SS$lines + 1), length.out = nbPieces + 1))
   Start_Per_Chunk2 <- Start_Per_Chunk - Start_Per_Chunk %% SE_Size + 1
-  Start_Per_Chunk[1:nbPieces] <- Start_Per_Chunk2[1:nbPieces]
+  Start_Per_Chunk[seq_len(nbPieces)] <- Start_Per_Chunk2[seq_len(nbPieces)]
   # Start_Per_Chunk <- Start_Per_Chunk - Start_Per_Chunk %% SE_Size
   Start_Per_Chunk.SSD <- ceiling((Start_Per_Chunk-1) / SE_Size) + 1
 
@@ -1315,8 +1315,8 @@ where_to_write_kernel <- function(HDR_SS, HDR_SSD, nbPieces, SE_Size) {
   Image_Format <- ENVI_type2bytes(HDR_SSD)
   lb_SSD <- 1 + (((Start_Per_Chunk.SSD - 1) * Data_Per_Line_SSD) * Image_Format$Bytes)
   ub_SSD <- lb_SSD - 1
-  ReadByte_Start.SSD <- lb_SSD[1:nbPieces]
-  ReadByte_End.SSD <- ub_SSD[2:(nbPieces + 1)]
+  ReadByte_Start.SSD <- lb_SSD[seq_len(nbPieces)]
+  ReadByte_End.SSD <- ub_SSD[seq_len(nbPieces) + 1]
   Lines_Per_Chunk.SSD <- diff(Start_Per_Chunk.SSD)
 
   my_list <- list("ReadByte_Start" = ReadByte_Start.SSD, "ReadByte_End" = ReadByte_End.SSD, "Lines_Per_Chunk" = Lines_Per_Chunk.SSD)
@@ -1365,7 +1365,7 @@ Write_Big_Image <- function(ImgWrite,ImagePath,HDR,Image_Format){
   # for each piece of image
   message(paste('Writing raster', ImagePath, sep = ' '))
 
-  for (i in 1:nbPieces) {
+  for (i in seq_len(nbPieces)) {
     # read image and mask data
     Byte_Start <- SeqRead_Image$ReadByte_Start[i]
     Line_Start <- SeqRead_Image$Line_Start[i]
@@ -1428,9 +1428,9 @@ Write_Image_NativeRes <- function(Image,ImagePath,HDR,window_size){
     Image = array(Image,c(HDR$lines,HDR$samples,1))
   }
   Image_FullRes <- array(NA,c(HDR_Full$lines,HDR_Full$samples,HDR_Full$bands))
-  for (band in  1:HDR_Full$bands){
-    for (i in 1:HDR$lines) {
-      for (j in 1:HDR$samples) {
+  for (band in  seq_len(HDR_Full$bands)){
+    for (i in seq_len(HDR$lines)) {
+      for (j in seq_len(HDR$samples)) {
         Image_FullRes[((i-1)*window_size+1):(i*window_size),((j-1)*window_size+1):(j*window_size),band] <- Image[i,j,band]
       }
     }

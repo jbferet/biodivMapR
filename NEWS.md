@@ -1,3 +1,9 @@
+# biodivMapR v1.14.4
+
+## Change
+
+- systematically use seq_len for loops and sequences of indices
+
 # biodivMapR v1.14.3
 
 ## Fix

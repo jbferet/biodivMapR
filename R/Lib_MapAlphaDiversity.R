@@ -132,7 +132,7 @@ compute_ALPHA_FromPlot <- function(SpectralSpecies_Plot,pcelim = 0.02){
 
   nb_partitions <- dim(SpectralSpecies_Plot)[2]
   Richness.tmp <- Shannon.tmp <- Fisher.tmp <- Simpson.tmp <- vector(length = nb_partitions)
-  for (i in 1:nb_partitions){
+  for (i in seq_len(nb_partitions)){
     # compute distribution of spectral species
     Distritab <- table(SpectralSpecies_Plot[,i])
     # compute distribution of spectral species
@@ -873,7 +873,7 @@ RW_bytes_all <- function(SeqRead_SS, SeqWrite_SSD, SeqWrite_Sunlit,
                          SeqRead_Mask = FALSE){
   nbPieces <- length(SeqRead_SS$ReadByte_Start)
   ReadWrite <- list()
-  for (i in 1:nbPieces) {
+  for (i in seq_len(nbPieces)) {
     ReadWrite[[i]] <- list()
     # ReadWrite[[i]]$RW_SS <- ReadWrite[[i]]$RW_SSD <- ReadWrite[[i]]$RW_Sunlit <- list()
     ReadWrite[[i]]$RW_SS <- RW_bytes(SeqRead_SS, i)
