@@ -21,7 +21,6 @@
 #' @param MinSun numeric. minimum amount of sunlit pixels in the plots
 #' @param maxPixel_kmeans numeric. max number of pixels extracted for kmeans
 #' @param dimPCoA numeric. number of dimensions of PCoA
-#' @param verbose boolean. set true for messages
 #' @param progressbar boolean. set true for progress bar during clustering
 #' @param filetype character. driver for output diversity raster data
 #'
@@ -36,7 +35,7 @@ biodivMapR_full <- function(input_raster_path, output_dir, window_size,
                             nbSamples_beta = 1000, SelectBands = NULL,
                             alphametrics = 'shannon', Hill_order = 1, FDmetric = NULL,
                             pcelim = 0.02, nbCPU = 1, nbIter = 20, MinSun = 0.25,
-                            maxPixel_kmeans = 1e5, dimPCoA = 3, verbose = T,
+                            maxPixel_kmeans = 1e5, dimPCoA = 3,
                             progressbar = T, filetype = 'GTiff'){
 
   # read input rasters
@@ -52,12 +51,13 @@ biodivMapR_full <- function(input_raster_path, output_dir, window_size,
   # compute kmeans from random subset of image
   Kmeans_info <- init_kmeans(input_rast = input_rast,
                              output_dir = output_dir,
-                             maxPixel_kmeans = maxPixel_kmeans,
                              input_mask = input_mask,
                              SelectBands = SelectBands,
                              nbclusters = nbclusters,
                              Kmeans_info_save = Kmeans_info_save,
                              Kmeans_info_read = Kmeans_info_read,
+                             maxPixel_kmeans = maxPixel_kmeans,
+                             nbIter = nbIter,
                              nbCPU = nbCPU)
 
   # compute beta diversity for training data
@@ -73,6 +73,7 @@ biodivMapR_full <- function(input_raster_path, output_dir, window_size,
   # compute alpha and beta diversity from raster data
   # input_rasters <- list('main' = input_raster_path,
   #                       'mask' = input_mask_path)
+  options(fundiversity.memoise = FALSE)
   ab_div_metrics <- get_raster_diversity(input_raster_path = input_raster_path,
                                          input_mask_path = input_mask_path,
                                          Kmeans_info = Kmeans_info,

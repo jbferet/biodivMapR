@@ -1,3 +1,7 @@
+# biodivMapR2 v2.1.2
+## change
+- use package fundiversity to compute diversity metrics
+
 # biodivMapR v2.1.1
 ## Fix
 - Fixed testthat

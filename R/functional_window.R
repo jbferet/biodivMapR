@@ -12,7 +12,7 @@
 
 functional_window <- function(SSwindow, FDmetric = c('FRic', 'FEve', 'FDiv'),
                               p = NULL){
-  fmetrics <- data.frame('FRic'= NA, 'FEve'= NA, 'FDiv'= NA)
+  fmetrics <- data.frame('FRic'= NA, 'FEve'= NA, 'FDiv'= NA, 'FDis' = NA, 'FRaoq' = NA)
   if (nrow(SSwindow)>ncol(SSwindow)) fmetrics <- get_functional_diversity(spectraits = SSwindow,
                                                                           FDmetric = FDmetric)
   if (!is.null(p)) p()
