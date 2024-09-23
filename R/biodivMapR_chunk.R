@@ -28,7 +28,8 @@ biodivMapR_chunk <- function(blk, r_in, window_size, Kmeans_info, Beta_info = NU
                              SelectBands = NULL, pcelim = 0.02, nbCPU = 1,
                              MinSun = 0.25, p = NULL){
   list_allidx <- c('richness', 'shannon', 'simpson', 'fisher', 'hill')
-  list_Funcidx <- FDmetric <- c('FRic', 'FEve', 'FDiv', 'FDis', 'FRaoq')
+  # list_Funcidx <- FDmetric <- c('FRic', 'FEve', 'FDiv', 'FDis', 'FRaoq')
+  list_Funcidx <- c('FRic', 'FEve', 'FDiv', 'FDis', 'FRaoq')
   FunctionalIdx_CPU <- NULL
   richness <- shannon <- simpson <- fisher <- hill <- list('mean' = NA, 'sd' = NA)
   # 1- read input files

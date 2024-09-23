@@ -23,7 +23,7 @@ spectralspecies_per_polygon <- function(SpatVector, input_rast,
                                         MinSun = 0.25){
 
   FRic <- FEve <- FDiv <- FunctDiv <- NULL
-  SSValid <- AttributeTable <- NULL
+  SSValid <- NULL
   # extract pixel info from vector data
   if (is.null(rast_sample)){
     rastext <- extract_vect_from_rast(SpatVector = SpatVector,
@@ -68,7 +68,9 @@ spectralspecies_per_polygon <- function(SpatVector, input_rast,
       #                        'FDiv' = unlist(lapply(FunctDiv, '[[','FDiv')))
       FunctDiv <- data.frame('FRic' = unlist(lapply(FunctDiv, '[[',1)),
                              'FEve' = unlist(lapply(FunctDiv, '[[',2)),
-                             'FDiv' = unlist(lapply(FunctDiv, '[[',3)))
+                             'FDiv' = unlist(lapply(FunctDiv, '[[',3)),
+                             'FDis' = unlist(lapply(FunctDiv, '[[',4)),
+                             'FRaoq' = unlist(lapply(FunctDiv, '[[',5)))
     }
   } else if (inherits(SpatVector, what = 'SpatVector')){
     AttributeTable <- values(SpatVector)

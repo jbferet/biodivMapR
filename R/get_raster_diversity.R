@@ -26,7 +26,7 @@ get_raster_diversity <- function(input_raster_path, Kmeans_info, Beta_info,
                                  FDmetric = NULL, window_size, maxRows = NULL,
                                  pcelim = 0.02, nbCPU = 1, MinSun = 0.25){
   message('Compute diversity metrics for full rasters')
-  if (is.null(maxRows)) maxRows <- window_size
+  if (is.null(maxRows)) maxRows <- 20*window_size
   # prepare to read input raster data
   r_in <- list()
   if (is.null(names(input_raster_path))) names(input_raster_path) <- seq_len(length(input_raster_path))

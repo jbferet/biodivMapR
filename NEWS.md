@@ -1,3 +1,10 @@
+# biodivMapR2 v2.1.3
+## fix
+- correct get_diversity_from_plots: output for FDis corrected to FDis instead of FDiv
+- correct spectralspecies_per_polygon : AttributeTable not set to NULL
+## addition
+- computes all functional diversity when running get_diversity_from_plots 
+
 # biodivMapR2 v2.1.2
 ## change
 - use package fundiversity to compute diversity metrics

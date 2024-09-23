@@ -43,7 +43,7 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
   # read vector data
   if (inherits(validation_vect, what = 'SpatVectorCollection') & is.null(rast_sample)){
     SSValid <- Attributes <- list()
-    FRic <- FEve <- FDiv <- list()
+    FRic <- FEve <- FDiv <- FDis <- FRaoq <- list()
     nbPlots_init <- 0
     for (ind_vect in seq_len(length(validation_vect))){
       ssvect <- spectralspecies_per_polygon(SpatVector = validation_vect[[ind_vect]],
@@ -64,13 +64,17 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
         FRic[[ind_vect]] <- ssvect$FunctDiv$FRic
         FEve[[ind_vect]] <- ssvect$FunctDiv$FEve
         FDiv[[ind_vect]] <- ssvect$FunctDiv$FDiv
+        FDis[[ind_vect]] <- ssvect$FunctDiv$FDis
+        FRaoq[[ind_vect]] <- ssvect$FunctDiv$FRaoq
       }
     }
     SSValid <- do.call(rbind,SSValid)
     Attributes <- do.call(rbind,Attributes)
     FunctDiv <- data.frame('FRic' = unlist(FRic),
                            'FEve' = unlist(FEve),
-                           'FDiv' = unlist(FDiv))
+                           'FDiv' = unlist(FDiv),
+                           'FDis' = unlist(FDis),
+                           'FRaoq' = unlist(FRaoq))
   } else if (inherits(validation_vect, what = 'SpatVector') | (!is.null(rast_sample))){
     ssvect <- spectralspecies_per_polygon(SpatVector = validation_vect,
                                           input_rast = input_rast,
@@ -90,7 +94,9 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
     }
     FunctDiv <- data.frame('FRic' = ssvect$FunctDiv$FRic,
                            'FEve' = ssvect$FunctDiv$FEve,
-                           'FDiv' = ssvect$FunctDiv$FDiv)
+                           'FDiv' = ssvect$FunctDiv$FDiv,
+                           'FDis' = ssvect$FunctDiv$FDis,
+                           'FRaoq' = ssvect$FunctDiv$FRaoq)
   }
 
   windows_per_plot <- split_chunk(SSchunk = SSValid, nbCPU = 1)
@@ -165,9 +171,13 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
     FunctDiv$ID_biodivMapR <- Attributes$ID_biodivMapR
     FunctDiv$id <- Attributes$id
     FunctDiv$source <- Attributes$source
+    Attributes$FRic <- FunctDiv$FRic
+    Attributes$FEve <- FunctDiv$FEve
+    Attributes$FDiv <- FunctDiv$FDiv
+    Attributes$FDis <- FunctDiv$FDis
+    Attributes$FRaoq <- FunctDiv$FRaoq
   }
   if (verbose == T) message('diversity computed from vector plot network')
-  return(list('validation_AlphaBeta' = Attributes,
-              'BC_dissimilarity' = MatBC_Full,
-              'validation_Functional' = FunctDiv))
+  return(list('specdiv' = Attributes,
+              'BC_dissimilarity' = MatBC_Full))
 }
