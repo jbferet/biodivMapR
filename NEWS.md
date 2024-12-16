@@ -1,3 +1,9 @@
+# biodivMapR v1.14.5
+
+## fix 
+
+- 'gdalUtilities::gdalinfo' causes an error with sf 1.0-19. Use 'sf::gdal_utils' instead in function get_gdal_info
+
 # biodivMapR v1.14.4
 
 ## Change

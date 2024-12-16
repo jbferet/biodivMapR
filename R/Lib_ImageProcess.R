@@ -693,15 +693,17 @@ get_byte_order <- function() {
 #' @param x character. Raster image path.
 #' @return list. Nested list of raster characteristics.
 #' @import magrittr
-#' @importFrom gdalUtilities gdalinfo
+#' @importFrom sf gdal_utils
 #' @importFrom jsonlite fromJSON
 #' @export
 get_gdal_info <- function(x){
   x <- normalizePath(x)
   if(!file.exists(x))
     stop("File not found: ", x)
-  gdalUtilities::gdalinfo(x, json = TRUE, quiet = TRUE) %>%
+  sf::gdal_utils("info", destfile, options = "-json") |>
     jsonlite::fromJSON()
+  # gdalUtilities::gdalinfo(x, json = TRUE, quiet = TRUE) %>%
+  #   jsonlite::fromJSON()
 }
 #' get hdr name from image file name, assuming it is BIL format
 #'
