@@ -700,7 +700,7 @@ get_gdal_info <- function(x){
   x <- normalizePath(x)
   if(!file.exists(x))
     stop("File not found: ", x)
-  sf::gdal_utils("info", destfile, options = "-json") |>
+  sf::gdal_utils("info", x, options = "-json") |>
     jsonlite::fromJSON()
   # gdalUtilities::gdalinfo(x, json = TRUE, quiet = TRUE) %>%
   #   jsonlite::fromJSON()
