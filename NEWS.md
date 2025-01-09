@@ -1,3 +1,9 @@
+# biodivMapR v1.14.6
+
+## fix 
+
+- corrects bug in function get_gdal_info (variable destfile unknown)
+
 # biodivMapR v1.14.5
 
 ## fix 
