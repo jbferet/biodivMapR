@@ -1,3 +1,19 @@
+# biodivMapR2 v2.1.4
+## fix
+- in 'get_diversity_from_plots' : 
+- initialize Attributes with nrow = nbPlots_init
+- initialize functional diversity metrics in Attributes with NA
+- correct get_diversity_from_plots : assign to beta diversity values instead of mean Hill
+- correct extract_vect_from_rast : update AttributeTable and discard vectors with no data
+
+## addition
+- create functions init_kmeans_samples and init_PCoA_samples to process samples 
+previously extracted independently from an input raster
+- possibility to provide name for output files in addition to directory
+
+## change
+- possibility to define updated mask file name as input for radiometric_filtering
+
 # biodivMapR2 v2.1.3
 ## fix
 - correct get_diversity_from_plots: output for FDis corrected to FDis instead of FDiv

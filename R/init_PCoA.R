@@ -33,9 +33,8 @@ init_PCoA <- function(input_rast, output_dir, window_size, Kmeans_info,
 
   # if path for data required to map beta diversity provided
   if (!is.null(Beta_info_read)) {
-    if (file.exists(Beta_info_read)){
-      load(Beta_info_read)
-    } else {
+    if (file.exists(Beta_info_read)) load(Beta_info_read)
+    if (!file.exists(Beta_info_read)){
       print_error_message('Beta_info_file_missing')
       Beta_info_read <- NULL
     }
@@ -75,46 +74,52 @@ init_PCoA <- function(input_rast, output_dir, window_size, Kmeans_info,
       rast_sample2$ID <- rast_sample2$ID + nbSamples
       rast_sample <- rbind(rast_sample, rast_sample2)
     }
-    # list per plot
-    rast_sample <- rast_sample %>% group_split(ID, .keep = F)
-    if (verbose ==T) message('compute spectral species from beta plots')
-    # compute spectral species for each plot
-    ResDist <- lapply(X = rast_sample, FUN = apply_kmeans,
-                      Kmeans_info = Kmeans_info,
-                      SelectBands = SelectBands)
 
-    # spectral species distribution
-    SSdist <- list()
-    for (iter in names(ResDist[[1]])) SSdist[[iter]] <- lapply(ResDist, '[[',iter)
-    # get nbIter and nbclusters
-    nbIter <- length(Kmeans_info$Centroids)
-    nbclusters <- dim(Kmeans_info$Centroids[[1]])[1]
-    # compute spectral species distribution for each cluster & BC dissimilarity
-    if (verbose ==T) message('compute dissimilarity among plots')
-    # plan(multisession, workers = nbCPU)
-	cl <- parallel::makeCluster(nbCPU)
-    plan("cluster", workers = cl)
-    handlers(global = TRUE)
-    handlers("cli")
-    with_progress({
-      p <- progressr::progressor(steps = nbIter)
-      Beta_info <- future.apply::future_lapply(SSdist,
-                                               FUN = get_BCdiss_from_SSD,
-                                               nbclusters = nbclusters,
-                                               pcelim = pcelim, p = p)
-    })
-	parallel::stopCluster(cl)
-    plan(sequential)
-    MatBC_iter <- lapply(Beta_info, '[[','MatBC')
-    SSD <- lapply(Beta_info, '[[','SSD')
-    MatBC <- Reduce('+', MatBC_iter)/nbIter
-    MatBCdist <- stats::as.dist(MatBC, diag = FALSE, upper = FALSE)
-    BetaPCO <- labdsv::pco(MatBCdist, k = dimPCoA)
-    # Beta_Ordination_sel <- BetaPCO$points
-    Beta_info <- list('SSD' = SSD, 'MatBC' = MatBC, 'BetaPCO' = BetaPCO)
-    if (is.null(Beta_info_save)) Beta_info_save <- file.path(output_dir,
-                                                             'Beta_info.RData')
-    save(Beta_info, file = Beta_info_save)
+    Beta_info <- init_PCoA_samples(rast_sample = rast_sample, output_dir = output_dir,
+                                   Kmeans_info = Kmeans_info, SelectBands = SelectBands,
+                                   pcelim = pcelim, dimPCoA = dimPCoA, nbCPU = nbCPU,
+                                   Beta_info_save = Beta_info_save, verbose = verbose)
+
+    # # list per plot
+    # rast_sample <- rast_sample %>% group_split(ID, .keep = F)
+    # if (verbose ==T) message('compute spectral species from beta plots')
+    # # compute spectral species for each plot
+    # ResDist <- lapply(X = rast_sample, FUN = apply_kmeans,
+    #                   Kmeans_info = Kmeans_info,
+    #                   SelectBands = SelectBands)
+    #
+    # # spectral species distribution
+    # SSdist <- list()
+    # for (iter in names(ResDist[[1]])) SSdist[[iter]] <- lapply(ResDist, '[[',iter)
+    # # get nbIter and nbclusters
+    # nbIter <- length(Kmeans_info$Centroids)
+    # nbclusters <- dim(Kmeans_info$Centroids[[1]])[1]
+    # # compute spectral species distribution for each cluster & BC dissimilarity
+    # if (verbose ==T) message('compute dissimilarity among plots')
+    # # plan(multisession, workers = nbCPU)
+    # cl <- parallel::makeCluster(nbCPU)
+    # plan("cluster", workers = cl)
+    # handlers(global = TRUE)
+    # handlers("cli")
+    # with_progress({
+    #   p <- progressr::progressor(steps = nbIter)
+    #   Beta_info <- future.apply::future_lapply(SSdist,
+    #                                            FUN = get_BCdiss_from_SSD,
+    #                                            nbclusters = nbclusters,
+    #                                            pcelim = pcelim, p = p)
+    # })
+    # parallel::stopCluster(cl)
+    # plan(sequential)
+    # MatBC_iter <- lapply(Beta_info, '[[','MatBC')
+    # SSD <- lapply(Beta_info, '[[','SSD')
+    # MatBC <- Reduce('+', MatBC_iter)/nbIter
+    # MatBCdist <- stats::as.dist(MatBC, diag = FALSE, upper = FALSE)
+    # BetaPCO <- labdsv::pco(MatBCdist, k = dimPCoA)
+    # # Beta_Ordination_sel <- BetaPCO$points
+    # Beta_info <- list('SSD' = SSD, 'MatBC' = MatBC, 'BetaPCO' = BetaPCO)
+    # if (is.null(Beta_info_save)) Beta_info_save <- file.path(output_dir,
+    #                                                          'Beta_info.RData')
+    # save(Beta_info, file = Beta_info_save)
   }
   return(Beta_info)
 }

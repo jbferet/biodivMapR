@@ -48,11 +48,9 @@ get_raster_diversity <- function(input_raster_path, Kmeans_info, Beta_info,
   nbchunks <- length(blk$row)
   for (i in seq_len(nbchunks)) blk_list[[i]] <- list('row'= blk$row[i],
                                                      'nrows' = blk$nrows[i])
-  # compute diversity metrics for each block
-  handlers(global = TRUE)
-  handlers("cli")
-  with_progress({
-    p <- progressr::progressor(steps = length(blk_list))
+
+  if (nbCPU==1){
+    # compute diversity metrics for each block
     ab_div_metrics <- lapply(X = blk_list,
                              FUN = biodivMapR_chunk,
                              Kmeans_info = Kmeans_info,
@@ -64,8 +62,30 @@ get_raster_diversity <- function(input_raster_path, Kmeans_info, Beta_info,
                              window_size = window_size,
                              SelectBands = SelectBands,
                              pcelim = pcelim, nbCPU = nbCPU,
-                             MinSun = MinSun, p = p)
-  })
+                             MinSun = MinSun)
+  } else {
+    if (nbCPU>1){
+    # compute diversity metrics for each block
+    handlers(global = TRUE)
+    handlers("cli")
+    with_progress({
+      p <- progressr::progressor(steps = length(blk_list))
+      ab_div_metrics <- lapply(X = blk_list,
+                               FUN = biodivMapR_chunk,
+                               Kmeans_info = Kmeans_info,
+                               Beta_info = Beta_info,
+                               alphametrics = alphametrics,
+                               Hill_order = Hill_order,
+                               FDmetric = FDmetric,
+                               r_in = r_in,
+                               window_size = window_size,
+                               SelectBands = SelectBands,
+                               pcelim = pcelim, nbCPU = nbCPU,
+                               MinSun = MinSun, p = p)
+    })
+  }
+
+  }
   for (fid in names(r_in)) terra::readStop(r_in[[fid]])
   return(ab_div_metrics)
 }

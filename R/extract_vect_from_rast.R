@@ -31,6 +31,8 @@ extract_vect_from_rast <- function(SpatVector, input_rast,
     rast_sample <- rast_sample[sel,]
   }
   rast_sample <- clean_NAsInf(rast_sample)
+  # update attribute table to eliminate plots which include no information
+  AttributeTable <- AttributeTable[unique(rast_sample$ID),]
   # get plot size
   nbPix_per_plot <- data.frame(table(rast_sample$ID))
   # only get common plots between nbPix_per_plot and nbPix_per_plot_init

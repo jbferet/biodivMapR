@@ -22,8 +22,7 @@ spectralspecies_per_polygon <- function(SpatVector, input_rast,
                                         rast_sample = NULL, AttributeTable = NULL,
                                         MinSun = 0.25){
 
-  FRic <- FEve <- FDiv <- FunctDiv <- NULL
-  SSValid <- NULL
+  FunctDiv <- SSValid <- NULL
   # extract pixel info from vector data
   if (is.null(rast_sample)){
     rastext <- extract_vect_from_rast(SpatVector = SpatVector,

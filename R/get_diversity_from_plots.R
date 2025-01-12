@@ -18,6 +18,7 @@
 #' @param verbose boolean. set true for messages
 #'
 #' @return SpatVector including diversity metrics and BC dissimilarity for the plots
+#' @importFrom dplyr group_split
 #' @export
 
 get_diversity_from_plots <- function(input_rast, validation_vect,
@@ -86,12 +87,20 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
                                           AttributeTable = AttributeTable,
                                           MinSun = MinSun)
     SSValid <- ssvect$SSValid
-    Attributes <- ssvect$AttributeTable
     if (inherits(validation_vect, what = 'SpatVector')) {
       nbPlots_init <- length(validation_vect)
+      nbPlots <- nrow(ssvect$AttributeTable)
+      selPlots <- ssvect$AttributeTable$ID_biodivMapR
     } else if (!is.null(rast_sample)) {
-      nbPlots_init <- length(unique(rast_sample$ID))
+      nbPlots_init <- nbPlots <- length(unique(rast_sample$ID))
+      selPlots <- seq_len(nbPlots_init)
     }
+    Attributes0 <- ssvect$AttributeTable
+    Attributes <- data.frame(matrix(NA, ncol = ncol(ssvect$AttributeTable),
+                                    # nrow = nrow(ssvect$AttributeTable)))
+                                    nrow = nbPlots_init))
+    names(Attributes) <- names(Attributes0)
+    Attributes[selPlots,] <- Attributes0
     FunctDiv <- data.frame('FRic' = ssvect$FunctDiv$FRic,
                            'FEve' = ssvect$FunctDiv$FEve,
                            'FDiv' = ssvect$FunctDiv$FDiv,
@@ -133,7 +142,7 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
   Attributes$hill_sd <- res_shapeChunk[[10]]
   # 8- reshape beta diversity metrics
   if (!is.null(Beta_info)){
-    PCoA_BC0 <- do.call(rbind,lapply(alphabetaIdx,'[[',9))
+    PCoA_BC0 <- do.call(rbind,lapply(alphabetaIdx,'[[',11))
     PCoA_BC <- matrix(data = NA,nrow = nbPlots_init, ncol = dimPCO)
     PCoA_BC[IDwindow,] <- PCoA_BC0
     Attributes$BetaFull_PCoA_1 <- PCoA_BC[,1]
@@ -168,14 +177,15 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
     Attributes$BetaPlots_PCoA_3 <- PCoA_BC[,3]
   }
   if (!is.null(Functional)) {
-    FunctDiv$ID_biodivMapR <- Attributes$ID_biodivMapR
-    FunctDiv$id <- Attributes$id
-    FunctDiv$source <- Attributes$source
-    Attributes$FRic <- FunctDiv$FRic
-    Attributes$FEve <- FunctDiv$FEve
-    Attributes$FDiv <- FunctDiv$FDiv
-    Attributes$FDis <- FunctDiv$FDis
-    Attributes$FRaoq <- FunctDiv$FRaoq
+    # FunctDiv$ID_biodivMapR <- Attributes$ID_biodivMapR
+    # FunctDiv$id <- Attributes$id
+    # FunctDiv$source <- Attributes$source
+    Attributes$FRic <- Attributes$FEve <- Attributes$FDiv <- Attributes$FDis <- Attributes$FRaoq <- NA
+    Attributes$FRic[selPlots] <- FunctDiv$FRic
+    Attributes$FEve[selPlots] <- FunctDiv$FEve
+    Attributes$FDiv[selPlots] <- FunctDiv$FDiv
+    Attributes$FDis[selPlots] <- FunctDiv$FDis
+    Attributes$FRaoq[selPlots] <- FunctDiv$FRaoq
   }
   if (verbose == T) message('diversity computed from vector plot network')
   return(list('specdiv' = Attributes,

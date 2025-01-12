@@ -31,9 +31,8 @@ init_kmeans <- function(input_rast,
 
   # if Kmeans_info_read directs towards RData: read the variable if exists
   if (!is.null(Kmeans_info_read)){
-    if (file.exists(Kmeans_info_read)){
-      load(Kmeans_info_read)
-    } else {
+    if (file.exists(Kmeans_info_read)) load(Kmeans_info_read)
+    if (!file.exists(Kmeans_info_read)){
       print_error_message('Kmeans_info_file_missing')
       Kmeans_info_read = NULL
     }
@@ -49,28 +48,32 @@ init_kmeans <- function(input_rast,
     extent_area <- get_raster_extent(input_rast[[1]])
     # sample plots for initialization of beta diversity
     nbSamples <- Pix_Per_Iter*nbIter
-    if (verbose ==T) message('sampling pixels to compute spectral species')
+    if (verbose ==T)
+      message('sampling pixels to compute spectral species')
     rast_sample <- sample_from_raster(extent_area = extent_area,
                                       nbSamples = nbSamples,
                                       input_rast = input_rast,
                                       input_mask = input_mask)
-    # rast_sample <- sample_exact_raster(extent_area = extent_area,
-    #                                    nbSamples = nbSamples,
-    #                                    input_rast = input_rast,
-    #                                    input_mask = input_mask)
-    # rast_sample$ID <- NULL
-    if (is.null(SelectBands)) SelectBands <- seq_len(dim(rast_sample)[2])
-    rast_sample <- rast_sample %>% select(all_of(SelectBands))
-    # 3- PERFORM KMEANS FOR EACH ITERATION & DEFINE SPECTRAL SPECIES
-    if (verbose ==T) message("perform k-means clustering for each subset and define centroids")
-    Kmeans_info <- get_kmeans(rast_sample = rast_sample,
-                              nbIter = nbIter,
-                              nbclusters = nbclusters, algorithm = algorithm,
-                              nbCPU = nbCPU)
-    if (is.null(Kmeans_info_save)) {
-      Kmeans_info_save <- file.path(output_dir,'Kmeans_info.RData')
-    }
-    save(Kmeans_info, file = Kmeans_info_save)
+
+    Kmeans_info <- init_kmeans_samples(rast_sample = rast_sample,
+                                       output_dir = output_dir,
+                                       SelectBands = SelectBands,
+                                       nbclusters = nbclusters, nbIter = nbIter,
+                                       Kmeans_info_save = Kmeans_info_save,
+                                       algorithm = algorithm, nbCPU = nbCPU,
+                                       verbose = verbose, progressbar = progressbar)
+
+    # if (is.null(SelectBands)) SelectBands <- seq_len(dim(rast_sample)[2])
+    # rast_sample <- rast_sample %>% select(all_of(SelectBands))
+    # # 3- PERFORM KMEANS FOR EACH ITERATION & DEFINE SPECTRAL SPECIES
+    # if (verbose ==T)
+    #   message("perform k-means clustering for each subset and define centroids")
+    # Kmeans_info <- get_kmeans(rast_sample = rast_sample, nbIter = nbIter,
+    #                           nbclusters = nbclusters, algorithm = algorithm,
+    #                           nbCPU = nbCPU)
+    # if (is.null(Kmeans_info_save))
+    #   means_info_save <- file.path(output_dir,'Kmeans_info.RData')
+    # save(Kmeans_info, file = Kmeans_info_save)
   }
   return(Kmeans_info)
 }

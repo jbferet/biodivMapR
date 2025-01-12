@@ -12,16 +12,18 @@
 #' @param NIR numeric. central wavelength corresponding to the NIR spectral band (in nanometers)
 #' @param maxRows numeric. max number of rows in each block
 #' @param filetype character. GDAL driver
+#' @param maskfilename character. name of the updated mask file
 #'
 #' @return MaskPath = updated mask file
 #' @importFrom terra rast blocks readStart writeStart writeValues readStop
 #' @export
 
 radiometric_filtering <- function(input_raster_path, output_dir, input_rast_wl,
-                                  input_mask_path = NULL, NDVI_Thresh = 0.8,
+                                  input_mask_path = NULL, NDVI_Thresh = 0.65,
                                   Blue_Thresh = 500, NIR_Thresh = 1500,
                                   Blue = 480, Red = 670, NIR = 835,
-                                  maxRows = 1000, filetype = 'GTiff') {
+                                  maxRows = 1000, filetype = 'GTiff',
+                                  maskfilename = 'mask_update') {
 
   # produce SpatRaster
   input_rast <- terra::rast(input_raster_path)
@@ -32,9 +34,11 @@ radiometric_filtering <- function(input_raster_path, output_dir, input_rast_wl,
     input_mask <- terra::rast(input_mask_path)
     check_data(input_data = input_mask, arguments = 'input_mask')
   }
-  mask_update <- file.path(output_dir, "mask_update")
+  mask_update <- file.path(output_dir, maskfilename)
   dir.create(path = output_dir,recursive = T,showWarnings = F)
-  if (filetype%in%c('GTiff', 'COG')) mask_update <- paste0(mask_update, '.tif')
+  if (filetype%in%c('GTiff', 'COG') & ! grepl(x = mask_update, pattern = '.tif')) {
+    mask_update <- paste0(mask_update, '.tif')
+  }
 
   # wavelengths expected to perform filtering
   Spectral_Bands <- data.frame('Blue' = Blue, 'Red' = Red, 'NIR' = NIR)

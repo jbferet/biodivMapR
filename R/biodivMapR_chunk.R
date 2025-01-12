@@ -53,7 +53,7 @@ biodivMapR_chunk <- function(blk, r_in, window_size, Kmeans_info, Beta_info = NU
   nbWindows <- max(inputdata$win_ID)
   # 2a- eliminate masked pixels
   if ('mask' %in% names(inputdata)){
-    inputdata <- inputdata %>% dplyr::filter(inputdata$mask == 1)
+    inputdata <- inputdata %>% dplyr::filter(inputdata$mask > 0)
     inputdata$mask <- NULL
   }
   # 2b- eliminate NA and inf
