@@ -79,7 +79,7 @@ We recommend using the most-up-to-date versions of `biodivMapR`, as the previous
 
 
 
-    <!-- * Partitioning of spectral diversity into $\alpha$ and $\beta$ components following an adaptation of the method proposed by [Laliberte et al. (2020)](https://doi.org/10.1111/ele.13429 "Laliberte2020") -->
+<!-- * Partitioning of spectral diversity into $\alpha$ and $\beta$ components following an adaptation of the method proposed by [Laliberte et al. (2020)](https://doi.org/10.1111/ele.13429 "Laliberte2020") -->
 
 ```{=html}
 <!-- * Comparison between spectral diversity metrics and ground observations

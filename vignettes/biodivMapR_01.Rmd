@@ -103,9 +103,9 @@ SCL <- list_files$provider_mask
 geometryAcquisition <- list_files$geometryAcquisition
 ```
 
-<p align="center">
+<p>
 
-<img src="../man/figures/SiteRGB.png" width="50%" height="50%"/>
+<img src="../man/figures/SiteRGB.png" width="70%" height="70%" class="center">
 
 </p>
 

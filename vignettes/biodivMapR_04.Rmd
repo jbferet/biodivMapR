@@ -87,9 +87,9 @@ The figures below illustrates the dissimilarity among ground plots provided as v
 The Bray-Curtis dissimilarity matrix was first computed among all plots. 
 A Principal Coordinate Analysis (PCoA) was then performed on this BC dissimilarity matrix in order to transpose it in a 3D space.
 
-<p align="center">
+<p>
 
-<img src="../man/figures/BetaDiversity_Plots_PCA.png" width="50%" height="50%"/>
+<img src="../man/figures/BetaDiversity_Plots_PCA.png" width="80%" height="80%" class="center">
 
 </p>
 
@@ -97,9 +97,9 @@ The adjustment of PCoA on the ground plots only tends to emphasize the dissimila
 The second figure based on `BetaFull` information instead of `BetaPlots` uses the PCoA space adjusted based on the sampling used to produce the beta diversity maps. 
 The significantly larger amount of data tends to reduce the potential dissimilarity highlighted when focusing on a subset of plots. 
 
-<p align="center">
+<p>
 
-<img src="../man/figures/BetaDiversity_Full_PCA.png" width="50%" height="50%"/>
+<img src="../man/figures/BetaDiversity_Full_PCA.png" width="80%" height="80%" class="center">
 
 </p>
 
@@ -157,9 +157,9 @@ The figures below illustrates the dissimilarity among ground plots provided as v
 The Bray-Curtis dissimilarity matrix was first computed among all plots. 
 A Principal Coordinate Analysis (PCoA) was then performed on this BC dissimilarity matrix in order to transpose it in a 3D space.
 
-<p align="center">
+<p>
 
-<img src="../man/figures/BetaDiversity_Plots_SI.png" width="50%" height="50%"/>
+<img src="../man/figures/BetaDiversity_Plots_SI.png" width="80%" height="80%" class="center">
 
 </p>
 
@@ -167,8 +167,8 @@ As in the previous example, the adjustment of PCoA on the ground plots only tend
 The second figure based on `BetaFull` information instead of `BetaPlots` uses the PCoA space adjusted based on the sampling used to produce the beta diversity maps. 
 The significantly larger amount of data tends to reduce the potential dissimilarity highlighted when focusing on a subset of plots. 
 
-<p align="center">
+<p>
 
-<img src="../man/figures/BetaDiversity_Full_SI.png" width="50%" height="50%"/>
+<img src="../man/figures/BetaDiversity_Full_SI.png" width="80%" height="80%" class="center">
 
 </p>
