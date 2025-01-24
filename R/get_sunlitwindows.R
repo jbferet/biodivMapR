@@ -11,6 +11,7 @@
 #' @export
 #'
 get_sunlitwindows <- function(inputdata, pixperplot, MinSun = 0.25){
+  win_ID <- data <- ID <- NULL
   inputwindow <- inputdata %>% dplyr::group_by(win_ID) %>% nest()
   nbPix_Sunlit <- unlist(purrr::map(inputwindow$data,nrow))
   PCsun <- nbPix_Sunlit/pixperplot

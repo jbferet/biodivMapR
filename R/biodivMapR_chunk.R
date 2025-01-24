@@ -89,11 +89,13 @@ biodivMapR_chunk <- function(blk, r_in, window_size, Kmeans_info, Beta_info = NU
                                                         alphametrics = alphametrics,
                                                         Beta_info = Beta_info,
                                                         Hill_order = Hill_order,
-                                                        pcelim = pcelim)
+                                                        pcelim = pcelim, 
+														future.seed = TRUE)
         if (!is.null(FDmetric)){
           FunctionalIdx_CPU <- future.apply::future_lapply(X = windows_per_CPU$SSwindow_perCPU,
                                                            FUN = functional_window_list,
-                                                           FDmetric = FDmetric)
+                                                           FDmetric = FDmetric, 
+                                                           future.seed = TRUE)
         }
         parallel::stopCluster(cl)
         plan(sequential)

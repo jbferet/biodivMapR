@@ -1,12 +1,12 @@
 ---
-title: "Perform spatial & spectral filtering"
+title: "Produce diversity maps from a set of features"
 author: "Jean-Baptiste Féret, Florian de Boissieu"
 date: "`r Sys.Date()`"
 output: 
   html_vignette:
     number_sections: true
 vignette: >
-  %\VignetteIndexEntry{DataFiltering}
+  %\VignetteIndexEntry{biodivMapR}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
@@ -20,43 +20,97 @@ knitr::opts_chunk$set(
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
-### Produce a vegetation / cloud / shade mask
+Once spectral features are computed from optical data, they can be used as input variables in `biodivMapR`.
 
-The full radiometric filtering can be peformed with a unique function, including: 
+`biodivMapR v2` provides a simplified procedure compared to `biodivMapR v1`. A unique function named `biodivMapR_full` runs the full workflow and produces a limited set of outputs.
 
-* **NDVI filtering**: allows filtering to eliminate non-vegetated pixels. Nothing fancy so you may need to deal with mixed pixels... `NDVI_Thresh` defines the minimum NDVI value to be kept. By default, the NDVI is computed based on the NIR spectral band closest to 835 nm, and the RED spectral band closest to 670 nm. These values can be adjusted as input variables for `perform_radiometric_filtering`. 
+## Produce diversity maps from SPCA file
 
-* **NIR filtering**: allows filtering of shadows and pixels with very low signal. `NIR_Thresh` defines the minimum NIR value to be kept. By default, the NIR spectral band closest to 835nm is used. This value can be adjusted as input variables for `perform_radiometric_filtering`. 
+SPCA was previously computed and the relevant spectral features were identified based on visual interpretation. This selection of components will be used here to produce diversity maps with `biodivMapR.` The SPCA file is a unique raster file stacking all components. `biodivMapR` needs the path for the stacked data as well as the list of selected features. The mask previously computed is also used.
 
-* **BLUE filtering**: allows filtering of clouds, based on the hypothesis that atmospheric scattering will lead to higher reflectance in the blue domain. `Blue_Thresh` defines the maximum Blue reflectance to be kept. By default, the Blue spectral band closest to 480nm is used. This value can be adjusted as input variables for `perform_radiometric_filtering`. 
+```{r run biodivMapR with slected components from SPCA file}
 
+# 1- define biodivMapR output directory 
+output_dir_PCA2 <- file.path('./biodivMapR/SPCA')
+dir.create(output_dir_PCA2, showWarnings = F, recursive = T)
 
-The spectral bands corresponding to the Blue, Green and NIR spectral bands can be defined as optional parameters. 
+# 2- define parameters for biodivMapR
+window_size <- 10         # window side size for computation of spectral diversity
+nbclusters <- 50          # nb of clusters (spectral species)
 
-```{r perform radiometric filtering}
-print("PERFORM RADIOMETRIC FILTERING")
-Input_Mask_File <- perform_radiometric_filtering(Image_Path = Input_Image_File, Mask_Path = Input_Mask_File,
-                                                 Output_Dir = Output_Dir, TypePCA = TypePCA,
-                                                 NDVI_Thresh = NDVI_Thresh, Blue_Thresh = Blue_Thresh,
-                                                 NIR_Thresh = NIR_Thresh)
+# 3- define path for intermediate variables to be saved
+# - information related to kmeans clustering defining spectral species
+Kmeans_info_save <- file.path(output_dir_PCA2,'Kmeans_info.RData')
+# - information related to beta diversity mapping (BC dissimilarity + PCoA)
+Beta_info_save <- file.path(output_dir_PCA2,'Beta_info.RData')
+
+# 4- adjust parameters for multithread & computational efficiency
+maxRows <- 1000           # nb of lines processed at once (adjust based on RAM available)
+nbCPU <- 4                # nb of threads for parallel processing
+
+# 5- apply biodivMapR 
+selectedPC <- c(1,5,6)
+ab_info_SPCA <- biodivMapR_full(input_raster_path = PCA_Output$PCA_Files$PCA, 
+                                input_mask_path = mask_path_PCA,
+                                output_dir = output_dir_PCA2, 
+                                window_size = window_size, 
+                                nbclusters = nbclusters, 
+                                Kmeans_info_save = Kmeans_info_save,
+                                Beta_info_save = Beta_info_save, 
+                                maxRows = maxRows, nbCPU = nbCPU)
 ```
 
+Here, `ab_info_SPCA` includes two lists:
 
-### Produce a spectral filter
+-   `Kmeans_info`, which gathers all information related to the k-means clustering: centroid, min and max values for each feature
 
-Spectral bands or spectral domains can be discarded during the process. This is particularly useful when spectral domains with high SNR are includd in the image. 
+-   `Beta_info`, which gathers all information related to the computation of the beta diversity
 
-By default, the spectral domains corresponding to atmospheric water absorption are masked. 
+These lists are saved as `Rdata` files corresponding to the files defined by `Kmeans_info_save` and `Beta_info_save`. These files can then be used for an independent process with `biodivMapR_full`. The path for these files can then be provided for input variables `Kmeans_info_read`, `Beta_info_read`.
 
-However, these spectral domains can be extended, or included with the variable `Excluded_WL`, which is an input variable for the function `perform_PCA`. The default values are the following for the spectral domains to exclude (in nanometers):
+`biodivMapR` will not recompute this information, if user provides a valid path for `Kmeans_info` and `Beta_info`. This option is interesting when adjusting `Kmeans_info` and `Beta_info` for a region including multiple tiles, and processing each tile independently.
 
-```{r Excluded_WL}
-Excluded_WL <- c(0, 400)
-Excluded_WL <- rbind(Excluded_WL, c(895, 1005))
-Excluded_WL <- rbind(Excluded_WL, c(1180, 1480))
-Excluded_WL <- rbind(Excluded_WL, c(1780, 2040))
+$\alpha$ and $\beta$ diversity maps produced from the analysis of selected PCs are displayed below.
+
+|  |  |
+|------------------------------------|------------------------------------|
+| ![](../man/figures/alphaSI.png) | ![](../man/figures/betaSI.png) |
+
+## Produce diversity maps from spectral indices with `biodivMapR`
+
+Spectral indices computed previously will be used here to produce diversity maps with `biodivMapR`. Each spectral index was saved as an individual raster file. `biodivMapR` needs a list of paths for input features and corresponding names. The mask previously computed based on interquartile ranges of spectral indices is also used.
+
+```{r run biodivMapR with spectral indices}
+
+# 1- define biodivMapR output directory 
+output_dir_SI2 <- file.path('./biodivMapR/SpectralIndices')
+dir.create(output_dir, showWarnings = F, recursive = T)
+
+# 2- define parameters for biodivMapR
+window_size <- 10         # window side size for computation of spectral diversity
+nbclusters <- 50          # nb of clusters (spectral species)
+
+# 3- define path for intermediate variables to be saved
+# - information related to kmeans clustering defining spectral species
+Kmeans_info_save <- file.path(output_dir_SI2,'Kmeans_info.RData')
+# - information related to beta diversity mapping (BC dissimilarity + PCoA)
+Beta_info_save <- file.path(output_dir_SI2,'Beta_info.RData')
+
+# 4- adjust parameters for multithread & computational efficiency
+maxRows <- 1000           # nb of lines processed at once (adjust based on RAM available)
+nbCPU <- 4                # nb of threads for parallel processing
+
+# 4- apply biodivMapR 
+ab_info_SI <- biodivMapR_full(input_raster_path = SI_path, 
+                              input_mask_path = mask_path_SI,
+                              output_dir = output_dir_SI2, 
+                              window_size = window_size,
+                              nbclusters = nbclusters, 
+                              Kmeans_info_save = Kmeans_info_save,
+                              Beta_info_save = Beta_info_save, 
+                              maxRows = maxRows, nbCPU = nbCPU)
 ```
 
 <br/><br/>
 
-The PCA transformation and dimensional reduction are performed in the [next step](https://jbferet.github.io/biodivMapR/articles/biodivMapR_04.html){target="_blank"}.
+The validation can then be performed if ground information is available Validation is described in this [tutorial](https://jbferet.github.io/biodivMapR/articles/biodivMapR_04.html){target="_blank"}.

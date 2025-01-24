@@ -11,6 +11,7 @@ save_diversity_maps(
   FDmetric = NULL,
   input_rast,
   output_dir,
+  output_raster_name = NULL,
   window_size,
   filetype = "GTiff"
 )
@@ -27,6 +28,8 @@ save_diversity_maps(
 \item{input_rast}{list. path for input rasters}
 
 \item{output_dir}{character.}
+
+\item{output_raster_name}{character.}
 
 \item{window_size}{numeric. window size for square plots}
 

@@ -22,11 +22,9 @@
 #'
 #' @return list including performances (correlation) of SFS with additional
 #' features and assessed diversity metrics corresponding to each step
-#' @import doParallel
 #' @importFrom doFuture registerDoFuture
 #' @importFrom future plan multisession sequential
 #' @importFrom foreach foreach %dopar%
-#' @importFrom dplyr group_split
 #' @importFrom vegan mantel
 #' @importFrom progress progress_bar
 #' @importFrom stats cor.test
@@ -98,6 +96,7 @@ biodivMapR_OptClusters <- function(input_raster, obs_vect, obs2optimize, SelectB
     registerDoFuture()
     cl <- parallel::makeCluster(nbCPU)
     plan("cluster", workers = cl)
+	kmit <- NULL
     get_diversity_from_plots_list <- function() {
       foreach(kmit = Kmeans_info) %dopar% {
         divplots <- get_diversity_from_plots(input_rast = input_raster,

@@ -5,7 +5,6 @@
 #' @param input_mask SpatRaster. mask corresponding to raster to extract data from
 #'
 #' @return xy matrix
-#' @importFrom pracma randperm
 #' @importFrom terra values xyFromCell
 #' @export
 
@@ -17,7 +16,7 @@ get_xy_samples <- function(input_rast, nbSamples, input_mask = NULL){
   # adjust if mask provided
   if (!is.null(input_mask)) nbPixels <- sum(terra::values(input_mask),na.rm = T)
   if (nbSamples>nbPixels) nbSamples <- nbPixels
-  choicePix <- pracma::randperm(seq_len(nbPixels),nbSamples)
+  choicePix <- randperm(seq_len(nbPixels),nbSamples)
   if (!is.null(input_mask)){
     whichPix <- which(terra::values(input_mask)==1)
   } else {

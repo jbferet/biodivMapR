@@ -19,6 +19,7 @@
 #'
 #' @return SpatVector including diversity metrics and BC dissimilarity for the plots
 #' @importFrom dplyr group_split
+#' @importFrom stats as.dist
 #' @export
 
 get_diversity_from_plots <- function(input_rast, validation_vect,
@@ -31,7 +32,7 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
                                      MinSun = 0.25, pcelim = 0.02, nbCPU = 1, getBeta = T,
                                      verbose = F){
   if (verbose == T) message('Compute diversity from vector plot network')
-  FunctDiv <- MatBC_Full <- NULL
+  FunctDiv <- MatBC_Full <- win_ID <- NULL
   # get nbIter and nbclusters
   nbIter <- length(Kmeans_info$Centroids)
   nbclusters <- dim(Kmeans_info$Centroids[[1]])[1]
@@ -169,7 +170,7 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
     MatBC_Full[IDwindow,IDwindow] <- MatBC
     MatBCdist <- stats::as.dist(MatBC, diag = FALSE, upper = FALSE)
     colnames(MatBC_Full) <- rownames(MatBC_Full) <- Attributes$ID_biodivMapR
-    BetaPCO <- labdsv::pco(MatBCdist, k = dimPCO)
+    BetaPCO <- pco(MatBCdist, k = dimPCO)
     PCoA_BC <- matrix(data = NA,nrow = nbPlots_init, ncol = dimPCO)
     PCoA_BC[IDwindow,] <- BetaPCO$points
     Attributes$BetaPlots_PCoA_1 <- PCoA_BC[,1]

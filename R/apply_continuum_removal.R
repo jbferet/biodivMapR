@@ -5,9 +5,6 @@
 #
 #' @return samples from image and updated number of pixels to sample if necessary
 #' @importFrom snow splitRows
-#' @importFrom future plan multisession sequential
-#' @importFrom future.apply future_lapply
-#' @importFrom progressr progressor handlers with_progress
 #' @export
 
 apply_continuum_removal <- function(Spectral_Data, Spectral) {

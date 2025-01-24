@@ -27,9 +27,9 @@ perform_PCA  <- function(input_raster_path, output_dir, input_rast_wl = NULL,
                          nbIter = 20, maxRows = 100, filetype = 'GTiff') {
   # check if format of raster data is as expected
   input_rast <- terra::rast(input_raster_path)
-  if (!is.null(input_rast_wl)){
-    names(input_rast) <- input_rast_wl
-    check_data(input_data = input_rast, arguments = 'input_rast')
+  if (!is.null(input_rast_wl))
+  {names(input_rast) <- input_rast_wl
+  check_data(input_data = input_rast, arguments = 'input_rast')
   }
   input_mask <- NULL
   if (!is.null(input_mask_path)) {

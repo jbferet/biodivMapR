@@ -10,6 +10,7 @@
 #'
 split_chunk <- function(SSchunk, nbCPU){
 
+  win_ID <- NULL
   nbWindows <- length(unique(SSchunk$win_ID))
   windowperCPU <- ceiling(nbWindows/nbCPU)
   lbWin <- seq(1,nbWindows, by= windowperCPU)

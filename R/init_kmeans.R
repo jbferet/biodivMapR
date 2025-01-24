@@ -15,7 +15,6 @@
 #' @param progressbar boolean. set true for progress bar during clustering
 #'
 #' @return Kmeans_info
-#' @importFrom dplyr select all_of
 #' @export
 
 init_kmeans <- function(input_rast,

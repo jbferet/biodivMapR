@@ -20,9 +20,6 @@
 #' @importFrom future plan multisession sequential
 #' @importFrom future.apply future_lapply
 #' @importFrom progressr progressor handlers with_progress
-#' @importFrom labdsv pco
-#' @importFrom dplyr group_split
-#' @importFrom stats as.dist
 #' @importFrom parallel makeCluster stopCluster
 #' @export
 

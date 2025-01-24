@@ -9,14 +9,15 @@ radiometric_filtering(
   output_dir,
   input_rast_wl,
   input_mask_path = NULL,
-  NDVI_Thresh = 0.8,
+  NDVI_Thresh = 0.65,
   Blue_Thresh = 500,
   NIR_Thresh = 1500,
   Blue = 480,
   Red = 670,
   NIR = 835,
   maxRows = 1000,
-  filetype = "GTiff"
+  filetype = "GTiff",
+  maskfilename = "mask_update"
 )
 }
 \arguments{
@@ -43,6 +44,8 @@ radiometric_filtering(
 \item{maxRows}{numeric. max number of rows in each block}
 
 \item{filetype}{character. GDAL driver}
+
+\item{maskfilename}{character. name of the updated mask file}
 }
 \value{
 MaskPath = updated mask file

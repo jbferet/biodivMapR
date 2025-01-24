@@ -20,7 +20,6 @@
 #'
 #' @return list including performances (correlation) of SFS with additional
 #' features and assessed diversity metrics corresponding to each step
-#' @import doParallel
 #' @importFrom doFuture registerDoFuture
 #' @importFrom future plan multisession sequential
 #' @importFrom foreach foreach %dopar%
@@ -135,6 +134,7 @@ biodivMapR_SFS <- function(input_raster, obs_vect, obs2optimize,
 
   for (nbvars2select in seq_len(NbPCs_To_Keep)){
     NumVar_list <- as.list(seq_len(length(AllVars)))
+	numvar <- win_ID <- NULL
     subfeatures_SFS <- function() {
       foreach(numvar = NumVar_list) %dopar% {
         CorrVal <- Assess <- list()

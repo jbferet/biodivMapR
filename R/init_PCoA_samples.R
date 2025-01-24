@@ -15,7 +15,6 @@
 #' @importFrom future plan multisession sequential
 #' @importFrom future.apply future_lapply
 #' @importFrom progressr progressor handlers with_progress
-#' @importFrom labdsv pco
 #' @importFrom dplyr group_split
 #' @importFrom stats as.dist
 #' @importFrom parallel makeCluster stopCluster
@@ -26,6 +25,7 @@ init_PCoA_samples <- function(rast_sample, output_dir, Kmeans_info,
                               nbCPU = 1, Beta_info_save = NULL, verbose = T){
 
   rast_sample <- clean_NAsInf(rast_sample)
+  ID <- NULL
   # list per plot
   rast_sample <- rast_sample %>% group_split(ID, .keep = F)
   if (verbose ==T) message('compute spectral species from beta plots')
@@ -53,7 +53,8 @@ init_PCoA_samples <- function(rast_sample, output_dir, Kmeans_info,
       Beta_info <- future.apply::future_lapply(SSdist,
                                                FUN = get_BCdiss_from_SSD,
                                                nbclusters = nbclusters,
-                                               pcelim = pcelim, p = p)
+                                               pcelim = pcelim, p = p,
+                                               future.seed = TRUE)
     })
     parallel::stopCluster(cl)
     plan(sequential)
@@ -61,13 +62,13 @@ init_PCoA_samples <- function(rast_sample, output_dir, Kmeans_info,
     Beta_info <- lapply(X = SSdist,
                         FUN = get_BCdiss_from_SSD,
                         nbclusters = nbclusters,
-                        pcelim = pcelim, p = p)
+                        pcelim = pcelim)
   }
   MatBC_iter <- lapply(Beta_info, '[[','MatBC')
   SSD <- lapply(Beta_info, '[[','SSD')
   MatBC <- Reduce('+', MatBC_iter)/nbIter
   MatBCdist <- stats::as.dist(MatBC, diag = FALSE, upper = FALSE)
-  BetaPCO <- labdsv::pco(MatBCdist, k = dimPCoA)
+  BetaPCO <- pco(MatBCdist, k = dimPCoA)
   # Beta_Ordination_sel <- BetaPCO$points
   Beta_info <- list('SSD' = SSD, 'MatBC' = MatBC, 'BetaPCO' = BetaPCO)
   if (is.null(Beta_info_save)) Beta_info_save <- file.path(output_dir,

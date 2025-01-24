@@ -13,6 +13,7 @@
 #'
 #' @return Kmeans_info
 #' @importFrom dplyr select all_of
+#' @importFrom doFuture registerDoFuture
 #' @export
 
 explore_kmeans <- function(input_rast,
@@ -43,7 +44,7 @@ explore_kmeans <- function(input_rast,
   registerDoFuture()
   cl <- parallel::makeCluster(nbCPU)
   plan("cluster", workers = cl)
-
+  nbclust <- NULL
   get_kmeans_list <- function() {
     foreach(nbclust = nbClust_list) %dopar% {
       Kmeans_info <- get_kmeans(rast_sample = rast_sample,

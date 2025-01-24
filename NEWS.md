@@ -1,3 +1,8 @@
+# biodivMapR2 v2.2.0
+## change
+- merge v2 from gitlab repository
+- update vignettes for use of v2 
+
 # biodivMapR2 v2.1.4
 ## fix
 - in 'get_diversity_from_plots' : 

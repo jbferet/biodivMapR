@@ -11,9 +11,8 @@
 #' @param MinSun numeric. minimum amount of sunlit pixels in the plots
 #
 #' @return list
-#' @importFrom dplyr group_by
 #' @importFrom tidyr nest
-#' @importFrom terra extract sources values
+#' @importFrom terra sources values
 #' @export
 #'
 spectralspecies_per_polygon <- function(SpatVector, input_rast,

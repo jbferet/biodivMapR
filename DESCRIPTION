@@ -1,6 +1,6 @@
 Package: biodivMapR
 Title: biodivMapR: an R package for a- and ß-diversity mapping using remotely-sensed images
-Version: 2.1.4
+Version: 2.2.0
 Authors@R: c(person(given = "Jean-Baptiste", 
 					family = "Feret", 
 					email = "jb.feret@teledetection.fr", 
@@ -13,27 +13,24 @@ Authors@R: c(person(given = "Jean-Baptiste",
 					comment = c(ORCID = "0000-0002-2185-9952", "clean code, format as package, build website")))
 Description: this packages allows processing image data based on the method described in the following publication:
     Féret, J.-B., Asner, G.P., 2014. Mapping tropical forest canopy diversity using high-fidelity imaging spectroscopy. Ecol. Appl. 24, 1289–1296. https://doi.org/10.1890/13-1824.1
-    It expects a raster file as input, with ENVI HDR header file including spectral bands of the sensor, if optical sensor.
+    biodivMapR v2 produces spectral diversity maps, and more broadly 'remotely sensed' diversity maps. 
+    It can process any type of raster data, as long as the driver is compatible with drivers accepted by the terra package. 
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 License: GPL-3 + file LICENSE
 LazyData: true
 Imports: 
-    ape,
     bigRaster,
     cli,
     dissUtils,
     doFuture,
-    doParallel,
     dplyr,
     fields,
     foreach,
+    fundiversity,
     future,
     future.apply,
-    geometry,
-    labdsv,
-    pracma,
     progress,
     progressr,
     purrr,
@@ -43,11 +40,13 @@ Imports:
     stats,
     terra,
     tidyr,
-    tools,
-    vegan,
-    zip
+    vegan
 Suggests: 
+    ggplot2, 
+    gridExtra, 
     knitr,
+    RColorBrewer, 
+    readr,
     rmarkdown,
     testthat (>= 2.0.0)
 Remotes: gitlab::jbferet/bigRaster

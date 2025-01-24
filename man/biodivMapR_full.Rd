@@ -26,7 +26,6 @@ biodivMapR_full(
   MinSun = 0.25,
   maxPixel_kmeans = 1e+05,
   dimPCoA = 3,
-  verbose = T,
   progressbar = T,
   filetype = "GTiff"
 )
@@ -73,8 +72,6 @@ biodivMapR_full(
 \item{maxPixel_kmeans}{numeric. max number of pixels extracted for kmeans}
 
 \item{dimPCoA}{numeric. number of dimensions of PCoA}
-
-\item{verbose}{boolean. set true for messages}
 
 \item{progressbar}{boolean. set true for progress bar during clustering}
 
