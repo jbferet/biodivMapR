@@ -89,7 +89,7 @@ A Principal Coordinate Analysis (PCoA) was then performed on this BC dissimilari
 
 <p>
 
-<img src="../man/figures/BetaDiversity_Plots_PCA.png" width="80%" height="80%" class="center">
+<img src="../man/figures/BetaDiversity_Plots_PCA.png" width="100%" height="100%" class="center">
 
 </p>
 
@@ -99,7 +99,7 @@ The significantly larger amount of data tends to reduce the potential dissimilar
 
 <p>
 
-<img src="../man/figures/BetaDiversity_Full_PCA.png" width="80%" height="80%" class="center">
+<img src="../man/figures/BetaDiversity_Full_PCA.png" width="100%" height="100%" class="center">
 
 </p>
 
@@ -159,7 +159,7 @@ A Principal Coordinate Analysis (PCoA) was then performed on this BC dissimilari
 
 <p>
 
-<img src="../man/figures/BetaDiversity_Plots_SI.png" width="80%" height="80%" class="center">
+<img src="../man/figures/BetaDiversity_Plots_SI.png" width="100%" height="100%" class="center">
 
 </p>
 
@@ -169,6 +169,6 @@ The significantly larger amount of data tends to reduce the potential dissimilar
 
 <p>
 
-<img src="../man/figures/BetaDiversity_Full_SI.png" width="80%" height="80%" class="center">
+<img src="../man/figures/BetaDiversity_Full_SI.png" width="100%" height="100%" class="center">
 
 </p>

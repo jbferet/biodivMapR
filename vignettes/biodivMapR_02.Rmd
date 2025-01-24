@@ -110,7 +110,7 @@ A color composition of these components is displayed below.
 
 <p>
 
-<img src="../man/figures/SitePCA.png" width="70%" height="70%" class="center">
+<img src="../man/figures/SitePCA.png" width="100%" height="100%" class="center">
 
 </p>
 
@@ -185,7 +185,7 @@ A color composition of the three spectral indices selected is displayed below:
 
 <p>
 
-<img src="../man/figures/SiteSI.png" width="70%" height="70%" class="center">
+<img src="../man/figures/SiteSI.png" width="100%" height="100%" class="center">
 
 </p>
 
