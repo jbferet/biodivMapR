@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.14.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0</span>
       </span>
     </div>
 
@@ -52,61 +52,16 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/biodivMapR_01.html">Prepare your data</a>
+      <a href="../articles/biodivMapR_01.html">Get Sentinel-2 data and validation</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_02.html">Set parameters for biodivMapR</a>
+      <a href="../articles/biodivMapR_02.html">Produce features from original raster</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_03.html">Perform spatial &amp; spectral filtering</a>
+      <a href="../articles/biodivMapR_03.html">Produce diversity maps from a set of features</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_04.html">PCA &amp; Dimensionality reduction</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_05.html">Spectral species mapping</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_06.html">alpha and beta diversity maps</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_07.html">Functional Diversity</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_08.html">How to perform validation?</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_09.html">Compute diversity from user-defined set of layers</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_10.html">Map diversity from Lautaret HS image</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_11.html">PROGYSAT#1: download S2 data</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_12.html">PROGYSAT#2: Run biodivMapR on S2 reflectance data</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_13.html">PROGYSAT#3: Run biodivMapR on selected spectral indices</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_14.html">COPERNICUS &amp; biodiv #1: set working environment</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_15.html">COPERNICUS &amp; biodiv #2: Get reference data</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_16.html">COPERNICUS &amp; biodiv #3: check S2 availability</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_17.html">COPERNICUS &amp; biodiv #4: download</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_18.html">COPERNICUS &amp; biodiv #5/6: Apply biodivMapR on S2 reflectance</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_19.html">COPERNICUS &amp; biodiv #5/6: Apply biodivMapR on S2 spectral indices</a>
+      <a href="../articles/biodivMapR_04.html">Validation with ground information</a>
     </li>
   </ul>
 </li>
@@ -139,7 +94,7 @@ biodivMapR</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2025-01-09</h4>
+            <h4 data-toc-skip class="date">2025-01-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR.Rmd" class="external-link"><code>vignettes/biodivMapR.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR.Rmd</code></div>
@@ -148,22 +103,46 @@ Féret, Florian de Boissieu</h4>
 
     
     
-<p>This tutorial aims at describing the processing workflow and
-providing a script aiming at producing diversity maps on a Sentinel-2
-subset image acquired over the Cameroonese forest. The workflow is
-divided into three steps:</p>
+<p>This tutorial describes the processing workflow for
+<code>biodivMapR</code>. It goes through the different steps for the
+production of spectral diversity maps using Sentinel-2 imagery. The
+workflow is divided into three steps:</p>
+<ul>
+<li>Acquisition of the Sentinel-2 imagery Sentinel-2 is downloaded from
+a STAC catalog using the package <a href="https://jbferet.gitlab.io/preprocs2/" class="external-link"><code>preprocS2</code></a>,
+which is a wrapper of the <a href="https://brazil-data-cube.github.io/rstac/" class="external-link"><code>rstac</code></a>
+and <a href="https://zivankaraman.github.io/CDSE/" class="external-link"><code>CDSE</code></a>
+packages.</li>
+</ul>
+<p>The default STAC collection is <a href="https://planetarycomputer.microsoft.com/dataset/sentinel-2-l2a" class="external-link"><code>sentinel-2-l2a</code></a>
+from the Planetary computer catalog.</p>
+<ul>
+<li>Preparation of the data <code>biodivMapR</code> requires a raster /
+set of raster as input data. The first <code>biodivMapR v1</code> used
+spectral transformations as initial pre-processing step. This included
+reflectance normalization with a continuum removal, followed by a
+spctral transformation (PCA, SPCA, MNF…).</li>
+</ul>
+<p><code>biodivMapR v2</code> now allows user to run the preprocessing
+step of their choice. This can consist in computing spectral indices,
+vegetation biophysical variables, or spectral transformation. This also
+means that any type of input data can be used, as long as the input
+rasters share the same footprint, spatial resolution and projection.</p>
+<p>We provide a few examples here. Users can experiment with the method
+of their choice</p>
 <ul>
 <li>
-<p>Definition of the processing parameters:</p>
+<p>Definition of the processing parameters This includes the
+following information:</p>
 <ul>
 <li>input / output files paths</li>
-<li>output spatial resolution</li>
-<li>preprocessing and processing options</li>
+<li>output spatial resolution (window size)</li>
+<li>pre-processing and processing options</li>
 </ul>
 </li>
 <li>
-<p>Computation of the diversity maps. This includes several
-diversity metrics which can be computed independently:</p>
+<p>Computation of the diversity maps This includes several diversity
+metrics:</p>
 <ul>
 <li>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
@@ -171,26 +150,31 @@ and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
 diversity maps as defined in <a href="https://doi.org/10.1890/13-1824.1" title="Feret&amp;Asner2014" class="external-link">Feret &amp; Asner (2014)</a> and <a href="https://doi.org/10.1111/2041-210X.13310" title="Feret&amp;deBoissieu2019" class="external-link">Feret &amp; de Boissieu (2019)</a>
 </li>
-<li>Functional diversity maps, including Richnes, Evenness and
-Divergence as defined in <a href="https://doi.org/10.1890/07-1206.1" title="Villeger2008" class="external-link">Villeger et al. (2008)</a>
-<!-- * Partitioning of spectral diversity into $\alpha$ and $\beta$ components following an adaptation of the method proposed by [Laliberte et al. (2020)](https://doi.org/10.1111/ele.13429 "Laliberte2020") -->
+<li>Functional diversity maps, including Richness, Evenness and
+Divergence as defined in <a href="https://doi.org/10.1890/07-1206.1" title="Villeger2008" class="external-link">Villeger et al. (2008)</a>
 </li>
 </ul>
 </li>
-<li><p>Validation of the resulting diversity metrics if field plots
-measurements are available</p></li>
 </ul>
-<p>The computation of the diversity maps is based on a certain number of
-prepocessing steps including: * Spectral normalization with continuum
-removal (relevant if woring with multi or hypersepctral images) *
-dimensionality reduction based on PCA, SPCA or MNF and component
-selection</p>
-<p>Below is the typical flow chart of the computation of diversity maps
-with <strong>biodivMapR</strong> :</p>
-<p><img align="bottom" width="100%" height="100%" src="../reference/figures/Figure1_FlowChart_biodivMapR_Process_600DPI.png"></p>
-<p><a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_01.html" target="_blank" class="external-link">Please check the full tutorial pages to get
-instructions, data and code examples to run <code>biodivMapR</code></a>
-can be applied.</p>
+<div class="section level3">
+<h3 id="biodivmapr-v1">biodivMapR v1<a class="anchor" aria-label="anchor" href="#biodivmapr-v1"></a>
+</h3>
+<p>Please refer to the branch <a href="https://github.com/jbferet/biodivMapR/tree/dev_v1" class="external-link"><code>dev_v1</code></a>
+of the package for the previous versions and tutorials. Vignettes and
+tutorials corresponding to this version are still available <a href="https://github.com/jbferet/biodivMapR/tree/dev_v1/vignettes" class="external-link">here</a>.</p>
+<p>We recommend using the most-up-to-date versions of
+<code>biodivMapR</code>, as the previous ones will not be
+maintained.</p>
+<pre><code>&lt;!-- * Partitioning of spectral diversity into $\alpha$ and $\beta$ components following an adaptation of the method proposed by [Laliberte et al. (2020)](https://doi.org/10.1111/ele.13429 "Laliberte2020") --&gt;</code></pre>
+<!-- * Comparison between spectral diversity metrics and ground observations
+
+
+Below is the typical flow chart of the computation of diversity maps with __biodivMapR__ :
+
+<img align="bottom" width="100%" height="100%" src="../man/figures/Figure1_FlowChart_biodivMapR_Process_600DPI.png">
+
+
+[Please check the full tutorial pages to get instructions, data and code examples to run `biodivMapR`](https://jbferet.github.io/biodivMapR/articles/biodivMapR_01.html){target="_blank"} can be applied. -->
 <!-- ## Partitioning of spectral diversity into $\alpha$ and $\beta$ components -->
 <!-- The partitioning of spectral diversity is based on the `specdiv` function provided by [Etienne Laliberte on Github](https://github.com/elaliberte/specdiv "specdiv"). The original method does not use the exact same normalization, and only the framework starting from component selection is used here. Future versions will include the full original framework.  -->
 <!-- ```{r Partitioning spectral diversity} -->
@@ -202,6 +186,7 @@ can be applied.</p>
 <!--                                                 Selected_Features = Selected_Features, Output_Dir = Output_Dir, -->
 <!--                                                 window_size = window_size, TypePCA = TypePCA) -->
 <!-- ``` -->
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

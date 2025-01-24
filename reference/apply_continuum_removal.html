@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.14.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0</span>
       </span>
     </div>
 
@@ -35,61 +35,16 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/biodivMapR_01.html">Prepare your data</a>
+      <a href="../articles/biodivMapR_01.html">Get Sentinel-2 data and validation</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_02.html">Set parameters for biodivMapR</a>
+      <a href="../articles/biodivMapR_02.html">Produce features from original raster</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_03.html">Perform spatial &amp; spectral filtering</a>
+      <a href="../articles/biodivMapR_03.html">Produce diversity maps from a set of features</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_04.html">PCA &amp; Dimensionality reduction</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_05.html">Spectral species mapping</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_06.html">alpha and beta diversity maps</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_07.html">Functional Diversity</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_08.html">How to perform validation?</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_09.html">Compute diversity from user-defined set of layers</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_10.html">Map diversity from Lautaret HS image</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_11.html">PROGYSAT#1: download S2 data</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_12.html">PROGYSAT#2: Run biodivMapR on S2 reflectance data</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_13.html">PROGYSAT#3: Run biodivMapR on selected spectral indices</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_14.html">COPERNICUS &amp; biodiv #1: set working environment</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_15.html">COPERNICUS &amp; biodiv #2: Get reference data</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_16.html">COPERNICUS &amp; biodiv #3: check S2 availability</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_17.html">COPERNICUS &amp; biodiv #4: download</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_18.html">COPERNICUS &amp; biodiv #5/6: Apply biodivMapR on S2 reflectance</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_19.html">COPERNICUS &amp; biodiv #5/6: Apply biodivMapR on S2 spectral indices</a>
+      <a href="../articles/biodivMapR_04.html">Validation with ground information</a>
     </li>
   </ul></li>
 <li>
@@ -111,7 +66,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>prepares data to run multithreaded continuum removal</h1>
-    <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/R/Lib_ContinuumRemoval.R" class="external-link"><code>R/Lib_ContinuumRemoval.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/R/apply_continuum_removal.R" class="external-link"><code>R/apply_continuum_removal.R</code></a></small>
     <div class="hidden name"><code>apply_continuum_removal.Rd</code></div>
     </div>
 
@@ -120,7 +75,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">apply_continuum_removal</span><span class="op">(</span><span class="va">Spectral_Data</span>, <span class="va">Spectral</span>, nbCPU <span class="op">=</span> <span class="fl">1</span>, progressbar <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">apply_continuum_removal</span><span class="op">(</span><span class="va">Spectral_Data</span>, <span class="va">Spectral</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -133,14 +88,6 @@
 
 <dt id="arg-spectral">Spectral<a class="anchor" aria-label="anchor" href="#arg-spectral"></a></dt>
 <dd><p>list. information about spectral bands</p></dd>
-
-
-<dt id="arg-nbcpu">nbCPU<a class="anchor" aria-label="anchor" href="#arg-nbcpu"></a></dt>
-<dd><p>numeric. number of CPUs to be used in parallel</p></dd>
-
-
-<dt id="arg-progressbar">progressbar<a class="anchor" aria-label="anchor" href="#arg-progressbar"></a></dt>
-<dd><p>boolean. should progress bar be displayed (set to TRUE only if no conflict of parallel process)</p></dd>
 
 </dl></div>
     <div id="value">

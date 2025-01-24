@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.14.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0</span>
       </span>
     </div>
 
@@ -35,61 +35,16 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/biodivMapR_01.html">Prepare your data</a>
+      <a href="../articles/biodivMapR_01.html">Get Sentinel-2 data and validation</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_02.html">Set parameters for biodivMapR</a>
+      <a href="../articles/biodivMapR_02.html">Produce features from original raster</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_03.html">Perform spatial &amp; spectral filtering</a>
+      <a href="../articles/biodivMapR_03.html">Produce diversity maps from a set of features</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_04.html">PCA &amp; Dimensionality reduction</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_05.html">Spectral species mapping</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_06.html">alpha and beta diversity maps</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_07.html">Functional Diversity</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_08.html">How to perform validation?</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_09.html">Compute diversity from user-defined set of layers</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_10.html">Map diversity from Lautaret HS image</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_11.html">PROGYSAT#1: download S2 data</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_12.html">PROGYSAT#2: Run biodivMapR on S2 reflectance data</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_13.html">PROGYSAT#3: Run biodivMapR on selected spectral indices</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_14.html">COPERNICUS &amp; biodiv #1: set working environment</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_15.html">COPERNICUS &amp; biodiv #2: Get reference data</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_16.html">COPERNICUS &amp; biodiv #3: check S2 availability</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_17.html">COPERNICUS &amp; biodiv #4: download</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_18.html">COPERNICUS &amp; biodiv #5/6: Apply biodivMapR on S2 reflectance</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_19.html">COPERNICUS &amp; biodiv #5/6: Apply biodivMapR on S2 spectral indices</a>
+      <a href="../articles/biodivMapR_04.html">Validation with ground information</a>
     </li>
   </ul></li>
 <li>
@@ -118,25 +73,13 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="ENVI_type2bytes.html">ENVI_type2bytes()</a></code> </p>
+          <p><code><a href="IQR_SpatRaster.html">IQR_SpatRaster()</a></code> </p>
         </td>
-        <td><p>get information corresponding to data type defined in ENVI</p></td>
-      </tr><tr><td>
-          <p><code><a href="Get_FunctionalMetrics_From_Traits.html">Get_FunctionalMetrics_From_Traits()</a></code> </p>
-        </td>
-        <td><p>Prepare for the computation of the functional diversity metrics</p></td>
+        <td><p>This function computes interquartile range (IQR) for a SpatRaster</p></td>
       </tr><tr><td>
           <p><code><a href="IQR_outliers.html">IQR_outliers()</a></code> </p>
         </td>
         <td><p>This function computes interquartile range (IQR) criterion, which can be used as a criterion for outlier detection</p></td>
-      </tr><tr><td>
-          <p><code><a href="RW_bytes.html">RW_bytes()</a></code> </p>
-        </td>
-        <td><p>identifies bytes where to read or write for each piece of an image in a given file</p></td>
-      </tr><tr><td>
-          <p><code><a href="RW_bytes_all.html">RW_bytes_all()</a></code> </p>
-        </td>
-        <td><p>identifies bytes where to read and write for each piece of image and all files</p></td>
       </tr><tr><td>
           <p><code><a href="RowToLinear.html">RowToLinear()</a></code> </p>
         </td>
@@ -146,17 +89,13 @@
         </td>
         <td><p>Compute the weighted coordinates of a spatial unit based on nearest neighbors used during PCoA</p></td>
       </tr><tr><td>
-          <p><code><a href="Write_Big_Image.html">Write_Big_Image()</a></code> </p>
+          <p><code><a href="alphabeta_window.html">alphabeta_window()</a></code> </p>
         </td>
-        <td><p>write an image which size is &gt; 2**31-1</p></td>
+        <td><p>compute alpha and beta diversity metrics from pixel data corresponding to spectral species extracted from a window</p></td>
       </tr><tr><td>
-          <p><code><a href="Write_Image_NativeRes.html">Write_Image_NativeRes()</a></code> </p>
+          <p><code><a href="alphabeta_window_list.html">alphabeta_window_list()</a></code> </p>
         </td>
-        <td><p>write an image resulting from "window processing" at native spatial resolution (assuming square windows &amp; origin at top left corner)</p></td>
-      </tr><tr><td>
-          <p><code><a href="ZipFile.html">ZipFile()</a></code> </p>
-        </td>
-        <td><p>Zips an image file</p></td>
+        <td><p>apply alphabeta_window to a list of lists</p></td>
       </tr><tr><td>
           <p><code><a href="apply_continuum_removal.html">apply_continuum_removal()</a></code> </p>
         </td>
@@ -164,147 +103,103 @@
       </tr><tr><td>
           <p><code><a href="apply_kmeans.html">apply_kmeans()</a></code> </p>
         </td>
-        <td><p>Applies Kmeans clustering to PCA image and writes spectral species map</p></td>
+        <td><p>apply kmeans to information extracted from an image and corresponding to a window</p></td>
       </tr><tr><td>
-          <p><code><a href="build_image_from_list.html">build_image_from_list()</a></code> </p>
+          <p><code><a href="biodivMapR_OptClusters.html">biodivMapR_OptClusters()</a></code> </p>
         </td>
-        <td><p>rebuilds full image from list of subsets</p></td>
+        <td><p>explores performances of biodivMapR for different numbers of clusters</p></td>
+      </tr><tr><td>
+          <p><code><a href="biodivMapR_SFS.html">biodivMapR_SFS()</a></code> </p>
+        </td>
+        <td><p>performs SFS to identify combination of input variables maximizing a criterion</p></td>
+      </tr><tr><td>
+          <p><code><a href="biodivMapR_chunk.html">biodivMapR_chunk()</a></code> </p>
+        </td>
+        <td><p>apply biodivMapR (computes clusters + diversity metrics) to an image chunk</p></td>
+      </tr><tr><td>
+          <p><code><a href="biodivMapR_full.html">biodivMapR_full()</a></code> </p>
+        </td>
+        <td><p>computes diversity metrics from raster</p></td>
       </tr><tr><td>
           <p><code><a href="center_reduce.html">center_reduce()</a></code> </p>
         </td>
         <td><p>center and reduce data matrix based on known mean and SD</p></td>
       </tr><tr><td>
-          <p><code><a href="change_resolution_HDR.html">change_resolution_HDR()</a></code> </p>
-        </td>
-        <td><p>change resolution in a HDR file</p></td>
-      </tr><tr><td>
           <p><code><a href="check_data.html">check_data()</a></code> </p>
         </td>
         <td><p>Checks if the data to be processed has the format type expected</p></td>
       </tr><tr><td>
-          <p><code><a href="check_update_mask_format.html">check_update_mask_format()</a></code> </p>
+          <p><code><a href="clean_NAsInf.html">clean_NAsInf()</a></code> </p>
         </td>
-        <td><p>check if the format of the mask is as expected: integer, coded in Bytes, same dimensions as input image</p></td>
-      </tr><tr><td>
-          <p><code><a href="compute_ALPHA_FromPlot.html">compute_ALPHA_FromPlot()</a></code> </p>
-        </td>
-        <td><p>compute alpha diversity from spectral species computed for a plot expecting a matrix of spectral species (n pixels x p repetitions)</p></td>
+        <td><p>cleans dataframe from NAs and Inf values</p></td>
       </tr><tr><td>
           <p><code><a href="compute_BCdiss.html">compute_BCdiss()</a></code> </p>
         </td>
-        <td><p>compute the bray curtis dissimilarity matrix corresponding to a list of kernels (rows) defined by their spectral species (columns) SSDList is a list containing spectral species distribution for two sets of kernels ([[1]] and [[2]]) pcelim is the threshold for minimum contributin of a spctral species to be kept</p></td>
-      </tr><tr><td>
-          <p><code><a href="compute_BETA_FromPlots.html">compute_BETA_FromPlots()</a></code> </p>
-        </td>
-        <td><p>compute beta diversity from spectral species computed for a plot expecting a matrix of spectral species (n pixels x p repetitions)</p></td>
-      </tr><tr><td>
-          <p><code><a href="compute_FD.html">compute_FD()</a></code> </p>
-        </td>
-        <td><p>compute functional diversity metrics for an array, given a specific window size</p></td>
-      </tr><tr><td>
-          <p><code><a href="compute_Functional_metrics.html">compute_Functional_metrics()</a></code> </p>
-        </td>
-        <td><p>Map functional diversity metrics based on spectral species</p></td>
+        <td><p>compute bray curtis dissimilarity matrix corresponding to a list of kernels (rows) defined by their spectral species (columns) SSDList is a list containing spectral species distribution for two sets of kernels pcelim is the threshold for minimum contributin of a spctral species to be kept</p></td>
       </tr><tr><td>
           <p><code><a href="compute_NN_from_ordination.html">compute_NN_from_ordination()</a></code> </p>
         </td>
-        <td><p>compute the nearest neighbors among kernels used in NMDS</p></td>
+        <td><p>compute the nearest neighbors among kernels</p></td>
       </tr><tr><td>
-          <p><code><a href="compute_SSD.html">compute_SSD()</a></code> </p>
+          <p><code><a href="compute_mask_IQR.html">compute_mask_IQR()</a></code> </p>
         </td>
-        <td><p>compute spectral species distribution from original spectral species map</p></td>
-      </tr><tr><td>
-          <p><code><a href="compute_alpha_metrics.html">compute_alpha_metrics()</a></code> </p>
-        </td>
-        <td><p>Computes alpha diversity metrics based on spectral species</p></td>
-      </tr><tr><td>
-          <p><code><a href="compute_beta_metrics.html">compute_beta_metrics()</a></code> </p>
-        </td>
-        <td><p>computes beta diversity metrics</p></td>
-      </tr><tr><td>
-          <p><code><a href="compute_spectral_species.html">compute_spectral_species()</a></code> </p>
-        </td>
-        <td><p>this function reads PCA file and defines the spectral species for each pixel based on the set of cluster centroids defined for each iteration applies kmeans –&gt; closest cluster corresponds to the "spectral species"</p></td>
-      </tr><tr><td>
-          <p><code><a href="compute_spectral_species_FieldPlots.html">compute_spectral_species_FieldPlots()</a></code> </p>
-        </td>
-        <td><p>compute spectral species for a subset of pixels provided in a list, each element corresponding to a polygon</p></td>
+        <td><p>compute mask based on interquartile range criterion applied on input rasters</p></td>
       </tr><tr><td>
           <p><code><a href="continuumRemoval.html">continuumRemoval()</a></code> </p>
         </td>
         <td><p>Computes continuum removal for matrix shaped data: more efficient than processing individual spectra the convex hull is based on the computation of the derivative between R at a given spectral band and R at the following bands</p></td>
       </tr><tr><td>
-          <p><code><a href="convert_PCA_to_SSD.html">convert_PCA_to_SSD()</a></code> </p>
-        </td>
-        <td><p>Convert PCA into SSD based on previous clustering</p></td>
-      </tr><tr><td>
-          <p><code><a href="create_hdr.html">create_hdr()</a></code> </p>
-        </td>
-        <td><p>create a hdr file for a raster</p></td>
-      </tr><tr><td>
-          <p><code><a href="create_mask_from_threshold.html">create_mask_from_threshold()</a></code> </p>
-        </td>
-        <td><p>create a mask based on NDVI, Green reflectance and NIR reflectance NDVI (min) threshold eliminates non vegetated pixels Blue (max) threshold eliminates Clouds NIR (min) threshold eliminates shadows ! only valid if Optical data!!</p></td>
-      </tr><tr><td>
-          <p><code><a href="define_output_directory.html">define_output_directory()</a></code> </p>
-        </td>
-        <td><p>define output directory and create it if necessary</p></td>
-      </tr><tr><td>
-          <p><code><a href="define_output_subdir.html">define_output_subdir()</a></code> </p>
-        </td>
-        <td><p>define output directory and subdirectory and create it if necessary</p></td>
-      </tr><tr><td>
           <p><code><a href="define_pixels_per_iter.html">define_pixels_per_iter()</a></code> </p>
         </td>
-        <td><p>defines the number of pixels per iteration based on a trade-off between image size and sample size per iteration</p></td>
-      </tr><tr><td>
-          <p><code><a href="diversity_from_plots.html">diversity_from_plots()</a></code> </p>
-        </td>
-        <td><p>gets alpha diversity indicators from plot</p></td>
+        <td><p>defines the number of pixels per iteration</p></td>
       </tr><tr><td>
           <p><code><a href="exclude_spectral_domains.html">exclude_spectral_domains()</a></code> </p>
         </td>
-        <td><p>define Water Vapor bands based on spectral smapling of original image</p></td>
+        <td><p>define Water Vapor bands based on spectral sampling of original image</p></td>
       </tr><tr><td>
-          <p><code><a href="extract.big_raster.html">extract.big_raster()</a></code> </p>
+          <p><code><a href="explore_kmeans.html">explore_kmeans()</a></code> </p>
         </td>
-        <td><p>Extract bands of sparse pixels in image data cube</p></td>
+        <td><p>Compute kmeans from random subset of pixels extracted from an image and a list of values for k</p></td>
       </tr><tr><td>
-          <p><code><a href="extract_pixels.html">extract_pixels()</a></code> </p>
+          <p><code><a href="extract_svc_from_rast.html">extract_svc_from_rast()</a></code> </p>
         </td>
-        <td><p>extracts sample points from binary image file</p></td>
+        <td><p>extract pixel information from a raster based on SpatVectorCollection</p></td>
       </tr><tr><td>
-          <p><code><a href="extract_pixels_coordinates.html">extract_pixels_coordinates()</a></code> </p>
+          <p><code><a href="extract_vect_from_rast.html">extract_vect_from_rast()</a></code> </p>
         </td>
-        <td><p>Extracts pixels coordinates from raster intersecting a vector.</p></td>
-      </tr><tr><td>
-          <p><code><a href="extract_samples_from_image.html">extract_samples_from_image()</a></code> </p>
-        </td>
-        <td><p>extracts pixels from image based on their coordinates</p></td>
-      </tr><tr><td>
-          <p><code><a href="filter_PCA.html">filter_PCA()</a></code> </p>
-        </td>
-        <td><p>perform filtering based on extreme values PCA identified through PCA</p></td>
+        <td><p>extract pixel information from a raster based on vector footprint</p></td>
       </tr><tr><td>
           <p><code><a href="filter_prior_CR.html">filter_prior_CR()</a></code> </p>
         </td>
-        <td><p>Filter data prior to continuum removal: - values are expected to be real reflectance values between 0 and 10000 - negative values may occur, so a +100 value is applied to avoid negative - possibly remaining negative values are set to 0 - constant spectra are eliminated</p></td>
+        <td><p>Filter data prior to continuum removal: </p><ul><li><p>values are expected to be real reflectance values between 0 and 10000</p></li> <li><p>negative values may occur, so a +100 value is applied to avoid negative</p></li> <li><p>possibly remaining negative values are set to 0</p></li> <li><p>constant spectra are eliminated</p></li> </ul></td>
       </tr><tr><td>
-          <p><code><a href="getBCdiss.html">getBCdiss()</a></code> </p>
+          <p><code><a href="functional_window.html">functional_window()</a></code> </p>
+        </td>
+        <td><p>compute alpha and beta diversity metrics from pixel data corresponding to spectral species extracted from a window</p></td>
+      </tr><tr><td>
+          <p><code><a href="functional_window_list.html">functional_window_list()</a></code> </p>
+        </td>
+        <td><p>apply functional_window to a list of lists</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_BCdiss.html">get_BCdiss()</a></code> </p>
         </td>
         <td><p>Computes BC dissimilarity for a given matrix</p></td>
       </tr><tr><td>
-          <p><code><a href="getFD.html">getFD()</a></code> </p>
+          <p><code><a href="get_BCdiss_from_SSD.html">get_BCdiss_from_SSD()</a></code> </p>
         </td>
-        <td><p>get functional diversity metrics from dataframe This function was inspired from FD package</p></td>
+        <td><p>Computes BC dissimilarity for a list of spectral species distributions</p></td>
       </tr><tr><td>
           <p><code><a href="get_HDR_name.html">get_HDR_name()</a></code> </p>
         </td>
         <td><p>get hdr name from image file name, assuming it is BIL format</p></td>
       </tr><tr><td>
-          <p><code><a href="get_SSpath.html">get_SSpath()</a></code> </p>
+          <p><code><a href="get_Hill.html">get_Hill()</a></code> </p>
         </td>
-        <td><p>defines path for the spectral species raster file. Depends on preprocessing: - if standard dimensionality reduction (PCA, SPCA, MNF) was used, the corresponding directory is pointed - if no dimensionality reduction, or an alternative dimensionality reduction (spectral indices, tasseled cap... ) was used, user defined subdirectory is used - Diversity metrics can also be computed from a classification map</p></td>
+        <td><p>computes hill number from a distribution The Hill numbers quantify biodiversity. The importance of the abundance distribution increases with increasing Hill order. For q=0, the Hill number is the richness, for q=1, it is the exponential Shannon entropy and for q=2, it is the inverse Simpson index. Note that the Hill order can also be a fraction, e.g. 0.5.</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_SSD_full.html">get_SSD_full()</a></code> </p>
+        </td>
+        <td><p>get spectral species distribution for all clusters, even those with null abundance</p></td>
       </tr><tr><td>
           <p><code><a href="get_Shannon.html">get_Shannon()</a></code> </p>
         </td>
@@ -314,205 +209,185 @@
         </td>
         <td><p>computes Simpson index from a distribution (faster than version implemented in vegan package)</p></td>
       </tr><tr><td>
-          <p><code><a href="get_alpha_metrics.html">get_alpha_metrics()</a></code> </p>
+          <p><code><a href="get_alpha_from_SSD.html">get_alpha_from_SSD()</a></code> </p>
         </td>
-        <td><p>Computes alpha diversity metrics from distribution</p></td>
+        <td><p>computes alpha diversity metrics from SSD</p></td>
       </tr><tr><td>
-          <p><code><a href="get_byte_order.html">get_byte_order()</a></code> </p>
+          <p><code><a href="get_asset_path.html">get_asset_path()</a></code> </p>
         </td>
-        <td><p>does the system work with little endians or big endians?</p></td>
+        <td><p>This function gets path from an asset in the JSON file</p></td>
       </tr><tr><td>
-          <p><code><a href="get_gdal_info.html">get_gdal_info()</a></code> </p>
+          <p><code><a href="get_date.html">get_date()</a></code> </p>
         </td>
-        <td><p>Get GDAL info as a nested list</p></td>
+        <td><p>This function gets acquisition date from S2 image</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_diversity_from_plots.html">get_diversity_from_plots()</a></code> </p>
+        </td>
+        <td><p>computes diversity metrics from validation plots</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_functional_diversity.html">get_functional_diversity()</a></code> </p>
+        </td>
+        <td><p>get functional diversity metrics from dataframe This function was inspired from FD package</p></td>
       </tr><tr><td>
           <p><code><a href="get_image_bands.html">get_image_bands()</a></code> </p>
         </td>
         <td><p>gets rank of spectral bands in an image</p></td>
       </tr><tr><td>
-          <p><code><a href="get_random_subset_from_image.html">get_random_subset_from_image()</a></code> </p>
+          <p><code><a href="get_kmeans.html">get_kmeans()</a></code> </p>
         </td>
-        <td><p>extract random subset of pixels from an image</p></td>
+        <td><p>computes k-means from nbIter subsets taken from dataPCA</p></td>
       </tr><tr><td>
-          <p><code><a href="get_sunlit_pixels.html">get_sunlit_pixels()</a></code> </p>
+          <p><code><a href="get_raster_diversity.html">get_raster_diversity()</a></code> </p>
         </td>
-        <td><p>Gets sunlit pixels from SpectralSpecies_Distribution_Sunlit</p></td>
+        <td><p>Computes diversity metrics from raster data</p></td>
       </tr><tr><td>
-          <p><code><a href="ind2sub.html">ind2sub()</a></code> </p>
+          <p><code><a href="get_raster_extent.html">get_raster_extent()</a></code> </p>
         </td>
-        <td><p>convert image coordinates from index to X-Y</p></td>
+        <td><p>gets raster extent</p></td>
       </tr><tr><td>
-          <p><code><a href="ind2sub2.html">ind2sub2()</a></code> </p>
+          <p><code><a href="get_spectralSpecies.html">get_spectralSpecies()</a></code> </p>
         </td>
-        <td><p>convert image coordinates from index to X-Y image coordinates are given as index = (ID.col-1) * total.lines + ID.row</p></td>
+        <td><p>compute spectral species from inputdata</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_sunlitwindows.html">get_sunlitwindows()</a></code> </p>
+        </td>
+        <td><p>eliminate windows with insufficient sunlit pixels</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_xy_samples.html">get_xy_samples()</a></code> </p>
+        </td>
+        <td><p>get xy of pixels to sample from raster</p></td>
+      </tr><tr><td>
+          <p><code><a href="init_PCoA.html">init_PCoA()</a></code> </p>
+        </td>
+        <td><p>initialize PCoA for beta diversity mapping</p></td>
+      </tr><tr><td>
+          <p><code><a href="init_PCoA_samples.html">init_PCoA_samples()</a></code> </p>
+        </td>
+        <td><p>initialize PCoA for beta diversity mapping based on samples extracted from images</p></td>
       </tr><tr><td>
           <p><code><a href="init_kmeans.html">init_kmeans()</a></code> </p>
         </td>
-        <td><p>computes k-means from nb_partitions subsets taken from dataPCA</p></td>
+        <td><p>Compute kmeans from random subset of pixels extracted from an image</p></td>
+      </tr><tr><td>
+          <p><code><a href="init_kmeans_samples.html">init_kmeans_samples()</a></code> </p>
+        </td>
+        <td><p>Compute kmeans from random subset of pixels extracted from an image</p></td>
+      </tr><tr><td>
+          <p><code><a href="kmeans_iter.html">kmeans_iter()</a></code> </p>
+        </td>
+        <td><p>computes kmeans for an iteration in biodivMapR</p></td>
       </tr><tr><td>
           <p><code><a href="kmeans_progressr.html">kmeans_progressr()</a></code> </p>
         </td>
         <td><p>applies results of ordination to full image based on nearest neighbors</p></td>
       </tr><tr><td>
-          <p><code><a href="list_shp.html">list_shp()</a></code> </p>
+          <p><code><a href="maxRows_chunk.html">maxRows_chunk()</a></code> </p>
         </td>
-        <td><p>Get list of shapefiles in a directory</p></td>
-      </tr><tr><td>
-          <p><code><a href="map_alpha_div.html">map_alpha_div()</a></code> </p>
-        </td>
-        <td><p>maps alpha diversity indicators based on prior selection of PCs</p></td>
-      </tr><tr><td>
-          <p><code><a href="map_beta_div.html">map_beta_div()</a></code> </p>
-        </td>
-        <td><p>maps beta diversity indicator based on spectral species distribution</p></td>
-      </tr><tr><td>
-          <p><code><a href="map_functional_div.html">map_functional_div()</a></code> </p>
-        </td>
-        <td><p>maps functional diversity indicators based on prior selection of PCs</p></td>
-      </tr><tr><td>
-          <p><code><a href="map_spectral_species.html">map_spectral_species()</a></code> </p>
-        </td>
-        <td><p>maps spectral species based on PCA file computed previously</p></td>
-      </tr><tr><td>
-          <p><code><a href="mean_filter.html">mean_filter()</a></code> </p>
-        </td>
-        <td><p>applies mean filter to an image</p></td>
-      </tr><tr><td>
-          <p><code><a href="minmax.html">minmax()</a></code> </p>
-        </td>
-        <td><p>this function performs rescaling and either defines min and max from each feature in a data set, or applies the transformation based on a previously defined min and max</p></td>
+        <td><p>redefined chunks based on the max number of rows per chunk</p></td>
       </tr><tr><td>
           <p><code><a href="mnf.html">mnf()</a></code> </p>
         </td>
         <td><p>Function to perform MNF</p></td>
       </tr><tr><td>
+          <p><code><a href="nbRows_chunk.html">nbRows_chunk()</a></code> </p>
+        </td>
+        <td><p>adjusts number of rows from chunks</p></td>
+      </tr><tr><td>
           <p><code><a href="noise.html">noise()</a></code> </p>
         </td>
         <td><p>this function</p></td>
-      </tr><tr><td>
-          <p><code><a href="ordination_to_NN.html">ordination_to_NN()</a></code> </p>
-        </td>
-        <td><p>#' computes NMDS # #' @param MatBCdist BC dissimilarity matrix #' @param dimMDS numeric. number of dimensions of the NMDS # #' @return BetaNMDS_sel #' @importFrom future plan multisession sequential #' @importFrom future.apply future_lapply #' @importFrom ecodist nmds #' @importFrom utils find #' @export</p></td>
-      </tr><tr><td>
-          <p><code><a href="ordination_to_NN_list.html">ordination_to_NN_list()</a></code> </p>
-        </td>
-        <td><p>computes nearest neighbors of a SSD subset with samples used for the adjustment of the ordination, then gets the coordinates of each window in the ordination space</p></td>
       </tr><tr><td>
           <p><code><a href="pca.html">pca()</a></code> </p>
         </td>
         <td><p>Function to perform PCA on a matrix</p></td>
       </tr><tr><td>
+          <p><code><a href="pco.html">pco()</a></code> </p>
+        </td>
+        <td><p>compute PCoA using the cmdscale function original source: package labdsv https://rdrr.io/cran/labdsv/src/R/pco.R</p></td>
+      </tr><tr><td>
           <p><code><a href="perform_PCA.html">perform_PCA()</a></code> </p>
         </td>
         <td><p>Performs PCA for all images and create PCA file with either all or a selection of PCs</p></td>
-      </tr><tr><td>
-          <p><code><a href="perform_radiometric_filtering.html">perform_radiometric_filtering()</a></code> </p>
-        </td>
-        <td><p>Performs radiometric filtering based on three criteria: NDVI, NIR reflectance, Blue reflectance</p></td>
-      </tr><tr><td>
-          <p><code><a href="prepare_HDR_SSD.html">prepare_HDR_SSD()</a></code> </p>
-        </td>
-        <td><p>prepares Spectral species distribution (SSD) file and header</p></td>
-      </tr><tr><td>
-          <p><code><a href="prepare_HDR_Sunlit.html">prepare_HDR_Sunlit()</a></code> </p>
-        </td>
-        <td><p>prepare for writing sunlit proportion file</p></td>
       </tr><tr><td>
           <p><code><a href="print_error_message.html">print_error_message()</a></code> </p>
         </td>
         <td><p>prints an error message if problems occur</p></td>
       </tr><tr><td>
-          <p><code><a href="raster2BIL.html">raster2BIL()</a></code> </p>
+          <p><code><a href="produce_win_ID.html">produce_win_ID()</a></code> </p>
         </td>
-        <td><p>converts a raster into BIL format as expected by biodivMapR codes</p></td>
+        <td><p>design a matrix with window ID based on an original raster and window size in pixels</p></td>
       </tr><tr><td>
-          <p><code><a href="read_BIL_image_subset.html">read_BIL_image_subset()</a></code> </p>
+          <p><code><a href="radiometric_filtering.html">radiometric_filtering()</a></code> </p>
         </td>
-        <td><p>reads subset of an ENVI BIL image</p></td>
+        <td><p>Performs radiometric filtering based on three criteria: NDVI, NIR reflectance, Blue reflectance</p></td>
+      </tr><tr><td>
+          <p><code><a href="radiometricfilter_chunk.html">radiometricfilter_chunk()</a></code> </p>
+        </td>
+        <td><p>Performs radiometric filtering based on three criteria: NDVI, NIR reflectance, Blue reflectance</p></td>
+      </tr><tr><td>
+          <p><code><a href="randperm.html">randperm()</a></code> </p>
+        </td>
+        <td><p>performs random permutation for k samples among the vector defined by a original source: package labdsv https://rdrr.io/cran/labdsv/src/R/pco.R</p></td>
       </tr><tr><td>
           <p><code><a href="read_ENVI_header.html">read_ENVI_header()</a></code> </p>
         </td>
         <td><p>Reads ENVI hdr file</p></td>
       </tr><tr><td>
-          <p><code><a href="read_bin_subset.html">read_bin_subset()</a></code> </p>
-        </td>
-        <td><p>reads a subset from a binary image</p></td>
-      </tr><tr><td>
-          <p><code><a href="read_image_bands.html">read_image_bands()</a></code> </p>
-        </td>
-        <td><p>read specific image bands from image</p></td>
-      </tr><tr><td>
-          <p><code><a href="read_image_subset.html">read_image_subset()</a></code> </p>
-        </td>
-        <td><p>reads subset of lines from an image</p></td>
-      </tr><tr><td>
           <p><code><a href="repmat.html">repmat()</a></code> </p>
         </td>
         <td><p>R equivalent of repmat (matlab)</p></td>
-      </tr><tr><td>
-          <p><code><a href="revert_resolution_HDR.html">revert_resolution_HDR()</a></code> </p>
-        </td>
-        <td><p>revert resolution in a HDR file</p></td>
       </tr><tr><td>
           <p><code><a href="rm_invariant_bands.html">rm_invariant_bands()</a></code> </p>
         </td>
         <td><p>remove constant bands</p></td>
       </tr><tr><td>
+          <p><code><a href="sample_exact_raster.html">sample_exact_raster()</a></code> </p>
+        </td>
+        <td><p>sample exact number of pixels from a raster</p></td>
+      </tr><tr><td>
+          <p><code><a href="sample_from_raster.html">sample_from_raster()</a></code> </p>
+        </td>
+        <td><p>sample pixels or plots from raster data</p></td>
+      </tr><tr><td>
+          <p><code><a href="sample_from_raster_coords.html">sample_from_raster_coords()</a></code> </p>
+        </td>
+        <td><p>sample set of pixels defined by row and col from raster data</p></td>
+      </tr><tr><td>
+          <p><code><a href="sample_plots_from_raster.html">sample_plots_from_raster()</a></code> </p>
+        </td>
+        <td><p>sample pixels or plots from raster data</p></td>
+      </tr><tr><td>
+          <p><code><a href="sample_raster.html">sample_raster()</a></code> </p>
+        </td>
+        <td><p>sample pixels from raster data</p></td>
+      </tr><tr><td>
+          <p><code><a href="save_diversity_maps.html">save_diversity_maps()</a></code> </p>
+        </td>
+        <td><p>save diversity maps as raster data</p></td>
+      </tr><tr><td>
+          <p><code><a href="scatter_alphabeta.html">scatter_alphabeta()</a></code> </p>
+        </td>
+        <td><p>produces a figure summarizing alpha and beta diversity on scatterplots</p></td>
+      </tr><tr><td>
           <p><code><a href="select_PCA_components.html">select_PCA_components()</a></code> </p>
         </td>
         <td><p>Check if principal components are properly selected as expected by the method</p></td>
       </tr><tr><td>
-          <p><code><a href="spectral_band_unit.html">spectral_band_unit()</a></code> </p>
+          <p><code><a href="spectralspecies_per_polygon.html">spectralspecies_per_polygon()</a></code> </p>
         </td>
-        <td><p>Check spectral band units and convert from nanometer to micrometer or from micrometer to nanometer</p></td>
+        <td><p>get spectral species corresponding to polygons in a SpatVector object</p></td>
       </tr><tr><td>
-          <p><code><a href="split_image.html">split_image()</a></code> </p>
+          <p><code><a href="split_chunk.html">split_chunk()</a></code> </p>
         </td>
-        <td><p>defines the number of pieces resulting from image split</p></td>
+        <td><p>split chunk into subsets to prepare for parallel processing</p></td>
       </tr><tr><td>
           <p><code><a href="split_line.html">split_line()</a></code> </p>
         </td>
         <td><p>ENVI functions</p></td>
       </tr><tr><td>
-          <p><code><a href="split_pixel_samples.html">split_pixel_samples()</a></code> </p>
+          <p><code><a href="wrapperBig_PCA.html">wrapperBig_PCA()</a></code> </p>
         </td>
-        <td><p>splits a set of pixels to be sampled in an image based on number of lines, not number of samples</p></td>
-      </tr><tr><td>
-          <p><code><a href="sub2ind.html">sub2ind()</a></code> </p>
-        </td>
-        <td><p>convert image coordinates from X-Y to index</p></td>
-      </tr><tr><td>
-          <p><code><a href="update_shademask.html">update_shademask()</a></code> </p>
-        </td>
-        <td><p>updates an existing mask</p></td>
-      </tr><tr><td>
-          <p><code><a href="where_to_read.html">where_to_read()</a></code> </p>
-        </td>
-        <td><p>defines which byte should be read for each part of an image split in nbPieces</p></td>
-      </tr><tr><td>
-          <p><code><a href="where_to_read_kernel.html">where_to_read_kernel()</a></code> </p>
-        </td>
-        <td><p>defines which byte should be read for each part of an image split in nbPieces</p></td>
-      </tr><tr><td>
-          <p><code><a href="where_to_write_kernel.html">where_to_write_kernel()</a></code> </p>
-        </td>
-        <td><p>defines which byte should be written for each part of an image split in nbPieces</p></td>
-      </tr><tr><td>
-          <p><code><a href="write_ENVI_header.html">write_ENVI_header()</a></code> </p>
-        </td>
-        <td><p>writes ENVI hdr file</p></td>
-      </tr><tr><td>
-          <p><code><a href="write_PCA_raster.html">write_PCA_raster()</a></code> </p>
-        </td>
-        <td><p>writes an ENVI image corresponding to PCA</p></td>
-      </tr><tr><td>
-          <p><code><a href="write_StarsStack.html">write_StarsStack()</a></code> </p>
-        </td>
-        <td><p>This function writes a stars object into a raster file</p></td>
-      </tr><tr><td>
-          <p><code><a href="write_raster.html">write_raster()</a></code> </p>
-        </td>
-        <td><p>Writes a matrix or an array into a ENVI BIL raster</p></td>
+        <td><p>this function aims at applying PCA on a raster or list of rasters in combination with the function apply_bigRaster</p></td>
       </tr></tbody></table></div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

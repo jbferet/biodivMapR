@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Set parameters for biodivMapR • biodivMapR</title>
+<title>Produce features from original raster • biodivMapR</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Set parameters for biodivMapR">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Produce features from original raster">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.14.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0</span>
       </span>
     </div>
 
@@ -52,61 +52,16 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/biodivMapR_01.html">Prepare your data</a>
+      <a href="../articles/biodivMapR_01.html">Get Sentinel-2 data and validation</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_02.html">Set parameters for biodivMapR</a>
+      <a href="../articles/biodivMapR_02.html">Produce features from original raster</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_03.html">Perform spatial &amp; spectral filtering</a>
+      <a href="../articles/biodivMapR_03.html">Produce diversity maps from a set of features</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_04.html">PCA &amp; Dimensionality reduction</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_05.html">Spectral species mapping</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_06.html">alpha and beta diversity maps</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_07.html">Functional Diversity</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_08.html">How to perform validation?</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_09.html">Compute diversity from user-defined set of layers</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_10.html">Map diversity from Lautaret HS image</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_11.html">PROGYSAT#1: download S2 data</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_12.html">PROGYSAT#2: Run biodivMapR on S2 reflectance data</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_13.html">PROGYSAT#3: Run biodivMapR on selected spectral indices</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_14.html">COPERNICUS &amp; biodiv #1: set working environment</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_15.html">COPERNICUS &amp; biodiv #2: Get reference data</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_16.html">COPERNICUS &amp; biodiv #3: check S2 availability</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_17.html">COPERNICUS &amp; biodiv #4: download</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_18.html">COPERNICUS &amp; biodiv #5/6: Apply biodivMapR on S2 reflectance</a>
-    </li>
-    <li>
-      <a href="../articles/biodivMapR_19.html">COPERNICUS &amp; biodiv #5/6: Apply biodivMapR on S2 spectral indices</a>
+      <a href="../articles/biodivMapR_04.html">Validation with ground information</a>
     </li>
   </ul>
 </li>
@@ -134,11 +89,11 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Set parameters for biodivMapR</h1>
+      <h1 data-toc-skip>Produce features from original raster</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2025-01-09</h4>
+            <h4 data-toc-skip class="date">2025-01-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR_02.Rmd" class="external-link"><code>vignettes/biodivMapR_02.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_02.Rmd</code></div>
@@ -147,194 +102,281 @@ Féret, Florian de Boissieu</h4>
 
     
     
-<p>The image is <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_01.html" target="_blank" class="external-link">ready to process</a>, parameter setting for
-<code>biodivMapR</code> can start.</p>
-<div class="section level3">
-<h3 id="image-to-be-processed">Image to be processed<a class="anchor" aria-label="anchor" href="#image-to-be-processed"></a>
-</h3>
-<p>First, let’s define the (absolute or relative) path to the image file
-to be processed.</p>
-<p>Here we are using the image downloaded during the first step of the
-tutorial. The raster file systematically needs to pair with a
-<strong>.hdr</strong> file which will be automatically identified.</p>
+<div class="section level2">
+<h2 id="producing-features-from-reflectance-data-principle">Producing features from reflectance data: principle<a class="anchor" aria-label="anchor" href="#producing-features-from-reflectance-data-principle"></a>
+</h2>
+<p>A pre-processing step is usually required in order to produce
+relevant features from remote sensing data. When using
+multispectral/hyperspectral optical imagery, several alternatives can be
+considered to produce these features.</p>
+<ul>
+<li><p><strong>Spectral transformation</strong>. This includes PCA, MNF,
+as well as various multidimensional methods applying linear or
+non-linear transformations using the full spectral information</p></li>
+<li><p><strong>Spectral indices</strong>. They consist in applying
+simple transformations (difference, ratio, normalized difference…) on a
+limited number of spectral bands available from sensor acquisition.
+These include NDVI, EVI, NDWI1…</p></li>
+<li><p><strong>Biophysical properties</strong>. They involve physical
+information obtained from radiative transfer models, combined with an
+inversion algorithm dedicated to regression in order to link reflectance
+measured over part or all of the spectral range covered by a sensor, to
+one or multiple vegetation characteristics, such as LAI, leaf pigment
+and water content, LMA.</p></li>
+</ul>
+<p>This tutorial describes a selection of options available for users
+interested in producing features from an optical sensor (here,
+Sentinel-2) to prepare for <code>biodivMapR.</code></p>
+</div>
+<div class="section level2">
+<h2 id="reflectance-data-and-vegetation-mask">Reflectance data and vegetation mask<a class="anchor" aria-label="anchor" href="#reflectance-data-and-vegetation-mask"></a>
+</h2>
+<p>The image is assumed to be downloaded from the procedure described <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_01.html" target="_blank" class="external-link">previously</a></p>
+<p>The binary mask corresponding to the image to be processed is
+optional. However we strongly recommend using a mask when possible in
+order to discard pixels which may not be relevant for ecological
+analysis. This is the case for shaded, cloudy and non-vegetated pixels
+when focusing on vegetation biodiversity. Artificial surfaces and
+mineral surfaces should also be masked as they usually strongly
+contribute to spectral variability and do not inform about biological
+diversity.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">Input_Image_File</span> <span class="op">&lt;-</span> <span class="va">destfile</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># variables Refl_L2A and vegetation_mask defined in previous tutorial</span></span>
+<span><span class="va">input_raster_path</span> <span class="op">&lt;-</span>  <span class="va">Refl_L2A</span></span>
+<span><span class="va">input_mask_path</span> <span class="op">&lt;-</span>  <span class="va">vegetation_mask</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="mask-corresponding-to-the-image">Mask corresponding to the image<a class="anchor" aria-label="anchor" href="#mask-corresponding-to-the-image"></a>
-</h3>
-<p>It is possible to provide a mask file at this first stage of the
-process, in order take advantage of cloud detection or any other
-preprocessing step, and to target specific/valid areas.</p>
-<p>This mask file is introduced the same way as the image, by providing
-the absolute or relative path to the raster file.</p>
-<p>The mask is expected to be the same spatial dimensions and extent as
-the raster file to process (columns and lines)</p>
-<p>Expected values in the mask:</p>
+<div class="section level2">
+<h2 id="spectral-transformation">Spectral transformation<a class="anchor" aria-label="anchor" href="#spectral-transformation"></a>
+</h2>
+<p>Standardized Principal Component Analysis (SPCA) can be applied on
+Sentinel-2 images with the code below.</p>
+<p>First, the mask produced with <code>preprocS2</code> during the
+previous step is refined using a combination of radiometric filters.</p>
 <ul>
-<li><p>0 = pixel is masked</p></li>
-<li><p>1 = pixel is selected</p></li>
+<li><p><strong>NDVI filtering</strong>: allows filtering to eliminate
+non-vegetated pixels. Nothing fancy so you may need to deal with mixed
+pixels… <code>NDVI_Thresh</code> defines the minimum NDVI value to be
+kept. By default, the NDVI is computed based on the NIR spectral band
+closest to 835 nm, and the RED spectral band closest to 670 nm.</p></li>
+<li><p><strong>NIR filtering</strong>: allows filtering of shadows and
+pixels with very low signal. <code>NIR_Thresh</code> defines the minimum
+NIR value to be kept. By default, the NIR spectral band closest to 835
+nm is used.</p></li>
+<li><p><strong>BLUE filtering</strong>: allows filtering of clouds,
+based on the hypothesis that atmospheric scattering will lead to higher
+reflectance in the blue domain. <code>Blue_Thresh</code> defines the
+maximum Blue reflectance to be kept. By default, the Blue spectral band
+closest to 480 nm is used.</p></li>
 </ul>
-<p>If possible, the mask should be written in ENVI HDR format, with 1
-band and values coded in integer 8bits.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Set to FALSE if no mask available</span></span>
-<span><span class="va">Input_Mask_File</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="definition-of-an-output-directory">Definition of an output directory<a class="anchor" aria-label="anchor" href="#definition-of-an-output-directory"></a>
-</h3>
-<p>Various files will be computed and written on the disk during the
-process.</p>
-<p>These files will be written in a directory structure created within a
-main output directory</p>
-<p>A sub directory named after the name of the image processed is
-automatically created in this main output directory, in order to
-facilitate identification of the results corresponding to a given
-image.</p>
-<p>If the same image is processed with different parameter settings,
-some files may be overwritten.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">Output_Dir</span> <span class="op">&lt;-</span> <span class="st">'../RESULTS'</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="radiometric-filterings">Radiometric filterings<a class="anchor" aria-label="anchor" href="#radiometric-filterings"></a>
-</h3>
-<p>If no mask file is available with the image to process, it is
-possible to perform basic radiometric filterings:</p>
-<ul>
-<li><p><strong>Elimination of non vegetated pixels</strong>: the mask
-can be updated based on NDVI thresholding. Pixels with NDVI lower than
-this threshold are masked.</p></li>
-<li><p><strong>Elimination of residual clouds</strong>: : the mask can
-be updated based on NDVI thresholding. Pixels with reflectance in blue
-domain higher than this threshold are masked</p></li>
-<li><p><strong>Elimination of shaded areas</strong>: the mask can be
-updated based on NIR thresholding. Pixels with reflectance in NIR domain
-lower than this threshold are masked.</p></li>
-</ul>
-<p>__These radiometric filters are very basic filters and should not
-replace algorthms dedicated to the detection of
-cloud/shade/non-vegetated pixels.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">NDVI_Thresh</span> <span class="op">&lt;-</span> <span class="fl">0.8</span></span>
-<span><span class="va">Blue_Thresh</span> <span class="op">&lt;-</span> <span class="fl">500</span></span>
-<span><span class="va">NIR_Thresh</span> <span class="op">&lt;-</span> <span class="fl">1500</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="normalization-of-reflectance-data">Normalization of reflectance data<a class="anchor" aria-label="anchor" href="#normalization-of-reflectance-data"></a>
-</h3>
-<p><strong>Continuum Removal</strong>, a normalization procedure, is
-available when working with reflectance data. This procedure eliminates
-multiplicative effects, and proved to be relatively efficient in
-decreasing the effect of changes in illumination within individual tree
-crowns, when using high spatial resolution imaging spectroscopy over
-tropical forests.</p>
+<p>Normalization of reflectance data with Continuum Removal can be
+performed as additional pre-processing step. This is done by setting
+<code>Continuum_Removal = T</code> as input when running
+<code>perform_PCA</code>.</p>
+<p><strong>Continuum Removal</strong> is available when working with
+reflectance data only. It requires information on the sensor spectral
+bands, defined by <code>input_rast_wl</code> This procedure eliminates
+multiplicative effects on reflectance. It proved to be relatively
+efficient in decreasing the effect of changes in illumination within
+individual tree crowns, when using high spatial resolution imaging
+spectroscopy over tropical forests.</p>
 <p><strong>Continuum Removal</strong> is recommended when processing
-high spatial resolution (spatial resolutionc
+high spatial resolution (spatial resolution
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>≤</mo><annotation encoding="application/x-tex">\leq</annotation></semantics></math>
 10 m) multi and hyperspectral data.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">Continuum_Removal</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jbferet/biodivMapR" class="external-link">biodivMapR</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 1- define spectral bands corresponding to the sensor. </span></span>
+<span><span class="co"># central wavelength of S2 spectral bands can be loaded from biodivMapR data</span></span>
+<span><span class="va">HDRpath</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata'</span>, <span class="st">'HDR'</span>, <span class="st">'SENTINEL_2.hdr'</span>, package <span class="op">=</span> <span class="st">'biodivMapR'</span><span class="op">)</span></span>
+<span><span class="va">SensorBands</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_ENVI_header.html">read_ENVI_header</a></span><span class="op">(</span>HDRpath <span class="op">=</span> <span class="va">HDRpath</span><span class="op">)</span><span class="op">$</span><span class="va">wavelength</span></span>
+<span></span>
+<span><span class="co"># 2- define spectral transformation: select between 'PCA' and 'SPCA'</span></span>
+<span><span class="va">spectral_transformation</span> <span class="op">&lt;-</span> <span class="st">'SPCA'</span></span>
+<span></span>
+<span><span class="co"># 3- define path for output directory</span></span>
+<span><span class="va">output_dir_PCA</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">output_dir</span>, <span class="va">spectral_transformation</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 4- apply additional (very basic) radiometric filtering</span></span>
+<span><span class="co"># --&gt; User's responsibility to check if resulting mask meets needs</span></span>
+<span><span class="va">NDVI_Thresh</span> <span class="op">&lt;-</span> <span class="fl">0.65</span>     <span class="co"># NDVI thresholding to exclude non vegetated pixels</span></span>
+<span><span class="va">Blue_Thresh</span> <span class="op">&lt;-</span> <span class="fl">500</span>      <span class="co"># Blue thresholding to exclude remaining cloudy/hazy pixels</span></span>
+<span><span class="va">NIR_Thresh</span> <span class="op">&lt;-</span> <span class="fl">1500</span>      <span class="co"># NDVI thresholding to exclude remaining shaded pixels</span></span>
+<span><span class="va">mask_path_PCA</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/radiometric_filtering.html">radiometric_filtering</a></span><span class="op">(</span>input_raster_path <span class="op">=</span> <span class="va">input_raster_path</span>, </span>
+<span>                                       input_rast_wl <span class="op">=</span> <span class="va">SensorBands</span>, </span>
+<span>                                       input_mask_path <span class="op">=</span> <span class="va">input_mask_path</span>,</span>
+<span>                                       output_dir <span class="op">=</span> <span class="va">output_dir_PCA</span>,</span>
+<span>                                       NDVI_Thresh <span class="op">=</span> <span class="va">NDVI_Thresh</span>, </span>
+<span>                                       Blue_Thresh <span class="op">=</span> <span class="va">Blue_Thresh</span>, </span>
+<span>                                       NIR_Thresh <span class="op">=</span> <span class="va">NIR_Thresh</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 5- apply spectral transformation on continuum removed reflectance</span></span>
+<span><span class="va">PCA_Output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/perform_PCA.html">perform_PCA</a></span><span class="op">(</span>input_raster_path <span class="op">=</span> <span class="va">input_raster_path</span>, </span>
+<span>                          input_rast_wl <span class="op">=</span> <span class="va">SensorBands</span>, </span>
+<span>                          output_dir <span class="op">=</span> <span class="va">output_dir_PCA</span>, </span>
+<span>                          Continuum_Removal <span class="op">=</span> <span class="va">Continuum_Removal</span>, </span>
+<span>                          input_mask_path <span class="op">=</span>  <span class="va">mask_path_PCA</span>, </span>
+<span>                          maxRows <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></code></pre></div>
+<p>The original publication <a href="https://doi.org/10.1890/13-1824.1" class="external-link">Féret &amp; Asner (2014)</a>
+used SPCA when applying the method implemented in
+<code>biodivMapR</code>. This procedure remains a valid option.</p>
+<p>Once spectral transformation is performed, users are requested to
+select relevant components. <code>biodivMapR</code> currently does not
+provide automated procedure for principal component (PC) selection.
+Hence, PC selection is users’ responsibility. We recommend selection
+based on visual inspection in order to identify spatial features
+highlighting changes in vegetation types / species composition. This
+procedure requires expertise on the ecosystem of interest. PC selection
+should ideally be validated with ground information.</p>
+<p>Data-driven methods adjusted based on data distribution for a
+specific image/site, such as PCA, usually show poor generalization
+ability, and cannot be applied on other images. As explained earlier, PC
+selection is a subjective step which prevents from fully automated
+workflows. Moreover, spectral transformation such as PCA and MNF are
+usually computationally demanding.</p>
+<p>Here, we selected components 1, 5, and 6 to produce the diversity
+maps. A color composition of these components is displayed below.</p>
+<p align="center">
+</p>
+<p><img src="../reference/figures/SitePCA.png" width="50%" height="50%"></p>
+
+<p>Note that the selection of spectral indices used here may not be
+optimal. Users may want to test various combinations of spectral
+indices. The function <code>biodivMapR_SFS</code> included in the
+package allows sequential feature selection to identify the set of
+features optimizing a criterion (diversity metrics, discrimination among
+vegetation types).</p>
+<p>Users can contact the authors of the package for assistance if needed
+when running <code>biodivMapR_SFS</code>.</p>
 </div>
-<div class="section level3">
-<h3 id="transformation-of-reflectance-and-dimensionality-reduction">Transformation of reflectance and dimensionality reduction<a class="anchor" aria-label="anchor" href="#transformation-of-reflectance-and-dimensionality-reduction"></a>
-</h3>
-<p>Once normalization is performed, the next step in
-<code>biodivMapR</code> consists in transformation of the data using one
-of the following techniques:</p>
+<div class="section level2">
+<h2 id="spectral-indices">Spectral indices<a class="anchor" aria-label="anchor" href="#spectral-indices"></a>
+</h2>
+<p>Spectral indices can be considered as input spectral features in the
+perspective of application over large regions, or generalization in
+space and time of spectral diversity models produced with
+<code>biodivMapR.</code></p>
+<p>Here, we will illustrate how to produce spectral indices from
+Sentinel-2 reflectance with the R package <a href="https://gitlab.com/jbferet/spinr" class="external-link"><code>spinR</code></a></p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">spinR</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 1- define spectral bands corresponding to the sensor. </span></span>
+<span><span class="co"># central wavelength of S2 spectral bands can be loaded from biodivMapR data</span></span>
+<span><span class="va">HDRpath</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata'</span>, <span class="st">'HDR'</span>, <span class="st">'SENTINEL_2.hdr'</span>, package <span class="op">=</span> <span class="st">'biodivMapR'</span><span class="op">)</span></span>
+<span><span class="va">SensorBands</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_ENVI_header.html">read_ENVI_header</a></span><span class="op">(</span>HDRpath <span class="op">=</span> <span class="va">HDRpath</span><span class="op">)</span><span class="op">$</span><span class="va">wavelength</span></span>
+<span></span>
+<span><span class="co"># 2- define path for output directory and create it</span></span>
+<span><span class="va">spectral_transformation</span> <span class="op">&lt;-</span> <span class="st">'SpectralIndices'</span></span>
+<span><span class="va">output_dir_SI</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">output_dir</span>, <span class="va">spectral_transformation</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">output_dir</span>, showWarnings <span class="op">=</span> <span class="cn">F</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 3- [for information] list spectral indices included in spinR</span></span>
+<span><span class="fu">spinR</span><span class="fu">::</span><span class="fu">listIndices_spinR</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 4- define spectral indices of your choice</span></span>
+<span><span class="va">SI_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'CCCI'</span>, <span class="st">'LAI_SAVI'</span>, <span class="st">'CR_SWIR'</span><span class="op">)</span></span>
+<span><span class="co"># - CCCI is expected to be correlated to vegetation chlorophyll content</span></span>
+<span><span class="co"># - LAI_SAVI is expected to be correlated to Leaf Area Index</span></span>
+<span><span class="co"># - CR_SWIR is expected to be correlated to vegetation water content</span></span>
+<span><span class="va">SI_path</span> <span class="op">&lt;-</span> <span class="fu">spectralindices_from_raster</span><span class="op">(</span>input_raster_path <span class="op">=</span> <span class="va">input_raster_path</span>, </span>
+<span>                                       input_rast_wl <span class="op">=</span> <span class="va">SensorBands</span>, </span>
+<span>                                       output_dir <span class="op">=</span> <span class="va">output_dir_SI</span>, </span>
+<span>                                       SI_list <span class="op">=</span> <span class="va">SI_list</span>, </span>
+<span>                                       input_mask_path <span class="op">=</span>  <span class="va">input_mask_path</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 6- update mask based on interquartile range.</span></span>
+<span><span class="co"># Inf or extreme values can be obtained from some spectral indices</span></span>
+<span><span class="co"># (e.g. negative reflectance or extremely low values used in ratio)</span></span>
+<span><span class="co"># this optional step ensures that erroneous vegetation indices are discarded. </span></span>
+<span><span class="va">mask_path_SI</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">output_dir_SI</span>, <span class="st">'Mask_update_IQR.tif'</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/compute_mask_IQR.html">compute_mask_IQR</a></span><span class="op">(</span>input_raster_path <span class="op">=</span> <span class="va">SI_path</span>,</span>
+<span>                 output_mask_path <span class="op">=</span> <span class="va">mask_path_SI</span>,</span>
+<span>                 input_mask_path <span class="op">=</span> <span class="va">input_mask_path</span><span class="op">)</span></span></code></pre></div>
+<p>Spectral indices (SI) are computationally less demanding than
+spectral transformation.</p>
+<p>They are theoretically more generalizable through space and time than
+spectral features resulting from PCA. However, SI are also sensitive to
+the conditions of acquisition and properties extrinsic to vegetation.
+such as :</p>
 <ul>
-<li><p><code>PCA</code>: Principal component analysis (no rescaling of
-the data, computation from covariance matrix)</p></li>
-<li><p><code>SPCA</code>: Standardized Principal component analysis (no
-rescaling of the data, computation from correlation matrix)</p></li>
-<li><p><code>MNF</code>: minimum noise fraction (appropriate for high
-dimensionality data such as imaging spectroscopy)</p></li>
+<li>geometry of acquisition (relative sun/satellite position</li>
+<li>atmospheric properties and associated correction for L2A reflectance
+production</li>
+<li>soil properties in case of low density vegetation</li>
+<li>sensor characteristics</li>
 </ul>
-<p>These transformations will be followed by component selection in
-order to perform dimensionality reduction.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">TypePCA</span> <span class="op">&lt;-</span> <span class="st">'SPCA'</span></span></code></pre></div>
+<p>SI to be used with <code>biodivMapR</code> should be selected so that
+they can be related to vegetation properties. SI showing artifacts
+caused by sensor or factors extrinsic to vegetation should be
+avoided.</p>
+<p>Note that the selection of spectral indices used here may not be
+optimal. Users may want to test various combinations of spectral
+indices. The function <code>biodivMapR_SFS</code> included in the
+package allows sequential feature selection to identify the set of
+features optimizing a criterion (diversity metrics, discrimination among
+vegetation types).</p>
+<p>Users can contact the authors of the package for assistance if needed
+when running <code>biodivMapR_SFS</code>.</p>
+<p>A color composition of the three spectral indices selected is
+displayed below:</p>
+<p align="center">
+</p>
+<p><img src="../reference/figures/SiteSI.png" width="50%" height="50%"></p>
+
 </div>
-<div class="section level3">
-<h3 id="filtering-outliers-in-pca">Filtering outliers in PCA<a class="anchor" aria-label="anchor" href="#filtering-outliers-in-pca"></a>
-</h3>
-<p>An additional filtering step can be performed, based on the detection
-of outliers in components of the PCA. This strategy is computationally
-more demanding and significantly longer. However, this outlier detection
-may be useful to mask pixels including residual effect of atmosphere, or
-outliers which may not be relevant to include in the process of
-computation of spectral variation.</p>
-<p>This PCA filtering can be performed by setting a unique parameter,
-<code>FilterPCA</code>, to <code>TRUE</code>.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># PCA FILTERING:        Set to TRUE if you want second filtering based on PCA outliers to be processed.</span></span>
-<span><span class="co"># Slower process</span></span>
-<span><span class="co"># Automatically set to FALSE if TypePCA     = 'MNF'</span></span>
-<span><span class="va">FilterPCA</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="definition-of-window-size-for-computation-of-spectral-diversity">Definition of window size for computation of spectral diversity<a class="anchor" aria-label="anchor" href="#definition-of-window-size-for-computation-of-spectral-diversity"></a>
-</h3>
-<p><code>biodivMapR</code> computes spectral diversity over a set of
-pixels. The number of pixels included for each spectral diversity data
-point is defined by a window size. The window size defines the spatial
-resolution of all diversity maps.</p>
-<p>The length of the side of the window is provided as input parameter:
-if <code>window_size=10</code>, then the pixels in the spectral
-diversity maps will correspond to a 10x10 pixels windows in the original
-image.</p>
-<p>Both image spatial resolution and type of ecosystem under study
-should be taken into account when defining the window size: in forested
-ecosystems, window size should be large enough to include groups of
-individuals.</p>
-<p>In forested ecosystems, window size between 0.25 and 4 ha usually
-match with ground data and correspond to a fair compromise. However,
-this would need to be adapted to specific situations.</p>
-<p>If the value of window_size is too low, this will result in low
-number of pixels per spatial unit, hence limited range of variation of
-diversity in the image.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">window_size</span> <span class="op">&lt;-</span> <span class="fl">10</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="optimization-of-computational-resource">Optimization of computational resource<a class="anchor" aria-label="anchor" href="#optimization-of-computational-resource"></a>
-</h3>
-<p>The computational resource can be adjusted:</p>
+<div class="section level2">
+<h2 id="biophysical-properties">Biophysical properties<a class="anchor" aria-label="anchor" href="#biophysical-properties"></a>
+</h2>
+<p>Biophysical properties obtained from physical model inversion are an
+alternative to data-driven spectral transformation and spectral
+indices.</p>
+<p>Vegetation biophysical properties can be obtained with the package <a href="https://jbferet.gitlab.io/prosail" class="external-link"><code>prosail</code></a>. An
+example of computation of vegetation biophysical properties from PROSAIL
+hybrid inversion applied to Sentinel-2 imagery is described <a href="https://jbferet.gitlab.io/prosail/articles/prosail4.html" class="external-link">here</a>.</p>
+<p>Vegetation biophysical properties are theoretically the best option
+recommended for the application of <code>biodivMapR</code>. They produce
+information directly related to vegetation properties, such as leaf
+pigment content, water content, Leaf Mass per Area (LMA), Leaf Area
+Index (LAI). They are able to account for factors such as geometry of
+acquisition, soil properties, sensor characteristics.</p>
+<p>However, these procedures for biophysical properties estimation also
+show limitations:</p>
 <ul>
-<li><p><code>nbCPU</code> corresponds to the number of processing units
-to be used during steps of the computation which are parallelized. Make
-sure you do not ask for more than what your computer can
-provide.</p></li>
-<li><p><code>MaxRAM</code> corresponds to the maximum size of file chunk
-of loaded in the RAM when processing the image.
-<strong>WARNING</strong>: this does not corresponds to the maximum
-amount of RAM needed for data processing. Once a chunk of file is
-written, its processing may require several time this amount of RAM to
-perfom different processing steps. <code>MaxRAM &lt;- 0.5</code> is
-reasonable when processing a 2Gb raster on a personal computer with 16Gb
-RAM. However, larger values of <code>MaxRAM</code> may rapidly require
-larger amount of RAM.</p></li>
+<li><p>Physical model inversion are computationally more demanding than
+SI. Model inversion requires simulation of a training set, machine
+learning training and application to the image data.</p></li>
+<li><p>Model inversion may require fine tuning of the training set in
+order to get optimal estimation of vegetation biophysical properties.
+Generic parameterization may lead to suboptimal estimations, with
+possible saturation.</p></li>
 </ul>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">nbCPU</span> <span class="op">&lt;-</span> <span class="fl">4</span></span>
-<span><span class="va">MaxRAM</span> <span class="op">&lt;-</span> <span class="fl">0.5</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="number-of-spectral-species">Number of spectral species<a class="anchor" aria-label="anchor" href="#number-of-spectral-species"></a>
-</h3>
-<p>The main spectral diversity metrics computed by
-<code>biodivMapR</code> are based on a clustering of normalized &amp;
-dimensionality reduced image. Following this clustering, a cluster ID is
-assigned to each pixel, corresponding to the <strong>‘spectral
-species’</strong> defined in the original publication.</p>
-<p>The number of clusters is defined by the value of
-<code>nbclusters</code>.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">nbclusters</span> <span class="op">&lt;-</span> <span class="fl">50</span></span></code></pre></div>
+<div class="section level2">
+<h2 id="choosing-the-right-spectral-features">Choosing the right spectral features<a class="anchor" aria-label="anchor" href="#choosing-the-right-spectral-features"></a>
+</h2>
+<p>As describe above, several procedures can be applied in order to
+produce features which will feed <code>biodivMapR</code>.</p>
+<p>The authors of this package currently do not have firm
+recommendations. Users should test, explore and compare resulting
+spectral diversity metrics to ecological information obtained from
+ground observations.</p>
+<p>We consider spectral indices as a good trade-off when using
+Sentinel-2 data, given the straightforward computation and the
+possibility to relate these spectral indices to specific spectral
+domains and to vegetation properties, or groups of vegetation
+properties.</p>
+<p>Spectral transformation produce original features taking advantage of
+rich spectral information. They are more suitable to summarize
+information from imaging spectroscopy:<br>
+MNF for example, should produce latent features with minimum
+colinearity, and contribute to separate information on vegetation from
+noisy signal.</p>
+<p>Please contact the authors of this package if in need for additional
+information.</p>
 <p><br><br></p>
-<p>Once parameterization has been set, the image processing can start,
-first with an optional <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_03.html" target="_blank" class="external-link">radiometric filtering</a>.</p>
+<p>Once spectral features are computed, <code>biodivMapR</code> can be
+applied. This is described in this <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_03.html" target="_blank" class="external-link">tutorial</a>.</p>
 </div>
   </div>
 
