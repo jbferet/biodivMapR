@@ -108,9 +108,9 @@ Data-driven methods adjusted based on data distribution for a specific image/sit
 Here, we selected components 1, 5, and 6 to produce the diversity maps. 
 A color composition of these components is displayed below. 
 
-<p align="center">
+<p>
 
-<img src="../man/figures/SitePCA.png" width="50%" height="50%"/>
+<img src="../man/figures/SitePCA.png" width="70%" height="70%" class="center">
 
 </p>
 
@@ -183,9 +183,9 @@ Users can contact the authors of the package for assistance if needed when runni
 
 A color composition of the three spectral indices selected is displayed below: 
 
-<p align="center">
+<p>
 
-<img src="../man/figures/SiteSI.png" width="50%" height="50%"/>
+<img src="../man/figures/SiteSI.png" width="70%" height="70%" class="center">
 
 </p>
 
