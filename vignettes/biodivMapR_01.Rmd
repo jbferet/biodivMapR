@@ -1,14 +1,17 @@
 ---
-title: "Prepare your data"
+title: "Get Sentinel-2 data and validation"
 author: "Jean-Baptiste Féret, Florian de Boissieu"
 date: "`r Sys.Date()`"
 output: 
   html_vignette:
     number_sections: true
 vignette: >
-  %\VignetteIndexEntry{PrepareData}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{getdata}
   \usepackage[utf8]{inputenc}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: sentence
 ---
 
 ```{r setup, include = FALSE}
@@ -20,146 +23,114 @@ knitr::opts_chunk$set(
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
-`biodivMapR` produces (spectral) diversity maps based on (optical) images.
-The first step is then to have access to such image. Many possibilities exist to access Sentinel-2 data. 
-The R package [`sen2r`](https://sen2r.ranghetti.info/) is a good option to access Sentinel-2 data if you want to develop a full workflow with R. 
+`biodivMapR` aims at producing spectral diversity maps based on multidimensional raster data.
+While its application is technically not limited to optical imagery, users experimenting with other types of remote sensing data are expected to make sure that the input information used to produce remotely sensed diversity maps are actually relevant to describe vegetation biodiversity as intended in `biodivMapR`.
 
-### Data requirements to run `biodivMapR`
-`biodivMapR` requires raster data as input, written as image stacks (one file including all spectral bands / dimensions used for the analysis). If optical data is processed, then __the spectral bands should be provided in the header file__, in order to allow computation of the continuum removal over the full spectrum. 
-If Continuum_Removal is set to __FALSE__, then the spectral bands are not required.
+## Data requirements
 
-## Download a Sentinel-2 image sample
+`biodivMapR` requires raster data as input.
+Raster data are handled with the R package [`terra`](https://rspatial.github.io/terra/reference/terra-package.html).
+Data format should then be compliant with the drivers available with this package.
 
-In the chunk of code hereafter, an image subset is downloaded from a gitlab repository. 
-The image is an ENVI raster including : 
+If using multispectral/hyperspectral optical data, **the central wavelength should be properly identified for each spectral band provided**.
+Central wavelength is required for the computation of spectral indices or the application of continuum removal.
 
-* A binary file (which has no extension here).
+## Download Sentinel-2 image sample
 
-* A header file (with __.hdr__ extension).
+The S2 subset used for this tutorial corresponds to a forested area in Cameroon.
+We previously identified a S2 acquisition with minimum cloud cover.
+Visualization can be done with the [Copenicus Browser](https://browser.dataspace.copernicus.eu/)
 
-The header file is a text file including all necessary metadata which can be read with a text editor.
-It includes image dimensions, projection, and the name and __central wavelength for each spectral band__.
+Once a correct acquisition identified, Sentinel-2 imagery is obtained with the R package [`preprocS2`](https://jbferet.gitlab.io/preprocs2/).
+
+The chunk of code below downloads Sentinel-2 products corresponding to a bounding box from the STAC catalog provided by Microsoft Planetary Computer.
+
+-   `Refl_L2A` is the L-2A reflectance for the bounding box
+-   `provider_mask` is the corresponding SCL (scene classification layer)
+-   `Binary_mask` is a binary vegetation mask extracted from the SCL
+-   `vegetation_mask` is an updated binary vegetation mask after application of NDVI and radiometric thresholds to remove non-vegetated, shaded and hazy pixels (very basic filtering)
+
+Additionally, The rasters corresponding to the geometry of acquisition can be downloaded from the [CDSE](https://dataspace.copernicus.eu/analyse/apis), if valid authentication is provided and `geomAcq = T`.
 
 ```{r download S2 sample}
-# load biodivMapR and useful libraries 
-library(biodivMapR)
-library(utils)
-library(stars)
-# url for the S2 subset
-url <- 'https://gitlab.com/jbferet/myshareddata/-/raw/master/biodivMapR_S2_Sample/RASTER/S2A_T33NUD_20180104_Subset'
-# create a temporary directory (choose your own data directory)
-tmpdir <- tempdir()
-# name your binary raster with the same name as the online file
-NameRaster <- 'S2A_T33NUD_20180104_Subset'
-destfile <- file.path(tmpdir,NameRaster)
-download.file(url = url, destfile = destfile, method = 'auto', quiet = FALSE, mode = "wb")
+# load useful libraries 
+library(preprocS2)
+library(sf)
 
-# url for the S2 subset header
-urlhdr <-  'https://gitlab.com/jbferet/myshareddata/-/raw/master/biodivMapR_S2_Sample/RASTER/S2A_T33NUD_20180104_Subset.hdr'
-# name your raster HDR with the same name as the binary raster, with .hdr extension
-destfile_HDR <- get_HDR_name(destfile,showWarnings = FALSE)
-download.file(url = urlhdr, destfile = destfile_HDR, method = 'auto', quiet = FALSE, mode = "w")
+################################################################################
+# 1- define input & output directories
+output_dir_s2 <- './S2_data2'
+datetime <- '2018-12-25'
+siteName <- 'S2_subset_Cameroon'
+
+bbox <- sf::st_bbox(obj = c('xmin' = 357001, 'ymin' = 341701, 
+                            'xmax' = 366730, 'ymax' = 351236))
+sf::st_crs(x = bbox) <- 32633
+
+# 2- get tiling grid kml from https://sentiwiki.copernicus.eu/web/s2-products
+path_S2tilinggrid <- 'Sentinel-2_tiling_grid.kml'
+
+# 3- get S2 acquisition and geometry of acquisition for study area
+# https://shapps.dataspace.copernicus.eu/dashboard/#/account/settings
+id <- "sh-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+secret <- "XXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+
+# tip to save credential on your computer: run the following command : 
+# > file.edit("~/.Renviron")
+# add ID and password for CDSE as well as CURL_SSL_BACKEND using this template
+# > CDSE_ID="sh-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+# > CDSE_SECRET="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+# > CURL_SSL_BACKEND="openssl"
+# save .Renviron file and restart R session then load your credential this way: 
+# > id <- Sys.getenv("CDSE_ID")
+# > secret <- Sys.getenv("CDSE_SECRET")
+authentication <- list('id' = id, 'pwd' = secret)
+
+# 3- get S2 acquisition for study area
+list_files <- preprocS2::get_s2_raster(bbox = bbox, geomAcq = T,
+                                       authentication = authentication, 
+                                       path_S2tilinggrid = path_S2tilinggrid, 
+                                       datetime = datetime, 
+                                       output_dir = output_dir_s2, 
+                                       siteName = siteName)
+# Sentinel-2 L2A reflectance
+Refl_L2A <- list_files$Refl_L2A
+# Sentinel-2 binary mask identifying vegetation, discarding clouds & shadows
+vegetation_mask <- list_files$vegetation_mask
+# Sentinel-2 mask from provider ( = SCL from ESA products)
+SCL <- list_files$provider_mask
+# Sentinel-2 geometry of acquisition (if requested from CDSE)
+geometryAcquisition <- list_files$geometryAcquisition
 ```
 
-
-The subset is obtained from tile T33NUD, acquired by Sentinel-2A satellite in 2018/01/04 over Cameroon.
-
-
 <p align="center">
-  <img width="50%" height="50%" src="../man/figures/01_RGB_S2A_T33NUD_20180104_Subset.png">
-</p>
 
+<img src="../man/figures/SiteRGB.png" width="50%" height="50%"/>
+
+</p>
 
 Once the image is downloaded, it can be processed with `biodivMapR`.
 
-### Add a header file to Tiff images
-
-This example illustrates how to produce a proper HDR file for Sentinel-2 images when no header is paired with the main raster file. 
-
-This is the case of most GeoTiff raster images, for example.
-
-To illustrate the procedure, let's produce a GeoTiff image from the ENVI raster downloaded in the previous step.
-
-```{r convert ENVI to TIFF}
-# read ENVI file with stars
-Stars_S2 <- stars::read_stars(destfile, along = 'band',proxy = FALSE)
-# write it as a tiff image
-# create a specific directory for the tiff image and name your raster
-desttiff <- file.path(tmpdir,'TIFF',fsep = '\\')
-dir.create(desttiff,showWarnings = FALSE)
-destfiletiff <- file.path(desttiff,'S2_Subset.tif',fsep = '\\')
-r <- write_stars(Stars_S2, dsn=destfiletiff, driver =  'GTiff', type='Int16')
-
-```
-
-Then, let's produce a header file for this GeoTiff image.
-
-In order to simplify the process if you are using __Sentinel-2__, __Landsat-7__, or __WorldView__: a [`.hdr` template]('https://github.com/jbferet/biodivMapR/blob/master/inst/extdata/HDR'){target="_blank"} is available. This `.hdr` template is valid for L2A level images, so make sure the spectral bands in your image correspond to the spectral bands identified in the raster file (name and rank).
-
-The bands in the GeoTiff raster are expected to be written as follows: 
-
-* __Sentinel-2__ (possibility to differentiate __Sentinel-2A__ and __Sentinel-2B__)
-
-  ** band names 		= {band 02, band 03, band 04, band 05, band 06, band 07, band 08, band 08A, band 11, band 12}.
-
-  ** wavelength 		= {496.6, 560.0, 664.5, 703.9, 740.2, 782.5, 835.1, 864.8, 1613.7, 2202.4}.
-
-  ** bandwidth 		= {98, 45, 38, 19, 18, 28, 145, 33, 143, 242}.
-
-* __Landsat-7__
-
-  ** band names 		= {B01, B02, B03, B04, B05, B07}
-
-  ** wavelength 		= {485.0, 560.0, 660.5, 835.0, 1650.0, 2220.0}
-
-* __WorldView__
-
-  ** band names = {Coastal, Blue, Green, Yellow, Red, Red Edge, NIR1, NIR2}
-
-  ** wavelength = { 425.000, 480.000, 545.000, 605.000, 660.000, 725.000, 832.500, 950.000}
-
-
-__If spectral bands in your raster image differ from these aforementioned, please properly define these spectral bands.__
-
-__Keep in mind that the bands should be ranked in ascending order (in terms of central wavelength).__
-
-
-```{r Produce header for TIFF raster}
-# read ENVI file with stars
-create_hdr(ImPath = destfiletiff, Sensor = 'SENTINEL_2A', 
-           SpectralBands = NULL, BandName = NULL, WLunits = NULL)
-```
-
-
-You can also produce a header file with your own parameters corresponding to the raster data. 
-
-```{r Produce header for TIFF raster and custom sensor}
-# read ENVI file with stars
-BandName <- c('band_02', 'band 03', 'band_04', 'band_05', 'band_06', 
-               'band_07', 'band_08', 'band_08A', 'band_11', 'band_12')
-SpectralBands <- c(496.6, 560.0, 664.5, 703.9, 740.2, 
-                   782.5, 835.1, 864.8, 1613.7, 2202.4)
-WLunits <- 'Nanometers'
-create_hdr(ImPath = destfiletiff, Sensor = 'MyOwnSensor', 
-           SpectralBands = SpectralBands,BandName = BandName, WLunits = WLunits)
-```
-
 ### Download vector files used for 'validation'
 
-A set of vector files is downloaded here, corresponding to circular plots identified in the raster. It will be used in the final step of the tutorial ([__How to perform validation?__](https://jbferet.github.io/biodivMapR/articles/biodivMapR_08.html){target="_blank"}.).
+A set of vector files is downloaded here, corresponding to circular plots identified in the raster.
+It will be used in the final step of the tutorial ([**How to perform validation?**](https://jbferet.github.io/biodivMapR/articles/biodivMapR_08.html){target="_blank"}.).
 
 The following code allows downloading the zipfile containing the vector data, and unzipping it in the same directory as the one including the raster data.
 
 ```{r download vector data}
-# library
 library(zip)
 # name zip file including plots located on the tile
-destzip <- file.path(tmpdir,'S2A_T33NUD_Plots.zip',fsep = '\\')
+output_dir_val <- file.path(output_dir_s2, 'GroudData')
+dir.create(path = output_dir_val, showWarnings = F, recursive = T)
+destzip <- file.path(output_dir_val,'S2A_T33NUD_Plots.zip')
 # url for the zip file
 url <- 'https://gitlab.com/jbferet/myshareddata/-/raw/master/biodivMapR_S2_Sample/VECTOR/S2A_T33NUD_Plots.zip'
 download.file(url = url, destfile = destzip)
-destunz <- file.path(tmpdir,'S2A_T33NUD_Plots',fsep = '\\')
-unzip(zipfile = destzip,exdir = destunz)
+destunz <- file.path(tmpdir,'S2A_T33NUD_Plots')
+unzip(zipfile = destzip, exdir = destunz)
+unlink(x = destzip, recursive = T)
+
 ```
 
 <br/><br/>

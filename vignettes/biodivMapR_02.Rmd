@@ -1,12 +1,12 @@
 ---
-title: "Set parameters for biodivMapR"
+title: "Produce features from original raster"
 author: "Jean-Baptiste Féret, Florian de Boissieu"
 date: "`r Sys.Date()`"
 output: 
   html_vignette:
     number_sections: true
 vignette: >
-  %\VignetteIndexEntry{Set parameters for biodivMapR}
+  %\VignetteIndexEntry{Featres from raster}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
@@ -20,152 +20,203 @@ knitr::opts_chunk$set(
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
+## Producing features from reflectance data: principle
 
-The image is [ready to process](https://jbferet.github.io/biodivMapR/articles/biodivMapR_01.html){target="_blank"}, parameter setting for `biodivMapR` can start. 
+A pre-processing step is usually required in order to produce relevant features from remote sensing data. When using multispectral/hyperspectral optical imagery, several alternatives can be considered to produce these features.
 
+-   **Spectral transformation**. This includes PCA, MNF, as well as various multidimensional methods applying linear or non-linear transformations using the full spectral information
 
-### Image to be processed
+-   **Spectral indices**. They consist in applying simple transformations (difference, ratio, normalized difference...) on a limited number of spectral bands available from sensor acquisition. These include NDVI, EVI, NDWI1...
 
-First, let's define the (absolute or relative) path to the image file to be processed. 
+-   **Biophysical properties**. They involve physical information obtained from radiative transfer models, combined with an inversion algorithm dedicated to regression in order to link reflectance measured over part or all of the spectral range covered by a sensor, to one or multiple vegetation characteristics, such as LAI, leaf pigment and water content, LMA.
 
-Here we are using the image downloaded during the first step of the tutorial. The raster file systematically needs to pair with a __.hdr__ file which will be automatically identified.
+This tutorial describes a selection of options available for users interested in producing features from an optical sensor (here, Sentinel-2) to prepare for `biodivMapR.`
 
-```{r set parameters#1}
-Input_Image_File <- destfile
+## Reflectance data and vegetation mask
+
+The image is assumed to be downloaded from the procedure described [previously](https://jbferet.github.io/biodivMapR/articles/biodivMapR_01.html){target="_blank"}
+
+The binary mask corresponding to the image to be processed is optional. However we strongly recommend using a mask when possible in order to discard pixels which may not be relevant for ecological analysis. This is the case for shaded, cloudy and non-vegetated pixels when focusing on vegetation biodiversity. Artificial surfaces and mineral surfaces should also be masked as they usually strongly contribute to spectral variability and do not inform about biological diversity.
+
+```{r set path for image and mask}
+# variables Refl_L2A and vegetation_mask defined in previous tutorial
+input_raster_path <-  Refl_L2A
+input_mask_path <-  vegetation_mask
 ```
 
-### Mask corresponding to the image
+## Spectral transformation
 
-It is possible to provide a mask file at this first stage of the process, in order take advantage of cloud detection or any other preprocessing step, and to target specific/valid areas.
+Standardized Principal Component Analysis (SPCA) can be applied on Sentinel-2 images with the code below.
 
-This mask file is introduced the same way as the image, by providing the absolute or relative path to the raster file.
+First, the mask produced with `preprocS2` during the previous step is refined using a combination of radiometric filters.
 
-The mask is expected to be the same spatial dimensions and extent as the raster file to process (columns and lines)
+-   **NDVI filtering**: allows filtering to eliminate non-vegetated pixels. Nothing fancy so you may need to deal with mixed pixels... `NDVI_Thresh` defines the minimum NDVI value to be kept. By default, the NDVI is computed based on the NIR spectral band closest to 835 nm, and the RED spectral band closest to 670 nm.
 
-Expected values in the mask: 
+-   **NIR filtering**: allows filtering of shadows and pixels with very low signal. `NIR_Thresh` defines the minimum NIR value to be kept. By default, the NIR spectral band closest to 835 nm is used.
 
-* 0 = pixel is masked
+-   **BLUE filtering**: allows filtering of clouds, based on the hypothesis that atmospheric scattering will lead to higher reflectance in the blue domain. `Blue_Thresh` defines the maximum Blue reflectance to be kept. By default, the Blue spectral band closest to 480 nm is used.
 
-* 1 = pixel is selected
+Normalization of reflectance data with Continuum Removal can be performed as additional pre-processing step. This is done by setting `Continuum_Removal = T` as input when running `perform_PCA`.
 
-If possible, the mask should be written in ENVI HDR format, with 1 band and values coded in integer 8bits.
+**Continuum Removal** is available when working with reflectance data only. It requires information on the sensor spectral bands, defined by `input_rast_wl` This procedure eliminates multiplicative effects on reflectance. It proved to be relatively efficient in decreasing the effect of changes in illumination within individual tree crowns, when using high spatial resolution imaging spectroscopy over tropical forests.
 
-```{r set parameters#2}
-# Set to FALSE if no mask available
-Input_Mask_File <- FALSE
+**Continuum Removal** is recommended when processing high spatial resolution (spatial resolution $\leq$ 10 m) multi and hyperspectral data.
+
+```{r compute SPCA}
+library(biodivMapR)
+
+# 1- define spectral bands corresponding to the sensor. 
+# central wavelength of S2 spectral bands can be loaded from biodivMapR data
+HDRpath <- system.file('extdata', 'HDR', 'SENTINEL_2.hdr', package = 'biodivMapR')
+SensorBands <- read_ENVI_header(HDRpath = HDRpath)$wavelength
+
+# 2- define spectral transformation: select between 'PCA' and 'SPCA'
+spectral_transformation <- 'SPCA'
+
+# 3- define path for output directory
+output_dir_PCA <- file.path(output_dir, spectral_transformation)
+
+# 4- apply additional (very basic) radiometric filtering
+# --> User's responsibility to check if resulting mask meets needs
+NDVI_Thresh <- 0.65     # NDVI thresholding to exclude non vegetated pixels
+Blue_Thresh <- 500      # Blue thresholding to exclude remaining cloudy/hazy pixels
+NIR_Thresh <- 1500      # NDVI thresholding to exclude remaining shaded pixels
+mask_path_PCA <- radiometric_filtering(input_raster_path = input_raster_path, 
+                                       input_rast_wl = SensorBands, 
+                                       input_mask_path = input_mask_path,
+                                       output_dir = output_dir_PCA,
+                                       NDVI_Thresh = NDVI_Thresh, 
+                                       Blue_Thresh = Blue_Thresh, 
+                                       NIR_Thresh = NIR_Thresh)
+
+# 5- apply spectral transformation on continuum removed reflectance
+PCA_Output <- perform_PCA(input_raster_path = input_raster_path, 
+                          input_rast_wl = SensorBands, 
+                          output_dir = output_dir_PCA, 
+                          Continuum_Removal = Continuum_Removal, 
+                          input_mask_path =  mask_path_PCA, 
+                          maxRows = 1000)
 ```
 
+The original publication [Féret & Asner (2014)](https://doi.org/10.1890/13-1824.1) used SPCA when applying the method implemented in `biodivMapR`. This procedure remains a valid option.
 
-### Definition of an output directory
+Once spectral transformation is performed, users are requested to select relevant components. `biodivMapR` currently does not provide automated procedure for principal component (PC) selection. Hence, PC selection is users' responsibility. We recommend selection based on visual inspection in order to identify spatial features highlighting changes in vegetation types / species composition. This procedure requires expertise on the ecosystem of interest. PC selection should ideally be validated with ground information.
 
-Various files will be computed and written on the disk during the process.
+Data-driven methods adjusted based on data distribution for a specific image/site, such as PCA, usually show poor generalization ability, and cannot be applied on other images. As explained earlier, PC selection is a subjective step which prevents from fully automated workflows. Moreover, spectral transformation such as PCA and MNF are usually computationally demanding.
 
-These files will be written in a directory structure created within a main output directory
 
-A sub directory named after the name of the image processed is automatically created in this main output directory, in order to facilitate identification of the results corresponding to a given image. 
+Here, we selected components 1, 5, and 6 to produce the diversity maps. 
+A color composition of these components is displayed below. 
 
-If the same image is processed with different parameter settings, some files may be overwritten. 
-```{r set parameters#3}
-Output_Dir <- '../RESULTS'
+<p align="center">
+
+<img src="../man/figures/SitePCA.png" width="50%" height="50%"/>
+
+</p>
+
+Note that the selection of spectral indices used here may not be optimal.
+Users may want to test various combinations of spectral indices. 
+The function `biodivMapR_SFS` included in the package allows sequential feature selection to identify the set of features optimizing a criterion (diversity metrics, discrimination among vegetation types). 
+
+Users can contact the authors of the package for assistance if needed when running  `biodivMapR_SFS`. 
+
+## Spectral indices
+
+Spectral indices can be considered as input spectral features in the perspective of application over large regions, or generalization in space and time of spectral diversity models produced with `biodivMapR.`
+
+Here, we will illustrate how to produce spectral indices from Sentinel-2 reflectance with the R package [`spinR`](https://gitlab.com/jbferet/spinr)
+
+```{r compute spectral indices}
+library(spinR)
+
+# 1- define spectral bands corresponding to the sensor. 
+# central wavelength of S2 spectral bands can be loaded from biodivMapR data
+HDRpath <- system.file('extdata', 'HDR', 'SENTINEL_2.hdr', package = 'biodivMapR')
+SensorBands <- read_ENVI_header(HDRpath = HDRpath)$wavelength
+
+# 2- define path for output directory and create it
+spectral_transformation <- 'SpectralIndices'
+output_dir_SI <- file.path(output_dir, spectral_transformation)
+dir.create(output_dir, showWarnings = F, recursive = T)
+
+# 3- [for information] list spectral indices included in spinR
+spinR::listIndices_spinR()
+
+# 4- define spectral indices of your choice
+SI_list <- c('CCCI', 'LAI_SAVI', 'CR_SWIR')
+# - CCCI is expected to be correlated to vegetation chlorophyll content
+# - LAI_SAVI is expected to be correlated to Leaf Area Index
+# - CR_SWIR is expected to be correlated to vegetation water content
+SI_path <- spectralindices_from_raster(input_raster_path = input_raster_path, 
+                                       input_rast_wl = SensorBands, 
+                                       output_dir = output_dir_SI, 
+                                       SI_list = SI_list, 
+                                       input_mask_path =  input_mask_path)
+
+# 6- update mask based on interquartile range.
+# Inf or extreme values can be obtained from some spectral indices
+# (e.g. negative reflectance or extremely low values used in ratio)
+# this optional step ensures that erroneous vegetation indices are discarded. 
+mask_path_SI <- file.path(output_dir_SI, 'Mask_update_IQR.tif')
+compute_mask_IQR(input_raster_path = SI_path,
+                 output_mask_path = mask_path_SI,
+                 input_mask_path = input_mask_path)
 ```
 
+Spectral indices (SI) are computationally less demanding than spectral transformation.
 
-### Radiometric filterings
+They are theoretically more generalizable through space and time than spectral features resulting from PCA. However, SI are also sensitive to the conditions of acquisition and properties extrinsic to vegetation. such as :
 
-If no mask file is available with the image to process, it is possible to perform basic radiometric filterings:  
+-   geometry of acquisition (relative sun/satellite position
+-   atmospheric properties and associated correction for L2A reflectance production
+-   soil properties in case of low density vegetation
+-   sensor characteristics
 
-* __Elimination of non vegetated pixels__: the mask can be updated based on NDVI thresholding. Pixels with NDVI lower than this threshold are masked.
-
-* __Elimination of residual clouds__: : the mask can be updated based on NDVI thresholding. Pixels with reflectance in blue domain higher than this threshold are masked
-
-* __Elimination of shaded areas__: the mask can be updated based on NIR thresholding. Pixels with reflectance in NIR domain lower than this threshold are masked. 
-
-__These radiometric filters are very basic filters and should not replace algorthms dedicated to the detection of cloud/shade/non-vegetated pixels. 
-```{r set parameters#4}
-NDVI_Thresh <- 0.8
-Blue_Thresh <- 500
-NIR_Thresh <- 1500
-```
+SI to be used with `biodivMapR` should be selected so that they can be related to vegetation properties. SI showing artifacts caused by sensor or factors extrinsic to vegetation should be avoided.
 
 
-### Normalization of reflectance data
+Note that the selection of spectral indices used here may not be optimal.
+Users may want to test various combinations of spectral indices. 
+The function `biodivMapR_SFS` included in the package allows sequential feature selection to identify the set of features optimizing a criterion (diversity metrics, discrimination among vegetation types). 
 
-__Continuum Removal__, a normalization procedure, is available when working with reflectance data. This procedure eliminates multiplicative effects, and proved to be relatively efficient in decreasing the effect of changes in illumination within individual tree crowns, when using high spatial resolution imaging spectroscopy over tropical forests. 
+Users can contact the authors of the package for assistance if needed when running  `biodivMapR_SFS`. 
 
-__Continuum Removal__ is recommended when processing high spatial resolution (spatial resolutionc $\leq$ 10 m) multi and hyperspectral data.
+A color composition of the three spectral indices selected is displayed below: 
 
-```{r set parameters#5}
-Continuum_Removal <- TRUE
-```
+<p align="center">
 
-### Transformation of reflectance and dimensionality reduction
+<img src="../man/figures/SiteSI.png" width="50%" height="50%"/>
 
-Once normalization is performed, the next step in `biodivMapR` consists in transformation of the data using one of the following techniques: 
+</p>
 
-* `PCA`: Principal component analysis (no rescaling of the data, computation from covariance matrix)
 
-* `SPCA`: Standardized Principal component analysis (no rescaling of the data, computation from correlation matrix)
+## Biophysical properties
 
-* `MNF`:  minimum noise fraction (appropriate for high dimensionality data such as imaging spectroscopy)
+Biophysical properties obtained from physical model inversion are an alternative to data-driven spectral transformation and spectral indices.
 
-These transformations will be followed by component selection in order to perform dimensionality reduction. 
+Vegetation biophysical properties can be obtained with the package [`prosail`](https://jbferet.gitlab.io/prosail). An example of computation of vegetation biophysical properties from PROSAIL hybrid inversion applied to Sentinel-2 imagery is described [here](https://jbferet.gitlab.io/prosail/articles/prosail4.html).
 
-```{r set parameters#6}
-TypePCA <- 'SPCA'
-```
+Vegetation biophysical properties are theoretically the best option recommended for the application of `biodivMapR`. They produce information directly related to vegetation properties, such as leaf pigment content, water content, Leaf Mass per Area (LMA), Leaf Area Index (LAI). They are able to account for factors such as geometry of acquisition, soil properties, sensor characteristics.
 
-### Filtering outliers in PCA
+However, these procedures for biophysical properties estimation also show limitations:
 
-An additional filtering step can be performed, based on the detection of outliers in components of the PCA. This strategy is computationally more demanding and significantly longer. However, this outlier detection may be useful to mask pixels including residual effect of atmosphere, or outliers which may not be relevant to include in the process of computation of spectral variation. 
+-   Physical model inversion are computationally more demanding than SI. Model inversion requires simulation of a training set, machine learning training and application to the image data.
 
-This PCA filtering can be performed by setting a unique parameter, `FilterPCA`, to `TRUE`.
+-   Model inversion may require fine tuning of the training set in order to get optimal estimation of vegetation biophysical properties. Generic parameterization may lead to suboptimal estimations, with possible saturation.
 
-```{r set parameters#7}
-# PCA FILTERING: 		Set to TRUE if you want second filtering based on PCA outliers to be processed.
-# Slower process
-# Automatically set to FALSE if TypePCA     = 'MNF'
-FilterPCA <- FALSE
-```
+## Choosing the right spectral features
 
-### Definition of window size for computation of spectral diversity
+As describe above, several procedures can be applied in order to produce features which will feed `biodivMapR`.
 
-`biodivMapR` computes spectral diversity over a set of pixels. The number of pixels included for each spectral diversity data point is defined by a window size. The window size defines the spatial resolution of all diversity maps. 
+The authors of this package currently do not have firm recommendations. Users should test, explore and compare resulting spectral diversity metrics to ecological information obtained from ground observations.
 
-The length of the side of the window is provided as input parameter: if `window_size=10`, then the pixels in the spectral diversity maps will correspond to a 10x10 pixels windows in the original image. 
+We consider spectral indices as a good trade-off when using Sentinel-2 data, given the straightforward computation and the possibility to relate these spectral indices to specific spectral domains and to vegetation properties, or groups of vegetation properties.
 
-Both image spatial resolution and type of ecosystem under study should be taken into account when defining the window size: in forested ecosystems, window size should be large enough to include groups of individuals. 
+Spectral transformation produce original features taking advantage of rich spectral information. They are more suitable to summarize information from imaging spectroscopy:\
+MNF for example, should produce latent features with minimum colinearity, and contribute to separate information on vegetation from noisy signal.
 
-In forested ecosystems, window size between 0.25 and 4 ha usually match with ground data and correspond to a fair compromise. However, this would need to be adapted to specific situations. 
-
-If the value of window_size is too low, this will result in low number of pixels per spatial unit, hence limited range of variation of diversity in the image.
-
-```{r set parameters#8}
-window_size <- 10
-```
-
-### Optimization of computational resource
-
-The computational resource can be adjusted:
-
-* `nbCPU` corresponds to the number of processing units to be used during steps of the computation which are parallelized. Make sure you do not ask for more than what your computer can provide. 
-
-* `MaxRAM` corresponds to the maximum size of file chunk of loaded in the RAM when processing the image. __WARNING__: this does not corresponds to the maximum amount of RAM needed for data processing. Once a chunk of file is written, its processing may require several time this amount of RAM to perfom different processing steps. `MaxRAM <- 0.5` is reasonable when processing a 2Gb raster on a personal computer with 16Gb RAM. However, larger values of `MaxRAM` may rapidly require larger amount of RAM.
-
-```{r set parameters#9}
-nbCPU <- 4
-MaxRAM <- 0.5
-```
-
-### Number of spectral species
-
-The main spectral diversity metrics computed by `biodivMapR` are based on a clustering of normalized & dimensionality reduced image. Following this clustering, a cluster ID is assigned to each pixel, corresponding to the __'spectral species'__ defined in the original publication. 
-
-The number of clusters is defined by the value of `nbclusters`. 
-
-```{r set parameters#10}
-nbclusters <- 50
-```
+Please contact the authors of this package if in need for additional information.
 
 <br/><br/>
 
-Once parameterization has been set, the image processing can start, first with an optional [radiometric filtering](https://jbferet.github.io/biodivMapR/articles/biodivMapR_03.html){target="_blank"}.
+Once spectral features are computed, `biodivMapR` can be applied. This is described in this [tutorial](https://jbferet.github.io/biodivMapR/articles/biodivMapR_03.html){target="_blank"}.

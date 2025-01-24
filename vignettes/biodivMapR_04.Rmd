@@ -1,14 +1,17 @@
 ---
-title: "PCA & Dimensionality reduction"
+title: "Validation with ground information"
 author: "Jean-Baptiste Féret, Florian de Boissieu"
 date: "`r Sys.Date()`"
 output: 
   html_vignette:
     number_sections: true
 vignette: >
-  %\VignetteIndexEntry{PCA_DimReduc}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{validation}
   \usepackage[utf8]{inputenc}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: sentence
 ---
 
 ```{r setup, include = FALSE}
@@ -20,73 +23,152 @@ knitr::opts_chunk$set(
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
+This tutorial illustrates how to perform validation of spectral diversity metrics based on ground information.
+Ground information should be associated with a vector layer including polygons.
+The size of the polygons is important, as it should be compatible with ground information.
 
-### Data transformation
+**Ground information should not correspond to individual points**:\
+`biodivMapR` produces diversity metrics based on information extracted from a group of pixels.
+$\alpha$ and $\beta$ spectral diversity metrics are computed from the distribution of cluster populations is each polygon.
+Therefore we recommend that each polygon defining an validation plots should correspond to at least 25-50 pixels of the image.
 
-The function `perform_PCA` allows for application of PCA (or SPCA or MNF), and automatically accounts for the mask. 
+This code computes $\alpha$ and $\beta$ spectral diversity metrics over the footprint defined by polygons of a vector layer.
 
-It results in a PCA file written in the output directory (full path defined in `PCA_Output$PCA_Files`).
+### Validation of `biodivMapR` using spectral features obtained from SPCA
 
-A set of additional information, including the PCA model obtained, an additional spectral filter (useful if some spectral bands with no information are still not masked).
+The validation can be performed using the `biodivMapR` spectral diversity models adjusted on SPCA.
+The following code illustrates how to proceed, based on results obtained from previous tutorials.
 
-The additional PCA filtering is performed during this stage. 
+```{r spectral diversity indices from vector layer and SPCA}
+library(ggplot2)
+library(RColorBrewer)
+library(gridExtra)
 
-```{r DIMENSIONALITY REDUCTION}
-print("PERFORM DIMENSIONALITY REDUCTION")
-PCA_Output <- perform_PCA(Input_Image_File = Input_Image_File, 
-                          Input_Mask_File = Input_Mask_File,
-                          Output_Dir = Output_Dir, 
-                          TypePCA = TypePCA, 
-                          FilterPCA = FilterPCA,
-                          nbCPU = nbCPU, 
-                          MaxRAM = MaxRAM, 
-                          Continuum_Removal = Continuum_Removal)
-# path of the raster resulting from dimensionality reduction
-PCA_Files <- PCA_Output$PCA_Files
-# path for the updated mask
-Input_Mask_File <- PCA_Output$MaskPath
+# 1- list vector files corresponding to groups of validation plots
+listShp <- as.list(list.files(path = output_dir_val, 
+                              pattern = '.shp', full.names = T))
+
+# 2- A SpatVectorCollection is created as validation plots correspond to multiple files
+samplesVal <- lapply(listShp, terra::vect)
+validation_vect <- terra::svc(samplesVal)
+
+# 3- define SpatRaster for the SPCA raster stack and corresponding mask
+SPCA_rast <- terra::rast(PCA_Output$PCA_Files$PCA)
+mask_rast <- terra::rast(mask_path_PCA)
+
+# 4- perform validation over the footprint of each polygon
+validation <- get_diversity_from_plots(input_rast = SPCA_rast,
+                                       SelectBands = selectedPC, 
+                                       input_mask = mask_rast,
+                                       validation_vect = validation_vect,
+                                       Kmeans_info = ab_info_SPCA$Kmeans_info,
+                                       Beta_info = ab_info_SPCA$Beta_info)
+
+# 5- produce scatterplot using PCoA computed only from plots
+filename <- file.path(output_dir_PCA2,'BetaDiversity_Plots.png')
+scatter_alphabeta(alpha = validation$specdiv$shannon_mean, 
+                  PCoA_1 = validation$specdiv$BetaPlots_PCoA_1, 
+                  PCoA_2 = validation$specdiv$BetaPlots_PCoA_2, 
+                  PCoA_3 = validation$specdiv$BetaPlots_PCoA_3,
+                  classes = validation$specdiv$source, 
+                  filename = filename)
+
+# produce scatterplot using PCoA computed from elements sampled across the full image
+filename <- file.path(output_dir_PCA2,'BetaDiversity_Full.png')
+scatter_alphabeta(alpha = validation$specdiv$shannon_mean, 
+                  PCoA_1 = validation$specdiv$BetaFull_PCoA_1, 
+                  PCoA_2 = validation$specdiv$BetaFull_PCoA_2, 
+                  PCoA_3 = validation$specdiv$BetaFull_PCoA_3,
+                  classes = validation$specdiv$source, 
+                  filename = filename)
+```
+
+The figures below illustrates the dissimilarity among ground plots provided as vector layers. 
+The Bray-Curtis dissimilarity matrix was first computed among all plots. 
+A Principal Coordinate Analysis (PCoA) was then performed on this BC dissimilarity matrix in order to transpose it in a 3D space.
+
+<p align="center">
+
+<img src="../man/figures/BetaDiversity_Plots_PCA.png" width="50%" height="50%"/>
+
+</p>
+
+The adjustment of PCoA on the ground plots only tends to emphasize the dissimilarity among plots. 
+The second figure based on `BetaFull` information instead of `BetaPlots` uses the PCoA space adjusted based on the sampling used to produce the beta diversity maps. 
+The significantly larger amount of data tends to reduce the potential dissimilarity highlighted when focusing on a subset of plots. 
+
+<p align="center">
+
+<img src="../man/figures/BetaDiversity_Full_PCA.png" width="50%" height="50%"/>
+
+</p>
+
+
+### Validation `biodivMapR` using spectral indices
+
+The validation can also be performed using the `biodivMapR` spectral diversity models adjusted on spectral indices.
+The following code illustrates how to proceed, based on results obtained from previous tutorials.
+
+```{r spectral diversity indices from vector layer and spectral indices}
+library(ggplot2)
+library(RColorBrewer)
+library(gridExtra)
+
+# 1- list vector files corresponding to groups of validation plots
+listShp <- as.list(list.files(path = output_dir_val, 
+                              pattern = '.shp', full.names = T))
+
+# 2- A SpatVectorCollection is created as validation plots correspond to multiple files
+samplesVal <- lapply(listShp, terra::vect)
+validation_vect <- terra::svc(samplesVal)
+
+# 3- define SpatRaster for the set of spectral indices and corresponding mask
+SI_rast <- lapply(SI_path,terra::rast)
+mask_rast <- terra::rast(mask_path_SI)
+
+# 4- perform validation over the footprint of each polygon
+validation <- get_diversity_from_plots(input_rast = SI_rast,
+                                       validation_vect = validation_vect,
+                                       input_mask = mask_rast,
+                                       Kmeans_info = ab_info_SI$Kmeans_info,
+                                       Beta_info = ab_info_SI$Beta_info)
+
+# 5- produce scatterplot using PCoA computed only from plots
+filename <- file.path(output_dir_SI2,'BetaDiversity_Plots.png')
+scatter_alphabeta(alpha = validation$specdiv$shannon_mean, 
+                  PCoA_1 = validation$specdiv$BetaPlots_PCoA_1, 
+                  PCoA_2 = validation$specdiv$BetaPlots_PCoA_2, 
+                  PCoA_3 = validation$specdiv$BetaPlots_PCoA_3,
+                  classes = validation$specdiv$source, 
+                  filename = filename)
+
+# produce scatterplot using PCoA computed from elements sampled across the full image
+filename <- file.path(output_dir_SI2,'BetaDiversity_Full.png')
+scatter_alphabeta(alpha = validation$specdiv$shannon_mean, 
+                  PCoA_1 = validation$specdiv$BetaFull_PCoA_1, 
+                  PCoA_2 = validation$specdiv$BetaFull_PCoA_2, 
+                  PCoA_3 = validation$specdiv$BetaFull_PCoA_3,
+                  classes = validation$specdiv$source, 
+                  filename = filename)
 ```
 
 
-### Component selection for dimensionality reduction
+The figures below illustrates the dissimilarity among ground plots provided as vector layers. 
+The Bray-Curtis dissimilarity matrix was first computed among all plots. 
+A Principal Coordinate Analysis (PCoA) was then performed on this BC dissimilarity matrix in order to transpose it in a 3D space.
 
-The dimensionality reduction is performed to select the most interesting spectral information relative to spectral diversity and remove spatial noise and sensor artefacts. The resulting transformed raster (PCA, SPCA or MNF) is then stored in a binary file in the `Output_Dir` directory, which in our case corresponds to
-`RESULTS/S2A_T33NUD_20180104_Subset/SPCA/PCA/OutputPCA_8_PCs`
+<p align="center">
 
-This raster file can be displayed using QGIS or any GIS / image processing software. Here, the PCs corresponding to our image look like this: 
+<img src="../man/figures/BetaDiversity_Plots_SI.png" width="50%" height="50%"/>
 
-<img align="left" width="50%" height="50%" src="../man/figures/PCs_1234.png">
-<img align="right" width="50%" height="50%" src="../man/figures/PCs_5678.png">
+</p>
 
+As in the previous example, the adjustment of PCoA on the ground plots only tends to emphasize the dissimilarity among plots. 
+The second figure based on `BetaFull` information instead of `BetaPlots` uses the PCoA space adjusted based on the sampling used to produce the beta diversity maps. 
+The significantly larger amount of data tends to reduce the potential dissimilarity highlighted when focusing on a subset of plots. 
 
-User then needs to select components based on visual interpretation. This component selection is saved in a `.txt` file located in the same directory as the raster file. 
+<p align="center">
 
-The file is automatically created and ready to edit with function `select_PCA_components`. This file expects one component selected to be written per line.
+<img src="../man/figures/BetaDiversity_Full_SI.png" width="50%" height="50%"/>
 
-The main goal of PC selection is to discard PCs showing no relevant information corresponding to vegetation, or including artifacts possibly explained by sensor properties. It is somehow a subjective process, and we are currently working on automatic selection of these components.
-
-```{r Component selection}
-# Select components from the PCA/SPCA/MNF raster
-# Sel_PC = path of the file where selected components are stored
-Sel_PC <- select_PCA_components(Input_Image_File = Input_Image_File,
-                                Output_Dir = Output_Dir, 
-                                PCA_Files = PCA_Output$PCA_Files,
-                                TypePCA = PCA_Output$TypePCA, 
-                                File_Open = TRUE)
-```
-
-For this example, PCA bands 1, 2, 5, 6 and 8 can be kept if writing the following lines in file `Selected_Components.txt` opened for edition (do not forget carriage return after last value):
-
-```
-1
-2
-5
-6
-8
-
-```
-
-PC#3 and PC#7 were discarded as the main patterns observed for these components did not correspond to vegetation patterns. As a rule of thumb, between 2 and 6 selected PCs are usually sufficient to catch the main diversity patterns, but this selection strongly depends on the conditions of acquisition, the type of sensor, and the complexity of the vegetation being observed.
-
-
-The computation of the spectral species can then be performed in the [next step](https://jbferet.github.io/biodivMapR/articles/biodivMapR_05.html){target="_blank"}.
+</p>

@@ -7,8 +7,11 @@ output:
     number_sections: true
 vignette: >
   %\VignetteIndexEntry{Introduction}
-  %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r setup, include = FALSE}
@@ -20,43 +23,94 @@ knitr::opts_chunk$set(
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
+This tutorial describes the processing workflow for `biodivMapR`. It
+goes through the different steps for the production of spectral
+diversity maps using Sentinel-2 imagery. The workflow is divided into
+three steps:
 
-This tutorial aims at describing the processing workflow and providing a script aiming at producing diversity maps on a Sentinel-2 subset image acquired over the Cameroonese forest. The workflow is divided into three steps:
+-   Acquisition of the Sentinel-2 imagery Sentinel-2 is downloaded from
+    a STAC catalog using the package
+    [`preprocS2`](https://jbferet.gitlab.io/preprocs2/), which is a
+    wrapper of the [`rstac`](https://brazil-data-cube.github.io/rstac/)
+    and [`CDSE`](https://zivankaraman.github.io/CDSE/) packages.
 
-* Definition of the processing parameters: 
+The default STAC collection is
+[`sentinel-2-l2a`](https://planetarycomputer.microsoft.com/dataset/sentinel-2-l2a)
+from the Planetary computer catalog.
 
-    * input / output files paths
-    * output spatial resolution
-    * preprocessing and processing options
-    
-* Computation of the diversity maps. This includes several diversity metrics which can be computed independently:
-    * $\alpha$ and $\beta$ diversity maps as defined in [Feret & Asner (2014)](https://doi.org/10.1890/13-1824.1 "Feret&Asner2014") and [Feret & de Boissieu (2019)]( https://doi.org/10.1111/2041-210X.13310 "Feret&deBoissieu2019")
-    * Functional diversity maps, including Richnes, Evenness and Divergence as defined in [Villeger et al. (2008)](https://doi.org/10.1890/07-1206.1 "Villeger2008")
+-   Preparation of the data `biodivMapR` requires a raster / set of
+    raster as input data. The first `biodivMapR v1` used spectral
+    transformations as initial pre-processing step. This included
+    reflectance normalization with a continuum removal, followed by a
+    spctral transformation (PCA, SPCA, MNF...).
+
+`biodivMapR v2` now allows user to run the preprocessing step of their
+choice. This can consist in computing spectral indices, vegetation
+biophysical variables, or spectral transformation. This also means that
+any type of input data can be used, as long as the input rasters share
+the same footprint, spatial resolution and projection.
+
+We provide a few examples here. Users can experiment with the method of
+their choice
+
+-   Definition of the processing parameters This includes the following
+    information:
+
+    -   input / output files paths
+    -   output spatial resolution (window size)
+    -   pre-processing and processing options
+
+-   Computation of the diversity maps This includes several diversity
+    metrics:
+
+    -   $\alpha$ and $\beta$ diversity maps as defined in [Feret & Asner
+        (2014)](https://doi.org/10.1890/13-1824.1 "Feret&Asner2014") and
+        [Feret & de Boissieu
+        (2019)](https://doi.org/10.1111/2041-210X.13310 "Feret&deBoissieu2019")
+    -   Functional diversity maps, including Richness, Evenness and
+        Divergence as defined in [Villeger et al.
+        (2008)](https://doi.org/10.1890/07-1206.1 "Villeger2008")
+
+### biodivMapR v1
+Please refer to the branch [`dev_v1`](https://github.com/jbferet/biodivMapR/tree/dev_v1) of the package for the previous versions and tutorials. 
+Vignettes and tutorials corresponding to this version are still available [here](https://github.com/jbferet/biodivMapR/tree/dev_v1/vignettes). 
+
+We recommend using the most-up-to-date versions of `biodivMapR`, as the previous ones will not be maintained. 
+
+
+
     <!-- * Partitioning of spectral diversity into $\alpha$ and $\beta$ components following an adaptation of the method proposed by [Laliberte et al. (2020)](https://doi.org/10.1111/ele.13429 "Laliberte2020") -->
-    
-* Validation of the resulting diversity metrics if field plots measurements are available 
 
-The computation of the diversity maps is based on a certain number of prepocessing steps including: 
-    * Spectral normalization with continuum removal (relevant if woring with multi or hypersepctral images)
-    * dimensionality reduction based on PCA, SPCA or MNF and component selection
+```{=html}
+<!-- * Comparison between spectral diversity metrics and ground observations
+
 
 Below is the typical flow chart of the computation of diversity maps with __biodivMapR__ :
 
 <img align="bottom" width="100%" height="100%" src="../man/figures/Figure1_FlowChart_biodivMapR_Process_600DPI.png">
 
 
-[Please check the full tutorial pages to get instructions, data and code examples to run `biodivMapR`](https://jbferet.github.io/biodivMapR/articles/biodivMapR_01.html){target="_blank"} can be applied.
-
+[Please check the full tutorial pages to get instructions, data and code examples to run `biodivMapR`](https://jbferet.github.io/biodivMapR/articles/biodivMapR_01.html){target="_blank"} can be applied. -->
+```
 
 <!-- ## Partitioning of spectral diversity into $\alpha$ and $\beta$ components -->
+
 <!-- The partitioning of spectral diversity is based on the `specdiv` function provided by [Etienne Laliberte on Github](https://github.com/elaliberte/specdiv "specdiv"). The original method does not use the exact same normalization, and only the framework starting from component selection is used here. Future versions will include the full original framework.  -->
 
 <!-- ```{r Partitioning spectral diversity} -->
+
 <!-- ################################################################################ -->
+
 <!-- ## MAP PARTITIONING OF PLANT SPECTRAL DIVERSITY INTO ALPHA & BETA COMPONENTS  ## -->
+
 <!-- ##        (Laliberte et al, 2020 https://doi.org/10.1111/ele.13429)           ## -->
+
 <!-- ################################################################################ -->
+
 <!-- PartitionSpectralDiversity <- map_partition_div(Original_Image_File = Input_Image_File, Partition_File = PCA_Files, -->
+
 <!--                                                 Selected_Features = Selected_Features, Output_Dir = Output_Dir, -->
+
 <!--                                                 window_size = window_size, TypePCA = TypePCA) -->
+
 <!-- ``` -->

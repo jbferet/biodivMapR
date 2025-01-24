@@ -1,26 +1,60 @@
-# biodivMapR v1.14.6
+# biodivMapR2 v2.2.0
+## change
+- merge v2 from gitlab repository
+- update vignettes for use of v2 
 
-## fix 
+# biodivMapR2 v2.1.4
+## fix
+- in 'get_diversity_from_plots' : 
+- initialize Attributes with nrow = nbPlots_init
+- initialize functional diversity metrics in Attributes with NA
+- correct get_diversity_from_plots : assign to beta diversity values instead of mean Hill
+- correct extract_vect_from_rast : update AttributeTable and discard vectors with no data
 
-- corrects bug in function get_gdal_info (variable destfile unknown)
+## addition
+- create functions init_kmeans_samples and init_PCoA_samples to process samples 
+previously extracted independently from an input raster
+- possibility to provide name for output files in addition to directory
 
-# biodivMapR v1.14.5
+## change
+- possibility to define updated mask file name as input for radiometric_filtering
 
-## fix 
+# biodivMapR2 v2.1.3
+## fix
+- correct get_diversity_from_plots: output for FDis corrected to FDis instead of FDiv
+- correct spectralspecies_per_polygon : AttributeTable not set to NULL
+## addition
+- computes all functional diversity when running get_diversity_from_plots 
 
-- 'gdalUtilities::gdalinfo' causes an error with sf 1.0-19. Use 'sf::gdal_utils' instead in function get_gdal_info
+# biodivMapR2 v2.1.2
+## change
+- use package fundiversity to compute diversity metrics
 
-# biodivMapR v1.14.4
+# biodivMapR v2.1.1
+## Fix
+- Fixed testthat
+- fixed maps for functional diversity metrics (center reduction of trait space)
 
 ## Change
+- more systematic use of 'seq_len'
 
-- systematically use seq_len for loops and sequences of indices
+
+# biodivMapR v2.1.0
+## Addition
+- added Hill numbers
+- added functional diversity
+
+## fix
+- initialize input_mask to NULL in biodivMapR_Full
+- handle chunk with pixels valid but no window valid
+
+# biodivMapR v2.0.0
+## Fix
+- fixed SFS function when using SpatVector instead of SpatVectorCollection
 
 # biodivMapR v1.14.3
-
 ## Fix
-
-- update fixed problem occurring when running map_alpha_div with default value nbCPU = 1
+- fixed SFS function when using SpatVector instead of SpatVectorCollection
 
 # biodivMapR v1.14.2
 

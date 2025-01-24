@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-this packages allows processing image data based on the method described in the following publication: Féret, J.-B., Asner, G.P., 2014. Mapping tropical forest canopy diversity using high-fidelity imaging spectroscopy. Ecol. Appl. 24, 1289–1296. https://doi.org/10.1890/13-1824.1 It expects a raster file as input, with ENVI HDR header file including spectral bands of the sensor, if optical sensor.
+this packages allows processing image data based on the method described in the following publication: Féret, J.-B., Asner, G.P., 2014. Mapping tropical forest canopy diversity using high-fidelity imaging spectroscopy. Ecol. Appl. 24, 1289–1296. https://doi.org/10.1890/13-1824.1 biodivMapR v2 produces spectral diversity maps, and more broadly 'remotely sensed' diversity maps. It can process any type of raster data, as long as the driver is compatible with drivers accepted by the terra package.
 }
 \seealso{
 Useful links:
