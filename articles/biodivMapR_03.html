@@ -144,6 +144,7 @@ computed is also used.</p>
 <span><span class="va">ab_info_SPCA</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/biodivMapR_full.html">biodivMapR_full</a></span><span class="op">(</span>input_raster_path <span class="op">=</span> <span class="va">PCA_Output</span><span class="op">$</span><span class="va">PCA_Files</span><span class="op">$</span><span class="va">PCA</span>, </span>
 <span>                                input_mask_path <span class="op">=</span> <span class="va">mask_path_PCA</span>,</span>
 <span>                                output_dir <span class="op">=</span> <span class="va">output_dir_PCA2</span>, </span>
+<span>                                SelectBands <span class="op">=</span> <span class="va">selectedPC</span>, </span>
 <span>                                window_size <span class="op">=</span> <span class="va">window_size</span>, </span>
 <span>                                nbclusters <span class="op">=</span> <span class="va">nbclusters</span>, </span>
 <span>                                Kmeans_info_save <span class="op">=</span> <span class="va">Kmeans_info_save</span>,</span>
@@ -179,8 +180,8 @@ below.</p>
 <col width="50%">
 </colgroup>
 <tbody><tr class="odd">
-<td><img src="../reference/figures/alphaSI.png"></td>
-<td><img src="../reference/figures/betaSI.png"></td>
+<td><img src="../reference/figures/alphaPCA.png"></td>
+<td><img src="../reference/figures/betaPCA.png"></td>
 </tr></tbody>
 </table>
 </div>
@@ -223,6 +224,16 @@ used.</p>
 <span>                              Kmeans_info_save <span class="op">=</span> <span class="va">Kmeans_info_save</span>,</span>
 <span>                              Beta_info_save <span class="op">=</span> <span class="va">Beta_info_save</span>, </span>
 <span>                              maxRows <span class="op">=</span> <span class="va">maxRows</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<tbody><tr class="odd">
+<td><img src="../reference/figures/alphaSI.png"></td>
+<td><img src="../reference/figures/betaSI.png"></td>
+</tr></tbody>
+</table>
 <p><br><br></p>
 <p>The validation can then be performed if ground information is
 available Validation is described in this <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_04.html" target="_blank" class="external-link">tutorial</a>.</p>
