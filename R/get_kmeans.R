@@ -44,22 +44,43 @@ get_kmeans <- function(rast_sample, nbIter, nbclusters = 50,
       fun_apply <- lapply
     }
     if (progressbar==TRUE){
-      handlers(global = TRUE)
-      handlers("cli")
-      with_progress({
+      # progressr::handlers(global = TRUE)
+      suppressWarnings(progressr::handlers("cli"))
+      # progressr::handlers("debug")
+      suppressWarnings(with_progress({
         p <- progressr::progressor(steps = nbIter)
+        if (nbCPU>1){
+          res <- fun_apply(X = rast_sample,
+                           FUN = kmeans_progressr,
+                           centers = nbclusters,
+                           iter.max = 50, nstart = 10,
+                           algorithm = algorithm, p = p,
+                           future.seed = TRUE)
+
+        } else if (nbCPU==1){
+          res <- fun_apply(X = rast_sample,
+                           FUN = kmeans_progressr,
+                           centers = nbclusters,
+                           iter.max = 50, nstart = 10,
+                           algorithm = algorithm, p = p)
+        }
+      }))
+    } else {
+      if (nbCPU>1){
         res <- fun_apply(X = rast_sample,
                          FUN = kmeans_progressr,
                          centers = nbclusters,
                          iter.max = 50, nstart = 10,
-                         algorithm = algorithm, p = p)
-      })
-    } else {
-      res <- fun_apply(X = rast_sample,
-                       FUN = kmeans_progressr,
-                       centers = nbclusters,
-                       iter.max = 50, nstart = 10,
-                       algorithm = algorithm, p = NULL)
+                         algorithm = algorithm, p = NULL,
+                         future.seed = TRUE)
+
+      } else if (nbCPU==1){
+        res <- fun_apply(X = rast_sample,
+                         FUN = kmeans_progressr,
+                         centers = nbclusters,
+                         iter.max = 50, nstart = 10,
+                         algorithm = algorithm, p = NULL)
+      }
     }
     if (nbCPU>1) parallel::stopCluster(cl)
     if (nbCPU>1) plan(sequential)

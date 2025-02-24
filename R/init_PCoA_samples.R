@@ -45,17 +45,18 @@ init_PCoA_samples <- function(rast_sample, output_dir, Kmeans_info,
   # plan(multisession, workers = nbCPU)
   if (nbCPU>1){
     cl <- parallel::makeCluster(nbCPU)
-    plan("cluster", workers = cl)
-    handlers(global = TRUE)
-    handlers("cli")
-    with_progress({
+    future::plan("cluster", workers = cl)
+    # progressr::handlers(global = TRUE)
+    suppressWarnings(progressr::handlers("cli"))
+    # progressr::handlers("debug")
+    suppressWarnings(with_progress({
       p <- progressr::progressor(steps = nbIter)
       Beta_info <- future.apply::future_lapply(SSdist,
                                                FUN = get_BCdiss_from_SSD,
                                                nbclusters = nbclusters,
                                                pcelim = pcelim, p = p,
                                                future.seed = TRUE)
-    })
+    }))
     parallel::stopCluster(cl)
     plan(sequential)
   } else {

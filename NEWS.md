@@ -1,3 +1,8 @@
+# biodivMapR2 v2.2.1
+## change
+- clean code
+- add suppressWarnings when calling progressr
+
 # biodivMapR2 v2.2.0
 ## change
 - merge v2 from gitlab repository

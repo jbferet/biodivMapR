@@ -69,32 +69,29 @@ biodivMapR_chunk <- function(blk, r_in, window_size, Kmeans_info, Beta_info = NU
                                      Kmeans_info = Kmeans_info,
                                      SelectBands = SelectBands)
       # 5- split data chunk by window and by nbCPU to ensure parallel computing
-      whichID <- which(names(inputdata) =='win_ID')
-      inputdata <- cbind(center_reduce(X = inputdata[SelectBands],
-                                       m = Kmeans_info$MinVal,
-                                       sig = Kmeans_info$Range),
-                         'win_ID' = inputdata$win_ID)
-      windows_per_CPU <- split_chunk(inputdata, nbCPU)
-      # windows_per_CPU <- split_chunk(inputdata[c(SelectBands, whichID)], nbCPU)
       SSwindows_per_CPU <- split_chunk(SSchunk, nbCPU)
       # 6- compute diversity metrics
       nbclusters <- dim(Kmeans_info$Centroids[[1]])[1]
       if (nbCPU>1) {
-        # plan(multisession, workers = nbCPU)
         cl <- parallel::makeCluster(nbCPU)
-        plan("cluster", workers = cl)  ## same as plan(multisession, workers = nbCPU)
+        plan("cluster", workers = cl)
         alphabetaIdx_CPU <- future.apply::future_lapply(X = SSwindows_per_CPU$SSwindow_perCPU,
                                                         FUN = alphabeta_window_list,
                                                         nbclusters = nbclusters,
                                                         alphametrics = alphametrics,
                                                         Beta_info = Beta_info,
                                                         Hill_order = Hill_order,
-                                                        pcelim = pcelim, 
+                                                        pcelim = pcelim,
 														future.seed = TRUE)
         if (!is.null(FDmetric)){
+          inputdata <- cbind(center_reduce(X = inputdata[SelectBands],
+                                           m = Kmeans_info$MinVal,
+                                           sig = Kmeans_info$Range),
+                             'win_ID' = inputdata$win_ID)
+          windows_per_CPU <- split_chunk(inputdata, nbCPU)
           FunctionalIdx_CPU <- future.apply::future_lapply(X = windows_per_CPU$SSwindow_perCPU,
                                                            FUN = functional_window_list,
-                                                           FDmetric = FDmetric, 
+                                                           FDmetric = FDmetric,
                                                            future.seed = TRUE)
         }
         parallel::stopCluster(cl)

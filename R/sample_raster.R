@@ -7,6 +7,8 @@
 #'
 #'
 #' @return rast_sample dataframe. pixel/plot info extracted from input_rast
+#' @import cli
+#' @importFrom progressr progressor handlers with_progress
 #' @importFrom terra extract
 #' @importFrom stats na.omit
 #' @export
@@ -24,15 +26,16 @@ sample_raster <- function(input_rast, pix2extract, xy = F, prog = F){
     rast_sample <- NULL
     names_layers <- names(input_rast)
     if (prog){
-      handlers(global = TRUE)
-      handlers("cli")
-      with_progress({
+      # progressr::handlers(global = TRUE)
+      suppressWarnings(progressr::handlers("cli"))
+      # progressr::handlers("debug")
+      suppressWarnings(with_progress({
         p <- progressr::progressor(steps = length(input_rast))
         rast_sample_list <- lapply(X = input_rast,
                                    FUN = terra_extract,
                                    y = pix2extract,
                                    p = p)
-      })
+      }))
     } else {
       rast_sample_list <- lapply(X = input_rast,
                                  FUN = terra_extract,
