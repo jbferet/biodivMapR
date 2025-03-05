@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_HDR_name.R
 \name{get_HDR_name}
 \alias{get_HDR_name}
-\title{get hdr name from image file name, assuming it is BIL format}
+\title{get hdr name from image file name}
 \usage{
 get_HDR_name(ImPath, showWarnings = TRUE)
 }
@@ -15,5 +15,5 @@ get_HDR_name(ImPath, showWarnings = TRUE)
 corresponding hdr
 }
 \description{
-get hdr name from image file name, assuming it is BIL format
+get hdr name from image file name
 }

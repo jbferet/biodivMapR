@@ -17,5 +17,5 @@ test_that("Radiometric Filtering", {
   updated_mask_path <- radiometric_filtering(input_raster_path = destfile,
                                              output_dir = output_dir,
                                              input_rast_wl = S2_hdr$wavelength)
-  testthat::expect_equal(updated_mask_path, 'RESULTS/mask_update.tif')
+  testthat::expect_equal(updated_mask_path, 'RESULTS/mask_update.tiff')
 })

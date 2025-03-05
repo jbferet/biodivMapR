@@ -2,8 +2,7 @@
 % Please edit documentation in R/get_SSD_full.R
 \name{get_SSD_full}
 \alias{get_SSD_full}
-\title{get spectral species distribution for all clusters, even those with null
-abundance}
+\title{get spectral species distribution for all clusters}
 \usage{
 get_SSD_full(SSD, nbclusters, pcelim = 0.02)
 }
@@ -18,6 +17,5 @@ get_SSD_full(SSD, nbclusters, pcelim = 0.02)
 SSwindow results of kmeans per window
 }
 \description{
-get spectral species distribution for all clusters, even those with null
-abundance
+get spectral species distribution for all clusters
 }

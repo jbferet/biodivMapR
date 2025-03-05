@@ -1,4 +1,4 @@
-#' this function
+#' gets noise
 #'
 #' @param X numeric. data matrix
 #' @param coordPix numeric.

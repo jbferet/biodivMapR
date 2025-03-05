@@ -1,4 +1,4 @@
-#' get hdr name from image file name, assuming it is BIL format
+#' get hdr name from image file name
 #'
 #' @param ImPath character. ath of the image
 #' @param showWarnings boolean. set TRUE if warning because HDR does not exist

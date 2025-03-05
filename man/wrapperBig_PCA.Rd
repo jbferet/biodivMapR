@@ -10,7 +10,7 @@ wrapperBig_PCA(input_data, input_args)
 \arguments{
 \item{input_data}{list. Image data chunk and corresponding mask if available}
 
-\item{input_args}{list. PCA model}
+\item{input_args}{list. PCA model and associated parameters required by bigRaster}
 }
 \value{
 list. PCA transformed spectral information

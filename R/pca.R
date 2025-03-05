@@ -1,4 +1,4 @@
-#' Function to perform PCA on a matrix
+#' performs PCA on matrix X
 #'
 #' @param X matrix to apply PCA on
 #' @param type PCA (no rescale) or SPCA (rescale)

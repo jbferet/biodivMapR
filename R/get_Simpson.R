@@ -1,5 +1,4 @@
 #' computes Simpson index from a distribution
-#' (faster than version implemented in vegan package)
 #'
 #' @param Distrib Distribution
 #'

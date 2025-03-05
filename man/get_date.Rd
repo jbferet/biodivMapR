@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_date.R
 \name{get_date}
 \alias{get_date}
-\title{This function gets acquisition date from S2 image}
+\title{gets acquisition date from S2 image}
 \usage{
 get_date(prodName)
 }
@@ -13,5 +13,5 @@ get_date(prodName)
 DateAcq character
 }
 \description{
-This function gets acquisition date from S2 image
+gets acquisition date from S2 image
 }

@@ -36,8 +36,8 @@ radiometric_filtering <- function(input_raster_path, output_dir, input_rast_wl,
   }
   mask_update <- file.path(output_dir, maskfilename)
   dir.create(path = output_dir,recursive = T,showWarnings = F)
-  if (filetype%in%c('GTiff', 'COG') & ! grepl(x = mask_update, pattern = '.tif')) {
-    mask_update <- paste0(mask_update, '.tif')
+  if (filetype%in%c('GTiff', 'COG') & ! grepl(x = mask_update, pattern = '.tiff')) {
+    mask_update <- paste0(mask_update, '.tiff')
   }
 
   # wavelengths expected to perform filtering

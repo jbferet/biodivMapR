@@ -2,7 +2,7 @@
 % Please edit documentation in R/apply_continuum_removal.R
 \name{apply_continuum_removal}
 \alias{apply_continuum_removal}
-\title{prepares data to run multithreaded continuum removal}
+\title{prepares data into list to apply continuum removal}
 \usage{
 apply_continuum_removal(Spectral_Data, Spectral)
 }
@@ -15,5 +15,5 @@ apply_continuum_removal(Spectral_Data, Spectral)
 samples from image and updated number of pixels to sample if necessary
 }
 \description{
-prepares data to run multithreaded continuum removal
+prepares data into list to apply continuum removal
 }

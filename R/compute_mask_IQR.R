@@ -14,16 +14,16 @@ compute_mask_IQR <- function(input_raster_path,
                              output_mask_path,
                              input_mask_path = NULL,
                              weightIRQ = 3,
-                             filetype = 'COG'){
+                             filetype = 'GTiff'){
   # initialize output mask: either input_mask, or only 1
-  output_mask <- terra::rast(input_raster_path[[1]])
-  terra::values(output_mask) <- 1
+  output_mask <- 1+0*terra::rast(input_raster_path[[1]])
   if (!is.null(input_mask_path)) {
     input_mask <- terra::rast(input_mask_path)
     output_mask <- input_mask
   } else if (is.null(input_mask_path)) {
     input_mask <- output_mask
-    terra::names(input_mask) <- terra::varnames(input_mask) <- 'mask'
+    terra::values(output_mask)[which(is.na(terra::values(input_mask)))] <- 0
+    names(input_mask) <- terra::varnames(input_mask) <- 'mask'
   }
   # update mask based on IQR computed for each raster
   for (si in input_raster_path){

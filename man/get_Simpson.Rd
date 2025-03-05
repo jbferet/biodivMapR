@@ -2,8 +2,7 @@
 % Please edit documentation in R/get_Simpson.R
 \name{get_Simpson}
 \alias{get_Simpson}
-\title{computes Simpson index from a distribution
-(faster than version implemented in vegan package)}
+\title{computes Simpson index from a distribution}
 \usage{
 get_Simpson(Distrib)
 }
@@ -15,5 +14,4 @@ Simpson index correspnding to the distribution
 }
 \description{
 computes Simpson index from a distribution
-(faster than version implemented in vegan package)
 }

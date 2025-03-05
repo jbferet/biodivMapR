@@ -2,7 +2,7 @@
 % Please edit documentation in R/noise.R
 \name{noise}
 \alias{noise}
-\title{this function}
+\title{gets noise}
 \usage{
 noise(X, coordPix = NULL)
 }
@@ -15,5 +15,5 @@ noise(X, coordPix = NULL)
 rescaled data, min and max values
 }
 \description{
-this function
+gets noise
 }

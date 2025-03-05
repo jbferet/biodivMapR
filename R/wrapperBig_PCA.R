@@ -2,7 +2,7 @@
 #' in combination with the function apply_bigRaster
 #'
 #' @param input_data list. Image data chunk and corresponding mask if available
-#' @param input_args list. PCA model
+#' @param input_args list. PCA model and associated parameters required by bigRaster
 #'
 #' @return list. PCA transformed spectral information
 #' @export

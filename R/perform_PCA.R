@@ -93,7 +93,7 @@ perform_PCA  <- function(input_raster_path, output_dir, input_rast_wl = NULL,
   PCA_Files <- list('PCA'= file.path(output_dir,
                                      paste0('OutputPCA_', Nb_PCs, '_PCs')))
   if (filetype %in% c('COG', 'tif', 'geoTiff', 'GeoTIFF', 'GTiff')){
-    PCA_Files$PCA <- paste0(PCA_Files$PCA,'.tif')
+    PCA_Files$PCA <- paste0(PCA_Files$PCA,'.tiff')
   }
   funct <- wrapperBig_PCA
   input_PCA <- list('main' = input_raster_path,

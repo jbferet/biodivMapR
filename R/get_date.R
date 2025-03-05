@@ -1,4 +1,4 @@
-#' This function gets acquisition date from S2 image
+#' gets acquisition date from S2 image
 #'
 #' @param prodName character. original name for the S2 image
 #'

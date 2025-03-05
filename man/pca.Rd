@@ -2,7 +2,7 @@
 % Please edit documentation in R/pca.R
 \name{pca}
 \alias{pca}
-\title{Function to perform PCA on a matrix}
+\title{performs PCA on matrix X}
 \usage{
 pca(X, type = "SPCA")
 }
@@ -15,5 +15,5 @@ pca(X, type = "SPCA")
 list of PCA parameters (PCs from X, mean, eigenvectors and values)
 }
 \description{
-Function to perform PCA on a matrix
+performs PCA on matrix X
 }

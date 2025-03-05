@@ -1,5 +1,4 @@
-#' get spectral species distribution for all clusters, even those with null
-#' abundance
+#' get spectral species distribution for all clusters
 #
 #' @param SSD dataframe. spectral species distribution
 #' @param nbclusters numeric. number of clusters used in kmeans

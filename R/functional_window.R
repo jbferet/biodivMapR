@@ -1,5 +1,5 @@
-#' compute alpha and beta diversity metrics from pixel data corresponding to
-#' spectral species extracted from a window
+#' compute functional diversity metrics from pixel data corresponding to
+#' features extracted from a window
 #'
 #' @param SSwindow dataframe. spectral species corresponding to a raster subset
 #' (window = elementary spatial unit of process)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/biodivMapR_OptClusters.R
 \name{biodivMapR_OptClusters}
 \alias{biodivMapR_OptClusters}
-\title{explores performances of biodivMapR for different numbers of clusters}
+\title{apply biodivMapR on a test set for different numbers of clusters}
 \usage{
 biodivMapR_OptClusters(
   input_raster,
@@ -66,5 +66,5 @@ list including performances (correlation) of SFS with additional
 features and assessed diversity metrics corresponding to each step
 }
 \description{
-explores performances of biodivMapR for different numbers of clusters
+apply biodivMapR on a test set for different numbers of clusters
 }

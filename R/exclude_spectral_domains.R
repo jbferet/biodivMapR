@@ -1,6 +1,6 @@
-#' define Water Vapor bands based on spectral sampling of original image
+#' define water vapor bands based on spectral sampling of original image
 #'
-#' @param input_rast =  character. path of the image
+#' @param input_rast character. path of the image
 #' @param Excluded_WL numeric. spectral domains corresponding to water vapor absorption
 #'
 #' @return bands corresponding to atmospheric water absorption domain

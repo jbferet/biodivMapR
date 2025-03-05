@@ -2,12 +2,12 @@
 % Please edit documentation in R/exclude_spectral_domains.R
 \name{exclude_spectral_domains}
 \alias{exclude_spectral_domains}
-\title{define Water Vapor bands based on spectral sampling of original image}
+\title{define water vapor bands based on spectral sampling of original image}
 \usage{
 exclude_spectral_domains(input_rast, Excluded_WL = NULL)
 }
 \arguments{
-\item{input_rast}{=  character. path of the image}
+\item{input_rast}{character. path of the image}
 
 \item{Excluded_WL}{numeric. spectral domains corresponding to water vapor absorption}
 }
@@ -15,5 +15,5 @@ exclude_spectral_domains(input_rast, Excluded_WL = NULL)
 bands corresponding to atmospheric water absorption domain
 }
 \description{
-define Water Vapor bands based on spectral sampling of original image
+define water vapor bands based on spectral sampling of original image
 }

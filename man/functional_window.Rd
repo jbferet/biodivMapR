@@ -2,8 +2,8 @@
 % Please edit documentation in R/functional_window.R
 \name{functional_window}
 \alias{functional_window}
-\title{compute alpha and beta diversity metrics from pixel data corresponding to
-spectral species extracted from a window}
+\title{compute functional diversity metrics from pixel data corresponding to
+features extracted from a window}
 \usage{
 functional_window(SSwindow, FDmetric = c("FRic", "FEve", "FDiv"), p = NULL)
 }
@@ -19,6 +19,6 @@ functional_window(SSwindow, FDmetric = c("FRic", "FEve", "FDiv"), p = NULL)
 list of alpha and beta diversity metrics
 }
 \description{
-compute alpha and beta diversity metrics from pixel data corresponding to
-spectral species extracted from a window
+compute functional diversity metrics from pixel data corresponding to
+features extracted from a window
 }

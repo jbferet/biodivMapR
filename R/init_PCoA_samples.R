@@ -69,6 +69,7 @@ init_PCoA_samples <- function(rast_sample, output_dir, Kmeans_info,
   SSD <- lapply(Beta_info, '[[','SSD')
   MatBC <- Reduce('+', MatBC_iter)/nbIter
   MatBCdist <- stats::as.dist(MatBC, diag = FALSE, upper = FALSE)
+  if (verbose ==T) message('perform PCoA')
   BetaPCO <- pco(MatBCdist, k = dimPCoA)
   # Beta_Ordination_sel <- BetaPCO$points
   Beta_info <- list('SSD' = SSD, 'MatBC' = MatBC, 'BetaPCO' = BetaPCO)

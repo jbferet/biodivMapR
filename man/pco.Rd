@@ -2,7 +2,7 @@
 % Please edit documentation in R/pco.R
 \name{pco}
 \alias{pco}
-\title{compute PCoA using the cmdscale function
+\title{computes PCoA using the cmdscale function
 original source: package labdsv https://rdrr.io/cran/labdsv/src/R/pco.R}
 \usage{
 pco(dis, k = 3)
@@ -16,6 +16,6 @@ pco(dis, k = 3)
 list
 }
 \description{
-compute PCoA using the cmdscale function
+computes PCoA using the cmdscale function
 original source: package labdsv https://rdrr.io/cran/labdsv/src/R/pco.R
 }

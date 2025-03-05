@@ -9,7 +9,7 @@ compute_mask_IQR(
   output_mask_path,
   input_mask_path = NULL,
   weightIRQ = 3,
-  filetype = "COG"
+  filetype = "GTiff"
 )
 }
 \arguments{

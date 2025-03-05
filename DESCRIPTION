@@ -1,6 +1,6 @@
 Package: biodivMapR
 Title: biodivMapR: an R package for a- and ß-diversity mapping using remotely-sensed images
-Version: 2.2.1
+Version: 2.3.0
 Authors@R: c(person(given = "Jean-Baptiste", 
 					family = "Feret", 
 					email = "jb.feret@teledetection.fr", 
@@ -31,6 +31,8 @@ Imports:
     fundiversity,
     future,
     future.apply,
+    methods,
+    preprocS2,
     progress,
     progressr,
     purrr,
@@ -50,7 +52,8 @@ Suggests:
     readr,
     rmarkdown,
     testthat (>= 2.0.0)
-Remotes: gitlab::jbferet/bigRaster
+Remotes: gitlab::jbferet/bigRaster, 
+         github::jbferet/preprocS2, 
 VignetteBuilder: knitr
 URL: https://github.com/jbferet/biodivMapR
 BugReports: https://github.com/jbferet/biodivMapR/issues

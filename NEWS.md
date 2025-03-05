@@ -1,3 +1,8 @@
+# biodivMapR2 v2.3.0
+## change
+- added functions to process large rasters divided into tiles using get_s2_tiling function from preprocS2 package
+- added functions to apply biodivMapR using moving window
+
 # biodivMapR2 v2.2.1
 ## change
 - clean code

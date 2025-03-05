@@ -41,7 +41,7 @@ save_diversity_maps <- function(ab_div_metrics,
     if (!is.null(output_raster_name[[idx2]]))
       output_raster <- file.path(output_dir, paste0(output_raster_name[[idx2]], '_mean'))
 
-    if (filetype%in%c('GTiff', 'COG')) output_raster <- paste0(output_raster, '.tif')
+    if (filetype%in%c('GTiff', 'COG')) output_raster <- paste0(output_raster, '.tiff')
     terra::writeRaster(x = template_rast, filename = output_raster,
                        filetype = filetype, overwrite = T)
     # SD value
@@ -57,7 +57,7 @@ save_diversity_maps <- function(ab_div_metrics,
       output_raster <- file.path(output_dir, paste0(idx2, '_sd'))
     if (!is.null(output_raster_name[[idx2]]))
       output_raster <- file.path(output_dir, paste0(output_raster_name[[idx2]], '_sd'))
-    if (filetype%in%c('GTiff', 'COG')) output_raster <- paste0(output_raster, '.tif')
+    if (filetype%in%c('GTiff', 'COG')) output_raster <- paste0(output_raster, '.tiff')
     terra::writeRaster(x = template_rast, filename = output_raster,
                        filetype = filetype, overwrite = T)
   }
@@ -75,7 +75,7 @@ save_diversity_maps <- function(ab_div_metrics,
       output_raster <- file.path(output_dir, idx)
     if (!is.null(output_raster_name[[idx]]))
       output_raster <- file.path(output_dir, output_raster_name[[idx]])
-    if (filetype%in%c('GTiff', 'COG')) output_raster <- paste0(output_raster, '.tif')
+    if (filetype%in%c('GTiff', 'COG')) output_raster <- paste0(output_raster, '.tiff')
     terra::writeRaster(x = template_rast, filename = output_raster,
                        filetype = filetype, overwrite = T)
   }
@@ -98,7 +98,7 @@ save_diversity_maps <- function(ab_div_metrics,
     output_raster <- file.path(output_dir, 'beta')
   if (!is.null(output_raster_name[[idx2]]))
     output_raster <- file.path(output_dir, output_raster_name[['beta']])
-  if (filetype%in%c('GTiff', 'COG')) output_raster <- paste0(output_raster, '.tif')
+  if (filetype%in%c('GTiff', 'COG')) output_raster <- paste0(output_raster, '.tiff')
   terra::writeRaster(x = template_rast, filename = output_raster,
                      filetype = filetype, overwrite = T)
   return(invisible())

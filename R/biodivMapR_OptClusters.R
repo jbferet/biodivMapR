@@ -1,4 +1,4 @@
-#' explores performances of biodivMapR for different numbers of clusters
+#' apply biodivMapR on a test set for different numbers of clusters
 #'
 #' @param input_raster SpatRaster or list of SpatRaster
 #' @param obs_vect SpatVector or SpatVectorCollection

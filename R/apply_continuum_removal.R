@@ -1,4 +1,4 @@
-#' prepares data to run multithreaded continuum removal
+#' prepares data into list to apply continuum removal
 #'
 #' @param Spectral_Data numeric. initial data matrix (nb samples x nb bands)
 #' @param Spectral list. information about spectral bands

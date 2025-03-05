@@ -19,11 +19,11 @@ get_alpha_from_SSD <- function(SSD, nbPix_Sunlit, alphametrics = 'shannon',
     SSD <- SSD[KeepSS]
   }
   richness <- shannon <- simpson <- fisher <- hill <- NA
-  if (!is.na(match('hill',alphametrics))) hill <- get_Hill(Distrib = SSD, q = Hill_order)
-  if (!is.na(match('richness',alphametrics))) richness <- length(SSD)
-  if (!is.na(match('shannon',alphametrics))) shannon <- get_Shannon(SSD)
-  if (!is.na(match('simpson',alphametrics))) simpson <- get_Simpson(SSD)
-  if (!is.na(match('fisher',alphametrics)) & length(SSD)>1) fisher <- vegan::fisher.alpha(SSD)
+  if ('hill' %in% alphametrics) hill <- get_Hill(Distrib = SSD, q = Hill_order)
+  if ('richness' %in% alphametrics) richness <- length(SSD)
+  if ('shannon' %in% alphametrics)  shannon <- get_Shannon(SSD)
+  if ('simpson' %in% alphametrics) simpson <- get_Simpson(SSD)
+  if ('fisher' %in% alphametrics & length(SSD)>1) fisher <- vegan::fisher.alpha(SSD)
   return(list('richness' = richness, 'shannon' = shannon,
               'simpson' = simpson, 'fisher' = fisher, 'hill' = hill))
 }

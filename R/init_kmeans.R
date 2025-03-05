@@ -61,18 +61,6 @@ init_kmeans <- function(input_rast,
                                        Kmeans_info_save = Kmeans_info_save,
                                        algorithm = algorithm, nbCPU = nbCPU,
                                        verbose = verbose, progressbar = progressbar)
-
-    # if (is.null(SelectBands)) SelectBands <- seq_len(dim(rast_sample)[2])
-    # rast_sample <- rast_sample %>% select(all_of(SelectBands))
-    # # 3- PERFORM KMEANS FOR EACH ITERATION & DEFINE SPECTRAL SPECIES
-    # if (verbose ==T)
-    #   message("perform k-means clustering for each subset and define centroids")
-    # Kmeans_info <- get_kmeans(rast_sample = rast_sample, nbIter = nbIter,
-    #                           nbclusters = nbclusters, algorithm = algorithm,
-    #                           nbCPU = nbCPU)
-    # if (is.null(Kmeans_info_save))
-    #   means_info_save <- file.path(output_dir,'Kmeans_info.RData')
-    # save(Kmeans_info, file = Kmeans_info_save)
   }
   return(Kmeans_info)
 }
