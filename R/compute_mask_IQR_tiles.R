@@ -31,6 +31,7 @@ compute_mask_IQR_tiles <- function(feature_dir, feature_list, mask_dir, plots,
   } else {
     # check if features also exist
     features_files <- lapply(X = feature_list, FUN = list.files, path = feature_dir)
+    names(features_files) <- feature_list
     feat_exists <- list()
     # which features exist
     for (feat in feature_list)
