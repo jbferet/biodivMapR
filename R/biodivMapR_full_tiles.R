@@ -51,7 +51,7 @@ biodivMapR_full_tiles <- function(dsn_grid, ID_aoi, feature_dir, list_features,
     beta_samples <- samples_alpha_beta$samples_beta[c(list_features,'ID')]
 
     # compute alpha and beta models from samples
-    nbCPU2 <- min(c(20, nbCPU))
+    nbCPU2 <- min(c(8, nbCPU))
     if (!file.exists(Kmeans_path)){
       alpha_samples$ID <- NULL
       Kmeans_info <- init_kmeans_samples(rast_sample = alpha_samples,
@@ -65,6 +65,7 @@ biodivMapR_full_tiles <- function(dsn_grid, ID_aoi, feature_dir, list_features,
   }
 
   message('applying biodivMapR on tiles')
+  nbCPU <- min(length(ID_aoi), nbCPU)
   if (nbCPU>1){
     cl <- parallel::makeCluster(nbCPU)
     plan("cluster", workers = cl)
