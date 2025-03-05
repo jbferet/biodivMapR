@@ -2,7 +2,7 @@
 % Please edit documentation in R/compute_mask_IQR_tiles.R
 \name{compute_mask_IQR_tiles}
 \alias{compute_mask_IQR_tiles}
-\title{computes mask for a series of rasters based on IQR}
+\title{get samples for alpha and beta diversity mapping}
 \usage{
 compute_mask_IQR_tiles(
   feature_dir,
@@ -33,8 +33,8 @@ compute_mask_IQR_tiles(
 \item{nbPixstats}{numeric.}
 }
 \value{
-mask_path
+mask_path_list
 }
 \description{
-computes mask for a series of rasters based on IQR
+get samples for alpha and beta diversity mapping
 }
