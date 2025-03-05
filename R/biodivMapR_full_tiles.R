@@ -1,7 +1,6 @@
 #' computes diversity metrics from raster
 #'
 #' @param dsn_grid character. path for the tiling grid
-#' @param ID_aoi list.
 #' @param feature_dir character. path where to get features
 #' @param list_features character. list of features
 #' @param mask_dir character. path for masks
@@ -19,7 +18,7 @@
 #' @return mosaic_path
 #' @export
 
-biodivMapR_full_tiles <- function(dsn_grid, ID_aoi, feature_dir, list_features,
+biodivMapR_full_tiles <- function(dsn_grid, feature_dir, list_features,
                                   mask_dir = NULL, output_dir, window_size,
                                   plots, nbsamples_alpha = 1e5, nbsamples_beta = 2e3,
                                   nbCPU = 1, pcelim = 0.02, maxRows = 1200,
@@ -33,8 +32,8 @@ biodivMapR_full_tiles <- function(dsn_grid, ID_aoi, feature_dir, list_features,
 
   # check which masks exist and discard plots with no masks
   mask_path <- mask_path_list$mask_path
-  tile_exists <- mask_path_list$tile_exists
-  plots <- plots[tile_exists]
+  ID_aoi <- mask_path_list$tile_exists
+  plots <- plots[ID_aoi]
 
   # load kmeans and beta info if exist
   Kmeans_path <- file.path(output_dir, 'Kmeans_info.RData')

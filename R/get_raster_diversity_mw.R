@@ -42,24 +42,25 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
   } else {
     SelectBands <- seq_len(dim(rast_in)[3]-1)
   }
-  
+
   res_shapeChunk <- list()
   for (idx in alphametrics){
     res_shapeChunk[[idx]] <- list()
     for (crit in c('mean', 'sd'))
-      res_shapeChunk[[idx]][[crit]] <- matrix(NA, 
-                                              nrow = nrow(rast_in), 
+      res_shapeChunk[[idx]][[crit]] <- matrix(NA,
+                                              nrow = nrow(rast_in),
                                               ncol = ncol(rast_in))
   }
   dimPCO <- 3
   if (!is.null(Beta_info)) dimPCO <- ncol(Beta_info$BetaPCO$points)
-  PCoA_raster <- list('PCoA1' = matrix(NA, nrow = nrow(rast_in), ncol = ncol(rast_in)), 
-                      'PCoA2' = matrix(NA, nrow = nrow(rast_in), ncol = ncol(rast_in)), 
+  PCoA_raster <- list('PCoA1' = matrix(NA, nrow = nrow(rast_in), ncol = ncol(rast_in)),
+                      'PCoA2' = matrix(NA, nrow = nrow(rast_in), ncol = ncol(rast_in)),
                       'PCoA3' = matrix(NA, nrow = nrow(rast_in), ncol = ncol(rast_in)))
 
   # v1: line per line
   nbWindows <- ncol(rast_in)
-  whichj <- which(rowSums(rast_in[[1]], na.rm = T)>0)
+  rastmat <- as.matrix(rast_in[[1]], wide=TRUE)
+  whichj <- which(rowSums(rastmat, na.rm = T)>0)
   for (j in whichj){
     inputdata <- list()
     sel <- NULL
@@ -73,7 +74,7 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
         inputdata[[i]] <- na.omit(rast_in[ymin:ymax, xmin:xmax, ])
         if (!is.null(inputdata[[i]]$mask)){
           sel <- which(inputdata[[i]]$mask==1)
-          if (length(sel)>0) 
+          if (length(sel)>0)
             inputdata[[i]] <- inputdata[[i]][sel,]
           inputdata[[i]]$mask <- NULL
         }
@@ -85,7 +86,7 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
       }
       inputdata <- do.call(what = rbind, args = inputdata)
     }
-    
+
     # inputdata <- list()
     # for (i in 1:ncol(rast_in)){
     #   xmin <- max(c(1, i-(window_size-1)/2))
@@ -100,7 +101,7 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
     # sel <- which(!is.na(rast_in[j,,1]) & ll>MinSun*window_size**2)
     # inputdata <- inputdata[sel]
     # inputdata <- do.call(what = rbind, args = inputdata)
-    
+
     # compute diversity
     if (!is.null(inputdata)){
       if (length(inputdata)>0){
@@ -141,20 +142,20 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
       }
     }
   }
-    
+
   # # v2: all lines together
   # nbWindows <- ncol(rast_in)*nrow(rast_in)
   # xyminmax <- list()
   # for (j in 1:nrow(rast_in)){
   #   for (i in 1:ncol(rast_in)){
   #     cell <- j+(i-1)*nrow(rast_in)
-  #     xyminmax[[cell]] <- list('xmin' = max(c(1, i-(window_size-1)/2)), 
-  #                              'xmax' = min(c(ncol(rast_in), i+(window_size-1)/2)), 
-  #                              'ymin' = max(c(1, j-(window_size-1)/2)), 
+  #     xyminmax[[cell]] <- list('xmin' = max(c(1, i-(window_size-1)/2)),
+  #                              'xmax' = min(c(ncol(rast_in), i+(window_size-1)/2)),
+  #                              'ymin' = max(c(1, j-(window_size-1)/2)),
   #                              'ymax' = min(c(nrow(rast_in), j+(window_size-1)/2)))
   #   }
   # }
-  # 
+  #
   # rastext <- function(xyminmax, cell, rast_in){
   #   inputdata <- na.omit(rast_in[xyminmax$ymin:xyminmax$ymax, xyminmax$xmin:xyminmax$xmax, ])
   #   if (nrow(inputdata)>0)
@@ -162,11 +163,11 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
   #   return(inputdata)
   # }
   # cell <- seq_len(length(xyminmax))
-  # inputdata <- mapply(FUN = rastext, 
-  #                     xyminmax = xyminmax, 
-  #                     cell = cell, 
+  # inputdata <- mapply(FUN = rastext,
+  #                     xyminmax = xyminmax,
+  #                     cell = cell,
   #                     MoreArgs = list(rast_in = rast_in))
-  # 
+  #
   # # for (j in 1:nrow(rast_in)){
   # #   print(100*j/nrow(rast_in))
   # #   for (i in 1:ncol(rast_in)){
@@ -184,11 +185,11 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
   # sel <- which(!is.na(terra::values(rast_in[[1]])) & ll>MinSun*window_size**2)
   # inputdata <- inputdata[sel]
   # inputdata <- do.call(what = rbind, args = inputdata)
-  # 
+  #
   # # compute diversity
   # if (length(sel)>0){
   #   SSchunk <- get_spectralSpecies(inputdata = inputdata,
-  #                                  Kmeans_info = Kmeans_info, 
+  #                                  Kmeans_info = Kmeans_info,
   #                                  SelectBands = SelectBands)
   #   # 5- split data chunk by window and by nbCPU to ensure parallel computing
   #   rm(inputdata)

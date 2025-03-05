@@ -6,7 +6,6 @@
 \usage{
 biodivMapR_full_tiles(
   dsn_grid,
-  ID_aoi,
   feature_dir,
   list_features,
   mask_dir = NULL,
@@ -24,8 +23,6 @@ biodivMapR_full_tiles(
 }
 \arguments{
 \item{dsn_grid}{character. path for the tiling grid}
-
-\item{ID_aoi}{list.}
 
 \item{feature_dir}{character. path where to get features}
 
