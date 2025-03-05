@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.3.0</span>
       </span>
     </div>
 
@@ -99,7 +99,7 @@
       </tr><tr><td>
           <p><code><a href="apply_continuum_removal.html">apply_continuum_removal()</a></code> </p>
         </td>
-        <td><p>prepares data to run multithreaded continuum removal</p></td>
+        <td><p>prepares data into list to apply continuum removal</p></td>
       </tr><tr><td>
           <p><code><a href="apply_kmeans.html">apply_kmeans()</a></code> </p>
         </td>
@@ -107,7 +107,7 @@
       </tr><tr><td>
           <p><code><a href="biodivMapR_OptClusters.html">biodivMapR_OptClusters()</a></code> </p>
         </td>
-        <td><p>explores performances of biodivMapR for different numbers of clusters</p></td>
+        <td><p>apply biodivMapR on a test set for different numbers of clusters</p></td>
       </tr><tr><td>
           <p><code><a href="biodivMapR_SFS.html">biodivMapR_SFS()</a></code> </p>
         </td>
@@ -118,6 +118,10 @@
         <td><p>apply biodivMapR (computes clusters + diversity metrics) to an image chunk</p></td>
       </tr><tr><td>
           <p><code><a href="biodivMapR_full.html">biodivMapR_full()</a></code> </p>
+        </td>
+        <td><p>computes diversity metrics from raster</p></td>
+      </tr><tr><td>
+          <p><code><a href="biodivMapR_full_tiles.html">biodivMapR_full_tiles()</a></code> </p>
         </td>
         <td><p>computes diversity metrics from raster</p></td>
       </tr><tr><td>
@@ -145,6 +149,10 @@
         </td>
         <td><p>compute mask based on interquartile range criterion applied on input rasters</p></td>
       </tr><tr><td>
+          <p><code><a href="compute_mask_IQR_tiles.html">compute_mask_IQR_tiles()</a></code> </p>
+        </td>
+        <td><p>computes mask for a series of rasters based on IQR</p></td>
+      </tr><tr><td>
           <p><code><a href="continuumRemoval.html">continuumRemoval()</a></code> </p>
         </td>
         <td><p>Computes continuum removal for matrix shaped data: more efficient than processing individual spectra the convex hull is based on the computation of the derivative between R at a given spectral band and R at the following bands</p></td>
@@ -155,7 +163,7 @@
       </tr><tr><td>
           <p><code><a href="exclude_spectral_domains.html">exclude_spectral_domains()</a></code> </p>
         </td>
-        <td><p>define Water Vapor bands based on spectral sampling of original image</p></td>
+        <td><p>define water vapor bands based on spectral sampling of original image</p></td>
       </tr><tr><td>
           <p><code><a href="explore_kmeans.html">explore_kmeans()</a></code> </p>
         </td>
@@ -175,7 +183,7 @@
       </tr><tr><td>
           <p><code><a href="functional_window.html">functional_window()</a></code> </p>
         </td>
-        <td><p>compute alpha and beta diversity metrics from pixel data corresponding to spectral species extracted from a window</p></td>
+        <td><p>compute functional diversity metrics from pixel data corresponding to features extracted from a window</p></td>
       </tr><tr><td>
           <p><code><a href="functional_window_list.html">functional_window_list()</a></code> </p>
         </td>
@@ -191,7 +199,7 @@
       </tr><tr><td>
           <p><code><a href="get_HDR_name.html">get_HDR_name()</a></code> </p>
         </td>
-        <td><p>get hdr name from image file name, assuming it is BIL format</p></td>
+        <td><p>get hdr name from image file name</p></td>
       </tr><tr><td>
           <p><code><a href="get_Hill.html">get_Hill()</a></code> </p>
         </td>
@@ -199,7 +207,7 @@
       </tr><tr><td>
           <p><code><a href="get_SSD_full.html">get_SSD_full()</a></code> </p>
         </td>
-        <td><p>get spectral species distribution for all clusters, even those with null abundance</p></td>
+        <td><p>get spectral species distribution for all clusters</p></td>
       </tr><tr><td>
           <p><code><a href="get_Shannon.html">get_Shannon()</a></code> </p>
         </td>
@@ -207,7 +215,7 @@
       </tr><tr><td>
           <p><code><a href="get_Simpson.html">get_Simpson()</a></code> </p>
         </td>
-        <td><p>computes Simpson index from a distribution (faster than version implemented in vegan package)</p></td>
+        <td><p>computes Simpson index from a distribution</p></td>
       </tr><tr><td>
           <p><code><a href="get_alpha_from_SSD.html">get_alpha_from_SSD()</a></code> </p>
         </td>
@@ -219,7 +227,7 @@
       </tr><tr><td>
           <p><code><a href="get_date.html">get_date()</a></code> </p>
         </td>
-        <td><p>This function gets acquisition date from S2 image</p></td>
+        <td><p>gets acquisition date from S2 image</p></td>
       </tr><tr><td>
           <p><code><a href="get_diversity_from_plots.html">get_diversity_from_plots()</a></code> </p>
         </td>
@@ -237,21 +245,45 @@
         </td>
         <td><p>computes k-means from nbIter subsets taken from dataPCA</p></td>
       </tr><tr><td>
+          <p><code><a href="get_plots_from_tiles.html">get_plots_from_tiles()</a></code> </p>
+        </td>
+        <td><p>get samples for beta diversity mapping</p></td>
+      </tr><tr><td>
           <p><code><a href="get_raster_diversity.html">get_raster_diversity()</a></code> </p>
         </td>
         <td><p>Computes diversity metrics from raster data</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_raster_diversity_mw.html">get_raster_diversity_mw()</a></code> </p>
+        </td>
+        <td><p>Computes diversity metrics from raster data based on moving window</p></td>
       </tr><tr><td>
           <p><code><a href="get_raster_extent.html">get_raster_extent()</a></code> </p>
         </td>
         <td><p>gets raster extent</p></td>
       </tr><tr><td>
+          <p><code><a href="get_samples_from_tiles.html">get_samples_from_tiles()</a></code> </p>
+        </td>
+        <td><p>get samples for alpha diversity mapping</p></td>
+      </tr><tr><td>
           <p><code><a href="get_spectralSpecies.html">get_spectralSpecies()</a></code> </p>
         </td>
         <td><p>compute spectral species from inputdata</p></td>
       </tr><tr><td>
+          <p><code><a href="get_stats_from_tiles.html">get_stats_from_tiles()</a></code> </p>
+        </td>
+        <td><p>get samples from tiles produced with preprocS2 function get_s2_tiling in order to produce stats</p></td>
+      </tr><tr><td>
           <p><code><a href="get_sunlitwindows.html">get_sunlitwindows()</a></code> </p>
         </td>
         <td><p>eliminate windows with insufficient sunlit pixels</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_valid_pixels.html">get_valid_pixels()</a></code> </p>
+        </td>
+        <td><p>get valid pixels from a list of plots produced with preprocS2 function get_s2_tiling (notNA)</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_valid_pixels_from_tiles.html">get_valid_pixels_from_tiles()</a></code> </p>
+        </td>
+        <td><p>get valid pixels from list of tiles</p></td>
       </tr><tr><td>
           <p><code><a href="get_xy_samples.html">get_xy_samples()</a></code> </p>
         </td>
@@ -289,21 +321,25 @@
         </td>
         <td><p>Function to perform MNF</p></td>
       </tr><tr><td>
+          <p><code><a href="mosaic_tiles.html">mosaic_tiles()</a></code> </p>
+        </td>
+        <td><p>compute spectral indices and composite for a given period of time</p></td>
+      </tr><tr><td>
           <p><code><a href="nbRows_chunk.html">nbRows_chunk()</a></code> </p>
         </td>
         <td><p>adjusts number of rows from chunks</p></td>
       </tr><tr><td>
           <p><code><a href="noise.html">noise()</a></code> </p>
         </td>
-        <td><p>this function</p></td>
+        <td><p>gets noise</p></td>
       </tr><tr><td>
           <p><code><a href="pca.html">pca()</a></code> </p>
         </td>
-        <td><p>Function to perform PCA on a matrix</p></td>
+        <td><p>performs PCA on matrix X</p></td>
       </tr><tr><td>
           <p><code><a href="pco.html">pco()</a></code> </p>
         </td>
-        <td><p>compute PCoA using the cmdscale function original source: package labdsv https://rdrr.io/cran/labdsv/src/R/pco.R</p></td>
+        <td><p>computes PCoA using the cmdscale function original source: package labdsv https://rdrr.io/cran/labdsv/src/R/pco.R</p></td>
       </tr><tr><td>
           <p><code><a href="perform_PCA.html">perform_PCA()</a></code> </p>
         </td>
@@ -341,9 +377,29 @@
         </td>
         <td><p>remove constant bands</p></td>
       </tr><tr><td>
+          <p><code><a href="run_biodivMapR.html">run_biodivMapR()</a></code> </p>
+        </td>
+        <td><p>apply biodivMapR to an individual set of rasters (one site)</p></td>
+      </tr><tr><td>
+          <p><code><a href="run_biodivMapR_plot.html">run_biodivMapR_plot()</a></code> </p>
+        </td>
+        <td><p>apply biodivMapR to a set of plots identified by a field '<em>id</em>' produced with preprocS2 function get_s2_tiling</p></td>
+      </tr><tr><td>
           <p><code><a href="sample_exact_raster.html">sample_exact_raster()</a></code> </p>
         </td>
         <td><p>sample exact number of pixels from a raster</p></td>
+      </tr><tr><td>
+          <p><code><a href="sample_from_plots.html">sample_from_plots()</a></code> </p>
+        </td>
+        <td><p>get samples for alpha and beta diversity mapping</p></td>
+      </tr><tr><td>
+          <p><code><a href="sample_from_plots_alpha.html">sample_from_plots_alpha()</a></code> </p>
+        </td>
+        <td><p>get samples for alpha diversity mapping</p></td>
+      </tr><tr><td>
+          <p><code><a href="sample_from_plots_beta.html">sample_from_plots_beta()</a></code> </p>
+        </td>
+        <td><p>get samples for beta diversity mapping</p></td>
       </tr><tr><td>
           <p><code><a href="sample_from_raster.html">sample_from_raster()</a></code> </p>
         </td>
@@ -365,6 +421,10 @@
         </td>
         <td><p>save diversity maps as raster data</p></td>
       </tr><tr><td>
+          <p><code><a href="save_diversity_maps_mw.html">save_diversity_maps_mw()</a></code> </p>
+        </td>
+        <td><p>save diversity maps as raster data once moving window process done</p></td>
+      </tr><tr><td>
           <p><code><a href="scatter_alphabeta.html">scatter_alphabeta()</a></code> </p>
         </td>
         <td><p>produces a figure summarizing alpha and beta diversity on scatterplots</p></td>
@@ -384,6 +444,10 @@
           <p><code><a href="split_line.html">split_line()</a></code> </p>
         </td>
         <td><p>ENVI functions</p></td>
+      </tr><tr><td>
+          <p><code><a href="update_mask_from_tiles.html">update_mask_from_tiles()</a></code> </p>
+        </td>
+        <td><p>update mask based on IQR for a series of rasters produced with preprocS2 function get_s2_tiling</p></td>
       </tr><tr><td>
           <p><code><a href="wrapperBig_PCA.html">wrapperBig_PCA()</a></code> </p>
         </td>

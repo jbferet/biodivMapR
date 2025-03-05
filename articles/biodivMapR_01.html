@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.3.0</span>
       </span>
     </div>
 
@@ -93,7 +93,7 @@
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2025-01-24</h4>
+            <h4 data-toc-skip class="date">2025-03-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR_01.Rmd" class="external-link"><code>vignettes/biodivMapR_01.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_01.Rmd</code></div>
@@ -153,7 +153,7 @@ acquisition can be downloaded from the <a href="https://dataspace.copernicus.eu/
 authentication is provided and <code>geomAcq = T</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># load useful libraries </span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">preprocS2</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://gitlab.com/jbferet/preprocS2" class="external-link">preprocS2</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">################################################################################</span></span>
@@ -186,7 +186,7 @@ authentication is provided and <code>geomAcq = T</code>.</p>
 <span><span class="va">authentication</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">'id'</span> <span class="op">=</span> <span class="va">id</span>, <span class="st">'pwd'</span> <span class="op">=</span> <span class="va">secret</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># 3- get S2 acquisition for study area</span></span>
-<span><span class="va">list_files</span> <span class="op">&lt;-</span> <span class="fu">preprocS2</span><span class="fu">::</span><span class="fu">get_s2_raster</span><span class="op">(</span>bbox <span class="op">=</span> <span class="va">bbox</span>, geomAcq <span class="op">=</span> <span class="cn">T</span>,</span>
+<span><span class="va">list_files</span> <span class="op">&lt;-</span> <span class="fu">preprocS2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/preprocS2/man/get_s2_raster.html" class="external-link">get_s2_raster</a></span><span class="op">(</span>bbox <span class="op">=</span> <span class="va">bbox</span>, geomAcq <span class="op">=</span> <span class="cn">T</span>,</span>
 <span>                                       authentication <span class="op">=</span> <span class="va">authentication</span>, </span>
 <span>                                       path_S2tilinggrid <span class="op">=</span> <span class="va">path_S2tilinggrid</span>, </span>
 <span>                                       datetime <span class="op">=</span> <span class="va">datetime</span>, </span>
