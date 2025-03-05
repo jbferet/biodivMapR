@@ -1,4 +1,4 @@
-#' computes mask for a series of rasters based on IQR
+#' get samples for alpha and beta diversity mapping
 #'
 #' @param feature_dir character.
 #' @param feature_list character.
@@ -9,7 +9,7 @@
 #' @param nbCPU numeric.
 #' @param nbPixstats numeric.
 #'
-#' @return mask_path
+#' @return mask_path_list
 #' @importFrom progressr progressor handlers with_progress
 #' @importFrom future.apply future_lapply
 #' @importFrom future plan
@@ -19,12 +19,27 @@
 compute_mask_IQR_tiles <- function(feature_dir, feature_list, mask_dir, plots,
                                    weightIRQ = 4, filetype = 'GTiff', nbCPU = 1,
                                    nbPixstats = 5e6){
-  
-  # first check if mask files exist
+
+  process_mask <- TRUE
+  # first check missing masks
   mask_path <- file.path(mask_dir, paste0('mask_', names(plots), '_IQR.tiff'))
-  which_process <- which(!file.exists(mask_path))
-  if (length(which_process)>0){
-    plots <- plots[which_process]
+  tile_exists <- names(plots)[which(file.exists(mask_path))]
+  mask_missing <- paste0('_', names(plots)[which(!file.exists(mask_path))], '_')
+  if (length(mask_missing)==0){
+    process_mask <- FALSE
+    tile_exists <- names(plots)[which(file.exists(mask_path))]
+  } else {
+    # check if features also exist
+    features_files <- lapply(X = feature_list, FUN = list.files, path = feature_dir)
+    feat_exists <- list()
+    # which features exist
+    for (feat in feature_list)
+      feat_exists[[feat]] <- unlist(lapply(X = mask_missing, FUN = grep, x = features_files[[feat]]))
+    if (length(unlist(feat_exists))==0)
+      process_mask <- FALSE
+  }
+
+  if (process_mask){
     # list files
     listfiles <- list.files(feature_dir, full.names = T)
     ##############################################################################
@@ -49,7 +64,6 @@ compute_mask_IQR_tiles <- function(feature_dir, feature_list, mask_dir, plots,
     }
     # get total number of pixels
     totalPixels <- sum(unlist(nbPixValid))
-    
     ##############################################################################
     # get statistics on nbPixstats
     if (totalPixels<nbPixstats)
@@ -78,8 +92,7 @@ compute_mask_IQR_tiles <- function(feature_dir, feature_list, mask_dir, plots,
                                             plotID = names(plots), pix2sel = pix2sel,
                                             MoreArgs = list(listfiles = listfiles,
                                                             feat_list = feature_list,
-                                                            as.df = T,
-                                                            p = p),
+                                                            as.df = T),
                                             future.seed = T, SIMPLIFY = F)
       parallel::stopCluster(cl)
       plan(sequential)
@@ -87,13 +100,13 @@ compute_mask_IQR_tiles <- function(feature_dir, feature_list, mask_dir, plots,
     # compute IQR
     selpixAll <- do.call(what = 'rbind', selpix)
     iqr_si <- lapply(X = selpixAll, FUN = biodivMapR::IQR_outliers, weightIRQ = weightIRQ)
-    
+
     ##############################################################################
     # produce mask for each tile
     if (nbCPU==1){
       handlers("cli")
       suppressWarnings(with_progress({
-        
+
         p <- progressr::progressor(steps = length(plots),
                                    message = 'update mask')
         mask_path <- lapply(X = names(plots),
@@ -115,6 +128,9 @@ compute_mask_IQR_tiles <- function(feature_dir, feature_list, mask_dir, plots,
       parallel::stopCluster(cl)
       plan(sequential)
     }
+    tile_exists <- names(plots)[which(file.exists(mask_path))]
   }
-  return(mask_path)
+  mask_path_list <- list('mask_path' = mask_path,
+                         'tile_exists' = tile_exists)
+  return(mask_path_list)
 }

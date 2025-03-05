@@ -26,10 +26,15 @@ biodivMapR_full_tiles <- function(dsn_grid, ID_aoi, feature_dir, list_features,
                                   MovingWindow = F, siteName = NULL){
 
   # update mask based on IQR filtering for each feature
-  mask_path <- compute_mask_IQR_tiles(feature_dir = feature_dir,
-                                      feature_list = list_features,
-                                      mask_dir = mask_dir,
-                                      plots = plots)
+  mask_path_list <- compute_mask_IQR_tiles(feature_dir = feature_dir,
+                                           feature_list = list_features,
+                                           mask_dir = mask_dir,
+                                           plots = plots)
+
+  # check which masks exist and discard plots with no masks
+  mask_path <- mask_path_list$mask_path
+  tile_exists <- mask_path_list$tile_exists
+  plots <- plots[tile_exists]
 
   # load kmeans and beta info if exist
   Kmeans_path <- file.path(output_dir, 'Kmeans_info.RData')
@@ -51,7 +56,7 @@ biodivMapR_full_tiles <- function(dsn_grid, ID_aoi, feature_dir, list_features,
     beta_samples <- samples_alpha_beta$samples_beta[c(list_features,'ID')]
 
     # compute alpha and beta models from samples
-    nbCPU2 <- min(c(8, nbCPU))
+    nbCPU2 <- min(c(10, nbCPU))
     if (!file.exists(Kmeans_path)){
       alpha_samples$ID <- NULL
       Kmeans_info <- init_kmeans_samples(rast_sample = alpha_samples,
@@ -65,7 +70,6 @@ biodivMapR_full_tiles <- function(dsn_grid, ID_aoi, feature_dir, list_features,
   }
 
   message('applying biodivMapR on tiles')
-  nbCPU <- min(length(ID_aoi), nbCPU)
   if (nbCPU>1){
     cl <- parallel::makeCluster(nbCPU)
     plan("cluster", workers = cl)
