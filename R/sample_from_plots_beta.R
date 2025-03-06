@@ -58,7 +58,10 @@ sample_from_plots_beta <- function(feature_dir, list_features, plots,
                                                       MoreArgs = list(listfiles = listfiles,
                                                                       feat_list = feat_list,
                                                                       window_size = window_size),
-                                                      future.seed = T, SIMPLIFY = F)
+                                                      future.seed = T,
+                                                      future.chunk.size = NULL,
+                                                      future.scheduling = structure(TRUE, ordering = "random"),
+                                                      SIMPLIFY = F)
     parallel::stopCluster(cl)
     plan(sequential)
   }

@@ -60,7 +60,10 @@ sample_from_plots_alpha <- function(feature_dir, list_features, plots, nbCPU = 1
                                           MoreArgs = list(listfiles = listfiles,
                                                           feat_list = feat_list,
                                                           as.df = T, xy = F),
-                                          future.seed = T, SIMPLIFY = F)
+                                          future.seed = T,
+                                          future.chunk.size = NULL,
+                                          future.scheduling = structure(TRUE, ordering = "random"),
+                                          SIMPLIFY = F)
     parallel::stopCluster(cl)
     plan(sequential)
   }

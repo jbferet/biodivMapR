@@ -50,12 +50,12 @@ biodivMapR_full_tiles <- function(dsn_grid, feature_dir, list_features,
                                             window_size = window_size,
                                             nbsamples_alpha = nbsamples_alpha,
                                             nbsamples_beta = nbsamples_beta,
-                                            nbCPU = nbCPU)
+                                            nbCPU = 1)
     alpha_samples <- samples_alpha_beta$samples_alpha[list_features]
     beta_samples <- samples_alpha_beta$samples_beta[c(list_features,'ID')]
 
     # compute alpha and beta models from samples
-    nbCPU2 <- min(c(10, nbCPU))
+    nbCPU2 <- min(c(4, nbCPU))
     if (!file.exists(Kmeans_path)){
       alpha_samples$ID <- NULL
       Kmeans_info <- init_kmeans_samples(rast_sample = alpha_samples,
@@ -65,7 +65,7 @@ biodivMapR_full_tiles <- function(dsn_grid, feature_dir, list_features,
       Beta_info <- init_PCoA_samples(rast_sample = beta_samples,
                                      output_dir = output_dir,
                                      Kmeans_info = Kmeans_info,
-                                     dimPCoA = 3, nbCPU = nbCPU2)
+                                     dimPCoA = 3, nbCPU = 1)
   }
 
   message('applying biodivMapR on tiles')

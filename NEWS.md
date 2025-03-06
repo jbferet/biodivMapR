@@ -1,3 +1,10 @@
+# biodivMapR2 v2.3.1
+## fix
+- fix tile mask management when tiles are empty
+
+## change
+- change management of parallel processing for steps where it is not optimal
+
 # biodivMapR2 v2.3.0
 ## change
 - added functions to process large rasters divided into tiles using get_s2_tiling function from preprocS2 package

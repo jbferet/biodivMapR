@@ -129,7 +129,9 @@ compute_mask_IQR_tiles <- function(feature_dir, feature_list, mask_dir, plots,
       parallel::stopCluster(cl)
       plan(sequential)
     }
-    tile_exists <- names(plots)[which(file.exists(mask_path))]
+    notnullMask <- which(!unlist(lapply(X = mask_path, FUN = is.null)))
+    tile_exists <- names(plots)[notnullMask]
+    mask_path <- mask_path[notnullMask]
   }
   mask_path_list <- list('mask_path' = mask_path,
                          'tile_exists' = tile_exists)
