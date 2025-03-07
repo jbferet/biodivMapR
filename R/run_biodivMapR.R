@@ -38,18 +38,18 @@ run_biodivMapR <- function(input_raster_path, input_mask_path = NULL,
     input_rast <- lapply(input_raster_path,terra::rast)
   
   if (!MovingWindow){
-    ab_div_metrics <- get_raster_diversity(input_raster_path = input_raster_path,
-                                           input_mask_path = input_mask_path,
-                                           Kmeans_info = Kmeans_info,
-                                           Beta_info = Beta_info,
-                                           SelectBands = SelectBands,
-                                           window_size = window_size,
-                                           alphametrics = alphametrics,
-                                           Hill_order = Hill_order,
-                                           FDmetric = FDmetric,
-                                           pcelim = pcelim,
-                                           maxRows = maxRows, nbCPU = nbCPU,
-                                           MinSun = MinSun)
+    ab_div_metrics <- get_raster_diversity_tile(input_raster_path = input_raster_path,
+                                                input_mask_path = input_mask_path,
+                                                Kmeans_info = Kmeans_info,
+                                                Beta_info = Beta_info,
+                                                SelectBands = SelectBands,
+                                                window_size = window_size,
+                                                alphametrics = alphametrics,
+                                                Hill_order = Hill_order,
+                                                FDmetric = FDmetric,
+                                                pcelim = pcelim,
+                                                maxRows = maxRows, nbCPU = nbCPU,
+                                                MinSun = MinSun)
     # save diversity metrics as raster data
     save_diversity_maps(ab_div_metrics = ab_div_metrics,
                         alphametrics = alphametrics,

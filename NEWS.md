@@ -1,3 +1,7 @@
+# biodivMapR2 v2.3.2
+## change
+- optimize tile processing with function get_raster_diversity_tile 
+
 # biodivMapR2 v2.3.1
 ## fix
 - fix tile mask management when tiles are empty
