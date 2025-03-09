@@ -52,6 +52,11 @@ The chunk of code below downloads Sentinel-2 products corresponding to a boundin
 
 Additionally, The rasters corresponding to the geometry of acquisition can be downloaded from the [CDSE](https://dataspace.copernicus.eu/analyse/apis), if valid authentication is provided and `geomAcq = T`.
 
+Authentication for CDSE should be obtained by activating an OAuth clients ID, following [`this link`](https://shapps.dataspace.copernicus.eu/dashboard/#/account/settings). 
+Please make sure you copy the password related to your OAuth clients ID as you will 
+not be able to access it once you close the page. 
+
+
 ```{r download S2 sample}
 # load useful libraries 
 library(preprocS2)
@@ -71,6 +76,7 @@ sf::st_crs(x = bbox) <- 32633
 path_S2tilinggrid <- 'Sentinel-2_tiling_grid.kml'
 
 # 3- get S2 acquisition and geometry of acquisition for study area
+# OAuth client ID and secret password should be provided
 # https://shapps.dataspace.copernicus.eu/dashboard/#/account/settings
 id <- "sh-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 secret <- "XXXXXXXXXXXXXXXXXXXXXXXXXXXX"
@@ -114,14 +120,14 @@ Once the image is downloaded, it can be processed with `biodivMapR`.
 ### Download vector files used for 'validation'
 
 A set of vector files is downloaded here, corresponding to circular plots identified in the raster.
-It will be used in the final step of the tutorial ([**How to perform validation?**](https://jbferet.github.io/biodivMapR/articles/biodivMapR_08.html){target="_blank"}.).
+It will be used in the final step of the tutorial ([**Validation with ground information**](https://jbferet.github.io/biodivMapR/articles/biodivMapR_04.html){target="_blank"}.).
 
-The following code allows downloading the zipfile containing the vector data, and unzipping it in the same directory as the one including the raster data.
+The following code allows downloading the zip file containing the vector data, and unzipping it in the same directory as the one including the raster data.
 
 ```{r download vector data}
 library(zip)
 # name zip file including plots located on the tile
-output_dir_val <- file.path(output_dir_s2, 'GroudData')
+output_dir_val <- file.path(output_dir_s2, 'GroundData')
 dir.create(path = output_dir_val, showWarnings = F, recursive = T)
 destzip <- file.path(output_dir_val,'S2A_T33NUD_Plots.zip')
 # url for the zip file
