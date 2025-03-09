@@ -23,20 +23,20 @@
 
 run_biodivMapR <- function(input_raster_path, input_mask_path = NULL,
                            Kmeans_info, Beta_info,
-                           output_dir, output_raster_name, 
-                           SelectBands = NULL, window_size, 
+                           output_dir, output_raster_name,
+                           SelectBands = NULL, window_size,
                            alphametrics = 'shannon',
-                           Hill_order = 1, FDmetric = NULL, pcelim = 0.02, 
-                           maxRows = NULL, nbCPU = 1, MinSun = 0.25, 
-                           filetype = 'GTiff', 
+                           Hill_order = 1, FDmetric = NULL, pcelim = 0.02,
+                           maxRows = NULL, nbCPU = 1, MinSun = 0.25,
+                           filetype = 'GTiff',
                            MovingWindow = F){
-  
+
   # read input rasters
   if (inherits(x = input_raster_path, what = 'character'))
     input_rast <- terra::rast(input_raster_path)
   if (inherits(x = input_raster_path, what = 'list'))
     input_rast <- lapply(input_raster_path,terra::rast)
-  
+
   if (!MovingWindow){
     ab_div_metrics <- get_raster_diversity_tile(input_raster_path = input_raster_path,
                                                 input_mask_path = input_mask_path,
@@ -51,15 +51,15 @@ run_biodivMapR <- function(input_raster_path, input_mask_path = NULL,
                                                 maxRows = maxRows, nbCPU = nbCPU,
                                                 MinSun = MinSun)
     # save diversity metrics as raster data
-    save_diversity_maps(ab_div_metrics = ab_div_metrics,
-                        alphametrics = alphametrics,
-                        Hill_order = Hill_order,
-                        FDmetric = FDmetric,
-                        input_rast = input_rast,
-                        output_dir = output_dir,
-                        output_raster_name = output_raster_name, 
-                        window_size = window_size,
-                        filetype = filetype)
+    save_diversity_maps_tile(ab_div_metrics = ab_div_metrics,
+                             alphametrics = alphametrics,
+                             Hill_order = Hill_order,
+                             FDmetric = FDmetric,
+                             input_rast = input_rast,
+                             output_dir = output_dir,
+                             output_raster_name = output_raster_name,
+                             window_size = window_size,
+                             filetype = filetype)
   }
   if (MovingWindow){
     ab_div_metrics <- get_raster_diversity_mw(input_raster_path = input_raster_path,
@@ -74,7 +74,7 @@ run_biodivMapR <- function(input_raster_path, input_mask_path = NULL,
                                               pcelim = pcelim,
                                               maxRows = maxRows, nbCPU = nbCPU,
                                               MinSun = MinSun)
-    
+
     save_diversity_maps_mw(input_raster_path = input_raster_path,
                            ab_div_metrics = ab_div_metrics,
                            alphametrics = alphametrics,
@@ -82,7 +82,7 @@ run_biodivMapR <- function(input_raster_path, input_mask_path = NULL,
                            FDmetric = FDmetric,
                            input_rast = input_rast,
                            output_dir = output_dir,
-                           output_raster_name = output_raster_name, 
+                           output_raster_name = output_raster_name,
                            window_size = window_size,
                            filetype = filetype)
   }
