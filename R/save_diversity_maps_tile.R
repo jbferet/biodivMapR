@@ -16,15 +16,15 @@
 #' @export
 
 save_diversity_maps_tile <- function(input_raster_path,
-                                   ab_div_metrics,
-                                   alphametrics = 'shannon',
-                                   Hill_order = 1,
-                                   FDmetric = NULL,
-                                   input_rast,
-                                   output_dir,
-                                   output_raster_name = NULL,
-                                   window_size,
-                                   filetype = 'GTiff'){
+                                     ab_div_metrics,
+                                     alphametrics = 'shannon',
+                                     Hill_order = 1,
+                                     FDmetric = NULL,
+                                     input_rast,
+                                     output_dir,
+                                     output_raster_name = NULL,
+                                     window_size,
+                                     filetype = 'GTiff'){
   # save alpha diversity indices
 
   # rast_out <- terra::rast(input_raster_path[[1]])

@@ -51,7 +51,8 @@ run_biodivMapR <- function(input_raster_path, input_mask_path = NULL,
                                                 maxRows = maxRows, nbCPU = nbCPU,
                                                 MinSun = MinSun)
     # save diversity metrics as raster data
-    save_diversity_maps_tile(ab_div_metrics = ab_div_metrics,
+    save_diversity_maps_tile(input_raster_path = input_raster_path,
+                             ab_div_metrics = ab_div_metrics,
                              alphametrics = alphametrics,
                              Hill_order = Hill_order,
                              FDmetric = FDmetric,
