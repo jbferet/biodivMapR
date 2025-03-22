@@ -65,6 +65,7 @@ Normalization of reflectance data with Continuum Removal can be performed as add
 ```{r compute SPCA}
 library(biodivMapR)
 
+output_dir <- './biodivMapR'
 # 1- define spectral bands corresponding to the sensor. 
 # central wavelength of S2 spectral bands can be loaded from biodivMapR data
 HDRpath <- system.file('extdata', 'HDR', 'SENTINEL_2.hdr', package = 'biodivMapR')

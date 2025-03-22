@@ -1,3 +1,10 @@
+# biodivMapR2 v2.3.3
+## addition
+- modified perform_PCA to allow PCA over any type of data
+
+## change
+- updated documentation
+
 # biodivMapR2 v2.3.2
 ## change
 - optimize tile processing with function get_raster_diversity_tile 

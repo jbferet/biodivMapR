@@ -64,7 +64,7 @@ library(sf)
 
 ################################################################################
 # 1- define input & output directories
-output_dir_s2 <- './S2_data2'
+output_dir_s2 <- './S2_image'
 datetime <- '2018-12-25'
 siteName <- 'S2_subset_Cameroon'
 

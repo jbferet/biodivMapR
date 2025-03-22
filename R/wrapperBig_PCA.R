@@ -31,9 +31,10 @@ wrapperBig_PCA<- function(input_data, input_args){
       input_data[[1]] <- apply_continuum_removal(Spectral_Data = input_data[[1]],
                                                  Spectral = Spectral)
     } else {
-      input_data[[1]] <- input_data[[1]][[Bands2Keep]]
+      input_data[[1]] <- input_data[[1]][Bands2Keep]
     }
-    if (length(BandsNoVar)>0) input_data[[1]] <- input_data[[1]][[-BandsNoVar]]
+    if (length(BandsNoVar)>0)
+      input_data[[1]] <- input_data[[1]][-BandsNoVar]
     PC_data <- scale(x = input_data[[1]],
                      center = PCA_model$center,
                      scale = PCA_model$scale) %*% PCA_model$rotation[, seq_len(Nb_PCs)]
