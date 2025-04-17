@@ -45,24 +45,24 @@ compute_mask_IQR_tiles <- function(feature_dir, feature_list, mask_dir, plots,
     listfiles <- list.files(feature_dir, full.names = T)
     ##############################################################################
     # get number of pixels per tile
-    if (nbCPU==1){
+    # if (nbCPU==1){
       handlers("cli")
       suppressWarnings(with_progress({
         p <- progressr::progressor(steps = length(plots),
                                    message = 'get valid pixels from tiles')
         nbPixValid <- lapply(X = names(plots), FUN = get_valid_pixels,
                              listfiles = listfiles, p = p)}))
-    } else {
-      message('get valid pixels from tiles')
-      cl <- parallel::makeCluster(nbCPU)
-      plan("cluster", workers = cl)
-      nbPixValid <- future.apply::future_lapply(X = names(plots),
-                                                FUN = get_valid_pixels,
-                                                listfiles = listfiles,
-                                                future.seed = TRUE)
-      parallel::stopCluster(cl)
-      plan(sequential)
-    }
+    # } else {
+    #   message('get valid pixels from tiles')
+    #   cl <- parallel::makeCluster(nbCPU)
+    #   plan("cluster", workers = cl)
+    #   nbPixValid <- future.apply::future_lapply(X = names(plots),
+    #                                             FUN = get_valid_pixels,
+    #                                             listfiles = listfiles,
+    #                                             future.seed = TRUE)
+    #   parallel::stopCluster(cl)
+    #   plan(sequential)
+    # }
     # get total number of pixels
     totalPixels <- sum(unlist(nbPixValid))
     ##############################################################################
@@ -104,7 +104,7 @@ compute_mask_IQR_tiles <- function(feature_dir, feature_list, mask_dir, plots,
 
     ##############################################################################
     # produce mask for each tile
-    if (nbCPU==1){
+    # if (nbCPU==1){
       handlers("cli")
       suppressWarnings(with_progress({
 
@@ -116,19 +116,19 @@ compute_mask_IQR_tiles <- function(feature_dir, feature_list, mask_dir, plots,
                             iqr_si = iqr_si,
                             mask_dir = mask_dir,
                             p = p)}))
-    } else {
-      message('update mask')
-      cl <- parallel::makeCluster(nbCPU)
-      plan("cluster", workers = cl)
-      mask_path <- future.apply::future_lapply(X = names(plots),
-                                               FUN = update_mask_from_tiles,
-                                               listfiles = listfiles,
-                                               iqr_si = iqr_si,
-                                               mask_dir = mask_dir,
-                                               future.seed = TRUE)
-      parallel::stopCluster(cl)
-      plan(sequential)
-    }
+    # } else {
+    #   message('update mask')
+    #   cl <- parallel::makeCluster(nbCPU)
+    #   plan("cluster", workers = cl)
+    #   mask_path <- future.apply::future_lapply(X = names(plots),
+    #                                            FUN = update_mask_from_tiles,
+    #                                            listfiles = listfiles,
+    #                                            iqr_si = iqr_si,
+    #                                            mask_dir = mask_dir,
+    #                                            future.seed = TRUE)
+    #   parallel::stopCluster(cl)
+    #   plan(sequential)
+    # }
     notnullMask <- which(!unlist(lapply(X = mask_path, FUN = is.null)))
     tile_exists <- names(plots)[notnullMask]
     mask_path <- mask_path[notnullMask]

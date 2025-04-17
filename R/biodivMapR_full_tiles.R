@@ -28,7 +28,8 @@ biodivMapR_full_tiles <- function(dsn_grid, feature_dir, list_features,
   mask_path_list <- compute_mask_IQR_tiles(feature_dir = feature_dir,
                                            feature_list = list_features,
                                            mask_dir = mask_dir,
-                                           plots = plots)
+                                           plots = plots,
+                                           nbCPU = nbCPU)
 
   # check which masks exist and discard plots with no masks
   mask_path <- mask_path_list$mask_path
