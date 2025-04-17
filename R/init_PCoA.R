@@ -66,7 +66,6 @@ init_PCoA <- function(input_rast, output_dir, window_size, Kmeans_info,
       rast_sample2$ID <- rast_sample2$ID + nbSamples
       rast_sample <- rbind(rast_sample, rast_sample2)
     }
-
     Beta_info <- init_PCoA_samples(rast_sample = rast_sample, output_dir = output_dir,
                                    Kmeans_info = Kmeans_info, SelectBands = SelectBands,
                                    pcelim = pcelim, dimPCoA = dimPCoA, nbCPU = nbCPU,

@@ -65,8 +65,10 @@ biodivMapR_full <- function(input_raster_path, output_dir, window_size,
                          input_mask = input_mask,
                          window_size = window_size,
                          nbSamples = nbSamples_beta,
-                         Kmeans_info = Kmeans_info, SelectBands = SelectBands,
-                         nbCPU = nbCPU,
+                         Kmeans_info = Kmeans_info,
+                         SelectBands = SelectBands,
+                         nbCPU = nbCPU, MinSun = MinSun,
+                         pcelim = pcelim, dimPCoA = dimPCoA,
                          Beta_info_save = Beta_info_save,
                          Beta_info_read = Beta_info_read)
 

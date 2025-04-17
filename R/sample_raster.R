@@ -13,7 +13,7 @@
 #' @importFrom stats na.omit
 #' @export
 
-sample_raster <- function(input_rast, pix2extract, xy = F, prog = F){
+sample_raster <- function(input_rast, pix2extract, xy = FALSE, prog = FALSE){
   # if multilayer spatial raster provided as input
   if (inherits(x = input_rast,what = 'SpatRaster')){
     if (inherits(pix2extract,what = 'matrix')){

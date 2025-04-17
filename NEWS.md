@@ -1,3 +1,7 @@
+# biodivMapR2 v2.3.4
+## fix
+- sample_from_raster adapted to handle distances when crs of input_rast in deg
+
 # biodivMapR2 v2.3.3
 ## addition
 - modified perform_PCA to allow PCA over any type of data

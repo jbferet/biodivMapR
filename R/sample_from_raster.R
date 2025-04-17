@@ -8,9 +8,11 @@
 #' @param capstyle character. shape of the plot, see terra::buffer for info on options for capstyle
 #'
 #' @return rast_sample dataframe. pixel/plot info extracted from input_rast
-#' @importFrom sf st_sample st_as_sf
-#' @importFrom terra vect buffer extract res
+#' @importFrom sf st_sample st_as_sf st_crs
+#' @importFrom terra vect buffer extract res linearUnits project centroids ext
 #' @importFrom stats runif
+#' @importFrom preprocS2 meters_to_decdeg
+#' @importFrom crsuggest suggest_crs
 #' @export
 
 sample_from_raster <- function(extent_area,
@@ -31,8 +33,27 @@ sample_from_raster <- function(extent_area,
     if (is.null(window_size)) {
       samples <- terra::vect(samples)
     } else {
+      # deal with crs units when not meters
+      if (sf::st_crs(sf::st_as_sf(extent_area))$units_gdal=='degree'){
+        # get resolution in meters for centroid
+        centroid_aoi <- terra::centroids(x = extent_area)
+        occs_df <- data.frame('latitude' = terra::ext(centroid_aoi)[3],
+                              'longitude' = terra::ext(centroid_aoi)[3],
+                              'distance' = 1)
+        # how many degrees for one meter?
+        distlatlon <- preprocS2::meters_to_decdeg(occs_df = occs_df,
+                                                  lat_col = 'latitude',
+                                                  lon_col = 'longitude',
+                                                  distance = 'distance')
+        deg_to_meters <- mean(unlist(distlatlon))
+        raster_res_init <- terra::res(input_rast[[1]])[1]
+        # raster resolution in meters
+        raster_res <- raster_res_init/deg_to_meters
+      } else {
+        raster_res <- terra::res(input_rast[[1]])[1]
+      }
       # apply buffer
-      bufferSize <- terra::res(input_rast[[1]])[1]*window_size/2
+      bufferSize <- raster_res*window_size/2
       samples <- terra::buffer(x = terra::vect(samples), width = bufferSize,
                                quadsegs = 8, capstyle  = capstyle)
     }

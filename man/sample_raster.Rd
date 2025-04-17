@@ -4,7 +4,7 @@
 \alias{sample_raster}
 \title{sample pixels from raster data}
 \usage{
-sample_raster(input_rast, pix2extract, xy = F, prog = F)
+sample_raster(input_rast, pix2extract, xy = FALSE, prog = FALSE)
 }
 \arguments{
 \item{input_rast}{SpatRaster or list of SpatRaster}
