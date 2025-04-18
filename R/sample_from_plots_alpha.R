@@ -7,6 +7,7 @@
 #' @param nbPixValid list.
 #' @param mask_dir character.
 #' @param nbsamples_alpha numeric.
+#' @param method character. method for terra::spatSample ('random' or 'regular')
 #'
 #' @return samples_alpha_terra
 #' @import cli
@@ -17,7 +18,7 @@
 
 sample_from_plots_alpha <- function(feature_dir, list_features, plots, nbCPU = 1,
                                     nbPixValid, mask_dir = NULL,
-                                    nbsamples_alpha = 1e5){
+                                    nbsamples_alpha = 1e5, method = 'regular'){
 
   # define number of samples per tile
   totalPixels <- sum(unlist(nbPixValid))
@@ -48,22 +49,25 @@ sample_from_plots_alpha <- function(feature_dir, list_features, plots, nbCPU = 1
                        plotID = names(plots), pix2sel = pix2sel,
                        MoreArgs = list(listfiles = listfiles,
                                        feat_list = feat_list,
+                                       method = method,
                                        as.df = T, xy = F,
                                        p = p),
                        SIMPLIFY = F)}))
   } else {
+    nbCPU2 <- min(c(4, nbCPU))
     message('get samples for alpha diversity')
-    cl <- parallel::makeCluster(nbCPU)
+    cl <- parallel::makeCluster(nbCPU2)
     plan("cluster", workers = cl)
-    selpix <- future.apply::future_mapply(FUN = get_samples_from_tiles,
-                                          plotID = names(plots), pix2sel = pix2sel,
-                                          MoreArgs = list(listfiles = listfiles,
-                                                          feat_list = feat_list,
-                                                          as.df = T, xy = F),
-                                          future.seed = T,
-                                          future.chunk.size = NULL,
-                                          future.scheduling = structure(TRUE, ordering = "random"),
-                                          SIMPLIFY = F)
+    selpix2 <- future.apply::future_mapply(FUN = get_samples_from_tiles,
+                                           plotID = names(plots), pix2sel = pix2sel,
+                                           MoreArgs = list(listfiles = listfiles,
+                                                           feat_list = feat_list,
+                                                           method = method,
+                                                           as.df = T, xy = F),
+                                           future.seed = T,
+                                           future.chunk.size = NULL,
+                                           future.scheduling = structure(TRUE, ordering = "random"),
+                                           SIMPLIFY = F)
     parallel::stopCluster(cl)
     plan(sequential)
   }

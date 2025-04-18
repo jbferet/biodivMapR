@@ -11,7 +11,8 @@ sample_from_plots_alpha(
   nbCPU = 1,
   nbPixValid,
   mask_dir = NULL,
-  nbsamples_alpha = 1e+05
+  nbsamples_alpha = 1e+05,
+  method = "regular"
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ sample_from_plots_alpha(
 \item{mask_dir}{character.}
 
 \item{nbsamples_alpha}{numeric.}
+
+\item{method}{character. method for terra::spatSample ('random' or 'regular')}
 }
 \value{
 samples_alpha_terra

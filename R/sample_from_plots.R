@@ -16,7 +16,7 @@ sample_from_plots <- function(feature_dir, list_features, plots, mask_dir = NULL
                               window_size, nbCPU = 1, nbsamples_alpha = 1e5,
                               nbsamples_beta = 2e3){
 
-  nbPixValid <- get_valid_pixels_from_tiles(feature_dir, plots, nbCPU = nbCPU,
+  nbPixValid <- get_valid_pixels_from_tiles(feature_dir, plots, nbCPU = 1,
                                             mask_dir = mask_dir)
   # sample the plot network for alpha diversity
   samples_alpha_terra <- sample_from_plots_alpha(feature_dir = feature_dir,

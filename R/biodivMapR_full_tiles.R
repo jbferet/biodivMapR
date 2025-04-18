@@ -51,7 +51,7 @@ biodivMapR_full_tiles <- function(dsn_grid, feature_dir, list_features,
                                             window_size = window_size,
                                             nbsamples_alpha = nbsamples_alpha,
                                             nbsamples_beta = nbsamples_beta,
-                                            nbCPU = 1)
+                                            nbCPU = nbCPU)
     alpha_samples <- samples_alpha_beta$samples_alpha[list_features]
     beta_samples <- samples_alpha_beta$samples_beta[c(list_features,'ID')]
 

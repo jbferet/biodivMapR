@@ -7,6 +7,7 @@
 #' @param as.df boolean.
 #' @param as.points boolean.
 #' @param xy boolean.
+#' @param method character. method for terra::spatSample ('random' or 'regular')
 #' @param p list.
 #'
 #' @return selpix
@@ -16,7 +17,8 @@
 #' @export
 #'
 get_samples_from_tiles <- function(plotID, pix2sel, listfiles, feat_list,
-                                   as.df = F, as.points = F, xy = F, p = NULL){
+                                   as.df = F, as.points = F, xy = F,
+                                   method = 'regular', p = NULL){
   plotID <- paste0('_',plotID,'_')
   # tileSI <- listfiles[stringr::str_detect(string = listfiles, pattern = plotID)]
   tileSI <- listfiles[grepl(x = listfiles, pattern = plotID)]
@@ -31,7 +33,7 @@ get_samples_from_tiles <- function(plotID, pix2sel, listfiles, feat_list,
                                  pattern = feat))
         names(rastID)[whichfeat] <- feat
       }
-      selpix <- spatSample(x = rastID, size = as.numeric(pix2sel), method = "random",
+      selpix <- spatSample(x = rastID, size = as.numeric(pix2sel), method = method,
                            na.rm = T, as.df = as.df, as.points = as.points,
                            xy = xy, warn = F)
     }

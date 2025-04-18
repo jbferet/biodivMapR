@@ -12,6 +12,7 @@ get_samples_from_tiles(
   as.df = F,
   as.points = F,
   xy = F,
+  method = "regular",
   p = NULL
 )
 }
@@ -29,6 +30,8 @@ get_samples_from_tiles(
 \item{as.points}{boolean.}
 
 \item{xy}{boolean.}
+
+\item{method}{character. method for terra::spatSample ('random' or 'regular')}
 
 \item{p}{list.}
 }

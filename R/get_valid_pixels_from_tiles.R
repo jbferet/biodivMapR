@@ -23,24 +23,24 @@ get_valid_pixels_from_tiles <- function(feature_dir, plots, nbCPU = 1,
     listfiles <- list.files(mask_dir, full.names = T)
   ##############################################################################
   # get number of pixels per tile
-  if (nbCPU==1){
+  # if (nbCPU==1){
     handlers("cli")
     suppressWarnings(with_progress({
       p <- progressr::progressor(steps = length(plots),
                                  message = 'get valid pixels from tiles')
       nbPixValid <- lapply(X = names(plots), FUN = get_valid_pixels,
                            listfiles = listfiles, p = p)}))
-  } else {
-    message('get valid pixels from tiles')
-    cl <- parallel::makeCluster(nbCPU)
-    plan("cluster", workers = cl)
-    nbPixValid <- future.apply::future_lapply(X = names(plots),
-                                              FUN = get_valid_pixels,
-                                              listfiles = listfiles,
-                                              future.seed = TRUE)
-    parallel::stopCluster(cl)
-    plan(sequential)
-  }
+  # } else {
+  #   message('get valid pixels from tiles')
+  #   cl <- parallel::makeCluster(nbCPU)
+  #   plan("cluster", workers = cl)
+  #   nbPixValid <- future.apply::future_lapply(X = names(plots),
+  #                                             FUN = get_valid_pixels,
+  #                                             listfiles = listfiles,
+  #                                             future.seed = TRUE)
+  #   parallel::stopCluster(cl)
+  #   plan(sequential)
+  # }
   names(nbPixValid) <- names(plots)
   return(nbPixValid)
 }
