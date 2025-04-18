@@ -58,7 +58,7 @@ sample_from_plots_alpha <- function(feature_dir, list_features, plots, nbCPU = 1
     message('get samples for alpha diversity')
     cl <- parallel::makeCluster(nbCPU2)
     plan("cluster", workers = cl)
-    selpix2 <- future.apply::future_mapply(FUN = get_samples_from_tiles,
+    selpix <- future.apply::future_mapply(FUN = get_samples_from_tiles,
                                            plotID = names(plots), pix2sel = pix2sel,
                                            MoreArgs = list(listfiles = listfiles,
                                                            feat_list = feat_list,
