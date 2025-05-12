@@ -7,6 +7,7 @@
 
 ## fix
 - account for presence of aux.xml files
+- fix documentation
 
 
 # biodivMapR2 v2.3.4
