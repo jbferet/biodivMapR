@@ -7,12 +7,14 @@
 #' @param output_dir character. path where to save results
 #' @param window_size numeric. number of clusters used in kmeans
 #' @param plots list. list of sf plots
-#' @param nbsamples_alpha numeric. number of samples to compute beta diversity from
-#' @param nbsamples_beta numeric. number of samples to compute beta diversity from
+#' @param nb_clusters numeric. number of clusters
+#' @param nb_samples_alpha numeric. number of samples to compute alpha diversity
+#' @param nb_samples_beta numeric. number of samples to compute beta diversity
 #' @param nbCPU numeric. Number of CPUs available
+#' @param nb_iter numeric. Number of iterations required to compute diversity
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
 #' @param maxRows numeric. maximum number of rows
-#' @param MovingWindow boolean. should moving window be used?
+#' @param moving_window boolean. should moving window be used?
 #' @param siteName character. name for the output files
 #'
 #' @return mosaic_path
@@ -20,12 +22,13 @@
 
 biodivMapR_full_tiles <- function(dsn_grid, feature_dir, list_features,
                                   mask_dir = NULL, output_dir, window_size,
-                                  plots, nbsamples_alpha = 1e5, nbsamples_beta = 2e3,
-                                  nbCPU = 1, pcelim = 0.02, maxRows = 1200,
-                                  MovingWindow = F, siteName = NULL){
+                                  plots, nb_clusters = 50, nb_samples_alpha = 1e5,
+                                  nb_samples_beta = 2e3, nbCPU = 1, nb_iter = 10,
+                                  pcelim = 0.02, maxRows = 1200,
+                                  moving_window = FALSE, siteName = NULL){
 
   # update mask based on IQR filtering for each feature
-  mask_path_list <- compute_mask_IQR_tiles(feature_dir = feature_dir,
+  mask_path_list <- compute_mask_iqr_tiles(feature_dir = feature_dir,
                                            feature_list = list_features,
                                            mask_dir = mask_dir,
                                            plots = plots,
@@ -39,8 +42,10 @@ biodivMapR_full_tiles <- function(dsn_grid, feature_dir, list_features,
   # load kmeans and beta info if exist
   Kmeans_path <- file.path(output_dir, 'Kmeans_info.RData')
   Beta_path <- file.path(output_dir, 'Beta_info.RData')
-  if (file.exists(Kmeans_path)) load(Kmeans_path)
-  if (file.exists(Beta_path)) load(Beta_path)
+  if (file.exists(Kmeans_path))
+    load(Kmeans_path)
+  if (file.exists(Beta_path))
+    load(Beta_path)
   # compute kmeans and beta info if exist
   if (!file.exists(Kmeans_path) | ! file.exists(Beta_path)){
     # define sampling points for alpha and beta diversity mapping
@@ -49,8 +54,8 @@ biodivMapR_full_tiles <- function(dsn_grid, feature_dir, list_features,
                                             mask_dir = mask_dir,
                                             plots = plots,
                                             window_size = window_size,
-                                            nbsamples_alpha = nbsamples_alpha,
-                                            nbsamples_beta = nbsamples_beta,
+                                            nb_samples_alpha = nb_samples_alpha,
+                                            nb_samples_beta = nb_samples_beta,
                                             nbCPU = nbCPU)
     alpha_samples <- samples_alpha_beta$samples_alpha[list_features]
     beta_samples <- samples_alpha_beta$samples_beta[c(list_features,'ID')]
@@ -60,7 +65,10 @@ biodivMapR_full_tiles <- function(dsn_grid, feature_dir, list_features,
     if (!file.exists(Kmeans_path)){
       alpha_samples$ID <- NULL
       Kmeans_info <- init_kmeans_samples(rast_sample = alpha_samples,
-                                         output_dir = output_dir, nbCPU = nbCPU2)
+                                         output_dir = output_dir,
+                                         nb_clusters = nb_clusters,
+                                         nb_iter = nb_iter,
+                                         nbCPU = nbCPU2)
     }
     if (!file.exists(Beta_path))
       Beta_info <- init_PCoA_samples(rast_sample = beta_samples,
@@ -87,10 +95,11 @@ biodivMapR_full_tiles <- function(dsn_grid, feature_dir, list_features,
                                   window_size = window_size,
                                   maxRows = maxRows,
                                   pcelim = pcelim,
-                                  MovingWindow = MovingWindow, p = p,
-                                  future.seed = T,
+                                  moving_window = moving_window, p = p,
+                                  future.seed = TRUE,
                                   future.chunk.size = NULL,
-                                  future.scheduling = structure(TRUE, ordering = "random"))
+                                  future.scheduling = structure(TRUE,
+                                                                ordering = "random"))
     })
     parallel::stopCluster(cl)
     plan(sequential)
@@ -108,7 +117,7 @@ biodivMapR_full_tiles <- function(dsn_grid, feature_dir, list_features,
              output_dir = output_dir,
              window_size = window_size,
              maxRows = maxRows,
-             MovingWindow = MovingWindow, p = p)
+             moving_window = moving_window, p = p)
     })
   }
 
@@ -126,13 +135,15 @@ biodivMapR_full_tiles <- function(dsn_grid, feature_dir, list_features,
     selfiles <- file.path(output_dir, selfiles)
     # create directory
     diridx <- file.path(output_dir,biodividx)
-    dir.create(diridx, showWarnings = F, recursive = T)
+    dir.create(diridx, showWarnings = FALSE, recursive = TRUE)
     # move files from - to
     files_in <- selfiles
     files_out <- as.list(file.path(diridx, basename(selfiles)))
     mapply(FUN = file.rename, from = files_in, to = files_out)
-    mosaic_path[[biodividx]] <- mosaic_tiles(pattern = biodividx, siteName = siteName,
-                                             dir_path = diridx, overwrite = F,
+    mosaic_path[[biodividx]] <- mosaic_tiles(pattern = biodividx,
+                                             siteName = siteName,
+                                             dir_path = diridx,
+                                             overwrite = FALSE,
                                              vrt_save = output_dir)
   }
   return(mosaic_path)

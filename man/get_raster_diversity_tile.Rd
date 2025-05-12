@@ -9,7 +9,7 @@ get_raster_diversity_tile(
   Kmeans_info,
   Beta_info,
   input_mask_path = NULL,
-  SelectBands = NULL,
+  selected_bands = NULL,
   alphametrics = "shannon",
   Hill_order = 1,
   FDmetric = NULL,
@@ -17,7 +17,7 @@ get_raster_diversity_tile(
   maxRows = NULL,
   pcelim = 0.02,
   nbCPU = 1,
-  MinSun = 0.25
+  min_sun = 0.25
 )
 }
 \arguments{
@@ -29,7 +29,7 @@ get_raster_diversity_tile(
 
 \item{input_mask_path}{character. path for mask file}
 
-\item{SelectBands}{numeric. bands selected from input_rast}
+\item{selected_bands}{numeric. bands selected from input_rast}
 
 \item{alphametrics}{list. alpha diversity metrics: richness, shannon, simpson}
 
@@ -45,7 +45,7 @@ get_raster_diversity_tile(
 
 \item{nbCPU}{numeric. Number of CPUs available}
 
-\item{MinSun}{numeric. minimum amount of sunlit pixels in the plots}
+\item{min_sun}{numeric. minimum amount of sunlit pixels in the plots}
 }
 \value{
 ab_div_metrics list. contains all metrics

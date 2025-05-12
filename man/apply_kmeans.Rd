@@ -2,20 +2,22 @@
 % Please edit documentation in R/apply_kmeans.R
 \name{apply_kmeans}
 \alias{apply_kmeans}
-\title{apply kmeans to information extracted from an image and corresponding to a window}
+\title{apply kmeans to information extracted from an image and corresponding to a
+window}
 \usage{
-apply_kmeans(inputdata_window, Kmeans_info, SelectBands = NULL)
+apply_kmeans(inputdata_window, Kmeans_info, select_bands = NULL)
 }
 \arguments{
 \item{inputdata_window}{numeric. pixel data extracted from raster}
 
 \item{Kmeans_info}{list. kmeans description obtained from function get_kmeans}
 
-\item{SelectBands}{numeric. bands selected from input data}
+\item{select_bands}{numeric. bands selected from input data}
 }
 \value{
 Kmeans_info
 }
 \description{
-apply kmeans to information extracted from an image and corresponding to a window
+apply kmeans to information extracted from an image and corresponding to a
+window
 }

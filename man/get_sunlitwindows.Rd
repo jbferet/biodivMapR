@@ -4,14 +4,14 @@
 \alias{get_sunlitwindows}
 \title{eliminate windows with insufficient sunlit pixels}
 \usage{
-get_sunlitwindows(inputdata, pixperplot, MinSun = 0.25)
+get_sunlitwindows(inputdata, pixperplot, min_sun = 0.25)
 }
 \arguments{
 \item{inputdata}{list. input data with window_ID produced from produce_win_ID}
 
 \item{pixperplot}{numeric. minimum number of pixels per window}
 
-\item{MinSun}{numeric. minimum percentage of sunlit pixels}
+\item{min_sun}{numeric. minimum percentage of sunlit pixels}
 }
 \value{
 NMDS position based on nearest neighbors from NMDS

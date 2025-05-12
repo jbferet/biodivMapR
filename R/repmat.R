@@ -11,6 +11,6 @@ repmat <- function(X, m, n) {
   mx <- dim(X)[1]
   nx <- dim(X)[2]
   replicmat <- matrix(t(matrix(X, mx, nx * n)),
-                      mx * m, nx * n, byrow = T)
+                      mx * m, nx * n, byrow = TRUE)
   return(replicmat)
 }

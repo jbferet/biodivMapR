@@ -5,7 +5,7 @@
 #' @param nbCPU numeric.
 #' @param mask_dir character.
 #'
-#' @return nbPixValid
+#' @return nb_pix_valid
 #' @import cli
 #' @importFrom progressr progressor handlers with_progress
 #' @importFrom future plan multisession sequential
@@ -16,11 +16,11 @@
 get_valid_pixels_from_tiles <- function(feature_dir, plots, nbCPU = 1,
                                         mask_dir = NULL){
 
-  nbPixValid <- NULL
+  nb_pix_valid <- NULL
   # identify how many samples per tile should be extracted
-  listfiles <- list.files(feature_dir, full.names = T)
+  listfiles <- list.files(feature_dir, full.names = TRUE)
   if (!is.null(mask_dir))
-    listfiles <- list.files(mask_dir, full.names = T)
+    listfiles <- list.files(mask_dir, full.names = TRUE)
   ##############################################################################
   # get number of pixels per tile
   # if (nbCPU==1){
@@ -28,19 +28,19 @@ get_valid_pixels_from_tiles <- function(feature_dir, plots, nbCPU = 1,
     suppressWarnings(with_progress({
       p <- progressr::progressor(steps = length(plots),
                                  message = 'get valid pixels from tiles')
-      nbPixValid <- lapply(X = names(plots), FUN = get_valid_pixels,
+      nb_pix_valid <- lapply(X = names(plots), FUN = get_valid_pixels,
                            listfiles = listfiles, p = p)}))
   # } else {
   #   message('get valid pixels from tiles')
   #   cl <- parallel::makeCluster(nbCPU)
   #   plan("cluster", workers = cl)
-  #   nbPixValid <- future.apply::future_lapply(X = names(plots),
+  #   nb_pix_valid <- future.apply::future_lapply(X = names(plots),
   #                                             FUN = get_valid_pixels,
   #                                             listfiles = listfiles,
   #                                             future.seed = TRUE)
   #   parallel::stopCluster(cl)
   #   plan(sequential)
   # }
-  names(nbPixValid) <- names(plots)
-  return(nbPixValid)
+  names(nb_pix_valid) <- names(plots)
+  return(nb_pix_valid)
 }

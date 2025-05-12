@@ -1,7 +1,7 @@
 #' sample pixels or plots from raster data
 #'
 #' @param extent_area .
-#' @param nbSamples numeric. number of samples to be extracted
+#' @param nb_samples numeric. number of samples to be extracted
 #' @param input_rast SpatRaster. raster to extract data from
 #' @param input_mask SpatRaster. mask corresponding to raster to extract data from
 #' @param window_size numeric. window size for square plots
@@ -16,19 +16,19 @@
 #' @export
 
 sample_from_raster <- function(extent_area,
-                               nbSamples,
+                               nb_samples,
                                input_rast,
                                input_mask = NULL,
                                window_size = NULL,
                                capstyle  = 'square'){
 
-  if (nbSamples < 100000 | !is.null(window_size)){
-    if (nbSamples > 100000 & !is.null(window_size)){
+  if (nb_samples < 100000 | !is.null(window_size)){
+    if (nb_samples > 100000 & !is.null(window_size)){
       message('extracting large number of plots will take some time')
       message('define window_size = NULL to extract pixels only')
     }
     # randomly sample square cells within the image and mask
-    samples <- sf::st_sample(x = sf::st_as_sf(extent_area), size = nbSamples)
+    samples <- sf::st_sample(x = sf::st_as_sf(extent_area), size = nb_samples)
     # define cell size based on window_size
     if (is.null(window_size)) {
       samples <- terra::vect(samples)
@@ -38,7 +38,7 @@ sample_from_raster <- function(extent_area,
         # get resolution in meters for centroid
         centroid_aoi <- terra::centroids(x = extent_area)
         occs_df <- data.frame('latitude' = terra::ext(centroid_aoi)[3],
-                              'longitude' = terra::ext(centroid_aoi)[3],
+                              'longitude' = terra::ext(centroid_aoi)[1],
                               'distance' = 1)
         # how many degrees for one meter?
         distlatlon <- preprocS2::meters_to_decdeg(occs_df = occs_df,
@@ -66,12 +66,11 @@ sample_from_raster <- function(extent_area,
     }
     rast_sample <- clean_NAsInf(rast_sample)
   } else {
-    xysamples <- get_xy_samples(input_rast, nbSamples, input_mask = input_mask)
+    xysamples <- get_xy_samples(input_rast, nb_samples, input_mask = input_mask)
     rast_sample <- sample_raster(input_rast = input_rast,
                                  pix2extract = xysamples,
-                                 xy = T)
+                                 xy = TRUE)
     rast_sample <- clean_NAsInf(rast_sample)
   }
   return(rast_sample)
 }
-

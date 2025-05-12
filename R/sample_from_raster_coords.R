@@ -26,6 +26,6 @@ sample_from_raster_coords <- function(input_rast, xy, input_mask = NULL){
     xy <- xy[sel,]
   }
   rast_sample <- clean_NAsInf(rast_sample)
-  return(list('DataSubset' = rast_sample, 'nbPix2Sample' = nrow(rast_sample),"coordPix"=xy))
+  return(list('DataSubset' = rast_sample, 'nb_pix_to_sample' = nrow(rast_sample),"coordPix"=xy))
 }
 

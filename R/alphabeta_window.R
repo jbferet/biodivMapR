@@ -3,10 +3,10 @@
 #'
 #' @param SSwindow dataframe. spectral species corresponding to a raster subset
 #' (window = elementary spatial unit of process)
-#' @param nbclusters numeric. number of clusters used in kmeans
-#' @param Beta_info list. BC dissimilarity & associated beta metrics from training set
-#' @param alphametrics list. alpha diversity metrics: richness, shannon, simpson
-#' @param pcelim numeric. minimum proportion of pixels to consider spectral species
+#' @param nb_clusters numeric. number of clusters used in kmeans
+#' @param Beta_info list. BC dissimilarity & associated beta metrics
+#' @param alphametrics list. alpha diversity metrics
+#' @param pcelim numeric. min proportion of pixels to consider spectral species
 #' @param Hill_order numeric. Hill order
 #' @param p list. progressor object for progress bar
 #'
@@ -14,39 +14,40 @@
 #' @importFrom stats sd
 #' @export
 
-alphabeta_window <- function(SSwindow, nbclusters,
+alphabeta_window <- function(SSwindow, nb_clusters,
                              Beta_info, alphametrics,
                              pcelim = 0.02,
                              Hill_order = 1,
                              p = NULL){
   # get spectral species distribution from individual pixels within a window
-  SSD <- lapply(X = SSwindow,FUN = table)
+  ssd <- lapply(X = SSwindow,FUN = table)
   # get ALPHA diversity
-  nbPix_Sunlit <- dim(SSwindow)[1]
-  alpha <- lapply(X = SSD,
-                  FUN = get_alpha_from_SSD,
+  nb_pix_sunlit <- dim(SSwindow)[1]
+  alpha <- lapply(X = ssd,
+                  FUN = get_alpha_from_ssd,
                   alphametrics = alphametrics,
-                  nbPix_Sunlit = nbPix_Sunlit,
+                  nb_pix_sunlit = nb_pix_sunlit,
                   pcelim = pcelim,
-                  Hill_order = Hill_order)
+                  hill_order = Hill_order)
   # get BETA diversity
   # full spectral species distribution = missing clusters set to 0
-  SSD_full <- lapply(X = SSD, FUN = get_SSD_full,
-                     nbclusters = nbclusters, pcelim = pcelim)
-  MatBCtmp <- list()
-  nbIter <- length(SSD_full)
-  PCoA_BC <- NULL
+  ssd_full <- lapply(X = ssd, FUN = get_ssd_full,
+                     nb_clusters = nb_clusters, pcelim = pcelim)
+  mat_bc <- list()
+  nb_iter <- length(ssd_full)
+  pcoa_bc <- NULL
   if (!is.null(Beta_info)){
-    for (i in seq_len(nbIter)) MatBCtmp[[i]] <- list('mat1' = SSD_full[[i]],
-                                              'mat2' = Beta_info$SSD[[i]])
-    MatBCtmp0 <- lapply(X = MatBCtmp, FUN = compute_BCdiss, pcelim)
-    MatBCtmp <- Reduce('+', MatBCtmp0)/nbIter
-    PCoA_BC <- compute_NN_from_ordination(MatBC = MatBCtmp, knn = 3,
-                                          PCoA_train = Beta_info$BetaPCO$points)
+    for (i in seq_len(nb_iter))
+      mat_bc[[i]] <- list('mat1' = ssd_full[[i]],
+                            'mat2' = Beta_info$SSD[[i]])
+    mat_bc_tmp <- lapply(X = mat_bc, FUN = compute_bc_diss, pcelim)
+    mat_bc <- Reduce('+', mat_bc_tmp)/nb_iter
+    pcoa_bc <- compute_nn_from_ordination(mat_bc = mat_bc, knn = 3,
+                                          pcoa_train = Beta_info$BetaPCO$points)
   }
   if (!is.null(p)) p()
   return(list('richness_mean' = mean(unlist(lapply(alpha, '[[', 'richness'))),
-              'richness_sd' = stats::sd(unlist(lapply(alpha, '[[', 'richness'))),
+              'richness_sd' = stats::sd(unlist(lapply(alpha,'[[','richness'))),
               'shannon_mean' = mean(unlist(lapply(alpha, '[[', 'shannon'))),
               'shannon_sd' = stats::sd(unlist(lapply(alpha, '[[', 'shannon'))),
               'simpson_mean' = mean(unlist(lapply(alpha, '[[', 'simpson'))),
@@ -55,5 +56,5 @@ alphabeta_window <- function(SSwindow, nbclusters,
               'fisher_sd' = stats::sd(unlist(lapply(alpha, '[[', 'fisher'))),
               'hill_mean' = mean(unlist(lapply(alpha, '[[', 'hill'))),
               'hill_sd' = stats::sd(unlist(lapply(alpha, '[[', 'hill'))),
-              'PCoA_BC' = PCoA_BC))
+              'PCoA_BC' = pcoa_bc))
 }

@@ -12,15 +12,15 @@ get_diversity_from_plots(
   Beta_info = NULL,
   input_mask = NULL,
   Functional = NULL,
-  SelectBands = NULL,
+  selected_bands = NULL,
   rast_sample = NULL,
   AttributeTable = NULL,
   alphametrics = c("richness", "shannon", "simpson", "hill"),
-  MinSun = 0.25,
+  min_sun = 0.25,
   pcelim = 0.02,
   nbCPU = 1,
-  getBeta = T,
-  verbose = F
+  getBeta = TRUE,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -38,7 +38,7 @@ get_diversity_from_plots(
 
 \item{Functional}{character.}
 
-\item{SelectBands}{numeric. bands selected from input_rast}
+\item{selected_bands}{numeric. bands selected from input_rast}
 
 \item{rast_sample}{dataframe.}
 
@@ -46,7 +46,7 @@ get_diversity_from_plots(
 
 \item{alphametrics}{character.}
 
-\item{MinSun}{numeric. minimum amount of sunlit pixels in the plots}
+\item{min_sun}{numeric. minimum amount of sunlit pixels in the plots}
 
 \item{pcelim}{numeric. minimum proportion of pixels to consider spectral species}
 

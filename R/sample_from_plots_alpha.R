@@ -4,9 +4,9 @@
 #' @param list_features list.
 #' @param plots list.
 #' @param nbCPU numeric.
-#' @param nbPixValid list.
+#' @param nb_pix_valid list.
 #' @param mask_dir character.
-#' @param nbsamples_alpha numeric.
+#' @param nb_samples_alpha numeric.
 #' @param method character. method for terra::spatSample ('random' or 'regular')
 #'
 #' @return samples_alpha_terra
@@ -17,25 +17,32 @@
 #' @export
 
 sample_from_plots_alpha <- function(feature_dir, list_features, plots, nbCPU = 1,
-                                    nbPixValid, mask_dir = NULL,
-                                    nbsamples_alpha = 1e5, method = 'regular'){
+                                    nb_pix_valid, mask_dir = NULL,
+                                    nb_samples_alpha = 1e5, method = 'regular'){
 
   # define number of samples per tile
-  totalPixels <- sum(unlist(nbPixValid))
-  if (totalPixels<nbsamples_alpha)
-    nbsamples_alpha <- totalPixels
-  ratioStats <- nbsamples_alpha/totalPixels
-  pix2sel <- lapply(X = nbPixValid,
+  totalPixels <- sum(unlist(nb_pix_valid))
+  if (totalPixels<nb_samples_alpha)
+    nb_samples_alpha <- totalPixels
+  ratioStats <- nb_samples_alpha/totalPixels
+  pix2sel <- lapply(X = nb_pix_valid,
                     FUN = function(x, ratio){as.numeric(round(x*ratio))},
                     ratio = ratioStats)
 
   # define features to sample
   if (is.null(mask_dir)){
-    listfiles <- list.files(feature_dir, full.names = T)
+    listfiles <- list.files(feature_dir, full.names = TRUE)
+    listfiles <- unique(gsub(pattern = '.aux.xml', x = listfiles,
+                             replacement = ''))
     feat_list <- list_features
   } else {
-    listfiles <- c(list.files(feature_dir, full.names = T),
-                   list.files(mask_dir, full.names = T))
+    listfiles1 <- list.files(feature_dir, full.names = TRUE)
+    listfiles1 <- unique(gsub(pattern = '.aux.xml', x = listfiles1,
+                              replacement = ''))
+    listfiles2 <- list.files(mask_dir, full.names = TRUE)
+    listfiles2 <- unique(gsub(pattern = '.aux.xml', x = listfiles2,
+                              replacement = ''))
+    listfiles <- c(listfiles1, listfiles2)
     feat_list <- c(list_features, 'mask')
   }
 
@@ -50,24 +57,25 @@ sample_from_plots_alpha <- function(feature_dir, list_features, plots, nbCPU = 1
                        MoreArgs = list(listfiles = listfiles,
                                        feat_list = feat_list,
                                        method = method,
-                                       as.df = T, xy = F,
+                                       as.df = TRUE, xy = FALSE,
                                        p = p),
-                       SIMPLIFY = F)}))
+                       SIMPLIFY = FALSE)}))
   } else {
     nbCPU2 <- min(c(4, nbCPU))
     message('get samples for alpha diversity')
     cl <- parallel::makeCluster(nbCPU2)
     plan("cluster", workers = cl)
     selpix <- future.apply::future_mapply(FUN = get_samples_from_tiles,
-                                           plotID = names(plots), pix2sel = pix2sel,
-                                           MoreArgs = list(listfiles = listfiles,
-                                                           feat_list = feat_list,
-                                                           method = method,
-                                                           as.df = T, xy = F),
-                                           future.seed = T,
-                                           future.chunk.size = NULL,
-                                           future.scheduling = structure(TRUE, ordering = "random"),
-                                           SIMPLIFY = F)
+                                          plotID = names(plots),
+                                          pix2sel = pix2sel,
+                                          MoreArgs = list(listfiles = listfiles,
+                                                          feat_list = feat_list,
+                                                          method = method,
+                                                          as.df = TRUE, xy = FALSE),
+                                          future.seed = TRUE,
+                                          future.chunk.size = NULL,
+                                          future.scheduling = structure(TRUE, ordering = "random"),
+                                          SIMPLIFY = FALSE)
     parallel::stopCluster(cl)
     plan(sequential)
   }

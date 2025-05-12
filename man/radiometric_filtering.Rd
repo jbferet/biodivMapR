@@ -29,17 +29,20 @@ radiometric_filtering(
 
 \item{input_mask_path}{character. Path of the mask corresponding to the image}
 
-\item{NDVI_Thresh}{numeric. NDVI threshold applied to produce a mask (select pixels with NDVI>NDVI_Thresh)}
+\item{NDVI_Thresh}{numeric. NDVI threshold applied to produce a mask
+(select pixels with NDVI>NDVI_Thresh)}
 
-\item{Blue_Thresh}{numeric. Blue threshold applied to produce a mask (select pixels with Blue refl < Blue_Thresh --> filter clouds) refl expected between 0 and 10000}
+\item{Blue_Thresh}{numeric. Blue threshold applied to produce a mask
+(select pixels with Blue refl < Blue_Thresh --> filter clouds)}
 
-\item{NIR_Thresh}{numeric. NIR threshold applied to produce a mask (select pixels with NIR refl > NIR_Thresh) refl expected between 0 and 10000}
+\item{NIR_Thresh}{numeric. NIR threshold applied to produce a mask
+(select pixels with NIR refl > NIR_Thresh)}
 
-\item{Blue}{numeric. central wavelength corresponding to the blue spectral band (in nanometers)}
+\item{Blue}{numeric. central wl corresponding to the blue spectral band}
 
-\item{Red}{numeric. central wavelength corresponding to the red spectral band (in nanometers)}
+\item{Red}{numeric. central wl corresponding to the red spectral band}
 
-\item{NIR}{numeric. central wavelength corresponding to the NIR spectral band (in nanometers)}
+\item{NIR}{numeric. central wl corresponding to the NIR spectral band}
 
 \item{maxRows}{numeric. max number of rows in each block}
 

@@ -4,27 +4,26 @@
 #' - possibly remaining negative values are set to 0
 #' - constant spectra are eliminated
 #'
-#' @param Minit initial data matrix, n rows = n samples, p cols = p spectral bands
-#' @param Spectral_Bands numeric. central wavelength for the spectral bands
+#' @param mat_init initial data matrix, n rows = n samples, p cols = p spectral bands
+#' @param spectral_bands numeric. central wavelength for the spectral bands
 #
-#' @return list. updated Minit
+#' @return list. updated mat_init
 #' @export
 
-filter_prior_CR <- function(Minit, Spectral_Bands) {
+filter_prior_cr <- function(mat_init, spectral_bands) {
   # number of samples to be processed
-  nbSamples <- nrow(Minit)
+  nb_samples <- nrow(mat_init)
   # make sure there is no negative values
-  # Minit[Minit<0] <- Minit + 100.0
-  Minit[Minit < 0] <- 0
+  # mat_init[mat_init<0] <- mat_init + 100.0
+  mat_init[mat_init < 0] <- 0
   # eliminate invariant spectra
-  SD <- apply(Minit, 1, sd)
-  keep <- which(!SD == 0 & !is.na(SD))
-  Minit <- Minit[keep, ]
-  nbSamplesUpDate <- nrow(Minit)
+  null_sd <- apply(mat_init, 1, sd)
+  samples_to_keep <- which(!null_sd == 0 & !is.na(null_sd))
+  mat_init <- mat_init[samples_to_keep, ]
   # add negative values to the last column and update spectral bands
-  Minit <- cbind(Minit, -9999)
-  nbBands <- ncol(Minit)
-  Spectral_Bands <- c(Spectral_Bands, Spectral_Bands[nbBands-1] + 100)
-  return(list("Minit" = Minit, "Spectral_Bands" = Spectral_Bands,
-              "nbSamples" = nbSamples, "SamplesToKeep" = keep))
+  mat_init <- cbind(mat_init, -9999)
+  nb_bands <- ncol(mat_init)
+  spectral_bands <- c(spectral_bands, spectral_bands[nb_bands-1] + 100)
+  return(list("mat_init" = mat_init, "spectral_bands" = spectral_bands,
+              "nb_samples" = nb_samples, "samples_to_keep" = samples_to_keep))
 }

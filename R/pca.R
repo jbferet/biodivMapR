@@ -8,8 +8,10 @@
 #' @export
 
 pca <- function(X, type = 'SPCA') {
-  if (type == 'SPCA') scale = TRUE
-  if (type == 'PCA') scale = FALSE
+  if (type == 'SPCA')
+    scale <- TRUE
+  if (type == 'PCA')
+    scale <- FALSE
   modPCA <- stats::prcomp(X, scale = scale)
   return(modPCA)
 }

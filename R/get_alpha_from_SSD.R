@@ -1,29 +1,29 @@
-#' computes alpha diversity metrics from SSD
+#' computes alpha diversity metrics from ssd
 #'
-#' @param SSD numeric. spectral species distribution
-#' @param nbPix_Sunlit numeric.
+#' @param ssd numeric. spectral species distribution
+#' @param nb_pix_sunlit numeric.
 #' @param alphametrics list. alpha diversity metrics: richness, shannon, simpson
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
-#' @param Hill_order numeric. Hill order
+#' @param hill_order numeric. Hill order
 #'
 #' @return Shannon index correspnding to the distribution
 #' @importFrom vegan fisher.alpha
 #' @export
 
-get_alpha_from_SSD <- function(SSD, nbPix_Sunlit, alphametrics = 'shannon',
-                               pcelim = 0.02, Hill_order = 1){
-  ClusterID <- as.numeric(names(SSD))
+get_alpha_from_ssd <- function(ssd, nb_pix_sunlit, alphametrics = 'shannon',
+                               pcelim = 0.02, hill_order = 1){
+  ClusterID <- as.numeric(names(ssd))
   if (pcelim > 0) {
-    KeepSS <- which(SSD >= pcelim * nbPix_Sunlit)
+    KeepSS <- which(ssd >= pcelim * nb_pix_sunlit)
     ClusterID <- ClusterID[KeepSS]
-    SSD <- SSD[KeepSS]
+    ssd <- ssd[KeepSS]
   }
   richness <- shannon <- simpson <- fisher <- hill <- NA
-  if ('hill' %in% alphametrics) hill <- get_Hill(Distrib = SSD, q = Hill_order)
-  if ('richness' %in% alphametrics) richness <- length(SSD)
-  if ('shannon' %in% alphametrics)  shannon <- get_Shannon(SSD)
-  if ('simpson' %in% alphametrics) simpson <- get_Simpson(SSD)
-  if ('fisher' %in% alphametrics & length(SSD)>1) fisher <- vegan::fisher.alpha(SSD)
+  if ('hill' %in% alphametrics) hill <- get_Hill(Distrib = ssd, q = hill_order)
+  if ('richness' %in% alphametrics) richness <- length(ssd)
+  if ('shannon' %in% alphametrics)  shannon <- get_Shannon(ssd)
+  if ('simpson' %in% alphametrics) simpson <- get_Simpson(ssd)
+  if ('fisher' %in% alphametrics & length(ssd)>1) fisher <- vegan::fisher.alpha(ssd)
   return(list('richness' = richness, 'shannon' = shannon,
               'simpson' = simpson, 'fisher' = fisher, 'hill' = hill))
 }

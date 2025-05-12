@@ -8,10 +8,10 @@ sample_from_plots_beta(
   feature_dir,
   list_features,
   plots,
-  nbPixValid,
+  nb_pix_valid,
   mask_dir = NULL,
   window_size,
-  nbsamples_beta = 2000,
+  nb_samples_beta = 2000,
   nbCPU = 1
 )
 }
@@ -22,13 +22,13 @@ sample_from_plots_beta(
 
 \item{plots}{list.}
 
-\item{nbPixValid}{numeric.}
+\item{nb_pix_valid}{numeric.}
 
 \item{mask_dir}{character.}
 
 \item{window_size}{numeric.}
 
-\item{nbsamples_beta}{numeric.}
+\item{nb_samples_beta}{numeric.}
 
 \item{nbCPU}{numeric.}
 }

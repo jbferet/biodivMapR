@@ -2,7 +2,8 @@
 % Please edit documentation in R/biodivMapR_SFS.R
 \name{biodivMapR_SFS}
 \alias{biodivMapR_SFS}
-\title{performs SFS to identify combination of input variables maximizing a criterion}
+\title{performs SFS to identify combination of input variables maximizing a
+criterion}
 \usage{
 biodivMapR_SFS(
   input_raster,
@@ -12,12 +13,12 @@ biodivMapR_SFS(
   corrMethod = "spearman",
   input_mask = NULL,
   Hill_order = 1,
-  nbclusters = 50,
-  MinSun = 0.25,
-  nbPix = 1e+05,
-  nbIter = 20,
+  nb_clusters = 50,
+  min_sun = 0.25,
+  nb_pix = 1e+05,
+  nb_iter = 10,
   pcelim = 0.02,
-  verbose = T,
+  verbose = TRUE,
   nbWorkers = 1,
   nbCPU = 1
 )
@@ -39,13 +40,13 @@ Expected values: richness, shannon, simpson, hill, BC}
 
 \item{Hill_order}{numeric.}
 
-\item{nbclusters}{numeric.}
+\item{nb_clusters}{numeric.}
 
-\item{MinSun}{numeric.}
+\item{min_sun}{numeric.}
 
-\item{nbPix}{numeric.}
+\item{nb_pix}{numeric.}
 
-\item{nbIter}{numeric.}
+\item{nb_iter}{numeric.}
 
 \item{pcelim}{numeric.}
 
@@ -60,5 +61,6 @@ list including performances (correlation) of SFS with additional
 features and assessed diversity metrics corresponding to each step
 }
 \description{
-performs SFS to identify combination of input variables maximizing a criterion
+performs SFS to identify combination of input variables maximizing a
+criterion
 }

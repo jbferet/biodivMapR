@@ -14,7 +14,7 @@ get_BCdiss(Mat1, pcelim = 0.02, p = NULL)
 \item{p}{list. progressor object for progress bar}
 }
 \value{
-BCtmp numeric. BC dissimilarity matrix corresponding to Mat1 and Mat2
+bc numeric. BC dissimilarity matrix corresponding to Mat1 and Mat2
 }
 \description{
 Computes BC dissimilarity for a given matrix

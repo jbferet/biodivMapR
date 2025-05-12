@@ -4,15 +4,15 @@
 \alias{apply_continuum_removal}
 \title{prepares data into list to apply continuum removal}
 \usage{
-apply_continuum_removal(Spectral_Data, Spectral)
+apply_continuum_removal(spectral_data, spectral)
 }
 \arguments{
-\item{Spectral_Data}{numeric. initial data matrix (nb samples x nb bands)}
+\item{spectral_data}{numeric. initial data matrix (nb samples x nb bands)}
 
-\item{Spectral}{list. information about spectral bands}
+\item{spectral}{list. information about spectral bands}
 }
 \value{
-samples from image and updated number of pixels to sample if necessary
+samples from image and updated number of pixels to sample
 }
 \description{
 prepares data into list to apply continuum removal

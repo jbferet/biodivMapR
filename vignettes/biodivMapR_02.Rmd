@@ -94,7 +94,7 @@ mask_path_PCA <- radiometric_filtering(input_raster_path = input_raster_path,
 PCA_Output <- perform_PCA(input_raster_path = input_raster_path, 
                           input_rast_wl = SensorBands, 
                           output_dir = output_dir_PCA, 
-                          Continuum_Removal = Continuum_Removal, 
+                          Continuum_Removal = T, 
                           input_mask_path =  mask_path_PCA, 
                           maxRows = 1000)
 ```
@@ -138,7 +138,7 @@ SensorBands <- read_ENVI_header(HDRpath = HDRpath)$wavelength
 # 2- define path for output directory and create it
 spectral_transformation <- 'SpectralIndices'
 output_dir_SI <- file.path(output_dir, spectral_transformation)
-dir.create(output_dir, showWarnings = F, recursive = T)
+dir.create(output_dir_SI, showWarnings = F, recursive = T)
 
 # 3- [for information] list spectral indices included in spinR
 spinR::listIndices_spinR()

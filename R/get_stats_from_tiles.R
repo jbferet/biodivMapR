@@ -28,10 +28,12 @@ get_stats_from_tiles <- function(plotID, pix2sel, listfiles, SI_list, p = NULL){
                                  pattern = feat))
         names(rastID)[whichfeat] <- feat
       }
-      selpix <- spatSample(x = rastID, size = as.numeric(pix2sel), method = "random",
-                           na.rm = T, as.df = T, warn = F)
+      selpix <- spatSample(x = rastID, size = as.numeric(pix2sel),
+                           method = "random", na.rm = TRUE, as.df = TRUE,
+                           warn = FALSE)
     }
   }
-  if (!is.null(p)) p()
+  if (!is.null(p))
+    p()
   return(selpix)
 }

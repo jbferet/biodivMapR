@@ -1,4 +1,4 @@
-#' update mask based on IQR for a series of rasters 
+#' update mask based on IQR for a series of rasters
 #' produced with preprocS2 function get_s2_tiling
 #'
 #' @param plotID character.
@@ -38,7 +38,7 @@ update_mask_from_tiles <- function(plotID, listfiles, iqr_si, mask_dir,
     }
     filename <- file.path(mask_dir, paste0('mask', plotID, 'IQR.tiff'))
     terra::writeRaster(x = mask, filename = filename, filetype = 'GTiff',
-                       overwrite = T)
+                       overwrite = TRUE)
   }
   if (!is.null(p)) p()
   return(filename)

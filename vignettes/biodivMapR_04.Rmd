@@ -58,7 +58,7 @@ mask_rast <- terra::rast(mask_path_PCA)
 
 # 4- perform validation over the footprint of each polygon
 validation <- get_diversity_from_plots(input_rast = SPCA_rast,
-                                       SelectBands = selectedPC, 
+                                       selected_bands = selectedPC, 
                                        input_mask = mask_rast,
                                        validation_vect = validation_vect,
                                        Kmeans_info = ab_info_SPCA$Kmeans_info,

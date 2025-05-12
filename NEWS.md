@@ -1,3 +1,14 @@
+# biodivMapR2 v2.3.5
+## addition
+- add possibility to change nb_iter and set it to 10 iterations as default
+
+## change
+- updated variable names
+
+## fix
+- account for presence of aux.xml files
+
+
 # biodivMapR2 v2.3.4
 ## fix
 - sample_from_raster adapted to handle distances when crs of input_rast in deg

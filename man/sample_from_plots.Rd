@@ -11,8 +11,8 @@ sample_from_plots(
   mask_dir = NULL,
   window_size,
   nbCPU = 1,
-  nbsamples_alpha = 1e+05,
-  nbsamples_beta = 2000
+  nb_samples_alpha = 1e+05,
+  nb_samples_beta = 2000
 )
 }
 \arguments{
@@ -28,9 +28,9 @@ sample_from_plots(
 
 \item{nbCPU}{numeric.}
 
-\item{nbsamples_alpha}{numeric.}
+\item{nb_samples_alpha}{numeric.}
 
-\item{nbsamples_beta}{numeric.}
+\item{nb_samples_beta}{numeric.}
 }
 \value{
 samples_alpha_beta

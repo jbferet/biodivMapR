@@ -15,7 +15,7 @@ get_valid_pixels(plotID, listfiles, p = NULL)
 \item{p}{list.}
 }
 \value{
-nbPixValid
+nb_pix_valid
 }
 \description{
 get valid pixels from a list of plots produced with

@@ -9,9 +9,9 @@ sample_from_plots_alpha(
   list_features,
   plots,
   nbCPU = 1,
-  nbPixValid,
+  nb_pix_valid,
   mask_dir = NULL,
-  nbsamples_alpha = 1e+05,
+  nb_samples_alpha = 1e+05,
   method = "regular"
 )
 }
@@ -24,11 +24,11 @@ sample_from_plots_alpha(
 
 \item{nbCPU}{numeric.}
 
-\item{nbPixValid}{list.}
+\item{nb_pix_valid}{list.}
 
 \item{mask_dir}{character.}
 
-\item{nbsamples_alpha}{numeric.}
+\item{nb_samples_alpha}{numeric.}
 
 \item{method}{character. method for terra::spatSample ('random' or 'regular')}
 }

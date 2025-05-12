@@ -1,19 +1,19 @@
 #' get spectral species distribution for all clusters
 #
-#' @param SSD dataframe. spectral species distribution
-#' @param nbclusters numeric. number of clusters used in kmeans
+#' @param ssd dataframe. spectral species distribution
+#' @param nb_clusters numeric. number of clusters used in kmeans
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
 #
 #' @return SSwindow results of kmeans per window
 #' @importFrom stats kmeans
 #' @export
 
-get_SSD_full <- function(SSD, nbclusters, pcelim = 0.02){
-  SSDMap0 <- 0*vector(length = nbclusters)
-  KeepSS <- which(SSD >= pcelim * sum(SSD))
-  ClusterID <- as.numeric(names(SSD))[KeepSS]
-  if (length(ClusterID)>0) SSDMap0[ClusterID] <- SSD[KeepSS]
+get_ssd_full <- function(ssd, nb_clusters, pcelim = 0.02){
+  ssd_map <- 0*vector(length = nb_clusters)
+  keep_ss <- which(ssd >= pcelim * sum(ssd))
+  cluster_id <- as.numeric(names(ssd))[keep_ss]
+  if (length(cluster_id)>0) ssd_map[cluster_id] <- ssd[keep_ss]
   # normalization
-  SSDMap0 <- matrix(data = SSDMap0/sum(SSDMap0),nrow = 1)
-  return(SSDMap0)
+  ssd_map <- matrix(data = ssd_map/sum(ssd_map),nrow = 1)
+  return(ssd_map)
 }

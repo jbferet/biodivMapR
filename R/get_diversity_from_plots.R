@@ -7,11 +7,11 @@
 #' @param Beta_info list. BC dissimilarity & associated beta metrics from training set
 #' @param input_mask SpatRaster
 #' @param Functional character.
-#' @param SelectBands numeric. bands selected from input_rast
+#' @param selected_bands numeric. bands selected from input_rast
 #' @param rast_sample dataframe.
 #' @param AttributeTable dataframe.
 #' @param alphametrics character.
-#' @param MinSun numeric. minimum amount of sunlit pixels in the plots
+#' @param min_sun numeric. minimum amount of sunlit pixels in the plots
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
 #' @param nbCPU numeric. Number of CPUs available
 #' @param getBeta boolean. set true if computation of beta required
@@ -26,16 +26,17 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
                                      Hill_order = 1,
                                      Kmeans_info, Beta_info = NULL,
                                      input_mask  = NULL, Functional = NULL,
-                                     SelectBands = NULL,
+                                     selected_bands = NULL,
                                      rast_sample = NULL, AttributeTable = NULL,
                                      alphametrics = c('richness', 'shannon', 'simpson', 'hill'),
-                                     MinSun = 0.25, pcelim = 0.02, nbCPU = 1, getBeta = T,
-                                     verbose = F){
-  if (verbose == T) message('Compute diversity from vector plot network')
+                                     min_sun = 0.25, pcelim = 0.02, nbCPU = 1,
+                                     getBeta = TRUE, verbose = FALSE){
+  if (verbose)
+    message('Compute diversity from vector plot network')
   FunctDiv <- MatBC_Full <- win_ID <- NULL
-  # get nbIter and nbclusters
-  nbIter <- length(Kmeans_info$Centroids)
-  nbclusters <- dim(Kmeans_info$Centroids[[1]])[1]
+  # get nb_iter and nb_clusters
+  nb_iter <- length(Kmeans_info$Centroids)
+  nb_clusters <- dim(Kmeans_info$Centroids[[1]])[1]
   # get dimPCO
   if (is.null(Beta_info)){
     dimPCO <- 3
@@ -43,7 +44,8 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
     dimPCO <- ncol(Beta_info$BetaPCO$points)
   }
   # read vector data
-  if (inherits(validation_vect, what = 'SpatVectorCollection') & is.null(rast_sample)){
+  if (inherits(validation_vect,
+               what = 'SpatVectorCollection') & is.null(rast_sample)){
     SSValid <- Attributes <- list()
     FRic <- FEve <- FDiv <- FDis <- FRaoq <- list()
     nbPlots_init <- 0
@@ -51,12 +53,12 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
       ssvect <- spectralspecies_per_polygon(SpatVector = validation_vect[[ind_vect]],
                                             input_rast = input_rast,
                                             Functional = Functional,
-                                            SelectBands = SelectBands,
+                                            selected_bands = selected_bands,
                                             input_mask = input_mask,
                                             Kmeans_info = Kmeans_info,
                                             rast_sample = rast_sample,
                                             AttributeTable = AttributeTable,
-                                            MinSun = MinSun)
+                                            min_sun = min_sun)
       if (!is.null(ssvect$SSValid)){
         SSValid[[ind_vect]] <- ssvect$SSValid
         Attributes[[ind_vect]] <- ssvect$AttributeTable
@@ -83,10 +85,10 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
                                           input_mask = input_mask,
                                           Functional = Functional,
                                           Kmeans_info = Kmeans_info,
-                                          SelectBands = SelectBands,
+                                          selected_bands = selected_bands,
                                           rast_sample = rast_sample,
                                           AttributeTable = AttributeTable,
-                                          MinSun = MinSun)
+                                          min_sun = min_sun)
     SSValid <- ssvect$SSValid
     if (inherits(validation_vect, what = 'SpatVector')) {
       nbPlots_init <- length(validation_vect)
@@ -114,12 +116,12 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
 
   alphabetaIdx_CPU <- lapply(X = windows_per_plot$SSwindow_perCPU,
                              FUN = alphabeta_window_list,
-                             nbclusters = nbclusters,
+                             nb_clusters = nb_clusters,
                              alphametrics = alphametrics,
                              Hill_order = Hill_order,
                              Beta_info = Beta_info, pcelim = pcelim)
 
-  alphabetaIdx <- unlist(alphabetaIdx_CPU,recursive = F)
+  alphabetaIdx <- unlist(alphabetaIdx_CPU,recursive = FALSE)
   rm(alphabetaIdx_CPU)
   gc()
   # 7- reshape alpha diversity metrics
@@ -151,21 +153,21 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
     Attributes$BetaFull_PCoA_3 <- PCoA_BC[,3]
   }
 
-  if (getBeta ==T){
+  if (getBeta){
     # compute BC matrix from spectral species
-    SSValid_win <- SSValid %>% group_split(win_ID, .keep = F)
+    SSValid_win <- SSValid %>% group_split(win_ID, .keep = FALSE)
     # spectral species distribution
     SSdist <- list()
-    for (iter in names(SSValid_win[[1]])) SSdist[[iter]] <- lapply(SSValid_win, '[[',iter)
+    for (iter in names(SSValid_win[[1]]))
+      SSdist[[iter]] <- lapply(SSValid_win, '[[',iter)
     # compute spectral species distribution for each cluster & BC dissimilarity
     SSD_BCval <- lapply(SSdist,
-                        FUN = get_BCdiss_from_SSD,
-                        nbclusters = nbclusters,
+                        FUN = get_bc_diss_from_ssd,
+                        nb_clusters = nb_clusters,
                         pcelim = pcelim)
 
     MatBC_iter <- lapply(SSD_BCval, '[[','MatBC')
-    SSD <- lapply(SSD_BCval, '[[','SSD')
-    MatBC <- Reduce('+', MatBC_iter)/nbIter
+    MatBC <- Reduce('+', MatBC_iter)/nb_iter
     MatBC_Full <- matrix(data = NA, nrow = nbPlots_init, ncol = nbPlots_init)
     MatBC_Full[IDwindow,IDwindow] <- MatBC
     MatBCdist <- stats::as.dist(MatBC, diag = FALSE, upper = FALSE)
@@ -181,14 +183,16 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
     # FunctDiv$ID_biodivMapR <- Attributes$ID_biodivMapR
     # FunctDiv$id <- Attributes$id
     # FunctDiv$source <- Attributes$source
-    Attributes$FRic <- Attributes$FEve <- Attributes$FDiv <- Attributes$FDis <- Attributes$FRaoq <- NA
+    Attributes$FRic <- Attributes$FEve <- Attributes$FDiv <- NA
+    Attributes$FDis <- Attributes$FRaoq <- NA
     Attributes$FRic[selPlots] <- FunctDiv$FRic
     Attributes$FEve[selPlots] <- FunctDiv$FEve
     Attributes$FDiv[selPlots] <- FunctDiv$FDiv
     Attributes$FDis[selPlots] <- FunctDiv$FDis
     Attributes$FRaoq[selPlots] <- FunctDiv$FRaoq
   }
-  if (verbose == T) message('diversity computed from vector plot network')
+  if (verbose)
+    message('diversity computed from vector plot network')
   return(list('specdiv' = Attributes,
               'BC_dissimilarity' = MatBC_Full))
 }

@@ -11,10 +11,10 @@ perform_PCA(
   input_mask_path = NULL,
   Continuum_Removal = TRUE,
   TypePCA = "SPCA",
-  NbPCs_To_Keep = 30,
+  nb_pcs_to_keep = 30,
   Excluded_WL = NULL,
-  nbPix_PCA = 1e+06,
-  nbIter = 20,
+  nb_pix_pca = 1e+06,
+  nb_iter = 10,
   maxRows = 100,
   filetype = "GTiff"
 )
@@ -32,15 +32,15 @@ perform_PCA(
 
 \item{TypePCA}{character. Type of PCA: choose either "PCA" or "SPCA"}
 
-\item{NbPCs_To_Keep}{numeric. number of components to ke saved in the PCA file. default = 30 if set to FALSE (or nb PC if <30)}
+\item{nb_pcs_to_keep}{numeric. number of components to ke saved in the PCA file. default = 30 if set to FALSE (or nb PC if <30)}
 
 \item{Excluded_WL}{numeric. Water Vapor Absorption domains (in nanometers, min and max WL).
 Can also be used to exclude spectific domains.
 dims = N x 2 (N = number of domains to be eliminated)}
 
-\item{nbPix_PCA}{numeric. number of pixels to use to compute PCA}
+\item{nb_pix_pca}{numeric. number of pixels to use to compute PCA}
 
-\item{nbIter}{numeric. nb of iterations averaged to compute diversity indices}
+\item{nb_iter}{numeric. nb of iterations averaged to compute diversity indices}
 
 \item{maxRows}{numeric. max number of rows in each block}
 

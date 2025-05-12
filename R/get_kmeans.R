@@ -1,8 +1,8 @@
-#' computes k-means from nbIter subsets taken from dataPCA
+#' computes k-means from nb_iter subsets taken from dataPCA
 #'
 #' @param rast_sample numeric. initial dataset sampled from PCA image
-#' @param nbIter numeric. nb of iterations averaged to compute diversity indices
-#' @param nbclusters numeric. number of clusters used in kmeans
+#' @param nb_iter numeric. nb of iterations averaged to compute diversity indices
+#' @param nb_clusters numeric. number of clusters used in kmeans
 #' @param nbCPU numeric. Number of CPUs available
 #' @param algorithm character. algorithm used in the kmeans clustering
 #' @param progressbar boolean. set true for progress bar during clustering
@@ -18,7 +18,7 @@
 #'
 #' @export
 
-get_kmeans <- function(rast_sample, nbIter, nbclusters = 50,
+get_kmeans <- function(rast_sample, nb_iter, nb_clusters = 50,
                        nbCPU = 1, algorithm = 'Hartigan-Wong',
                        progressbar = TRUE) {
   # define boundaries defining outliers based on IQR
@@ -35,7 +35,7 @@ get_kmeans <- function(rast_sample, nbIter, nbclusters = 50,
                 "Error" = TRUE))
   } else {
     rast_sample <- center_reduce(rast_sample, m0, d0)
-    rast_sample <- snow::splitRows(x = rast_sample, ncl = nbIter)
+    rast_sample <- snow::splitRows(x = rast_sample, ncl = nb_iter)
     if (nbCPU>1){
       # plan(multisession, workers = nbCPU) ## Parallelize using four cores
 	  cl <- parallel::makeCluster(nbCPU)
@@ -50,11 +50,11 @@ get_kmeans <- function(rast_sample, nbIter, nbclusters = 50,
       suppressWarnings(progressr::handlers("cli"))
       # progressr::handlers("debug")
       suppressWarnings(with_progress({
-        p <- progressr::progressor(steps = nbIter)
+        p <- progressr::progressor(steps = nb_iter)
         if (nbCPU>1){
           res <- fun_apply(X = rast_sample,
                            FUN = kmeans_progressr,
-                           centers = nbclusters,
+                           centers = nb_clusters,
                            iter.max = 50, nstart = 10,
                            algorithm = algorithm, p = p,
                            future.seed = TRUE)
@@ -62,7 +62,7 @@ get_kmeans <- function(rast_sample, nbIter, nbclusters = 50,
         } else if (nbCPU==1){
           res <- fun_apply(X = rast_sample,
                            FUN = kmeans_progressr,
-                           centers = nbclusters,
+                           centers = nb_clusters,
                            iter.max = 50, nstart = 10,
                            algorithm = algorithm, p = p)
         }
@@ -71,7 +71,7 @@ get_kmeans <- function(rast_sample, nbIter, nbclusters = 50,
       if (nbCPU>1){
         res <- fun_apply(X = rast_sample,
                          FUN = kmeans_progressr,
-                         centers = nbclusters,
+                         centers = nb_clusters,
                          iter.max = 50, nstart = 10,
                          algorithm = algorithm, p = NULL,
                          future.seed = TRUE)
@@ -79,7 +79,7 @@ get_kmeans <- function(rast_sample, nbIter, nbclusters = 50,
       } else if (nbCPU==1){
         res <- fun_apply(X = rast_sample,
                          FUN = kmeans_progressr,
-                         centers = nbclusters,
+                         centers = nb_clusters,
                          iter.max = 50, nstart = 10,
                          algorithm = algorithm, p = NULL)
       }

@@ -7,7 +7,7 @@ spectral species extracted from a window}
 \usage{
 alphabeta_window(
   SSwindow,
-  nbclusters,
+  nb_clusters,
   Beta_info,
   alphametrics,
   pcelim = 0.02,
@@ -19,13 +19,13 @@ alphabeta_window(
 \item{SSwindow}{dataframe. spectral species corresponding to a raster subset
 (window = elementary spatial unit of process)}
 
-\item{nbclusters}{numeric. number of clusters used in kmeans}
+\item{nb_clusters}{numeric. number of clusters used in kmeans}
 
-\item{Beta_info}{list. BC dissimilarity & associated beta metrics from training set}
+\item{Beta_info}{list. BC dissimilarity & associated beta metrics}
 
-\item{alphametrics}{list. alpha diversity metrics: richness, shannon, simpson}
+\item{alphametrics}{list. alpha diversity metrics}
 
-\item{pcelim}{numeric. minimum proportion of pixels to consider spectral species}
+\item{pcelim}{numeric. min proportion of pixels to consider spectral species}
 
 \item{Hill_order}{numeric. Hill order}
 

@@ -27,6 +27,6 @@ select_PCA_components <- function(pca_rast_path,
   print(Sel_PC)
   message("Please press Enter to continue the process")
   readline(prompt = "")
-  Selected_PC <- utils::read.csv(file = Sel_PC, header = F)[[1]]
+  Selected_PC <- utils::read.csv(file = Sel_PC, header = FALSE)[[1]]
   return(Selected_PC)
 }

@@ -9,7 +9,7 @@
 #' @export
 
 IQR_SpatRaster <- function(input_rast,weightIRQ = 3){
-  IQ <- terra::global(x = input_rast, fun= quantile, na.rm = T)
+  IQ <- terra::global(x = input_rast, fun= quantile, na.rm = TRUE)
   range_IQR <- data.frame('quartile1' = IQ[['X25.']],
                           'quartile3' = IQ[['X75.']])
   iqr <- range_IQR$quartile3 - range_IQR$quartile1

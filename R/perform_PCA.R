@@ -6,12 +6,12 @@
 #' @param input_mask_path character. path for mask corresponding to the image
 #' @param Continuum_Removal boolean. Set to TRUE if continuum removal should be applied
 #' @param TypePCA character. Type of PCA: choose either "PCA" or "SPCA"
-#' @param NbPCs_To_Keep numeric. number of components to ke saved in the PCA file. default = 30 if set to FALSE (or nb PC if <30)
+#' @param nb_pcs_to_keep numeric. number of components to ke saved in the PCA file. default = 30 if set to FALSE (or nb PC if <30)
 #' @param Excluded_WL numeric. Water Vapor Absorption domains (in nanometers, min and max WL).
 #' Can also be used to exclude spectific domains.
 #' dims = N x 2 (N = number of domains to be eliminated)
-#' @param nbPix_PCA numeric. number of pixels to use to compute PCA
-#' @param nbIter numeric. nb of iterations averaged to compute diversity indices
+#' @param nb_pix_pca numeric. number of pixels to use to compute PCA
+#' @param nb_iter numeric. nb of iterations averaged to compute diversity indices
 #' @param maxRows numeric. max number of rows in each block
 #' @param filetype character. gdal driver
 #'
@@ -22,9 +22,9 @@
 
 perform_PCA  <- function(input_raster_path, output_dir, input_rast_wl = NULL,
                          input_mask_path = NULL, Continuum_Removal = TRUE,
-                         TypePCA = 'SPCA', NbPCs_To_Keep = 30,
-                         Excluded_WL = NULL, nbPix_PCA = 1e6,
-                         nbIter = 20, maxRows = 100, filetype = 'GTiff') {
+                         TypePCA = 'SPCA', nb_pcs_to_keep = 30,
+                         Excluded_WL = NULL, nb_pix_pca = 1e6,
+                         nb_iter = 10, maxRows = 100, filetype = 'GTiff') {
   # check if format of raster data is as expected
   input_rast <- terra::rast(input_raster_path)
   if (!is.null(input_rast_wl)){
@@ -38,67 +38,67 @@ perform_PCA  <- function(input_raster_path, output_dir, input_rast_wl = NULL,
   }
   if (!is.null(input_rast_wl)){
     # Identify water vapor absorption bands in image and possibly other spectral domains to discard
-    SpectralFilter <- exclude_spectral_domains(input_rast = input_rast,
+    spectral_filter <- exclude_spectral_domains(input_rast = input_rast,
                                                Excluded_WL = Excluded_WL)
     # Extract valid data subset and check validity
     print("Extract pixels & perform PCA")
     # define number of pixels to be extracted from the image for each iteration
-    Pix_Per_Partition <- define_pixels_per_iter(input_rast = input_rast,
+    pix_per_partition <- define_pixels_per_iter(input_rast = input_rast,
                                                 input_mask = input_mask,
-                                                nbPix = nbPix_PCA,
-                                                nbIter = nbIter)
-    nbSamples <- nbIter * Pix_Per_Partition
+                                                nb_pix = nb_pix_pca,
+                                                nb_iter = nb_iter)
+    nb_samples <- nb_iter * pix_per_partition
   } else {
-    nbSamples <- nbPix_PCA
-    SpectralFilter <- nbIter <- Pix_Per_Partition <- NULL
+    nb_samples <- nb_pix_pca
+    spectral_filter <- nb_iter <- pix_per_partition <- NULL
     Continuum_Removal <- FALSE
   }
   # extract a random selection of pixels from image
   if (!TypePCA=='MNF'){
     extent_area <- get_raster_extent(input_rast[[1]])
-    Subset <- sample_from_raster(extent_area = extent_area,
-                                 nbSamples = nbSamples,
+    img_subset <- sample_from_raster(extent_area = extent_area,
+                                 nb_samples = nb_samples,
                                  input_rast = input_rast,
                                  input_mask = input_mask)
-    Subset$ID <- NULL
+    img_subset$ID <- NULL
   }
   # if needed, apply continuum removal
   if (Continuum_Removal == TRUE) {
-    Subset <- apply_continuum_removal(Spectral_Data = Subset,
-                                      Spectral = SpectralFilter)
+    img_subset <- apply_continuum_removal(spectral_data = img_subset,
+                                      spectral = spectral_filter)
   } else {
-    if (length(SpectralFilter$WaterVapor)>0)
-      Subset <- Subset[, -SpectralFilter$WaterVapor]
+    if (length(spectral_filter$WaterVapor)>0)
+      img_subset <- img_subset[, -spectral_filter$WaterVapor]
   }
   # if number of pixels available inferior number initial sample size
-  if (nrow(Subset) < nbSamples) {
-    nbSamples <- nrow(Subset)
-    if (!is.null(Pix_Per_Partition)){
-      nbIter <- ceiling(nbSamples / Pix_Per_Partition)
-      Pix_Per_Partition <- floor(nbSamples / nbIter)
-      nbSamples <- nbIter * Pix_Per_Partition
+  if (nrow(img_subset) < nb_samples) {
+    nb_samples <- nrow(img_subset)
+    if (!is.null(pix_per_partition)){
+      nb_iter <- ceiling(nb_samples / pix_per_partition)
+      pix_per_partition <- floor(nb_samples / nb_iter)
+      nb_samples <- nb_iter * pix_per_partition
     }
   }
-  if (!is.null(SpectralFilter)){
+  if (!is.null(spectral_filter)){
     # clean reflectance data from inf and constant values
-    CleanData <- rm_invariant_bands(Subset, SpectralFilter)
-    Subset <- CleanData$DataMatrix
-    SpectralFilter <- CleanData$Spectral
+    CleanData <- rm_invariant_bands(img_subset, spectral_filter)
+    img_subset <- CleanData$DataMatrix
+    spectral_filter <- CleanData$Spectral
   } else {
     CleanData <- list()
-    CleanData$Spectral <- list('Bands2Keep'= seq_len(dim(Subset)[2]))
+    CleanData$Spectral <- list('Bands2Keep'= seq_len(dim(img_subset)[2]))
   }
-  # Compute PCA #1 on Subset
+  # Compute PCA #1 on img_subset
   print(paste('perform',TypePCA,'on image subset'))
   if (TypePCA == "PCA" | TypePCA == "SPCA") {
-    PCA_model <- pca(Subset, TypePCA)
+    PCA_model <- pca(img_subset, TypePCA)
     # } else if(TypePCA=="MNF"){
-    #   PCA_model <- mnf(Subset, coordPix)
+    #   PCA_model <- mnf(img_subset, coordPix)
   }
   # Number of PCs computed and written in the PCA file: 30 if hyperspectral
   Nb_PCs <- dim(PCA_model$x)[2]
-  if (Nb_PCs > NbPCs_To_Keep)
-    Nb_PCs <- NbPCs_To_Keep
+  if (Nb_PCs > nb_pcs_to_keep)
+    Nb_PCs <- nb_pcs_to_keep
   PCA_model$Nb_PCs <- Nb_PCs
   # CREATE PCA FILE CONTAINING ONLY SELECTED PCs
   PCA_Files <- list('PCA'= file.path(output_dir,
@@ -121,16 +121,19 @@ perform_PCA  <- function(input_raster_path, output_dir, input_rast_wl = NULL,
                              input_rasters = input_PCA,
                              input_args = input_args,
                              output_lyrs = Nb_PCs,
-                             bandNames = list('PCA' = paste0('PC#',seq_len(Nb_PCs))),
+                             bandNames = list('PCA' = paste0('PC#',
+                                                             seq_len(Nb_PCs))),
                              output_rasters = PCA_Files,
                              maxRows = maxRows)
   # save workspace for this stage
   WS_Save <- file.path(output_dir, "PCA_info.RData")
-  my_list <- list("PCA_Files" = PCA_Files, "Pix_Per_Partition" = Pix_Per_Partition,
-                  "nbIter" = nbIter, "MaskPath" = input_mask_path,
-                  "PCA_model" = PCA_model, "SpectralFilter" = SpectralFilter,
+  my_list <- list("PCA_Files" = PCA_Files,
+                  "pix_per_partition" = pix_per_partition,
+                  "nb_iter" = nb_iter, "MaskPath" = input_mask_path,
+                  "PCA_model" = PCA_model,
+                  "spectral_filter" = spectral_filter,
                   "TypePCA" = TypePCA)
-  save(PCA_Files, Pix_Per_Partition, nbIter, input_mask_path,
-       PCA_model, SpectralFilter, TypePCA, file = WS_Save)
+  save(PCA_Files, pix_per_partition, nb_iter, input_mask_path,
+       PCA_model, spectral_filter, TypePCA, file = WS_Save)
   return(my_list)
 }

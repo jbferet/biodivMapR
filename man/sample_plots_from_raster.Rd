@@ -6,9 +6,9 @@
 \usage{
 sample_plots_from_raster(
   extent_area,
-  nbSamples,
+  nb_samples,
   input_rast,
-  MinSun = 0.25,
+  min_sun = 0.25,
   input_mask = NULL,
   window_size = NULL
 )
@@ -16,13 +16,13 @@ sample_plots_from_raster(
 \arguments{
 \item{extent_area}{.}
 
-\item{nbSamples}{numeric. number of samples to be extracted}
+\item{nb_samples}{numeric. number of samples to be extracted}
 
 \item{input_rast}{SpatRaster. raster to extract data from}
 
-\item{MinSun}{numeric. minimum amount of sunlit pixels in the plots}
+\item{min_sun}{numeric. minimum amount of sunlit pixels in the plots}
 
-\item{input_mask}{SpatRaster. mask corresponding to raster to extract data from}
+\item{input_mask}{SpatRaster. mask corresponding to raster}
 
 \item{window_size}{numeric. window size for square plots}
 }

@@ -6,7 +6,7 @@
 \usage{
 alphabeta_window_list(
   SSwindow,
-  nbclusters,
+  nb_clusters,
   Beta_info = NULL,
   alphametrics = "shannon",
   Hill_order = 1,
@@ -17,15 +17,15 @@ alphabeta_window_list(
 \item{SSwindow}{dataframe. spectral species corresponding to a raster subset
 (window = elementary spatial unit of process)}
 
-\item{nbclusters}{numeric. number of clusters used in kmeans}
+\item{nb_clusters}{numeric. number of clusters used in kmeans}
 
-\item{Beta_info}{list. BC dissimilarity & associated beta metrics from training set}
+\item{Beta_info}{list. BC dissimilarity & associated beta metrics}
 
-\item{alphametrics}{list. alpha diversity metrics: richness, shannon, simpson}
+\item{alphametrics}{list. alpha diversity metrics}
 
 \item{Hill_order}{numeric. Hill order}
 
-\item{pcelim}{numeric. minimum proportion of pixels to consider spectral species}
+\item{pcelim}{numeric. min proportion of pixels to consider spectral species}
 }
 \value{
 list of alpha and beta diversity metrics

@@ -9,9 +9,9 @@ get_samples_from_tiles(
   pix2sel,
   listfiles,
   feat_list,
-  as.df = F,
-  as.points = F,
-  xy = F,
+  as.df = FALSE,
+  as.points = FALSE,
+  xy = FALSE,
   method = "regular",
   p = NULL
 )

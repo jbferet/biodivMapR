@@ -18,7 +18,7 @@ split_chunk <- function(SSchunk, nbCPU){
   SSwindow <- SSchunk %>% dplyr::group_by(win_ID) %>% nest()
 
   # warning, output is not sorted as expected!!
-  sortUpdate <- sort(SSwindow$win_ID,index.return=T)
+  sortUpdate <- sort(SSwindow$win_ID,index.return = TRUE)
   SSwindow$data <- SSwindow$data[sortUpdate$ix]
   SSwindow$win_ID <- SSwindow$win_ID[sortUpdate$ix]
 

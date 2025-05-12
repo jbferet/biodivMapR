@@ -8,8 +8,8 @@ extract_vect_from_rast(
   SpatVector,
   input_rast,
   input_mask = NULL,
-  MinSun = 0.25,
-  prog = T
+  min_sun = 0.25,
+  prog = TRUE
 )
 }
 \arguments{
@@ -19,7 +19,7 @@ extract_vect_from_rast(
 
 \item{input_mask}{SpatRaster. optional mask}
 
-\item{MinSun}{numeric. minimum sunlit/unmasked proportion}
+\item{min_sun}{numeric. minimum sunlit/unmasked proportion}
 
 \item{prog}{boolean. progressbar ?}
 }

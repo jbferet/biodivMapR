@@ -4,12 +4,12 @@
 \alias{get_xy_samples}
 \title{get xy of pixels to sample from raster}
 \usage{
-get_xy_samples(input_rast, nbSamples, input_mask = NULL)
+get_xy_samples(input_rast, nb_samples, input_mask = NULL)
 }
 \arguments{
 \item{input_rast}{SpatRaster. raster to extract data from}
 
-\item{nbSamples}{numeric. number of samples to be extracted}
+\item{nb_samples}{numeric. number of samples to be extracted}
 
 \item{input_mask}{SpatRaster. mask corresponding to raster to extract data from}
 }

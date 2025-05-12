@@ -6,25 +6,25 @@
 #' @param mask_dir character.
 #' @param window_size numeric.
 #' @param nbCPU numeric.
-#' @param nbsamples_alpha numeric.
-#' @param nbsamples_beta numeric.
+#' @param nb_samples_alpha numeric.
+#' @param nb_samples_beta numeric.
 #'
 #' @return samples_alpha_beta
 #' @export
 
 sample_from_plots <- function(feature_dir, list_features, plots, mask_dir = NULL,
-                              window_size, nbCPU = 1, nbsamples_alpha = 1e5,
-                              nbsamples_beta = 2e3){
+                              window_size, nbCPU = 1, nb_samples_alpha = 1e5,
+                              nb_samples_beta = 2e3){
 
-  nbPixValid <- get_valid_pixels_from_tiles(feature_dir, plots, nbCPU = 1,
+  nb_pix_valid <- get_valid_pixels_from_tiles(feature_dir, plots, nbCPU = 1,
                                             mask_dir = mask_dir)
   # sample the plot network for alpha diversity
   samples_alpha_terra <- sample_from_plots_alpha(feature_dir = feature_dir,
                                                  list_features = list_features,
                                                  plots = plots,
-                                                 nbPixValid = nbPixValid,
+                                                 nb_pix_valid = nb_pix_valid,
                                                  mask_dir = mask_dir,
-                                                 nbsamples_alpha = nbsamples_alpha,
+                                                 nb_samples_alpha = nb_samples_alpha,
                                                  nbCPU = nbCPU)
 
   # sample the plot network for beta diversity
@@ -32,9 +32,9 @@ sample_from_plots <- function(feature_dir, list_features, plots, mask_dir = NULL
                                                list_features = list_features,
                                                plots = plots,
                                                window_size = window_size,
-                                               nbPixValid = nbPixValid,
+                                               nb_pix_valid = nb_pix_valid,
                                                mask_dir = mask_dir,
-                                               nbsamples_beta = nbsamples_beta,
+                                               nb_samples_beta = nb_samples_beta,
                                                nbCPU = nbCPU)
 
   # use a unique ID per plot

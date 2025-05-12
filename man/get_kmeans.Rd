@@ -2,12 +2,12 @@
 % Please edit documentation in R/get_kmeans.R
 \name{get_kmeans}
 \alias{get_kmeans}
-\title{computes k-means from nbIter subsets taken from dataPCA}
+\title{computes k-means from nb_iter subsets taken from dataPCA}
 \usage{
 get_kmeans(
   rast_sample,
-  nbIter,
-  nbclusters = 50,
+  nb_iter,
+  nb_clusters = 50,
   nbCPU = 1,
   algorithm = "Hartigan-Wong",
   progressbar = TRUE
@@ -16,9 +16,9 @@ get_kmeans(
 \arguments{
 \item{rast_sample}{numeric. initial dataset sampled from PCA image}
 
-\item{nbIter}{numeric. nb of iterations averaged to compute diversity indices}
+\item{nb_iter}{numeric. nb of iterations averaged to compute diversity indices}
 
-\item{nbclusters}{numeric. number of clusters used in kmeans}
+\item{nb_clusters}{numeric. number of clusters used in kmeans}
 
 \item{nbCPU}{numeric. Number of CPUs available}
 
@@ -30,5 +30,5 @@ get_kmeans(
 list of centroids and parameters needed to center/reduce data
 }
 \description{
-computes k-means from nbIter subsets taken from dataPCA
+computes k-means from nb_iter subsets taken from dataPCA
 }

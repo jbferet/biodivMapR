@@ -7,8 +7,8 @@
 define_pixels_per_iter(
   input_rast,
   input_mask = NULL,
-  nbIter = 20,
-  nbPix = 1e+05
+  nb_iter = 10,
+  nb_pix = 1e+05
 )
 }
 \arguments{
@@ -16,9 +16,9 @@ define_pixels_per_iter(
 
 \item{input_mask}{SpatRaster.}
 
-\item{nbIter}{numeric. nb of iterations averaged to compute diversity indices}
+\item{nb_iter}{numeric. nb of iterations averaged to compute diversity indices}
 
-\item{nbPix}{numeric. maximum number of pixels to extract for kmeans}
+\item{nb_pix}{numeric. maximum number of pixels to extract for kmeans}
 }
 \value{
 Pix_Per_Iter number of pixels per iteration

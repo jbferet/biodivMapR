@@ -9,16 +9,16 @@ init_PCoA(
   output_dir,
   window_size,
   Kmeans_info,
-  SelectBands = NULL,
+  selected_bands = NULL,
   input_mask = NULL,
-  nbSamples = 1000,
-  MinSun = 0.25,
+  nb_samples = 1000,
+  min_sun = 0.25,
   pcelim = 0.02,
   dimPCoA = 3,
   nbCPU = 1,
   Beta_info_save = NULL,
   Beta_info_read = NULL,
-  verbose = T
+  verbose = TRUE
 )
 }
 \arguments{
@@ -30,13 +30,13 @@ init_PCoA(
 
 \item{Kmeans_info}{list. obtained from prepare_init_kmeans}
 
-\item{SelectBands}{numeric. bands selected from input_rast}
+\item{selected_bands}{numeric. bands selected from input_rast}
 
 \item{input_mask}{SpatRaster. mask corresponding to raster to extract data from}
 
-\item{nbSamples}{numeric. number of samples to be extracted}
+\item{nb_samples}{numeric. number of samples to be extracted}
 
-\item{MinSun}{numeric. minimum percentage of sunlit pixels}
+\item{min_sun}{numeric. minimum percentage of sunlit pixels}
 
 \item{pcelim}{numeric. minimum proportion of pixels to consider spectral species}
 

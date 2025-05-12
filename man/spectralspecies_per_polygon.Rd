@@ -8,12 +8,12 @@ spectralspecies_per_polygon(
   SpatVector,
   input_rast,
   Kmeans_info,
-  SelectBands = NULL,
+  selected_bands = NULL,
   Functional = NULL,
   input_mask = NULL,
   rast_sample = NULL,
   AttributeTable = NULL,
-  MinSun = 0.25
+  min_sun = 0.25
 )
 }
 \arguments{
@@ -23,7 +23,7 @@ spectralspecies_per_polygon(
 
 \item{Kmeans_info}{list. kmeans description obtained from function get_kmeans}
 
-\item{SelectBands}{numeric. bands selected from input data}
+\item{selected_bands}{numeric. bands selected from input data}
 
 \item{Functional}{boolean. should functional diversity be computed as well?}
 
@@ -33,7 +33,7 @@ spectralspecies_per_polygon(
 
 \item{AttributeTable}{dataframe.}
 
-\item{MinSun}{numeric. minimum amount of sunlit pixels in the plots}
+\item{min_sun}{numeric. minimum amount of sunlit pixels in the plots}
 }
 \value{
 list

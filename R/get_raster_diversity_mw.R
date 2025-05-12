@@ -4,7 +4,7 @@
 #' @param Kmeans_info list. kmeans description obtained from function get_kmeans
 #' @param Beta_info list. BC dissimilarity & associated beta metrics from training set
 #' @param input_mask_path character. path for mask file
-#' @param SelectBands numeric. bands selected from input_rast
+#' @param selected_bands numeric. bands selected from input_rast
 #' @param alphametrics list. alpha diversity metrics: richness, shannon, simpson
 #' @param Hill_order numeric. Hill order
 #' @param FDmetric character. list of functional metrics
@@ -12,7 +12,7 @@
 #' @param maxRows numeric. max number of rows in each block
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
 #' @param nbCPU numeric. Number of CPUs available
-#' @param MinSun numeric. minimum amount of sunlit pixels in the plots
+#' @param min_sun numeric. minimum amount of sunlit pixels in the plots
 #'
 #' @return ab_div_metrics list. contains all metrics
 #' @import cli
@@ -21,14 +21,16 @@
 #' @export
 
 get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
-                                    input_mask_path = NULL, SelectBands = NULL,
+                                    input_mask_path = NULL, selected_bands = NULL,
                                     alphametrics = 'shannon', Hill_order = 1,
                                     FDmetric = NULL, window_size, maxRows = NULL,
-                                    pcelim = 0.02, nbCPU = 1, MinSun = 0.25){
+                                    pcelim = 0.02, nbCPU = 1, min_sun = 0.25){
   # prepare to read input raster data
   r_in <- list()
-  if (is.null(names(input_raster_path))) names(input_raster_path) <- seq_len(length(input_raster_path))
-  for (fid in names(input_raster_path)) r_in[[fid]] <- terra::rast(input_raster_path[[fid]])
+  if (is.null(names(input_raster_path)))
+    names(input_raster_path) <- seq_len(length(input_raster_path))
+  for (fid in names(input_raster_path))
+    r_in[[fid]] <- terra::rast(input_raster_path[[fid]])
   # if a mask file is provided
   if (!is.null(input_mask_path)) {
     r_in[['mask']] <- terra::rast(input_mask_path)
@@ -38,9 +40,9 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
   rast_in <- lapply(X = input_raster_path, FUN = terra::rast)
   rast_in <- terra::rast(rast_in)
   if (is.null(input_mask_path)) {
-    SelectBands <- seq_len(dim(rast_in)[3])
+    selected_bands <- seq_len(dim(rast_in)[3])
   } else {
-    SelectBands <- seq_len(dim(rast_in)[3]-1)
+    selected_bands <- seq_len(dim(rast_in)[3]-1)
   }
 
   res_shapeChunk <- list()
@@ -53,14 +55,17 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
   }
   dimPCO <- 3
   if (!is.null(Beta_info)) dimPCO <- ncol(Beta_info$BetaPCO$points)
-  PCoA_raster <- list('PCoA1' = matrix(NA, nrow = nrow(rast_in), ncol = ncol(rast_in)),
-                      'PCoA2' = matrix(NA, nrow = nrow(rast_in), ncol = ncol(rast_in)),
-                      'PCoA3' = matrix(NA, nrow = nrow(rast_in), ncol = ncol(rast_in)))
+  PCoA_raster <- list('PCoA1' = matrix(NA, nrow = nrow(rast_in),
+                                       ncol = ncol(rast_in)),
+                      'PCoA2' = matrix(NA, nrow = nrow(rast_in),
+                                       ncol = ncol(rast_in)),
+                      'PCoA3' = matrix(NA, nrow = nrow(rast_in),
+                                       ncol = ncol(rast_in)))
 
   # v1: line per line
   nbWindows <- ncol(rast_in)
-  rastmat <- as.matrix(rast_in[[1]], wide=TRUE)
-  whichj <- which(rowSums(rastmat, na.rm = T)>0)
+  rastmat <- as.matrix(rast_in[[1]], wide = TRUE)
+  whichj <- which(rowSums(rastmat, na.rm = TRUE)>0)
   for (j in whichj){
     inputdata <- list()
     sel <- NULL
@@ -78,7 +83,7 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
             inputdata[[i]] <- inputdata[[i]][sel,]
           inputdata[[i]]$mask <- NULL
         }
-        if (nrow(inputdata[[i]])>MinSun*window_size**2){
+        if (nrow(inputdata[[i]])>min_sun*window_size**2){
           inputdata[[i]]$win_ID <- i
         } else {
           inputdata[[i]] <- NULL
@@ -98,7 +103,7 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
     #     inputdata[[i]]$win_ID <- i
     # }
     # ll <- unlist(lapply(inputdata, nrow))
-    # sel <- which(!is.na(rast_in[j,,1]) & ll>MinSun*window_size**2)
+    # sel <- which(!is.na(rast_in[j,,1]) & ll>min_sun*window_size**2)
     # inputdata <- inputdata[sel]
     # inputdata <- do.call(what = rbind, args = inputdata)
 
@@ -107,26 +112,26 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
       if (length(inputdata)>0){
         SSchunk <- get_spectralSpecies(inputdata = inputdata,
                                        Kmeans_info = Kmeans_info,
-                                       SelectBands = SelectBands)
+                                       selected_bands = selected_bands)
         # 5- split data chunk by window and by nbCPU to ensure parallel computing
         SSwindows_per_CPU <- split_chunk(SSchunk, nbCPU)
         # 6- compute diversity metrics
-        nbclusters <- dim(Kmeans_info$Centroids[[1]])[1]
+        nb_clusters <- dim(Kmeans_info$Centroids[[1]])[1]
         alphabetaIdx_CPU <- lapply(X = SSwindows_per_CPU$SSwindow_perCPU,
                                    FUN = alphabeta_window_list,
-                                   nbclusters = nbclusters,
+                                   nb_clusters = nb_clusters,
                                    alphametrics = alphametrics,
                                    Beta_info = Beta_info,
                                    Hill_order = Hill_order,
                                    pcelim = pcelim)
-        alphabetaIdx <- unlist(alphabetaIdx_CPU,recursive = F)
+        alphabetaIdx <- unlist(alphabetaIdx_CPU, recursive = FALSE)
         # 7- reshape alpha diversity metrics
         IDwindow <- unlist(SSwindows_per_CPU$IDwindow_perCPU)
         for (idx in alphametrics){
           for (crit in c('mean', 'sd')){
             elem <- paste0(idx,'_',crit)
             restmp <- unlist(lapply(alphabetaIdx,'[[',elem))
-            res_shapeChunk_tmp <- rep(x = NA,nbWindows)
+            res_shapeChunk_tmp <- rep(x = NA, nbWindows)
             if (length(IDwindow)>0)
               res_shapeChunk_tmp[IDwindow] <- restmp
             res_shapeChunk[[idx]][[crit]][j,] <- res_shapeChunk_tmp
@@ -182,7 +187,7 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
   # #   }
   # # }
   # ll <- unlist(lapply(inputdata, nrow))
-  # sel <- which(!is.na(terra::values(rast_in[[1]])) & ll>MinSun*window_size**2)
+  # sel <- which(!is.na(terra::values(rast_in[[1]])) & ll>min_sun*window_size**2)
   # inputdata <- inputdata[sel]
   # inputdata <- do.call(what = rbind, args = inputdata)
   #
@@ -190,17 +195,17 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
   # if (length(sel)>0){
   #   SSchunk <- get_spectralSpecies(inputdata = inputdata,
   #                                  Kmeans_info = Kmeans_info,
-  #                                  SelectBands = SelectBands)
+  #                                  selected_bands = selected_bands)
   #   # 5- split data chunk by window and by nbCPU to ensure parallel computing
   #   rm(inputdata)
   #   SSwindows_per_CPU <- split_chunk(SSchunk, nbCPU)
   #   rm(SSchunk)
   #   gc()
   #   # 6- compute diversity metrics
-  #   nbclusters <- dim(Kmeans_info$Centroids[[1]])[1]
+  #   nb_clusters <- dim(Kmeans_info$Centroids[[1]])[1]
   #   alphabetaIdx_CPU <- lapply(X = SSwindows_per_CPU$SSwindow_perCPU,
   #                              FUN = alphabeta_window_list,
-  #                              nbclusters = nbclusters,
+  #                              nb_clusters = nb_clusters,
   #                              alphametrics = alphametrics,
   #                              Beta_info = Beta_info,
   #                              Hill_order = Hill_order,

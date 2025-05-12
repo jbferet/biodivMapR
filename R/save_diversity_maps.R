@@ -1,7 +1,7 @@
 #'save diversity maps as raster data
 #'
 #' @param ab_div_metrics list produced from get_raster_diversity
-#' @param alphametrics list. alpha diversity metrics: richness, shannon, simpson, hill
+#' @param alphametrics list. alpha diversity metrics
 #' @param Hill_order numeric. Hill order
 #' @param FDmetric character. list of functional metrics
 #' @param input_rast list. path for input rasters
@@ -30,7 +30,8 @@ save_diversity_maps <- function(ab_div_metrics,
     # Mean value
     # produce a template
     template_rast <- terra::aggregate(input_rast[[1]], fact = window_size)
-    mat_idx_mean <- array(do.call(rbind,lapply(lapply(ab_div_metrics, '[[', idx),
+    mat_idx_mean <- array(do.call(rbind,lapply(lapply(ab_div_metrics,
+                                                      '[[', idx),
                                                '[[','mean')),
                           dim = dim(template_rast))
     terra::values(template_rast[[1]]) <- mat_idx_mean
@@ -39,11 +40,14 @@ save_diversity_maps <- function(ab_div_metrics,
     if (is.null(output_raster_name[[idx2]]))
       output_raster <- file.path(output_dir, paste0(idx2, '_mean'))
     if (!is.null(output_raster_name[[idx2]]))
-      output_raster <- file.path(output_dir, paste0(output_raster_name[[idx2]], '_mean'))
+      output_raster <- file.path(output_dir,
+                                 paste0(output_raster_name[[idx2]], '_mean'))
 
-    if (filetype%in%c('GTiff', 'COG')) output_raster <- paste0(output_raster, '.tiff')
+    if (filetype%in%c('GTiff', 'COG'))
+      output_raster <- paste0(output_raster, '.tiff')
     terra::writeRaster(x = template_rast, filename = output_raster,
-                       filetype = filetype, overwrite = T)
+                       filetype = filetype, overwrite = TRUE,
+                       gdal = c("COMPRESS=LZW"))
     # SD value
     # produce a template
     template_rast <- terra::aggregate(input_rast[[1]], fact = window_size)
@@ -56,10 +60,13 @@ save_diversity_maps <- function(ab_div_metrics,
     if (is.null(output_raster_name[[idx2]]))
       output_raster <- file.path(output_dir, paste0(idx2, '_sd'))
     if (!is.null(output_raster_name[[idx2]]))
-      output_raster <- file.path(output_dir, paste0(output_raster_name[[idx2]], '_sd'))
-    if (filetype%in%c('GTiff', 'COG')) output_raster <- paste0(output_raster, '.tiff')
+      output_raster <- file.path(output_dir, paste0(output_raster_name[[idx2]],
+                                                    '_sd'))
+    if (filetype%in%c('GTiff', 'COG'))
+      output_raster <- paste0(output_raster, '.tiff')
     terra::writeRaster(x = template_rast, filename = output_raster,
-                       filetype = filetype, overwrite = T)
+                       filetype = filetype, overwrite = TRUE,
+                       gdal = c("COMPRESS=LZW"))
   }
 
   # save functional diversity indices
@@ -75,9 +82,11 @@ save_diversity_maps <- function(ab_div_metrics,
       output_raster <- file.path(output_dir, idx)
     if (!is.null(output_raster_name[[idx]]))
       output_raster <- file.path(output_dir, output_raster_name[[idx]])
-    if (filetype%in%c('GTiff', 'COG')) output_raster <- paste0(output_raster, '.tiff')
+    if (filetype%in%c('GTiff', 'COG'))
+      output_raster <- paste0(output_raster, '.tiff')
     terra::writeRaster(x = template_rast, filename = output_raster,
-                       filetype = filetype, overwrite = T)
+                       filetype = filetype, overwrite = TRUE,
+                       gdal = c("COMPRESS=LZW"))
   }
 
   # save beta diversity indices
@@ -89,7 +98,8 @@ save_diversity_maps <- function(ab_div_metrics,
   dim(template_rast)[3] <- dimPCoA
   for (nbPC in seq_len(dimPCoA)){
     pctmp <- list()
-    for (nbPieces in seq_len(length(PCoA))) pctmp[[nbPieces]] <- PCoA[[nbPieces]][,,nbPC]
+    for (nbPieces in seq_len(length(PCoA)))
+      pctmp[[nbPieces]] <- PCoA[[nbPieces]][,,nbPC]
     terra::values(template_rast[[nbPC]]) <- do.call(rbind,pctmp)
   }
   names(template_rast) <- paste0('PCoA#',seq(1,dimPCoA))
@@ -98,8 +108,10 @@ save_diversity_maps <- function(ab_div_metrics,
     output_raster <- file.path(output_dir, 'beta')
   if (!is.null(output_raster_name[[idx2]]))
     output_raster <- file.path(output_dir, output_raster_name[['beta']])
-  if (filetype%in%c('GTiff', 'COG')) output_raster <- paste0(output_raster, '.tiff')
+  if (filetype%in%c('GTiff', 'COG'))
+    output_raster <- paste0(output_raster, '.tiff')
   terra::writeRaster(x = template_rast, filename = output_raster,
-                     filetype = filetype, overwrite = T)
+                     filetype = filetype, overwrite = TRUE,
+                     gdal = c("COMPRESS=LZW"))
   return(invisible())
 }

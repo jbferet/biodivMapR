@@ -3,12 +3,12 @@
 #' @param SpatVector SpatVector.
 #' @param input_rast SpatRaster.
 #' @param Kmeans_info list. kmeans description obtained from function get_kmeans
-#' @param SelectBands numeric. bands selected from input data
+#' @param selected_bands numeric. bands selected from input data
 #' @param Functional boolean. should functional diversity be computed as well?
 #' @param input_mask SpatRaster.
 #' @param rast_sample dataframe.
 #' @param AttributeTable dataframe.
-#' @param MinSun numeric. minimum amount of sunlit pixels in the plots
+#' @param min_sun numeric. minimum amount of sunlit pixels in the plots
 #
 #' @return list
 #' @importFrom tidyr nest
@@ -16,10 +16,10 @@
 #' @export
 #'
 spectralspecies_per_polygon <- function(SpatVector, input_rast,
-                                        Kmeans_info, SelectBands = NULL,
+                                        Kmeans_info, selected_bands = NULL,
                                         Functional = NULL, input_mask = NULL,
                                         rast_sample = NULL, AttributeTable = NULL,
-                                        MinSun = 0.25){
+                                        min_sun = 0.25){
 
   FunctDiv <- SSValid <- NULL
   # extract pixel info from vector data
@@ -27,8 +27,8 @@ spectralspecies_per_polygon <- function(SpatVector, input_rast,
     rastext <- extract_vect_from_rast(SpatVector = SpatVector,
                                       input_rast = input_rast,
                                       input_mask = input_mask,
-                                      MinSun = MinSun,
-                                      prog = F)
+                                      min_sun = min_sun,
+                                      prog = FALSE)
     # update plot ID in collection
     rast_sample <- rastext$rast_sample_vect
     AttributeTable <- rastext$AttributeTable
@@ -36,21 +36,21 @@ spectralspecies_per_polygon <- function(SpatVector, input_rast,
     warning('"rast_sample" or "AttributeTable" missing for "spectralspecies_per_polygon"')
   }
 
-  nbPix_per_plot <- data.frame(table(rast_sample$ID))
-  # only get common plots between nbPix_per_plot and nbPix_per_plot_init
-  if (length(nbPix_per_plot$Freq)>0){
-    if (is.null(SelectBands)) SelectBands <- seq_len(dim(rast_sample)[2]-1)
+  nb_pix_per_plot <- data.frame(table(rast_sample$ID))
+  # only get common plots between nb_pix_per_plot and nb_pix_per_plot_init
+  if (length(nb_pix_per_plot$Freq)>0){
+    if (is.null(selected_bands)) selected_bands <- seq_len(dim(rast_sample)[2]-1)
     rast_sample_noID <- rast_sample
     rast_sample_noID$ID <- NULL
     SSValid <- get_spectralSpecies(inputdata = rast_sample_noID,
                                    Kmeans_info = Kmeans_info,
-                                   SelectBands = SelectBands)
+                                   selected_bands = selected_bands)
     SSValid$win_ID <- rast_sample$ID
     # Functional diversity
     if (!is.null(Functional)){
-      if (is.null(SelectBands)) SelectBands <- seq_len(ncol(rast_sample_noID))
+      if (is.null(selected_bands)) selected_bands <- seq_len(ncol(rast_sample_noID))
       # center reduce data
-      inputdata_cr <- center_reduce(X = rast_sample_noID[SelectBands],
+      inputdata_cr <- center_reduce(x = rast_sample_noID[selected_bands],
                                     m = Kmeans_info$MinVal,
                                     sig = Kmeans_info$Range)
       inputdata_cr$ID <- rast_sample$ID

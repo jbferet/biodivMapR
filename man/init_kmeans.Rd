@@ -8,16 +8,16 @@ init_kmeans(
   input_rast,
   output_dir,
   input_mask = NULL,
-  SelectBands = NULL,
-  nbclusters = 50,
-  nbIter = 20,
+  selected_bands = NULL,
+  nb_clusters = 50,
+  nb_iter = 10,
   Kmeans_info_save = NULL,
   Kmeans_info_read = NULL,
-  maxPixel_kmeans = 1e+05,
+  nb_samples_alpha = 1e+05,
   algorithm = "Hartigan-Wong",
   nbCPU = 1,
-  verbose = T,
-  progressbar = T
+  verbose = TRUE,
+  progressbar = TRUE
 )
 }
 \arguments{
@@ -27,17 +27,17 @@ init_kmeans(
 
 \item{input_mask}{character. Path and name of the mask corresponding to the image}
 
-\item{SelectBands}{numeric. bands selected from input_rast}
+\item{selected_bands}{numeric. bands selected from input_rast}
 
-\item{nbclusters}{numeric. number of clusters used in kmeans}
+\item{nb_clusters}{numeric. number of clusters used in kmeans}
 
-\item{nbIter}{numeric. nb of iterations averaged to compute diversity indices}
+\item{nb_iter}{numeric. nb of iterations averaged to compute diversity indices}
 
 \item{Kmeans_info_save}{character. path where to save Kmeans_info}
 
 \item{Kmeans_info_read}{character. path where to read Kmeans_info}
 
-\item{maxPixel_kmeans}{numeric. max number of pixels to extract for kmeans}
+\item{nb_samples_alpha}{numeric. max number of pixels to extract for kmeans}
 
 \item{algorithm}{character. algorithm used in the kmeans clustering}
 

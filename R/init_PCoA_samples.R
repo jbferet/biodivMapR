@@ -3,7 +3,7 @@
 #' @param rast_sample data frame containing samples to use
 #' @param output_dir character. Path for output directory
 #' @param Kmeans_info list. obtained from prepare_init_kmeans
-#' @param SelectBands numeric. bands selected from input_rast
+#' @param selected_bands numeric. bands selected from input_rast
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
 #' @param dimPCoA numeric.
 #' @param nbCPU numeric. Number of CPUs available
@@ -21,27 +21,30 @@
 #' @export
 
 init_PCoA_samples <- function(rast_sample, output_dir, Kmeans_info,
-                              SelectBands = NULL, pcelim = 0.02, dimPCoA = 3,
-                              nbCPU = 1, Beta_info_save = NULL, verbose = T){
+                              selected_bands = NULL, pcelim = 0.02, dimPCoA = 3,
+                              nbCPU = 1, Beta_info_save = NULL, verbose = TRUE){
 
   rast_sample <- clean_NAsInf(rast_sample)
   ID <- NULL
   # list per plot
-  rast_sample <- rast_sample %>% group_split(ID, .keep = F)
-  if (verbose ==T) message('compute spectral species from beta plots')
+  rast_sample <- rast_sample %>% group_split(ID, .keep = FALSE)
+  if (verbose ==TRUE)
+    message('compute spectral species from beta plots')
   # compute spectral species for each plot
   ResDist <- lapply(X = rast_sample, FUN = apply_kmeans,
                     Kmeans_info = Kmeans_info,
-                    SelectBands = SelectBands)
+                    select_bands = selected_bands)
 
   # spectral species distribution
   SSdist <- list()
-  for (iter in names(ResDist[[1]])) SSdist[[iter]] <- lapply(ResDist, '[[',iter)
-  # get nbIter and nbclusters
-  nbIter <- length(Kmeans_info$Centroids)
-  nbclusters <- dim(Kmeans_info$Centroids[[1]])[1]
+  for (iter in names(ResDist[[1]]))
+    SSdist[[iter]] <- lapply(ResDist, '[[',iter)
+  # get nb_iter and nb_clusters
+  nb_iter <- length(Kmeans_info$Centroids)
+  nb_clusters <- dim(Kmeans_info$Centroids[[1]])[1]
   # compute spectral species distribution for each cluster & BC dissimilarity
-  if (verbose ==T) message('compute dissimilarity among plots')
+  if (verbose ==TRUE)
+    message('compute dissimilarity among plots')
   # plan(multisession, workers = nbCPU)
   if (nbCPU>1){
     cl <- parallel::makeCluster(nbCPU)
@@ -50,10 +53,10 @@ init_PCoA_samples <- function(rast_sample, output_dir, Kmeans_info,
     suppressWarnings(progressr::handlers("cli"))
     # progressr::handlers("debug")
     suppressWarnings(with_progress({
-      p <- progressr::progressor(steps = nbIter)
+      p <- progressr::progressor(steps = nb_iter)
       Beta_info <- future.apply::future_lapply(SSdist,
-                                               FUN = get_BCdiss_from_SSD,
-                                               nbclusters = nbclusters,
+                                               FUN = get_bc_diss_from_ssd,
+                                               nb_clusters = nb_clusters,
                                                pcelim = pcelim, p = p,
                                                future.seed = TRUE)
     }))
@@ -61,20 +64,21 @@ init_PCoA_samples <- function(rast_sample, output_dir, Kmeans_info,
     plan(sequential)
   } else {
     Beta_info <- lapply(X = SSdist,
-                        FUN = get_BCdiss_from_SSD,
-                        nbclusters = nbclusters,
+                        FUN = get_bc_diss_from_ssd,
+                        nb_clusters = nb_clusters,
                         pcelim = pcelim)
   }
   MatBC_iter <- lapply(Beta_info, '[[','MatBC')
   SSD <- lapply(Beta_info, '[[','SSD')
-  MatBC <- Reduce('+', MatBC_iter)/nbIter
+  MatBC <- Reduce('+', MatBC_iter)/nb_iter
   MatBCdist <- stats::as.dist(MatBC, diag = FALSE, upper = FALSE)
-  if (verbose ==T) message('perform PCoA')
+  if (verbose ==TRUE)
+    message('perform PCoA')
   BetaPCO <- pco(MatBCdist, k = dimPCoA)
   # Beta_Ordination_sel <- BetaPCO$points
   Beta_info <- list('SSD' = SSD, 'MatBC' = MatBC, 'BetaPCO' = BetaPCO)
-  if (is.null(Beta_info_save)) Beta_info_save <- file.path(output_dir,
-                                                           'Beta_info.RData')
+  if (is.null(Beta_info_save))
+    Beta_info_save <- file.path(output_dir, 'Beta_info.RData')
   save(Beta_info, file = Beta_info_save)
   return(Beta_info)
 }

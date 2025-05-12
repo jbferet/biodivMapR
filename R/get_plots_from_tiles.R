@@ -5,7 +5,7 @@
 #' @param listfiles character.
 #' @param feat_list list.
 #' @param window_size numeric.
-#' @param minSun numeric.
+#' @param min_sun numeric.
 #' @param p list.
 #'
 #' @return samples_beta
@@ -15,7 +15,7 @@
 #' @export
 #'
 get_plots_from_tiles <- function(plotID, plots2sel, listfiles, feat_list,
-                                 window_size, minSun = 0.75, p = NULL){
+                                 window_size, min_sun = 0.75, p = NULL){
 
   plotID2 <- paste0('_',plotID,'_')
   # tileSI <- listfiles[stringr::str_detect(string = listfiles, pattern = plotID2)]
@@ -34,8 +34,9 @@ get_plots_from_tiles <- function(plotID, plots2sel, listfiles, feat_list,
       }
       # read rasters, select more plots to compensate for shaded areas
       selplot <- terra::spatSample(x = rastID, size = as.numeric(plots2sel)+5,
-                                   method = "random", na.rm = T, as.df = F,
-                                   as.points = T, xy = F, warn = F)
+                                   method = "random", na.rm = TRUE,
+                                   as.df = FALSE, as.points = TRUE, xy = FALSE,
+                                   warn = FALSE)
 
       extent_area <- get_raster_extent(rastID[[1]])
       # deal with crs units when not meters
@@ -43,7 +44,7 @@ get_plots_from_tiles <- function(plotID, plots2sel, listfiles, feat_list,
         # get resolution in meters for centroid
         centroid_aoi <- terra::centroids(x = extent_area)
         occs_df <- data.frame('latitude' = terra::ext(centroid_aoi)[3],
-                              'longitude' = terra::ext(centroid_aoi)[3],
+                              'longitude' = terra::ext(centroid_aoi)[1],
                               'distance' = 1)
         # how many degrees for one meter?
         distlatlon <- preprocS2::meters_to_decdeg(occs_df = occs_df,
@@ -75,8 +76,9 @@ get_plots_from_tiles <- function(plotID, plots2sel, listfiles, feat_list,
       samples_beta$plotID <- plotID
       samples_beta <- samples_beta %>% group_split(ID)
       # select plots with sufficient sunlit pixels
-      nbPixSunLit <- lapply(lapply(samples_beta, '[[', 'mask'), sum, na.rm = T)
-      minPix <- minSun*window_size**2
+      nbPixSunLit <- lapply(lapply(samples_beta, '[[', 'mask'),
+                            sum, na.rm = TRUE)
+      minPix <- min_sun*window_size**2
       selPlots <- which(unlist(nbPixSunLit)>minPix)
       samples_beta <- samples_beta[selPlots[1:plots2sel]]
       if (length(samples_beta)>0){

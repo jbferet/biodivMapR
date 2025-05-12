@@ -13,10 +13,10 @@ biodivMapR_chunk(
   alphametrics = "shannon",
   Hill_order = 1,
   FDmetric = NULL,
-  SelectBands = NULL,
+  selected_bands = NULL,
   pcelim = 0.02,
   nbCPU = 1,
-  MinSun = 0.25,
+  min_sun = 0.25,
   p = NULL
 )
 }
@@ -29,21 +29,21 @@ biodivMapR_chunk(
 
 \item{Kmeans_info}{list. kmeans description obtained from function get_kmeans}
 
-\item{Beta_info}{list. BC dissimilarity & associated beta metrics from training set}
+\item{Beta_info}{list. BC dissimilarity & associated beta metrics}
 
-\item{alphametrics}{list. alpha diversity metrics: richness, shannon, simpson}
+\item{alphametrics}{list. alpha diversity metrics}
 
 \item{Hill_order}{numeric. Hill order}
 
 \item{FDmetric}{character. list of functional metrics}
 
-\item{SelectBands}{numeric. bands selected from input data}
+\item{selected_bands}{numeric. bands selected from input data}
 
-\item{pcelim}{numeric. minimum proportion of pixels to consider spectral species}
+\item{pcelim}{numeric. min proportion of pixels to consider spectral species}
 
 \item{nbCPU}{numeric. Number of CPUs available}
 
-\item{MinSun}{numeric. minimum amount of sunlit pixels in the plots}
+\item{min_sun}{numeric. minimum amount of sunlit pixels in the plots}
 
 \item{p}{list. progressor object for progress bar}
 }

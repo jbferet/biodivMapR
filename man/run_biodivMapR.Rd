@@ -11,7 +11,7 @@ run_biodivMapR(
   Beta_info,
   output_dir,
   output_raster_name,
-  SelectBands = NULL,
+  selected_bands = NULL,
   window_size,
   alphametrics = "shannon",
   Hill_order = 1,
@@ -19,9 +19,9 @@ run_biodivMapR(
   pcelim = 0.02,
   maxRows = NULL,
   nbCPU = 1,
-  MinSun = 0.25,
+  min_sun = 0.25,
   filetype = "GTiff",
-  MovingWindow = F
+  moving_window = FALSE
 )
 }
 \arguments{
@@ -31,13 +31,13 @@ run_biodivMapR(
 
 \item{Kmeans_info}{list. kmeans description obtained from function get_kmeans}
 
-\item{Beta_info}{list. BC dissimilarity & associated beta metrics from training set}
+\item{Beta_info}{list. BC dissimilarity & associated beta metrics}
 
 \item{output_dir}{path where to save outputs}
 
 \item{output_raster_name}{raster file names}
 
-\item{SelectBands}{numeric. bands selected from input data}
+\item{selected_bands}{numeric. bands selected from input data}
 
 \item{window_size}{numeric. window size for square plots}
 
@@ -47,17 +47,17 @@ run_biodivMapR(
 
 \item{FDmetric}{character. list of functional metrics}
 
-\item{pcelim}{numeric. minimum proportion of pixels to consider spectral species}
+\item{pcelim}{numeric. min proportion of pixels to consider spectral species}
 
 \item{maxRows}{numeric. maximum number or rows to process}
 
 \item{nbCPU}{numeric. Number of CPUs available}
 
-\item{MinSun}{numeric. minimum proportion of sunlit pixels}
+\item{min_sun}{numeric. minimum proportion of sunlit pixels}
 
 \item{filetype}{character. gdal driver name}
 
-\item{MovingWindow}{boolean. should process be moving window (much longer)}
+\item{moving_window}{boolean. should process be moving window (much longer)}
 }
 \value{
 none

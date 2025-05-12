@@ -16,7 +16,7 @@ get_valid_pixels_from_tiles(feature_dir, plots, nbCPU = 1, mask_dir = NULL)
 \item{mask_dir}{character.}
 }
 \value{
-nbPixValid
+nb_pix_valid
 }
 \description{
 get valid pixels from list of tiles

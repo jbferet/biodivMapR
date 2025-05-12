@@ -1,7 +1,7 @@
 #' sample exact number of pixels from a raster
 #'
 #' @param extent_area extent
-#' @param nbSamples numeric. number of samples to be extracted
+#' @param nb_samples numeric. number of samples to be extracted
 #' @param input_rast SpatRaster. raster to extract data from
 #' @param input_mask SpatRaster. mask corresponding to raster to extract data from
 #'
@@ -12,12 +12,12 @@
 #' @export
 
 sample_exact_raster <- function(extent_area = extent_area,
-                                nbSamples = nbSamples,
+                                nb_samples = nb_samples,
                                 input_rast = input_rast,
                                 input_mask = input_mask){
 
   rast_sample <- sample_from_raster(extent_area = extent_area,
-                                    nbSamples = nbSamples,
+                                    nb_samples = nb_samples,
                                     input_rast = input_rast,
                                     input_mask = input_mask)
   return(rast_sample)

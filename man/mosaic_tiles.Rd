@@ -4,7 +4,7 @@
 \alias{mosaic_tiles}
 \title{compute spectral indices and composite for a given period of time}
 \usage{
-mosaic_tiles(pattern, dir_path, vrt_save, siteName = NULL, overwrite = F)
+mosaic_tiles(pattern, dir_path, vrt_save, siteName = NULL, overwrite = FALSE)
 }
 \arguments{
 \item{pattern}{character. identify which files to mosaic}

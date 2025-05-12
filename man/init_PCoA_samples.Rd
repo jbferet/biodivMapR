@@ -8,12 +8,12 @@ init_PCoA_samples(
   rast_sample,
   output_dir,
   Kmeans_info,
-  SelectBands = NULL,
+  selected_bands = NULL,
   pcelim = 0.02,
   dimPCoA = 3,
   nbCPU = 1,
   Beta_info_save = NULL,
-  verbose = T
+  verbose = TRUE
 )
 }
 \arguments{
@@ -23,7 +23,7 @@ init_PCoA_samples(
 
 \item{Kmeans_info}{list. obtained from prepare_init_kmeans}
 
-\item{SelectBands}{numeric. bands selected from input_rast}
+\item{selected_bands}{numeric. bands selected from input_rast}
 
 \item{pcelim}{numeric. minimum proportion of pixels to consider spectral species}
 

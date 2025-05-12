@@ -14,19 +14,19 @@ biodivMapR_full(
   Beta_info_save = NULL,
   Beta_info_read = NULL,
   input_mask_path = NULL,
-  nbclusters = 50,
-  nbSamples_beta = 1000,
-  SelectBands = NULL,
+  nb_clusters = 50,
+  nb_samples_beta = 1000,
+  selected_bands = NULL,
   alphametrics = "shannon",
   Hill_order = 1,
   FDmetric = NULL,
   pcelim = 0.02,
   nbCPU = 1,
-  nbIter = 20,
-  MinSun = 0.25,
-  maxPixel_kmeans = 1e+05,
+  nb_iter = 10,
+  min_sun = 0.25,
+  nb_samples_alpha = 1e+05,
   dimPCoA = 3,
-  progressbar = T,
+  progressbar = TRUE,
   filetype = "GTiff"
 )
 }
@@ -49,11 +49,11 @@ biodivMapR_full(
 
 \item{input_mask_path}{character. path for mask file}
 
-\item{nbclusters}{numeric. number of clusters used in kmeans}
+\item{nb_clusters}{numeric. number of clusters used in kmeans}
 
-\item{nbSamples_beta}{numeric. number of samples to compute beta diversity from}
+\item{nb_samples_beta}{numeric. number of samples to compute beta diversity}
 
-\item{SelectBands}{numeric. bands selected from input_rast}
+\item{selected_bands}{numeric. bands selected from input_rast}
 
 \item{alphametrics}{list. alpha diversity metrics: richness, shannon, simpson}
 
@@ -65,11 +65,11 @@ biodivMapR_full(
 
 \item{nbCPU}{numeric. Number of CPUs available}
 
-\item{nbIter}{numeric. nb of iterations averaged to compute diversity indices}
+\item{nb_iter}{numeric. nb of iterations averaged to compute diversity indices}
 
-\item{MinSun}{numeric. minimum amount of sunlit pixels in the plots}
+\item{min_sun}{numeric. minimum amount of sunlit pixels in the plots}
 
-\item{maxPixel_kmeans}{numeric. max number of pixels extracted for kmeans}
+\item{nb_samples_alpha}{numeric. max number of pixels extracted for kmeans}
 
 \item{dimPCoA}{numeric. number of dimensions of PCoA}
 

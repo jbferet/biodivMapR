@@ -36,7 +36,7 @@ dir.create(output_dir_PCA2, showWarnings = F, recursive = T)
 
 # 2- define parameters for biodivMapR
 window_size <- 10         # window side size for computation of spectral diversity
-nbclusters <- 50          # nb of clusters (spectral species)
+nb_clusters <- 50          # nb of clusters (spectral species)
 
 # 3- define path for intermediate variables to be saved
 # - information related to kmeans clustering defining spectral species
@@ -53,9 +53,9 @@ selectedPC <- c(1,5,6)
 ab_info_SPCA <- biodivMapR_full(input_raster_path = PCA_Output$PCA_Files$PCA, 
                                 input_mask_path = mask_path_PCA,
                                 output_dir = output_dir_PCA2, 
-                                SelectBands = selectedPC, 
+                                selected_bands = selectedPC, 
                                 window_size = window_size, 
-                                nbclusters = nbclusters, 
+                                nb_clusters = nb_clusters, 
                                 Kmeans_info_save = Kmeans_info_save,
                                 Beta_info_save = Beta_info_save, 
                                 maxRows = maxRows, nbCPU = nbCPU)
@@ -85,11 +85,11 @@ Spectral indices computed previously will be used here to produce diversity maps
 
 # 1- define biodivMapR output directory 
 output_dir_SI2 <- file.path('./biodivMapR/SpectralIndices')
-dir.create(output_dir, showWarnings = F, recursive = T)
+dir.create(output_dir_SI2, showWarnings = F, recursive = T)
 
 # 2- define parameters for biodivMapR
 window_size <- 10         # window side size for computation of spectral diversity
-nbclusters <- 50          # nb of clusters (spectral species)
+nb_clusters <- 50          # nb of clusters (spectral species)
 
 # 3- define path for intermediate variables to be saved
 # - information related to kmeans clustering defining spectral species
@@ -106,7 +106,7 @@ ab_info_SI <- biodivMapR_full(input_raster_path = SI_path,
                               input_mask_path = mask_path_SI,
                               output_dir = output_dir_SI2, 
                               window_size = window_size,
-                              nbclusters = nbclusters, 
+                              nb_clusters = nb_clusters, 
                               Kmeans_info_save = Kmeans_info_save,
                               Beta_info_save = Beta_info_save, 
                               maxRows = maxRows, nbCPU = nbCPU)

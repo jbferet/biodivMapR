@@ -72,30 +72,8 @@ bbox <- sf::st_bbox(obj = c('xmin' = 357001, 'ymin' = 341701,
                             'xmax' = 366730, 'ymax' = 351236))
 sf::st_crs(x = bbox) <- 32633
 
-# 2- get tiling grid kml from https://sentiwiki.copernicus.eu/web/s2-products
-path_S2tilinggrid <- 'Sentinel-2_tiling_grid.kml'
-
-# 3- get S2 acquisition and geometry of acquisition for study area
-# OAuth client ID and secret password should be provided
-# https://shapps.dataspace.copernicus.eu/dashboard/#/account/settings
-id <- "sh-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
-secret <- "XXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-
-# tip to save credential on your computer: run the following command : 
-# > file.edit("~/.Renviron")
-# add ID and password for CDSE as well as CURL_SSL_BACKEND using this template
-# > CDSE_ID="sh-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
-# > CDSE_SECRET="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-# > CURL_SSL_BACKEND="openssl"
-# save .Renviron file and restart R session then load your credential this way: 
-# > id <- Sys.getenv("CDSE_ID")
-# > secret <- Sys.getenv("CDSE_SECRET")
-authentication <- list('id' = id, 'pwd' = secret)
-
-# 3- get S2 acquisition for study area
+# 2- get S2 acquisition for study area
 list_files <- preprocS2::get_s2_raster(bbox = bbox, geomAcq = T,
-                                       authentication = authentication, 
-                                       path_S2tilinggrid = path_S2tilinggrid, 
                                        datetime = datetime, 
                                        output_dir = output_dir_s2, 
                                        siteName = siteName)
@@ -133,7 +111,7 @@ destzip <- file.path(output_dir_val,'S2A_T33NUD_Plots.zip')
 # url for the zip file
 url <- 'https://gitlab.com/jbferet/myshareddata/-/raw/master/biodivMapR_S2_Sample/VECTOR/S2A_T33NUD_Plots.zip'
 download.file(url = url, destfile = destzip)
-destunz <- file.path(tmpdir,'S2A_T33NUD_Plots')
+destunz <- file.path(output_dir_s2,'S2A_T33NUD_Plots')
 unzip(zipfile = destzip, exdir = destunz)
 unlink(x = destzip, recursive = T)
 

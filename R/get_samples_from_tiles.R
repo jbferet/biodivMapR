@@ -17,7 +17,7 @@
 #' @export
 #'
 get_samples_from_tiles <- function(plotID, pix2sel, listfiles, feat_list,
-                                   as.df = F, as.points = F, xy = F,
+                                   as.df = FALSE, as.points = FALSE, xy = FALSE,
                                    method = 'regular', p = NULL){
   plotID <- paste0('_',plotID,'_')
   # tileSI <- listfiles[stringr::str_detect(string = listfiles, pattern = plotID)]
@@ -33,11 +33,12 @@ get_samples_from_tiles <- function(plotID, pix2sel, listfiles, feat_list,
                                  pattern = feat))
         names(rastID)[whichfeat] <- feat
       }
-      selpix <- spatSample(x = rastID, size = as.numeric(pix2sel), method = method,
-                           na.rm = T, as.df = as.df, as.points = as.points,
-                           xy = xy, warn = F)
+      selpix <- spatSample(x = rastID, size = as.numeric(pix2sel),
+                           method = method, na.rm = TRUE, as.df = as.df,
+                           as.points = as.points, xy = xy, warn = FALSE)
     }
   }
-  if (!is.null(p)) p()
+  if (!is.null(p))
+    p()
   return(selpix)
 }

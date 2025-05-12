@@ -10,7 +10,7 @@ get_plots_from_tiles(
   listfiles,
   feat_list,
   window_size,
-  minSun = 0.75,
+  min_sun = 0.75,
   p = NULL
 )
 }
@@ -25,7 +25,7 @@ get_plots_from_tiles(
 
 \item{window_size}{numeric.}
 
-\item{minSun}{numeric.}
+\item{min_sun}{numeric.}
 
 \item{p}{list.}
 }

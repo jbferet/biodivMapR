@@ -12,12 +12,14 @@ biodivMapR_full_tiles(
   output_dir,
   window_size,
   plots,
-  nbsamples_alpha = 1e+05,
-  nbsamples_beta = 2000,
+  nb_clusters = 50,
+  nb_samples_alpha = 1e+05,
+  nb_samples_beta = 2000,
   nbCPU = 1,
+  nb_iter = 10,
   pcelim = 0.02,
   maxRows = 1200,
-  MovingWindow = F,
+  moving_window = FALSE,
   siteName = NULL
 )
 }
@@ -36,17 +38,21 @@ biodivMapR_full_tiles(
 
 \item{plots}{list. list of sf plots}
 
-\item{nbsamples_alpha}{numeric. number of samples to compute beta diversity from}
+\item{nb_clusters}{numeric. number of clusters}
 
-\item{nbsamples_beta}{numeric. number of samples to compute beta diversity from}
+\item{nb_samples_alpha}{numeric. number of samples to compute alpha diversity}
+
+\item{nb_samples_beta}{numeric. number of samples to compute beta diversity}
 
 \item{nbCPU}{numeric. Number of CPUs available}
+
+\item{nb_iter}{numeric. Number of iterations required to compute diversity}
 
 \item{pcelim}{numeric. minimum proportion of pixels to consider spectral species}
 
 \item{maxRows}{numeric. maximum number of rows}
 
-\item{MovingWindow}{boolean. should moving window be used?}
+\item{moving_window}{boolean. should moving window be used?}
 
 \item{siteName}{character. name for the output files}
 }

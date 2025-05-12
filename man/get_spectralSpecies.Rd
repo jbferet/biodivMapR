@@ -4,14 +4,14 @@
 \alias{get_spectralSpecies}
 \title{compute spectral species from inputdata}
 \usage{
-get_spectralSpecies(inputdata, Kmeans_info, SelectBands = NULL, nbCPU = 1)
+get_spectralSpecies(inputdata, Kmeans_info, selected_bands = NULL, nbCPU = 1)
 }
 \arguments{
 \item{inputdata}{dataframe. information extracted from raster data}
 
 \item{Kmeans_info}{list. obtained from function get_kmeans}
 
-\item{SelectBands}{numeric. bands selected from inputdata}
+\item{selected_bands}{numeric. bands selected from inputdata}
 
 \item{nbCPU}{numeric. Number of CPUs available}
 }

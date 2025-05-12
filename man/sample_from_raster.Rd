@@ -6,7 +6,7 @@
 \usage{
 sample_from_raster(
   extent_area,
-  nbSamples,
+  nb_samples,
   input_rast,
   input_mask = NULL,
   window_size = NULL,
@@ -16,7 +16,7 @@ sample_from_raster(
 \arguments{
 \item{extent_area}{.}
 
-\item{nbSamples}{numeric. number of samples to be extracted}
+\item{nb_samples}{numeric. number of samples to be extracted}
 
 \item{input_rast}{SpatRaster. raster to extract data from}
 

@@ -3,9 +3,9 @@
 #' @param feature_dir character.
 #' @param list_features character.
 #' @param plots list.
-#' @param nbPixValid numeric.
+#' @param nb_pix_valid numeric.
 #' @param mask_dir character.
-#' @param nbsamples_beta numeric.
+#' @param nb_samples_beta numeric.
 #' @param window_size numeric.
 #' @param nbCPU numeric.
 #'
@@ -14,25 +14,25 @@
 #' @export
 
 sample_from_plots_beta <- function(feature_dir, list_features, plots,
-                                   nbPixValid, mask_dir = NULL, window_size,
-                                   nbsamples_beta = 2e3, nbCPU = 1){
+                                   nb_pix_valid, mask_dir = NULL, window_size,
+                                   nb_samples_beta = 2e3, nbCPU = 1){
 
   # define number of samples per tile
-  totalPixels <- sum(unlist(nbPixValid))
-  if (totalPixels<nbsamples_beta)
-    nbsamples_beta <- totalPixels
-  ratioStats <- nbsamples_beta/totalPixels
-  plots2sel <- lapply(X = nbPixValid,
+  totalPixels <- sum(unlist(nb_pix_valid))
+  if (totalPixels<nb_samples_beta)
+    nb_samples_beta <- totalPixels
+  ratioStats <- nb_samples_beta/totalPixels
+  plots2sel <- lapply(X = nb_pix_valid,
                       FUN = function(x, ratio){as.numeric(ceiling(x*ratio))},
                       ratio = ratioStats)
 
   # define features to sample
   if (is.null(mask_dir)){
-    listfiles <- list.files(feature_dir, full.names = T)
+    listfiles <- list.files(feature_dir, full.names = TRUE)
     feat_list <- list_features
   } else {
-    listfiles <- c(list.files(feature_dir, full.names = T),
-                   list.files(mask_dir, full.names = T))
+    listfiles <- c(list.files(feature_dir, full.names = TRUE),
+                   list.files(mask_dir, full.names = TRUE))
     feat_list <- c(list_features, 'mask')
   }
 
@@ -48,20 +48,21 @@ sample_from_plots_beta <- function(feature_dir, list_features, plots,
                                                    feat_list = feat_list,
                                                    window_size = window_size,
                                                    p = p),
-                                   SIMPLIFY = F)}))
+                                   SIMPLIFY = FALSE)}))
   } else {
     message('get samples for beta diversity')
     cl <- parallel::makeCluster(nbCPU)
     plan("cluster", workers = cl)
     samples_beta_terra <- future.apply::future_mapply(FUN = get_plots_from_tiles,
-                                                      plotID = names(plots), plots2sel = plots2sel,
+                                                      plotID = names(plots),
+                                                      plots2sel = plots2sel,
                                                       MoreArgs = list(listfiles = listfiles,
                                                                       feat_list = feat_list,
                                                                       window_size = window_size),
-                                                      future.seed = T,
+                                                      future.seed = TRUE,
                                                       future.chunk.size = NULL,
                                                       future.scheduling = structure(TRUE, ordering = "random"),
-                                                      SIMPLIFY = F)
+                                                      SIMPLIFY = FALSE)
     parallel::stopCluster(cl)
     plan(sequential)
   }

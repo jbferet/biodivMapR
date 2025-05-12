@@ -22,7 +22,7 @@ save_diversity_maps_tile(
 
 \item{ab_div_metrics}{list produced from get_raster_diversity}
 
-\item{alphametrics}{list. alpha diversity metrics: richness, shannon, simpson, hill}
+\item{alphametrics}{list. alpha diversity metrics}
 
 \item{Hill_order}{numeric. Hill order}
 

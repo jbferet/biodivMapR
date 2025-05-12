@@ -6,7 +6,7 @@
 \usage{
 sample_exact_raster(
   extent_area = extent_area,
-  nbSamples = nbSamples,
+  nb_samples = nb_samples,
   input_rast = input_rast,
   input_mask = input_mask
 )
@@ -14,7 +14,7 @@ sample_exact_raster(
 \arguments{
 \item{extent_area}{extent}
 
-\item{nbSamples}{numeric. number of samples to be extracted}
+\item{nb_samples}{numeric. number of samples to be extracted}
 
 \item{input_rast}{SpatRaster. raster to extract data from}
 

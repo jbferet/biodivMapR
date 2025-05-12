@@ -4,7 +4,7 @@
 #' @param Kmeans_info list. kmeans description obtained from function get_kmeans
 #' @param Beta_info list. BC dissimilarity & associated beta metrics from training set
 #' @param input_mask_path character. path for mask file
-#' @param SelectBands numeric. bands selected from input_rast
+#' @param selected_bands numeric. bands selected from input_rast
 #' @param alphametrics list. alpha diversity metrics: richness, shannon, simpson
 #' @param Hill_order numeric. Hill order
 #' @param FDmetric character. list of functional metrics
@@ -12,7 +12,7 @@
 #' @param maxRows numeric. max number of rows in each block
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
 #' @param nbCPU numeric. Number of CPUs available
-#' @param MinSun numeric. minimum amount of sunlit pixels in the plots
+#' @param min_sun numeric. minimum amount of sunlit pixels in the plots
 #'
 #' @return ab_div_metrics list. contains all metrics
 #' @import cli
@@ -21,10 +21,10 @@
 #' @export
 
 get_raster_diversity <- function(input_raster_path, Kmeans_info, Beta_info,
-                                 input_mask_path = NULL, SelectBands = NULL,
+                                 input_mask_path = NULL, selected_bands = NULL,
                                  alphametrics = 'shannon', Hill_order = 1,
                                  FDmetric = NULL, window_size, maxRows = NULL,
-                                 pcelim = 0.02, nbCPU = 1, MinSun = 0.25){
+                                 pcelim = 0.02, nbCPU = 1, min_sun = 0.25){
   if (is.null(maxRows)) maxRows <- 20*window_size
   # prepare to read input raster data
   r_in <- list()
@@ -59,9 +59,9 @@ get_raster_diversity <- function(input_raster_path, Kmeans_info, Beta_info,
                              FDmetric = FDmetric,
                              r_in = r_in,
                              window_size = window_size,
-                             SelectBands = SelectBands,
+                             selected_bands = selected_bands,
                              pcelim = pcelim, nbCPU = nbCPU,
-                             MinSun = MinSun)
+                             min_sun = min_sun)
   } else {
     if (nbCPU>1){
     # compute diversity metrics for each block
@@ -79,9 +79,9 @@ get_raster_diversity <- function(input_raster_path, Kmeans_info, Beta_info,
                                  FDmetric = FDmetric,
                                  r_in = r_in,
                                  window_size = window_size,
-                                 SelectBands = SelectBands,
+                                 selected_bands = selected_bands,
                                  pcelim = pcelim, nbCPU = nbCPU,
-                                 MinSun = MinSun, p = p)
+                                 min_sun = min_sun, p = p)
       }))
     }
   }

@@ -7,14 +7,14 @@
 init_kmeans_samples(
   rast_sample,
   output_dir,
-  SelectBands = NULL,
-  nbclusters = 50,
-  nbIter = 20,
+  selected_bands = NULL,
+  nb_clusters = 50,
+  nb_iter = 10,
   Kmeans_info_save = NULL,
   algorithm = "Hartigan-Wong",
   nbCPU = 1,
-  verbose = T,
-  progressbar = T
+  verbose = TRUE,
+  progressbar = TRUE
 )
 }
 \arguments{
@@ -22,11 +22,11 @@ init_kmeans_samples(
 
 \item{output_dir}{character. Path for output directory}
 
-\item{SelectBands}{numeric. bands selected from input_rast}
+\item{selected_bands}{numeric. bands selected from input_rast}
 
-\item{nbclusters}{numeric. number of clusters used in kmeans}
+\item{nb_clusters}{numeric. number of clusters used in kmeans}
 
-\item{nbIter}{numeric. nb of iterations averaged to compute diversity indices}
+\item{nb_iter}{numeric. nb of iterations averaged to compute diversity indices}
 
 \item{Kmeans_info_save}{character. path where to save Kmeans_info}
 

@@ -10,7 +10,7 @@
 # used in noise
 
 # TODO: faire 2 fonctions: mnf et mnf.subset, de même pour noise, noise.subset
-mnf <- function(X, coordPix=NULL, retx=TRUE){
+mnf <- function(X, coordPix = NULL, retx = TRUE){
   if(any(is.na(X))){
     stop('Pixels with NAs found in X. Remove NA pixels before trying again.')
   }
@@ -26,12 +26,12 @@ mnf <- function(X, coordPix=NULL, retx=TRUE){
     nz <- matrix(nz, nrow = Xdim[1]*Xdim[2])
   }
 
-  Xc = scale(X, center = T, scale = F)
+  Xc <- scale(X, center = TRUE, scale = FALSE)
 
   covNoise <- stats::cov(nz)
   covXc <- stats::cov(Xc)
   eig <- eigen(solve(covNoise)%*%covXc)
-  colnames(eig$vectors) = paste0('PC', 1:ncol(eig$vectors))
+  colnames(eig$vectors) <- paste0('PC', seq_len(ncol(eig$vectors)))
   modMNF <- list(sdev = sqrt(eig$values), rotation = eig$vectors,
                  center = colMeans(X), scale = FALSE)
   attr(modMNF, 'class') <- 'prcomp'
@@ -43,8 +43,8 @@ mnf <- function(X, coordPix=NULL, retx=TRUE){
   #                 sdev=sqrt(eig_pairs$eigval),
   #                 center=colMeans(X),
   #                 scale=FALSE)
-  if(retx==T)
-    modMNF$x= array(Xc %*% modMNF$rotation, dim = Xdim)
+  if(retx)
+    modMNF$x <- array(Xc %*% modMNF$rotation, dim = Xdim)
 
   return(modMNF)
 }

@@ -7,7 +7,7 @@
 #' @param weightIRQ numeric.
 #' @param filetype character.
 #' @param nbCPU numeric.
-#' @param nbPixstats numeric.
+#' @param nb_pixstats numeric.
 #'
 #' @return mask_path_list
 #' @importFrom progressr progressor handlers with_progress
@@ -16,9 +16,9 @@
 #' @importFrom parallel makeCluster stopCluster
 #' @export
 #'
-compute_mask_IQR_tiles <- function(feature_dir, feature_list, mask_dir, plots,
+compute_mask_iqr_tiles <- function(feature_dir, feature_list, mask_dir, plots,
                                    weightIRQ = 4, filetype = 'GTiff', nbCPU = 1,
-                                   nbPixstats = 5e6){
+                                   nb_pixstats = 5e6){
 
   process_mask <- TRUE
   # first check missing masks
@@ -30,33 +30,35 @@ compute_mask_IQR_tiles <- function(feature_dir, feature_list, mask_dir, plots,
     tile_exists <- names(plots)[which(file.exists(mask_path))]
   } else {
     # check if features also exist
-    features_files <- lapply(X = feature_list, FUN = list.files, path = feature_dir)
+    features_files <- lapply(X = feature_list,
+                             FUN = list.files, path = feature_dir)
     names(features_files) <- feature_list
     feat_exists <- list()
     # which features exist
     for (feat in feature_list)
-      feat_exists[[feat]] <- unlist(lapply(X = mask_missing, FUN = grep, x = features_files[[feat]]))
+      feat_exists[[feat]] <- unlist(lapply(X = mask_missing,
+                                           FUN = grep, x = features_files[[feat]]))
     if (length(unlist(feat_exists))==0)
       process_mask <- FALSE
   }
 
   if (process_mask){
     # list files
-    listfiles <- list.files(feature_dir, full.names = T)
-    ##############################################################################
+    listfiles <- list.files(feature_dir, full.names = TRUE)
+    ############################################################################
     # get number of pixels per tile
     # if (nbCPU==1){
-      handlers("cli")
-      suppressWarnings(with_progress({
-        p <- progressr::progressor(steps = length(plots),
-                                   message = 'get valid pixels from tiles')
-        nbPixValid <- lapply(X = names(plots), FUN = get_valid_pixels,
+    handlers("cli")
+    suppressWarnings(with_progress({
+      p <- progressr::progressor(steps = length(plots),
+                                 message = 'get valid pixels from tiles')
+      nb_pix_valid <- lapply(X = names(plots), FUN = get_valid_pixels,
                              listfiles = listfiles, p = p)}))
     # } else {
     #   message('get valid pixels from tiles')
     #   cl <- parallel::makeCluster(nbCPU)
     #   plan("cluster", workers = cl)
-    #   nbPixValid <- future.apply::future_lapply(X = names(plots),
+    #   nb_pix_valid <- future.apply::future_lapply(X = names(plots),
     #                                             FUN = get_valid_pixels,
     #                                             listfiles = listfiles,
     #                                             future.seed = TRUE)
@@ -64,13 +66,13 @@ compute_mask_IQR_tiles <- function(feature_dir, feature_list, mask_dir, plots,
     #   plan(sequential)
     # }
     # get total number of pixels
-    totalPixels <- sum(unlist(nbPixValid))
-    ##############################################################################
-    # get statistics on nbPixstats
-    if (totalPixels<nbPixstats)
-      nbPixstats <- totalPixels
-    ratioStats <- nbPixstats/totalPixels
-    pix2sel <- lapply(X = nbPixValid,
+    totalPixels <- sum(unlist(nb_pix_valid))
+    ############################################################################
+    # get statistics on nb_pixstats
+    if (totalPixels<nb_pixstats)
+      nb_pixstats <- totalPixels
+    ratioStats <- nb_pixstats/totalPixels
+    pix2sel <- lapply(X = nb_pix_valid,
                       FUN = function(x, ratio){as.numeric(round(x*ratio))},
                       ratio = ratioStats)
     if (nbCPU==1){
@@ -82,19 +84,20 @@ compute_mask_IQR_tiles <- function(feature_dir, feature_list, mask_dir, plots,
                          plotID = names(plots), pix2sel = pix2sel,
                          MoreArgs = list(listfiles = listfiles,
                                          feat_list = feature_list,
-                                         as.df = T,
+                                         as.df = TRUE,
                                          p = p),
-                         SIMPLIFY = F)}))
+                         SIMPLIFY = FALSE)}))
     } else {
       message('compute stats')
       cl <- parallel::makeCluster(nbCPU)
       plan("cluster", workers = cl)
       selpix <- future.apply::future_mapply(FUN = get_samples_from_tiles,
-                                            plotID = names(plots), pix2sel = pix2sel,
+                                            plotID = names(plots),
+                                            pix2sel = pix2sel,
                                             MoreArgs = list(listfiles = listfiles,
                                                             feat_list = feature_list,
-                                                            as.df = T),
-                                            future.seed = T, SIMPLIFY = F)
+                                                            as.df = TRUE),
+                                            future.seed = TRUE, SIMPLIFY = FALSE)
       parallel::stopCluster(cl)
       plan(sequential)
     }
@@ -105,17 +108,17 @@ compute_mask_IQR_tiles <- function(feature_dir, feature_list, mask_dir, plots,
     ##############################################################################
     # produce mask for each tile
     # if (nbCPU==1){
-      handlers("cli")
-      suppressWarnings(with_progress({
+    handlers("cli")
+    suppressWarnings(with_progress({
 
-        p <- progressr::progressor(steps = length(plots),
-                                   message = 'update mask')
-        mask_path <- lapply(X = names(plots),
-                            FUN = update_mask_from_tiles,
-                            listfiles = listfiles,
-                            iqr_si = iqr_si,
-                            mask_dir = mask_dir,
-                            p = p)}))
+      p <- progressr::progressor(steps = length(plots),
+                                 message = 'update mask')
+      mask_path <- lapply(X = names(plots),
+                          FUN = update_mask_from_tiles,
+                          listfiles = listfiles,
+                          iqr_si = iqr_si,
+                          mask_dir = mask_dir,
+                          p = p)}))
     # } else {
     #   message('update mask')
     #   cl <- parallel::makeCluster(nbCPU)

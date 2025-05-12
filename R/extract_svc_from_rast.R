@@ -3,7 +3,7 @@
 #' @param SpatVector SpatVectorCollection object
 #' @param input_rast SpatRaster input raster
 #' @param input_mask SpatRaster optional mask
-#' @param MinSun numeric. minimum sunlit/unmasked proportion
+#' @param min_sun numeric. minimum sunlit/unmasked proportion
 #' @param prog boolean progressbar ?
 #'
 #' @return list including rast_sample: dataframe corresponding to
@@ -13,15 +13,15 @@
 #' @export
 
 extract_svc_from_rast <- function(SpatVector, input_rast,
-                                  input_mask = NULL, MinSun = 0.25,
-                                  prog = T){
+                                  input_mask = NULL, min_sun = 0.25,
+                                  prog = TRUE){
 
   # extract from list of SpatVectors in collection
   rastext <- lapply(X = SpatVector,
                     FUN = extract_vect_from_rast,
                     input_rast = input_rast,
                     input_mask = input_mask,
-                    MinSun = MinSun, prog = prog)
+                    min_sun = min_sun, prog = prog)
   # update plot ID in collection
   nbPlots_total <- 0
   for (ind_vect in seq_len(length(SpatVector))){
