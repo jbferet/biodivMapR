@@ -10,6 +10,7 @@
 get_BCdiss <- function(Mat1, pcelim = 0.02, p = NULL){
   ssd_list <- list(Mat1, Mat1)
   bc <- compute_bc_diss(ssd_list, pcelim)
-  if (!is.null(p)) p()
+  if (!is.null(p))
+    p()
   return(bc)
 }

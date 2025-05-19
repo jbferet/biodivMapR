@@ -2,14 +2,13 @@
 #'
 #' @param blk character. Path of the image to be processed
 #' @param r_in character. Path of the mask corresponding to the image
-#' @param Thresholds character. Path for output directory
-#' @param Spectral_Bands character. Type of PCA: choose either "PCA" or "SPCA"
+#' @param thresholds character. Path for output directory
 #'
 #' @return mask = updated mask values
 #' @importFrom terra readValues
 #' @export
 
-radiometricfilter_chunk <- function(blk, r_in, Thresholds, Spectral_Bands){
+radiometricfilter_chunk <- function(blk, r_in, thresholds){
   # 1- read input files
   input_data <- list()
   nameVars <- c()
@@ -20,19 +19,19 @@ radiometricfilter_chunk <- function(blk, r_in, Thresholds, Spectral_Bands){
                                                          dataframe = TRUE)[[1]]
   names(input_data) <- ll
   mask <- 0*input_data[[1]] + 1
-  for (band in names(Thresholds)){
+  for (band in names(thresholds)){
     if (band == 'Blue '){
-      elim <- which(input_data[[band]]>Thresholds[[band]])
+      elim <- which(input_data[[band]]>thresholds[[band]])
       if (length(elim)>0) mask[elim] <- 0
     }
     if (band == 'NIR'){
-      elim <- which(input_data[[band]]<Thresholds[[band]])
+      elim <- which(input_data[[band]]<thresholds[[band]])
       if (length(elim)>0) mask[elim] <- 0
     }
     if (band == 'NDVI'){
       if (!is.null(input_data$NIR) & !is.null(input_data$Red)){
         NDVI <- (input_data$NIR-input_data$Red)/(input_data$NIR+input_data$Red)
-        elim <- which(NDVI<Thresholds[[band]])
+        elim <- which(NDVI<thresholds[[band]])
         if (length(elim)>0) mask[elim] <- 0
       }
     }

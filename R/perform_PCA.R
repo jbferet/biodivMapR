@@ -39,7 +39,7 @@ perform_PCA  <- function(input_raster_path, output_dir, input_rast_wl = NULL,
   if (!is.null(input_rast_wl)){
     # Identify water vapor absorption bands in image and possibly other spectral domains to discard
     spectral_filter <- exclude_spectral_domains(input_rast = input_rast,
-                                               Excluded_WL = Excluded_WL)
+                                                Excluded_WL = Excluded_WL)
     # Extract valid data subset and check validity
     print("Extract pixels & perform PCA")
     # define number of pixels to be extracted from the image for each iteration
@@ -57,15 +57,15 @@ perform_PCA  <- function(input_raster_path, output_dir, input_rast_wl = NULL,
   if (!TypePCA=='MNF'){
     extent_area <- get_raster_extent(input_rast[[1]])
     img_subset <- sample_from_raster(extent_area = extent_area,
-                                 nb_samples = nb_samples,
-                                 input_rast = input_rast,
-                                 input_mask = input_mask)
+                                     nb_samples = nb_samples,
+                                     input_rast = input_rast,
+                                     input_mask = input_mask)
     img_subset$ID <- NULL
   }
   # if needed, apply continuum removal
   if (Continuum_Removal == TRUE) {
     img_subset <- apply_continuum_removal(spectral_data = img_subset,
-                                      spectral = spectral_filter)
+                                          spectral = spectral_filter)
   } else {
     if (length(spectral_filter$WaterVapor)>0)
       img_subset <- img_subset[, -spectral_filter$WaterVapor]

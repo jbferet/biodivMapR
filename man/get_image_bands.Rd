@@ -4,10 +4,10 @@
 \alias{get_image_bands}
 \title{gets rank of spectral bands in an image}
 \usage{
-get_image_bands(Spectral_Bands, wavelength)
+get_image_bands(spectral_bands, wavelength)
 }
 \arguments{
-\item{Spectral_Bands}{wavelength (nm) of the spectral bands to be found}
+\item{spectral_bands}{wavelength (nm) of the spectral bands to be found}
 
 \item{wavelength}{wavelength (nm) of all wavelengths in the image}
 }

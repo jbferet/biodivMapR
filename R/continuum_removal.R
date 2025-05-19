@@ -73,16 +73,21 @@ continuum_removal <- function(mat_init, spectral_bands, p = NULL) {
                                      nb_samples_update_tmp, nb_bands)
       # !!!! OPTIM: replace repmat with column operation
       # update coordinates of latest intercept
-      latest_intercept_tmp <- repmat(matrix(lambda_tmp[index_max_slope], ncol = 1), 1, nb_bands)
+      latest_intercept_tmp <- repmat(matrix(lambda_tmp[index_max_slope],
+                                            ncol = 1), 1, nb_bands)
       # update latest intercept
-      intercept_hull_tmp <- repmat(matrix(as.matrix(mat_init_tmp)[index_max_slope], ncol = 1), 1, nb_bands)
+      intercept_hull_tmp <- repmat(matrix(as.matrix(mat_init_tmp)[index_max_slope],
+                                          ncol = 1), 1, nb_bands)
       # values corresponding to the domain between the two continuum maxima
-      update_data[which((lambda_tmp - latest_intercept_tmp) >= 0 | latest_intercept_tmp == spectral_bands[nb_bands])] <- 0
+      update_data[which((lambda_tmp - latest_intercept_tmp) >= 0 |
+                          latest_intercept_tmp == spectral_bands[nb_bands])] <- 0
       # values to eliminate for the next analysis: all spectral bands before latest intercept
       still_need_cr_tmp[which((lambda_tmp - latest_intercept_tmp) < 0)] <- 0
       # the max slope is known, as well as the coordinates of the beginning and ending
       # a matrix now has to be built
-      convex_hull_tmp <- convex_hull_tmp + update_data * (intercept_hull_tmp + sweep((lambda_tmp - latest_intercept_tmp), 1, slope[index_max_slope], "*"))
+      convex_hull_tmp <- convex_hull_tmp +
+        update_data * (intercept_hull_tmp + sweep((lambda_tmp - latest_intercept_tmp),
+                                                  1, slope[index_max_slope], "*"))
       # update variables
       convex_hull[sel,] <- convex_hull_tmp
       still_need_cr[sel,] <- still_need_cr_tmp
@@ -90,14 +95,15 @@ continuum_removal <- function(mat_init, spectral_bands, p = NULL) {
       latest_intercept[sel,] <- latest_intercept_tmp
       intercept_hull[sel,] <- intercept_hull_tmp
     }
-    cr_results0 <- mat_init[, 2:(nb_bands - 2)] / convex_hull[, 2:(nb_bands - 2)]
+    cr_results0 <- mat_init[, 2:(nb_bands - 2)] / convex_hull[, 2:(nb_bands-2)]
     cr_results <- matrix(0, ncol = (nb_bands - 3), nrow = nb_samples)
     cr_results[cr_data$samples_to_keep, ] <- as.matrix(cr_results0)
   } else {
     cr_results <- matrix(0, ncol = (nb_bands - 3), nrow = nb_samples)
   }
   cr_results <- data.frame(cr_results)
-  if (!is.null(p)) p()
+  if (!is.null(p))
+    p()
   list <- ls()
   rm(list = list[-which(list == "cr_results")])
   rm(list)

@@ -11,15 +11,16 @@ rm_invariant_bands <- function(DataMatrix, Spectral) {
   # samples with inf value are eliminated
   for (i in seq_len(ncol(DataMatrix))) {
     elim <- which(DataMatrix[, i] == Inf)
-    if (length(elim) > 0) DataMatrix <- DataMatrix[-elim, ]
+    if (length(elim) > 0)
+      DataMatrix <- DataMatrix[-elim, ]
   }
   # bands showing null std are removed
   stdsub <- apply(DataMatrix, 2, sd)
   BandsNoVar <- which(stdsub == 0)
   # BandsNoVar  = which(stdsub<=0.002)
-  if (!length(Spectral$Bands2Keep[BandsNoVar]) == 0) {
+  if (!length(Spectral$Bands2Keep[BandsNoVar]) == 0)
     DataMatrix <- DataMatrix[, -BandsNoVar]
-  }
+
   # !! the wl which is discarded correspond to original spectral bands,
   # whereas BandsNoVar corresponds to spectral band after contiuum removal
   Spectral$BandsNoVar <- BandsNoVar

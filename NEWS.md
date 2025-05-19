@@ -1,3 +1,7 @@
+# biodivMapR2 v2.3.6
+## fix
+- fixed bug when SI values < 0 
+
 # biodivMapR2 v2.3.5
 ## addition
 - add possibility to change nb_iter and set it to 10 iterations as default

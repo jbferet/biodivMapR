@@ -16,7 +16,8 @@ get_bc_diss_from_ssd(ss_dist, nb_clusters, pcelim, p = NULL)
 \item{p}{list. progressor object for progress bar}
 }
 \value{
-list of spectral species distribution and corresponding  BC dissimilarity matrix corresponding to Mat1 and Mat2
+list of spectral species distribution and corresponding  BC
+dissimilarity matrix corresponding to Mat1 and Mat2
 }
 \description{
 Computes BC dissimilarity for a list of spectral species distributions

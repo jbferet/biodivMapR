@@ -14,8 +14,8 @@ get_sunlitwindows <- function(inputdata, pixperplot, min_sun = 0.25){
   win_ID <- data <- ID <- NULL
   inputwindow <- inputdata %>% dplyr::group_by(win_ID) %>% nest()
   nb_pix_Sunlit <- unlist(purrr::map(inputwindow$data,nrow))
-  PCsun <- nb_pix_Sunlit/pixperplot
-  SelWindows <- which(PCsun > min_sun)
+  pc_sun <- nb_pix_Sunlit/pixperplot
+  SelWindows <- which(pc_sun > min_sun)
   inputwindow <- inputwindow[SelWindows,]
   inputwindow <- inputwindow %>% unnest(win_ID) %>% unnest(data)
   inputwindow <- inputwindow %>% relocate(win_ID, .after = last_col())

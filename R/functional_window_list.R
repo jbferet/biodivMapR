@@ -7,7 +7,8 @@
 #' @return list of alpha and beta diversity metrics
 #' @export
 
-functional_window_list <- function(SSwindow, FDmetric = c('FRic', 'FEve', 'FDiv')){
+functional_window_list <- function(SSwindow,
+                                   FDmetric = c('FRic', 'FEve', 'FDiv')){
   functionalIdx <- lapply(X = SSwindow,
                           FUN = functional_window,
                           FDmetric = FDmetric)

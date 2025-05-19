@@ -18,5 +18,6 @@ get_functional_diversity <- function(spectraits,
   if ('FDis' %in% FDmetric) FDis <- fundiversity::fd_fdis(spectraits)$FDis
   if ('FRaoq' %in% FDmetric) FRaoq <- fundiversity::fd_raoq(spectraits)$Q
   if (!is.null(p)){p()}
-  return(list('FRic' = FRic, 'FEve' = FEve, 'FDiv' = FDiv, 'FDis' = FDis, 'FRaoq' = FRaoq))
+  return(list('FRic' = FRic, 'FEve' = FEve, 'FDiv' = FDiv,
+              'FDis' = FDis, 'FRaoq' = FRaoq))
 }

@@ -13,7 +13,7 @@
 filter_prior_cr(mat_init, spectral_bands)
 }
 \arguments{
-\item{mat_init}{initial data matrix, n rows = n samples, p cols = p spectral bands}
+\item{mat_init}{initial data matrix, n rows = n samples, p cols = p bands}
 
 \item{spectral_bands}{numeric. central wavelength for the spectral bands}
 }

@@ -1,6 +1,6 @@
-#' get valid pixels from a list of plots produced with 
+#' get valid pixels from a list of plots produced with
 #' preprocS2 function get_s2_tiling (notNA)
-#' 
+#'
 #' @param plotID list.
 #' @param listfiles character.
 #' @param p list.
@@ -13,7 +13,6 @@
 #'
 get_valid_pixels <- function(plotID, listfiles, p = NULL){
   plotID <- paste0('_',plotID,'_')
-  # tileSI <- listfiles[stringr::str_detect(string = listfiles, pattern = plotID)]
   tileSI <- listfiles[grepl(x = listfiles, pattern = plotID)]
   # get statistics on data availability
   nb_pix_valid <- 0
@@ -23,6 +22,7 @@ get_valid_pixels <- function(plotID, listfiles, p = NULL){
       nb_pix_valid <- terra::global(x = rastID, fun = 'notNA')
     }
   }
-  if (!is.null(p)) p()
+  if (!is.null(p))
+    p()
   return(nb_pix_valid)
 }

@@ -146,7 +146,7 @@ biodivMapR_SFS <- function(input_raster, obs_vect, obs2optimize,
 
   for (nbvars2select in seq_len(nb_pcs_to_keep)){
     NumVar_list <- as.list(seq_len(length(AllVars)))
-	numvar <- win_ID <- NULL
+    numvar <- win_ID <- NULL
     subfeatures_SFS <- function() {
       foreach(numvar = NumVar_list) %dopar% {
         CorrVal <- Assess <- list()
@@ -180,71 +180,70 @@ biodivMapR_SFS <- function(input_raster, obs_vect, obs2optimize,
           }
         }
         # if (obs_criterion %in% c('richness', 'shannon', 'simpson', 'hill', 'BC')){
-          SSValid <- get_spectralSpecies(inputdata = rast_val[SelFeat_tmp],
-                                         Kmeans_info = Kmeans_info)
-          SSValid$win_ID <- IDplot
-          windows_per_plot <- split_chunk(SSchunk = SSValid, nbCPU = 1)
-          windows_per_plot$win_ID <- list(SSValid$win_ID)
-          alphabetaIdx_CPU <- lapply(X = windows_per_plot$SSwindow_perCPU,
-                                     FUN = alphabeta_window_list,
-                                     nb_clusters = nb_clusters,
-                                     alphametrics = c('richness', 'shannon', 'simpson', 'hill'),
-                                     Hill_order = Hill_order, pcelim = pcelim)
-          alphabetaIdx <- unlist(alphabetaIdx_CPU,recursive = FALSE)
-          rm(alphabetaIdx_CPU)
-          gc()
-          # 7- reshape alpha diversity metrics
-          IDwindow <- unlist(windows_per_plot$IDwindow_perCPU)
-          selcrit <- list('richness'= 1,
-                          'shannon' = 3,
-                          'simpson' = 5,
-                          'hill' = 9)
-          for (crit in names(selcrit)){
-            if (!is.null(obs2optimize[[crit]])){
-              Assess[[crit]] <- rep(x = NA,nbPlots_total)
-              Assess[[crit]][IDwindow] <- unlist(lapply(alphabetaIdx,'[[',
-                                                        selcrit[[crit]]))
-              CorrVal[[crit]]  <- cor.test(obs2optimize[[crit]],
-                                           Assess[[crit]],
-                                           method = corrMethod)$estimate
-            } else {
-              CorrVal[[crit]] <- Assess[[crit]] <- NA
-            }
-          }
-          if (!is.null(obs2optimize$BC)){
-            # compute BC matrix from spectral species
-            SSValid_win <- SSValid %>% group_split(win_ID, .keep = FALSE)
-            # spectral species distribution
-            SSdist <- list()
-            for (iter in names(SSValid_win[[1]]))
-              SSdist[[iter]] <- lapply(SSValid_win, '[[',iter)
-            # compute spectral species distribution for each cluster & BC dissimilarity
-            SSD_BCval <- lapply(SSdist,
-                                FUN = get_bc_diss_from_ssd,
-                                nb_clusters = nb_clusters,
-                                pcelim = pcelim)
-            MatBC_iter <- lapply(SSD_BCval, '[[','MatBC')
-            SSD <- lapply(SSD_BCval, '[[','SSD')
-            MatBC <- Reduce('+', MatBC_iter)/nb_iter
-            MatBC_Full <- matrix(data = NA,
-                                 nrow = nbPlots_total,
-                                 ncol = nbPlots_total)
-            MatBC_Full[IDwindow,IDwindow] <- MatBC
-            colnames(MatBC_Full) <- rownames(MatBC_Full) <- Attributes$ID_biodivMapR
-            # Corr_val <- cor.test(c(obs2optimize[['BC']]),c(MatBC_Full),
-            #                      method = 'pearson')$estimate
-
-            Assess[['BC']] <- MatBC_Full
-            mantelVal <- vegan::mantel(xdis = as.dist(MatBC_Full),
-                                       ydis = as.dist(obs2optimize[['BC']]),
-                                       na.rm = TRUE, method = corrMethod)
-            CorrVal[['BC']] <- mantelVal$statistic
-
-            # CorrVal[['BC']]  <- cor.test(obs2optimize[['BC']],
-            #                              c(Assess[['BC']]), method = 'pearson')$estimate
+        SSValid <- get_spectralSpecies(inputdata = rast_val[SelFeat_tmp],
+                                       Kmeans_info = Kmeans_info)
+        SSValid$win_ID <- IDplot
+        windows_per_plot <- split_chunk(SSchunk = SSValid, nbCPU = 1)
+        windows_per_plot$win_ID <- list(SSValid$win_ID)
+        alphabetaIdx_CPU <- lapply(X = windows_per_plot$SSwindow_perCPU,
+                                   FUN = alphabeta_window_list,
+                                   nb_clusters = nb_clusters,
+                                   alphametrics = c('richness', 'shannon', 'simpson', 'hill'),
+                                   Hill_order = Hill_order, pcelim = pcelim)
+        alphabetaIdx <- unlist(alphabetaIdx_CPU,recursive = FALSE)
+        rm(alphabetaIdx_CPU)
+        gc()
+        # 7- reshape alpha diversity metrics
+        IDwindow <- unlist(windows_per_plot$IDwindow_perCPU)
+        selcrit <- list('richness'= 1,
+                        'shannon' = 3,
+                        'simpson' = 5,
+                        'hill' = 9)
+        for (crit in names(selcrit)){
+          if (!is.null(obs2optimize[[crit]])){
+            Assess[[crit]] <- rep(x = NA,nbPlots_total)
+            Assess[[crit]][IDwindow] <- unlist(lapply(alphabetaIdx,'[[',
+                                                      selcrit[[crit]]))
+            CorrVal[[crit]]  <- cor.test(obs2optimize[[crit]],
+                                         Assess[[crit]],
+                                         method = corrMethod)$estimate
           } else {
-            Assess[['BC']] <- CorrVal[['BC']]  <- NA
+            CorrVal[[crit]] <- Assess[[crit]] <- NA
           }
+        }
+        if (!is.null(obs2optimize$BC)){
+          # compute BC matrix from spectral species
+          SSValid_win <- SSValid %>% group_split(win_ID, .keep = FALSE)
+          # spectral species distribution
+          SSdist <- list()
+          for (iter in names(SSValid_win[[1]]))
+            SSdist[[iter]] <- lapply(SSValid_win, '[[',iter)
+          # compute spectral species distribution for each cluster & BC dissimilarity
+          SSD_BCval <- lapply(SSdist,
+                              FUN = get_bc_diss_from_ssd,
+                              nb_clusters = nb_clusters,
+                              pcelim = pcelim)
+          MatBC_iter <- lapply(SSD_BCval, '[[','MatBC')
+          SSD <- lapply(SSD_BCval, '[[','SSD')
+          MatBC <- Reduce('+', MatBC_iter)/nb_iter
+          MatBC_Full <- matrix(data = NA,
+                               nrow = nbPlots_total,
+                               ncol = nbPlots_total)
+          MatBC_Full[IDwindow,IDwindow] <- MatBC
+          colnames(MatBC_Full) <- rownames(MatBC_Full) <- Attributes$ID_biodivMapR
+          # Corr_val <- cor.test(c(obs2optimize[['BC']]),c(MatBC_Full),
+          #                      method = 'pearson')$estimate
+
+          Assess[['BC']] <- MatBC_Full
+          mantelVal <- vegan::mantel(xdis = as.dist(MatBC_Full),
+                                     ydis = as.dist(obs2optimize[['BC']]),
+                                     na.rm = TRUE, method = corrMethod)
+          CorrVal[['BC']] <- mantelVal$statistic
+          # CorrVal[['BC']]  <- cor.test(obs2optimize[['BC']],
+          #                              c(Assess[['BC']]), method = 'pearson')$estimate
+        } else {
+          Assess[['BC']] <- CorrVal[['BC']]  <- NA
+        }
         # }
         return(list('crit2Opt' = CorrVal,
                     'AssessedVal' = Assess))
@@ -253,11 +252,10 @@ biodivMapR_SFS <- function(input_raster, obs_vect, obs2optimize,
     subSFS <- subfeatures_SFS()
     pb$tick()
     CorrSFS[[nbvars2select]] <- list()
-    for (ind in FullListIndices) {
+    for (ind in FullListIndices)
       CorrSFS[[nbvars2select]][[ind]] <- unlist(lapply(lapply(subSFS,
                                                               '[[','crit2Opt'),
                                                        '[[',ind))
-    }
     CorrSFS[[nbvars2select]] <- data.frame(CorrSFS[[nbvars2select]])
     rownames(CorrSFS[[nbvars2select]]) <- AllVars
     criterion <- CorrSFS[[nbvars2select]][[obs_criterion]]

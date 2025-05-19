@@ -11,7 +11,8 @@ produce_win_ID <- function(inputdata, blk, window_size){
   # generate win_ID crresponding to an image, given chunk & window size
   nbRows <- ceiling(blk$nrows/window_size)
   nbRows_piece <- rep(x = window_size,nbRows)
-  if (blk$nrows%%window_size > 0) nbRows_piece[nbRows] <- blk$nrows%%window_size
+  if (blk$nrows%%window_size > 0)
+    nbRows_piece[nbRows] <- blk$nrows%%window_size
   nbCols <- ceiling((nrow(inputdata)/blk$nrows)/window_size)
   win_ID <- win_ID_lowRes <- list()
   for (i in seq_len(nbRows)){

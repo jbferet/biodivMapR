@@ -7,9 +7,9 @@
 
 read_ENVI_header <- function(HDRpath) {
   # header <- paste(header, collapse = "\n")
-  if (!grepl(".hdr$", HDRpath) & !grepl(".HDR$", HDRpath)) {
+  if (!grepl(".hdr$", HDRpath) & !grepl(".HDR$", HDRpath))
     stop("File extension should be .hdr or .HDR")
-  }
+
   HDR <- readLines(HDRpath)
   ## check ENVI at beginning of file
   if (!grepl("ENVI", HDR[1])) {
@@ -21,15 +21,17 @@ read_ENVI_header <- function(HDRpath) {
   HDR <- gsub("\\{([^}]*)\\}", "\\1", HDR)
   l <- grep("\\{", HDR)
   r <- grep("\\}", HDR)
-  if (length(l) != length(r)) stop("Error matching curly braces in header (differing numbers).")
-  if (any(r <= l)) stop("Mismatch of curly braces in header.")
+  if (length(l) != length(r))
+    stop("Error matching curly braces in header (differing numbers).")
+  if (any(r <= l))
+    stop("Mismatch of curly braces in header.")
   HDR[l] <- sub("\\{", "", HDR[l])
   HDR[r] <- sub("\\}", "", HDR[r])
-  for (i in rev(seq_along(l))) {
+  for (i in rev(seq_along(l)))
     HDR <- c(HDR [seq_len(l [i] - 1)],
              paste(HDR [l [i]:r [i]], collapse = "\n"),
              HDR [-seq_len(r [i])])
-  }
+
   ## split key = value constructs into list with keys as names
   HDR <- sapply(HDR, split_line, "=", USE.NAMES = FALSE)
   names(HDR) <- tolower(names(HDR))

@@ -43,24 +43,23 @@ radiometric_filtering <- function(input_raster_path, output_dir, input_rast_wl,
     mask_update <- paste0(mask_update, '.tiff')
 
   # wavelengths expected to perform filtering
-  Spectral_Bands <- data.frame('Blue' = Blue, 'Red' = Red, 'NIR' = NIR)
-  wl_filter <- list('filter' = 'WL', 'Spectral_Bands' = Spectral_Bands)
-  check_data(input_data = names(input_rast), arguments = wl_filter)
-  # get image bands correponding to spectral bands of interest
-  Spectral_Bands <- data.frame('Blue' = Blue,
+  spectral_bands <- data.frame('Blue' = Blue,
                                'Red' = Red,
                                'NIR' = NIR)
-  Thresholds <- data.frame('Blue' = Blue_Thresh,
+  wl_filter <- list('filter' = 'WL', 'spectral_bands' = spectral_bands)
+  check_data(input_data = names(input_rast), arguments = wl_filter)
+  # get image bands correponding to spectral bands of interest
+  thresholds <- data.frame('Blue' = Blue_Thresh,
                            'NDVI' = NDVI_Thresh,
                            'NIR' = NIR_Thresh)
-  Image_Bands <- get_image_bands(Spectral_Bands = Spectral_Bands,
+  image_bands <- get_image_bands(spectral_bands = spectral_bands,
                                  wavelength = as.numeric(names(input_rast)))
 
   # read image chunks in order to filter data
   r_in <- list()
-  for (fid in names(Image_Bands$ImBand)){
-    if (!is.na(Image_Bands$ImBand[[fid]]))
-      r_in[[fid]] <- input_rast[[Image_Bands$ImBand[[fid]]]]
+  for (fid in names(image_bands$image_band)){
+    if (!is.na(image_bands$image_band[[fid]]))
+      r_in[[fid]] <- input_rast[[image_bands$image_band[[fid]]]]
   }
   if (!is.null(input_mask_path))
     r_in$mask <- input_mask
@@ -84,8 +83,7 @@ radiometric_filtering <- function(input_raster_path, output_dir, input_rast_wl,
   # compute diversity metrics for each block
   for (bloc in blk_list){
     update_mask <- radiometricfilter_chunk(blk = bloc, r_in = r_in,
-                                           Thresholds = Thresholds,
-                                           Spectral_Bands = Spectral_Bands)
+                                           thresholds = thresholds)
     terra::writeValues(x = r_out, v = update_mask,
                        bloc$row, nrows = bloc$nrows)
   }

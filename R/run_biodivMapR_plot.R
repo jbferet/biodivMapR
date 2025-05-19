@@ -42,10 +42,14 @@ run_biodivMapR_plot <- function(id, feature_dir, mask_dir = NULL,
   if (FALSE %in% file.exists(file.path(output_dir,
                                        paste0(output_raster_name_mean,'.tiff')))){
     list_feat <- list.files(path = feature_dir, pattern = paste0('_',id,'_'))
+    list_feat <- unique(gsub(pattern = '.aux.xml', replacement = '',
+                             x = list_feat))
     if (!is.null(mask_dir)){
       input_mask_path <- list.files(path = mask_dir,
                                     pattern = paste0('_',id,'_'),
                                     full.names = TRUE)
+      input_mask_path <- unique(gsub(pattern = '.aux.xml', replacement = '',
+                                     x = input_mask_path))
     } else {
       input_mask_path <- NULL
     }
@@ -65,7 +69,8 @@ run_biodivMapR_plot <- function(id, feature_dir, mask_dir = NULL,
                        Kmeans_info = Kmeans_info, Beta_info = Beta_info,
                        output_dir = output_dir,
                        output_raster_name = output_raster_name,
-                       selected_bands = selected_bands, window_size = window_size,
+                       selected_bands = selected_bands,
+                       window_size = window_size,
                        alphametrics = alphametrics, Hill_order = Hill_order,
                        FDmetric = FDmetric, pcelim = pcelim,
                        maxRows = maxRows, nbCPU = nbCPU, min_sun = min_sun,

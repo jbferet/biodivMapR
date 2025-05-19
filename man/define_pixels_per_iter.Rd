@@ -21,7 +21,7 @@ define_pixels_per_iter(
 \item{nb_pix}{numeric. maximum number of pixels to extract for kmeans}
 }
 \value{
-Pix_Per_Iter number of pixels per iteration
+pix_per_iter number of pixels per iteration
 }
 \description{
 defines the number of pixels per iteration

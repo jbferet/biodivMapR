@@ -4,7 +4,7 @@
 #' - possibly remaining negative values are set to 0
 #' - constant spectra are eliminated
 #'
-#' @param mat_init initial data matrix, n rows = n samples, p cols = p spectral bands
+#' @param mat_init initial data matrix, n rows = n samples, p cols = p bands
 #' @param spectral_bands numeric. central wavelength for the spectral bands
 #
 #' @return list. updated mat_init

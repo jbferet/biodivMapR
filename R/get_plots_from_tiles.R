@@ -18,7 +18,6 @@ get_plots_from_tiles <- function(plotID, plots2sel, listfiles, feat_list,
                                  window_size, min_sun = 0.75, p = NULL){
 
   plotID2 <- paste0('_',plotID,'_')
-  # tileSI <- listfiles[stringr::str_detect(string = listfiles, pattern = plotID2)]
   tileSI <- listfiles[grepl(x = listfiles, pattern = plotID2)]
   # get plots for beta diversity
   selpix <- samples_beta <- ID <- NULL
@@ -92,6 +91,7 @@ get_plots_from_tiles <- function(plotID, plots2sel, listfiles, feat_list,
       }
     }
   }
-  if (!is.null(p)) p()
+  if (!is.null(p))
+    p()
   return(samples_beta)
 }

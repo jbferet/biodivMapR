@@ -28,8 +28,10 @@ get_raster_diversity <- function(input_raster_path, Kmeans_info, Beta_info,
   if (is.null(maxRows)) maxRows <- 20*window_size
   # prepare to read input raster data
   r_in <- list()
-  if (is.null(names(input_raster_path))) names(input_raster_path) <- seq_len(length(input_raster_path))
-  for (fid in names(input_raster_path)) r_in[[fid]] <- terra::rast(input_raster_path[[fid]])
+  if (is.null(names(input_raster_path)))
+    names(input_raster_path) <- seq_len(length(input_raster_path))
+  for (fid in names(input_raster_path))
+    r_in[[fid]] <- terra::rast(input_raster_path[[fid]])
   # if a mask file is provided
   if (!is.null(input_mask_path)) {
     r_in[['mask']] <- terra::rast(input_mask_path)
@@ -41,12 +43,13 @@ get_raster_diversity <- function(input_raster_path, Kmeans_info, Beta_info,
   blk <- terra::blocks(brast[[1]], n = 10)
   blk <- maxRows_chunk(blk = blk, maxRows = maxRows)
   blk <- nbRows_chunk(blk = blk, nbRows = window_size)
-  for (fid in names(r_in)) terra::readStart(r_in[[fid]])
+  for (fid in names(r_in))
+    terra::readStart(r_in[[fid]])
   # produce a list of blocks to read and process
   blk_list <- list()
   nbchunks <- length(blk$row)
-  for (i in seq_len(nbchunks)) blk_list[[i]] <- list('row'= blk$row[i],
-                                                     'nrows' = blk$nrows[i])
+  for (i in seq_len(nbchunks))
+    blk_list[[i]] <- list('row'= blk$row[i], 'nrows' = blk$nrows[i])
 
   if (nbCPU==1){
     # compute diversity metrics for each block
@@ -64,7 +67,7 @@ get_raster_diversity <- function(input_raster_path, Kmeans_info, Beta_info,
                              min_sun = min_sun)
   } else {
     if (nbCPU>1){
-    # compute diversity metrics for each block
+      # compute diversity metrics for each block
       # progressr::handlers(global = TRUE)
       suppressWarnings(progressr::handlers("cli"))
       # progressr::handlers("debug")
@@ -85,6 +88,7 @@ get_raster_diversity <- function(input_raster_path, Kmeans_info, Beta_info,
       }))
     }
   }
-  for (fid in names(r_in)) terra::readStop(r_in[[fid]])
+  for (fid in names(r_in))
+    terra::readStop(r_in[[fid]])
   return(ab_div_metrics)
 }

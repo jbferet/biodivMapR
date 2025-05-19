@@ -4,16 +4,14 @@
 \alias{radiometricfilter_chunk}
 \title{Performs radiometric filtering based on three criteria: NDVI, NIR reflectance, Blue reflectance}
 \usage{
-radiometricfilter_chunk(blk, r_in, Thresholds, Spectral_Bands)
+radiometricfilter_chunk(blk, r_in, thresholds)
 }
 \arguments{
 \item{blk}{character. Path of the image to be processed}
 
 \item{r_in}{character. Path of the mask corresponding to the image}
 
-\item{Thresholds}{character. Path for output directory}
-
-\item{Spectral_Bands}{character. Type of PCA: choose either "PCA" or "SPCA"}
+\item{thresholds}{character. Path for output directory}
 }
 \value{
 mask = updated mask values

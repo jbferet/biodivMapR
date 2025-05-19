@@ -65,7 +65,7 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
   # v1: line per line
   nbWindows <- ncol(rast_in)
   rastmat <- as.matrix(rast_in[[1]], wide = TRUE)
-  whichj <- which(rowSums(rastmat, na.rm = TRUE)>0)
+  whichj <- which(!rowSums(rastmat, na.rm = TRUE)==0)
   for (j in whichj){
     inputdata <- list()
     sel <- NULL

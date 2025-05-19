@@ -11,7 +11,7 @@
 #' @param nbCPU numeric. Number of CPUs available
 #' @param progressbar boolean. set true for progress bar during clustering
 #'
-#' @return Kmeans_info
+#' @return kmeans_info
 #' @importFrom dplyr select all_of
 #' @importFrom doFuture registerDoFuture
 #' @export
@@ -48,15 +48,15 @@ explore_kmeans <- function(input_rast,
   nbclust <- NULL
   get_kmeans_list <- function() {
     foreach(nbclust = nbClust_list) %dopar% {
-      Kmeans_info <- get_kmeans(rast_sample = rast_sample,
+      kmeans_info <- get_kmeans(rast_sample = rast_sample,
                                 nb_iter = nb_iter,
                                 nb_clusters = nbclust,
                                 algorithm = algorithm,
                                 progressbar = FALSE)
-      return(Kmeans_info)
+      return(kmeans_info)
     }
   }
-  Kmeans_info <- get_kmeans_list()
+  kmeans_info <- get_kmeans_list()
   plan(sequential)
-  return(Kmeans_info)
+  return(kmeans_info)
 }

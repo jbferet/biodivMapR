@@ -5,7 +5,8 @@
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
 #' @param p list. progressor object for progress bar
 #'
-#' @return list of spectral species distribution and corresponding  BC dissimilarity matrix corresponding to Mat1 and Mat2
+#' @return list of spectral species distribution and corresponding  BC
+#' dissimilarity matrix corresponding to Mat1 and Mat2
 #' @export
 
 get_bc_diss_from_ssd <- function(ss_dist, nb_clusters, pcelim, p = NULL){
@@ -15,6 +16,7 @@ get_bc_diss_from_ssd <- function(ss_dist, nb_clusters, pcelim, p = NULL){
   ssd <- do.call(rbind,ssd)
   ssd_list <- list(ssd, ssd)
   mat_bc <- compute_bc_diss(ssd_list, pcelim)
-  if (!is.null(p)) p()
-  return(list('SSD'=ssd, 'MatBC' = mat_bc))
+  if (!is.null(p))
+    p()
+  return(list('SSD' = ssd, 'MatBC' = mat_bc))
 }

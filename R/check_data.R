@@ -32,7 +32,8 @@ check_data <- function(input_data, arguments) {
         # set wl
         wl <- as.numeric(input_data)
         # Dist2Band = distance to theoretical band for blue, red and NIR data
-        if (max(wl)<40) stop('Define wavelength for input_rast in nanometers')
+        if (max(wl)<40)
+          stop('Define wavelength for input_rast in nanometers')
       }
     }
   }

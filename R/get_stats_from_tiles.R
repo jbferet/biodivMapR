@@ -15,7 +15,6 @@
 #'
 get_stats_from_tiles <- function(plotID, pix2sel, listfiles, SI_list, p = NULL){
   plotID <- paste0('_',plotID,'_')
-  # tileSI <- listfiles[stringr::str_detect(string = listfiles, pattern = plotID)]
   tileSI <- listfiles[grepl(x = listfiles, pattern = plotID)]
   # get statistics on data availability
   selpix <- NULL
@@ -23,7 +22,6 @@ get_stats_from_tiles <- function(plotID, pix2sel, listfiles, SI_list, p = NULL){
     if (all(file.exists(tileSI))){
       rastID <- terra::rast(tileSI)
       for (feat in SI_list){
-        # whichfeat <- which(stringr::str_detect(basename(terra::sources(rastID)), feat) )
         whichfeat <- which(grepl(x = basename(terra::sources(rastID)),
                                  pattern = feat))
         names(rastID)[whichfeat] <- feat

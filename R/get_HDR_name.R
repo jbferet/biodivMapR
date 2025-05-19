@@ -10,8 +10,8 @@
 get_HDR_name <- function(ImPath,showWarnings=TRUE) {
   ImPathHDR <- paste0(file_path_sans_ext(ImPath), ".hdr")
   if (showWarnings==TRUE){
-    if (!file.exists(ImPathHDR)) print_error_message(def_error = 'missing_hdr',
-                                                     optarg = ImPathHDR)
+    if (!file.exists(ImPathHDR))
+      print_error_message(def_error = 'missing_hdr', optarg = ImPathHDR)
   }
   return(ImPathHDR)
 }

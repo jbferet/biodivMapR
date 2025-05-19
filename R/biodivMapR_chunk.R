@@ -40,9 +40,12 @@ biodivMapR_chunk <- function(blk, r_in, window_size, Kmeans_info,
   for (fid in names(r_in)){
     input_data[[fid]] <- terra::readValues(r_in[[fid]], row = blk$row,
                                            nrows = blk$nrows, dataframe = TRUE)
-    if (fid == 'mask') names(input_data[[fid]]) <- 'mask'
-    if (dim(r_in[[fid]])[3]==1) nameVars <- c(nameVars, fid)
-    if (dim(r_in[[fid]])[3]>1) nameVars <- names(input_data[[fid]])
+    if (fid == 'mask')
+      names(input_data[[fid]]) <- 'mask'
+    if (dim(r_in[[fid]])[3]==1)
+      nameVars <- c(nameVars, fid)
+    if (dim(r_in[[fid]])[3]>1)
+      nameVars <- names(input_data[[fid]])
   }
   if (is.null(selected_bands)){
     if ('mask'%in%nameVars)

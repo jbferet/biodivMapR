@@ -10,7 +10,7 @@ get_date(prodName)
 \item{prodName}{character. original name for the S2 image}
 }
 \value{
-DateAcq character
+date_acq character
 }
 \description{
 gets acquisition date from S2 image

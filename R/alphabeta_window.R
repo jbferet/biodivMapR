@@ -39,13 +39,14 @@ alphabeta_window <- function(SSwindow, nb_clusters,
   if (!is.null(Beta_info)){
     for (i in seq_len(nb_iter))
       mat_bc[[i]] <- list('mat1' = ssd_full[[i]],
-                            'mat2' = Beta_info$SSD[[i]])
+                          'mat2' = Beta_info$SSD[[i]])
     mat_bc_tmp <- lapply(X = mat_bc, FUN = compute_bc_diss, pcelim)
     mat_bc <- Reduce('+', mat_bc_tmp)/nb_iter
     pcoa_bc <- compute_nn_from_ordination(mat_bc = mat_bc, knn = 3,
                                           pcoa_train = Beta_info$BetaPCO$points)
   }
-  if (!is.null(p)) p()
+  if (!is.null(p))
+    p()
   return(list('richness_mean' = mean(unlist(lapply(alpha, '[[', 'richness'))),
               'richness_sd' = stats::sd(unlist(lapply(alpha,'[[','richness'))),
               'shannon_mean' = mean(unlist(lapply(alpha, '[[', 'shannon'))),

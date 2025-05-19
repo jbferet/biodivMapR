@@ -58,10 +58,12 @@ init_kmeans <- function(input_rast,
     Kmeans_info <- init_kmeans_samples(rast_sample = rast_sample,
                                        output_dir = output_dir,
                                        selected_bands = selected_bands,
-                                       nb_clusters = nb_clusters, nb_iter = nb_iter,
+                                       nb_clusters = nb_clusters,
+                                       nb_iter = nb_iter,
                                        Kmeans_info_save = Kmeans_info_save,
                                        algorithm = algorithm, nbCPU = nbCPU,
-                                       verbose = verbose, progressbar = progressbar)
+                                       verbose = verbose,
+                                       progressbar = progressbar)
   }
   return(Kmeans_info)
 }

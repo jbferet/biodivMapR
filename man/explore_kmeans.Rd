@@ -37,7 +37,7 @@ explore_kmeans(
 \item{progressbar}{boolean. set true for progress bar during clustering}
 }
 \value{
-Kmeans_info
+kmeans_info
 }
 \description{
 Compute kmeans from random subset of pixels extracted from an image and a list

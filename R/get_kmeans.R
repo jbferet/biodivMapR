@@ -38,7 +38,7 @@ get_kmeans <- function(rast_sample, nb_iter, nb_clusters = 50,
     rast_sample <- snow::splitRows(x = rast_sample, ncl = nb_iter)
     if (nbCPU>1){
       # plan(multisession, workers = nbCPU) ## Parallelize using four cores
-	  cl <- parallel::makeCluster(nbCPU)
+      cl <- parallel::makeCluster(nbCPU)
       plan("cluster", workers = cl)  ## same as plan(multisession, workers = nbCPU)
 
       fun_apply <- future_lapply
@@ -84,8 +84,10 @@ get_kmeans <- function(rast_sample, nb_iter, nb_clusters = 50,
                          algorithm = algorithm, p = NULL)
       }
     }
-    if (nbCPU>1) parallel::stopCluster(cl)
-    if (nbCPU>1) plan(sequential)
+    if (nbCPU>1)
+      parallel::stopCluster(cl)
+    if (nbCPU>1)
+      plan(sequential)
     Centroids <- lapply(res,'[[',2)
     return(list("Centroids" = Centroids,
                 "MinVal" = m0, "MaxVal" = M0, "Range" = d0, "Error" = FALSE))

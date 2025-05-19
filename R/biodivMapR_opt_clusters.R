@@ -59,8 +59,10 @@ biodivMapR_opt_clusters <- function(input_raster, obs_vect, obs2optimize,
   Functional <- NULL
 
   # prepare sequence of clusters to test over multiple repetitions
-  if (length(nb_clusters)==1) nbClust_list <- seq(2,nb_clusters)
-  if (length(nb_clusters)>1) nbClust_list <- nb_clusters
+  if (length(nb_clusters)==1)
+    nbClust_list <- seq(2,nb_clusters)
+  if (length(nb_clusters)>1)
+    nbClust_list <- nb_clusters
   divIndex_est <- list()
   pb <- progress_bar$new(
     format = "Repeat clustering [:bar] :percent in :elapsedfull",
@@ -99,7 +101,7 @@ biodivMapR_opt_clusters <- function(input_raster, obs_vect, obs2optimize,
     registerDoFuture()
     cl <- parallel::makeCluster(nbCPU)
     plan("cluster", workers = cl)
-	kmit <- NULL
+    kmit <- NULL
     get_diversity_from_plots_list <- function() {
       foreach(kmit = Kmeans_info) %dopar% {
         divplots <- get_diversity_from_plots(input_rast = input_raster,

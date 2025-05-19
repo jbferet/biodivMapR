@@ -11,6 +11,7 @@ clean_NAsInf <- function(df){
   df <- stats::na.omit(object = df)
   # eliminate infs
   inf_val <- unlist(lapply(data.frame(lapply(df, is.infinite)), which))
-  if (length(inf_val)>0) df <- df[-inf_val,]
+  if (length(inf_val)>0)
+    df <- df[-inf_val,]
   return(df)
 }
