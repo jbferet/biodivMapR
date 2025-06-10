@@ -10,6 +10,9 @@
 #' @param nb_clusters numeric. number of clusters
 #' @param nb_samples_alpha numeric. number of samples to compute alpha diversity
 #' @param nb_samples_beta numeric. number of samples to compute beta diversity
+#' @param alphametrics character.
+#' @param Hill_order numeric.
+#' @param FDmetric character.
 #' @param nbCPU numeric. Number of CPUs available
 #' @param nb_iter numeric. Number of iterations required to compute diversity
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
@@ -23,7 +26,9 @@
 biodivMapR_full_tiles <- function(dsn_grid, feature_dir, list_features,
                                   mask_dir = NULL, output_dir, window_size,
                                   plots, nb_clusters = 50, nb_samples_alpha = 1e5,
-                                  nb_samples_beta = 2e3, nbCPU = 1, nb_iter = 10,
+                                  nb_samples_beta = 2e3,
+                                  alphametrics = 'shannon', Hill_order = 1,
+                                  FDmetric = NULL, nbCPU = 1, nb_iter = 10,
                                   pcelim = 0.02, maxRows = 1200,
                                   moving_window = FALSE, siteName = NULL){
 
@@ -91,6 +96,9 @@ biodivMapR_full_tiles <- function(dsn_grid, feature_dir, list_features,
                                   list_features = list_features,
                                   Kmeans_info = Kmeans_info,
                                   Beta_info = Beta_info,
+                                  alphametrics = alphametrics,
+                                  Hill_order = Hill_order,
+                                  FDmetric = FDmetric,
                                   output_dir = output_dir,
                                   window_size = window_size,
                                   maxRows = maxRows,
@@ -114,6 +122,9 @@ biodivMapR_full_tiles <- function(dsn_grid, feature_dir, list_features,
              list_features = list_features,
              Kmeans_info = Kmeans_info,
              Beta_info = Beta_info,
+             alphametrics = alphametrics,
+             Hill_order = Hill_order,
+             FDmetric = FDmetric,
              output_dir = output_dir,
              window_size = window_size,
              maxRows = maxRows,
@@ -122,15 +133,15 @@ biodivMapR_full_tiles <- function(dsn_grid, feature_dir, list_features,
   }
 
   # produce mosaic for outputs
-  indices <- c('shannon', 'beta')
+  indices <- c(alphametrics, 'beta', FDmetric)
   mosaic_path <- list()
   for (biodividx in indices){
     # identify files
-    if (biodividx == 'beta'){
+    if (! biodividx %in% alphametrics){
       selfiles <- list.files(path = output_dir, pattern = biodividx)
-    } else {
+    } else if (biodividx %in% alphametrics){
       selfiles <- list.files(path = output_dir, pattern = biodividx)
-      selfiles <- selfiles[grepl(x = selfiles, pattern = "mean.tiff")]
+      selfiles <- selfiles[grepl(x = basename(selfiles), pattern = "mean.tiff")]
     }
     selfiles <- file.path(output_dir, selfiles)
     # create directory

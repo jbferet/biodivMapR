@@ -15,7 +15,7 @@
 #'
 get_stats_from_tiles <- function(plotID, pix2sel, listfiles, SI_list, p = NULL){
   plotID <- paste0('_',plotID,'_')
-  tileSI <- listfiles[grepl(x = listfiles, pattern = plotID)]
+  tileSI <- listfiles[grepl(x = basename(listfiles), pattern = plotID)]
   # get statistics on data availability
   selpix <- NULL
   if (length(tileSI) > 0 & pix2sel >0){

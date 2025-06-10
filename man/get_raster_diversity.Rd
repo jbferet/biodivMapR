@@ -39,7 +39,7 @@ get_raster_diversity(
 
 \item{window_size}{numeric. window size for square plots}
 
-\item{maxRows}{numeric. max number of rows in each block}
+\item{maxRows}{numeric. max number of rows processed once by each CPU}
 
 \item{pcelim}{numeric. minimum proportion of pixels to consider spectral species}
 

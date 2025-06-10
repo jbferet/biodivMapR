@@ -89,7 +89,7 @@ save_diversity_maps_tile <- function(input_raster_path,
       output_raster <- file.path(output_dir, output_raster_name[[idx]])
     if (filetype%in%c('GTiff', 'COG'))
       output_raster <- paste0(output_raster, '.tiff')
-    terra::writeRaster(x = template_rast, filename = output_raster,
+    terra::writeRaster(x = template_newres, filename = output_raster,
                        filetype = filetype, overwrite = TRUE,
                        gdal=c("COMPRESS=LZW"))
   }

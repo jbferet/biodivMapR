@@ -15,6 +15,9 @@ biodivMapR_full_tiles(
   nb_clusters = 50,
   nb_samples_alpha = 1e+05,
   nb_samples_beta = 2000,
+  alphametrics = "shannon",
+  Hill_order = 1,
+  FDmetric = NULL,
   nbCPU = 1,
   nb_iter = 10,
   pcelim = 0.02,
@@ -43,6 +46,12 @@ biodivMapR_full_tiles(
 \item{nb_samples_alpha}{numeric. number of samples to compute alpha diversity}
 
 \item{nb_samples_beta}{numeric. number of samples to compute beta diversity}
+
+\item{alphametrics}{character.}
+
+\item{Hill_order}{numeric.}
+
+\item{FDmetric}{character.}
 
 \item{nbCPU}{numeric. Number of CPUs available}
 

@@ -1,3 +1,14 @@
+# biodivMapR2 v2.3.7
+## addition
+- added 'get_si_tiles_from_raster' to compute spectral index from raster tile
+- implemented functinali diversit ymetrics into tile processing 
+
+## change
+- delete files corresponding to individual tiles after mosaic
+
+## fix
+- use basename when calling grep to avoid conflict with directory name
+
 # biodivMapR2 v2.3.6
 ## fix
 - fixed bug when SI values < 0 

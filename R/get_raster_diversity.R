@@ -9,7 +9,7 @@
 #' @param Hill_order numeric. Hill order
 #' @param FDmetric character. list of functional metrics
 #' @param window_size numeric. window size for square plots
-#' @param maxRows numeric. max number of rows in each block
+#' @param maxRows numeric. max number of rows processed once by each CPU
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
 #' @param nbCPU numeric. Number of CPUs available
 #' @param min_sun numeric. minimum amount of sunlit pixels in the plots
@@ -25,7 +25,8 @@ get_raster_diversity <- function(input_raster_path, Kmeans_info, Beta_info,
                                  alphametrics = 'shannon', Hill_order = 1,
                                  FDmetric = NULL, window_size, maxRows = NULL,
                                  pcelim = 0.02, nbCPU = 1, min_sun = 0.25){
-  if (is.null(maxRows)) maxRows <- 20*window_size
+  if (is.null(maxRows))
+    maxRows <- 20*window_size
   # prepare to read input raster data
   r_in <- list()
   if (is.null(names(input_raster_path)))

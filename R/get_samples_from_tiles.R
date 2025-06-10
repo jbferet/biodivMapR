@@ -20,7 +20,7 @@ get_samples_from_tiles <- function(plotID, pix2sel, listfiles, feat_list,
                                    as.df = FALSE, as.points = FALSE, xy = FALSE,
                                    method = 'regular', p = NULL){
   plotID <- paste0('_',plotID,'_')
-  tileSI <- listfiles[grepl(x = listfiles, pattern = plotID)]
+  tileSI <- listfiles[grepl(x = basename(listfiles), pattern = plotID)]
   # get statistics on data availability
   selpix <- NULL
   if (length(tileSI) > 0 & pix2sel >0){
@@ -31,9 +31,9 @@ get_samples_from_tiles <- function(plotID, pix2sel, listfiles, feat_list,
                                  pattern = feat))
         names(rastID)[whichfeat] <- feat
       }
-      selpix <- spatSample(x = rastID, size = as.numeric(pix2sel),
-                           method = method, na.rm = TRUE, as.df = as.df,
-                           as.points = as.points, xy = xy, warn = FALSE)
+      selpix <- terra::spatSample(x = rastID, size = as.numeric(pix2sel),
+                                  method = method, na.rm = TRUE, as.df = as.df,
+                                  as.points = as.points, xy = xy, warn = FALSE)
     }
   }
   if (!is.null(p))

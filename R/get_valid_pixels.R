@@ -13,7 +13,7 @@
 #'
 get_valid_pixels <- function(plotID, listfiles, p = NULL){
   plotID <- paste0('_',plotID,'_')
-  tileSI <- listfiles[grepl(x = listfiles, pattern = plotID)]
+  tileSI <- listfiles[grepl(x = basename(listfiles), pattern = plotID)]
   # get statistics on data availability
   nb_pix_valid <- 0
   if (length(tileSI) > 0){

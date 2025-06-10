@@ -3,7 +3,7 @@
 #' @param input_raster_path character. path for the input rasters
 #' @param output_dir character. path for the output files
 #' @param window_size numeric. window size for square plots
-#' @param maxRows numeric. max number of rows in each block
+#' @param maxRows numeric. max number of rows processed once by each CPU
 #' @param Kmeans_info_save character. path where to save Kmeans_info
 #' @param Kmeans_info_read character. path where to read Kmeans_info
 #' @param Beta_info_save character. path where to save Beta_info

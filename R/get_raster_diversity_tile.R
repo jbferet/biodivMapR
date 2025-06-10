@@ -53,14 +53,18 @@ get_raster_diversity_tile <- function(input_raster_path, Kmeans_info, Beta_info,
                                 method = 'near')
   names(sample_tmp) <- 'win_ID'
 
-  res_shapeChunk <- list()
+  res_shape_chunk <- list()
   for (idx in alphametrics){
-    res_shapeChunk[[idx]] <- list()
+    res_shape_chunk[[idx]] <- list()
     for (crit in c('mean', 'sd'))
-      res_shapeChunk[[idx]][[crit]] <- matrix(NA,
-                                              nrow = nrow(sample_newres),
-                                              ncol = ncol(sample_newres))
+      res_shape_chunk[[idx]][[crit]] <- matrix(NA,
+                                               nrow = nrow(sample_newres),
+                                               ncol = ncol(sample_newres))
   }
+  for (idx in FDmetric)
+    res_shape_chunk[[idx]] <- matrix(NA,
+                                     nrow = nrow(sample_newres),
+                                     ncol = ncol(sample_newres))
   dimPCO <- 3
   if (!is.null(Beta_info))
     dimPCO <- ncol(Beta_info$BetaPCO$points)
@@ -81,6 +85,7 @@ get_raster_diversity_tile <- function(input_raster_path, Kmeans_info, Beta_info,
   selWin <- as.numeric(names(abund)[which(abund > min_sun*window_size**2)])
   selpix <- which(inputdata$win_ID %in% selWin)
   inputdata <- inputdata[selpix, ]
+  nbWindows <- max(inputdata$win_ID)
 
   # compute diversity
   if (!is.null(inputdata)){
@@ -89,45 +94,76 @@ get_raster_diversity_tile <- function(input_raster_path, Kmeans_info, Beta_info,
                                      Kmeans_info = Kmeans_info,
                                      selected_bands = selected_bands)
       # 5- split data chunk by window and by nbCPU to ensure parallel computing
-      SSwindows_per_CPU <- split_chunk(SSchunk, nbCPU)
-      # 6- compute diversity metrics
-      nb_clusters <- dim(Kmeans_info$Centroids[[1]])[1]
-      alphabetaIdx_CPU <- lapply(X = SSwindows_per_CPU$SSwindow_perCPU,
-                                 FUN = alphabeta_window_list,
-                                 nb_clusters = nb_clusters,
-                                 alphametrics = alphametrics,
-                                 Beta_info = Beta_info,
-                                 Hill_order = Hill_order,
-                                 pcelim = pcelim)
-      alphabetaIdx <- unlist(alphabetaIdx_CPU,recursive = FALSE)
-      # 7- reshape alpha diversity metrics
-      IDwindow <- unlist(SSwindows_per_CPU$IDwindow_perCPU)
-      for (idx in alphametrics){
-        for (crit in c('mean', 'sd')){
-          elem <- paste0(idx,'_',crit)
-          restmp <- unlist(lapply(alphabetaIdx,'[[',elem))
-          res_shapeChunk[[idx]][[crit]][IDwindow] <- restmp
+      if (dim(SSchunk)[1]>0){
+        SSwindows_per_CPU <- split_chunk(SSchunk, nbCPU)
+        # 6- compute diversity metrics
+        nb_clusters <- dim(Kmeans_info$Centroids[[1]])[1]
+        alphabetaIdx_CPU <- lapply(X = SSwindows_per_CPU$SSwindow_perCPU,
+                                   FUN = alphabeta_window_list,
+                                   nb_clusters = nb_clusters,
+                                   alphametrics = alphametrics,
+                                   Beta_info = Beta_info,
+                                   Hill_order = Hill_order,
+                                   pcelim = pcelim)
+        alphabetaIdx <- unlist(alphabetaIdx_CPU,recursive = FALSE)
+
+
+        if (!is.null(FDmetric)){
+          inputdata <- cbind(center_reduce(x = inputdata[selected_bands],
+                                           m = Kmeans_info$MinVal,
+                                           sig = Kmeans_info$Range),
+                             'win_ID' = inputdata$win_ID)
+          windows_per_CPU <- split_chunk(inputdata, nbCPU)
+          funct_idx_cpu <- future.apply::future_lapply(X = windows_per_CPU$SSwindow_perCPU,
+                                                       FUN = functional_window_list,
+                                                       FDmetric = FDmetric,
+                                                       future.seed = TRUE)
+          FunctionalIdx <- unlist(funct_idx_cpu, recursive = FALSE)
         }
-      }
-      if (!is.null(Beta_info) & !is.null(IDwindow) & length(IDwindow)>0) {
-        PCoA_BC0 <- do.call(rbind,lapply(alphabetaIdx,'[[','PCoA_BC'))
-        for (i in seq_len(dimPCO))
-          PCoA_raster[[i]][IDwindow] <- PCoA_BC0[,i]
+
+
+        # 7- reshape alpha diversity metrics
+        IDwindow <- unlist(SSwindows_per_CPU$IDwindow_perCPU)
+        for (idx in alphametrics){
+          for (crit in c('mean', 'sd')){
+            elem <- paste0(idx,'_',crit)
+            restmp <- unlist(lapply(alphabetaIdx,'[[',elem))
+            res_shape_chunk[[idx]][[crit]][IDwindow] <- restmp
+          }
+        }
+        if (!is.null(Beta_info) & !is.null(IDwindow) & length(IDwindow)>0) {
+          PCoA_BC0 <- do.call(rbind,lapply(alphabetaIdx,'[[','PCoA_BC'))
+          for (i in seq_len(dimPCO))
+            PCoA_raster[[i]][IDwindow] <- PCoA_BC0[,i]
+        }
+
+        list_funct_idx <- c('FRic', 'FEve', 'FDiv', 'FDis', 'FRaoq')
+        for (idx in list_funct_idx){
+          if (idx %in% FDmetric){
+            restmp <- unlist(lapply(FunctionalIdx,'[[',idx))
+            res_shape_chunk[[idx]][IDwindow] <- restmp
+            # res_shape_chunk_tmp <- rep(x = NA,nbWindows)
+            # res_shape_chunk_tmp[IDwindow] <- restmp
+            # res_shape_chunk[[idx]] <- matrix(res_shape_chunk_tmp,
+            #                                  nrow = ceiling(blk$nrows/window_size),
+            #                                  byrow = TRUE)
+          }
+        }
       }
     }
   }
   rm(alphabetaIdx)
   gc()
-  ab_div_metrics <- list('richness' = res_shapeChunk$richness,
-                         'shannon' = res_shapeChunk$shannon,
-                         'simpson' = res_shapeChunk$simpson,
-                         'fisher' = res_shapeChunk$fisher,
-                         'hill' = res_shapeChunk$hill,
-                         'FRic' = res_shapeChunk$FRic,
-                         'FEve' = res_shapeChunk$FEve,
-                         'FDiv' = res_shapeChunk$FDiv,
-                         'FDis' = res_shapeChunk$FDis,
-                         'FRaoq' = res_shapeChunk$FRaoq,
+  ab_div_metrics <- list('richness' = res_shape_chunk$richness,
+                         'shannon' = res_shape_chunk$shannon,
+                         'simpson' = res_shape_chunk$simpson,
+                         'fisher' = res_shape_chunk$fisher,
+                         'hill' = res_shape_chunk$hill,
+                         'FRic' = res_shape_chunk$FRic,
+                         'FEve' = res_shape_chunk$FEve,
+                         'FDiv' = res_shape_chunk$FDiv,
+                         'FDis' = res_shape_chunk$FDis,
+                         'FRaoq' = res_shape_chunk$FRaoq,
                          'PCoA_BC' = PCoA_raster)
   return(ab_div_metrics)
 }

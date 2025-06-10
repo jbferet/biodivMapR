@@ -15,7 +15,7 @@ update_mask_from_tiles <- function(plotID, listfiles, iqr_si, mask_dir,
                                    p = NULL){
   plotID <- paste0('_',plotID,'_')
   # tileSI <- listfiles[stringr::str_detect(string = listfiles, pattern = plotID)]
-  tileSI <- listfiles[grepl(x = listfiles, pattern = plotID)]
+  tileSI <- listfiles[grepl(x = basename(listfiles), pattern = plotID)]
   # get statistics on data availability
   namefeatures <- names(iqr_si)
   filename <- NULL
