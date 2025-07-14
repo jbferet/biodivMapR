@@ -8,8 +8,9 @@
 #' @param capstyle character. shape of the plot, see terra::buffer for info on options for capstyle
 #'
 #' @return rast_sample dataframe. pixel/plot info extracted from input_rast
-#' @importFrom sf st_sample st_as_sf st_crs
-#' @importFrom terra vect buffer extract res linearUnits project centroids ext
+#' @importFrom sf st_sample st_as_sf st_crs st_sfc st_crop
+#' @importFrom terra vect buffer extract res linearUnits project centroids ext crs
+#' @importFrom methods as
 #' @importFrom stats runif
 #' @importFrom preprocS2 meters_to_decdeg
 #' @importFrom crsuggest suggest_crs
@@ -28,7 +29,37 @@ sample_from_raster <- function(extent_area,
       message('define window_size = NULL to extract pixels only')
     }
     # randomly sample square cells within the image and mask
-    samples <- sf::st_sample(x = sf::st_as_sf(extent_area), size = nb_samples)
+    # first deal with global extent, if in this case, to avoid sampling outside of
+    # world footprint ...
+    if (terra::crs(extent_area, describe= T)$code==4326){
+      minmax_abs <- list('xmin' = -179.999,
+                         'xmax' = 179.999,
+                         'ymin' = -89.999,
+                         'ymax' = 89.999)
+      minmax_ext <- sf::st_bbox(extent_area)
+      if (minmax_ext$xmin < minmax_abs$xmin)
+        minmax_ext$xmin <- minmax_abs$xmin
+      if (minmax_ext$ymin < minmax_abs$ymin)
+        minmax_ext$ymin <- minmax_abs$ymin
+      if (minmax_ext$xmax > minmax_abs$xmax)
+        minmax_ext$xmax <- minmax_abs$xmax
+      if (minmax_ext$ymax > minmax_abs$ymax)
+        minmax_ext$ymax <- minmax_abs$ymax
+      crs_init <- sf::st_crs(extent_area)
+      polyg <- rbind(c(minmax_ext$xmin, minmax_ext$ymin),
+                     c(minmax_ext$xmax, minmax_ext$ymin),
+                     c(minmax_ext$xmax, minmax_ext$ymax),
+                     c(minmax_ext$xmin, minmax_ext$ymax),
+                     c(minmax_ext$xmin, minmax_ext$ymin)) |>
+        list() |>
+        sf::st_polygon() |>
+        sf::st_sfc(crs = crs_init)
+      extent_area <- sf::st_crop(x = sf::st_as_sf(extent_area),  y = polyg)
+      extent_area <- as(object = extent_area, Class = 'SpatVector')
+    }
+    samples <- sf::st_sample(x = sf::st_as_sf(extent_area), size = nb_samples,
+                             force = TRUE)
+
     # define cell size based on window_size
     if (is.null(window_size)) {
       samples <- terra::vect(samples)

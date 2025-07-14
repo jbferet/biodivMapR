@@ -10,7 +10,7 @@ get_plots_from_tiles(
   listfiles,
   feat_list,
   window_size,
-  min_sun = 0.75,
+  min_sun = 0.6,
   p = NULL
 )
 }

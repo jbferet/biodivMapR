@@ -1,7 +1,16 @@
+# biodivMapR2 v2.3.8
+## fix
+- implement fix to adjust global extent when using CRS 4326 (e.g. modis) 
+- modify sample_from_raster to account for global footprint
+
+## change
+- modify 'sample_from_plots_beta' to account for no data available
+- adjusted min_sun from 0.75 to 0.6 in 'get_plots_from_tiles' when sampling to produce beta model
+
 # biodivMapR2 v2.3.7
 ## addition
 - added 'get_si_tiles_from_raster' to compute spectral index from raster tile
-- implemented functinali diversit ymetrics into tile processing 
+- implemented functional diversity metrics into tile processing 
 
 ## change
 - delete files corresponding to individual tiles after mosaic

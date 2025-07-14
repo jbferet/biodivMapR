@@ -66,5 +66,8 @@ sample_from_plots_beta <- function(feature_dir, list_features, plots,
     parallel::stopCluster(cl)
     plan(sequential)
   }
+  elimNull <- unlist(lapply(samples_beta_terra, function(x){which(is.null(x))}))
+  if (length(elimNull)>0)
+    samples_beta_terra <- samples_beta_terra[-as.numeric(names(elimNull))]
   return(samples_beta_terra)
 }
