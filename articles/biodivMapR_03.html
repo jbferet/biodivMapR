@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.3.9</span>
       </span>
     </div>
 
@@ -94,7 +94,7 @@ features</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2025-04-18</h4>
+            <h4 data-toc-skip class="date">2025-09-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR_03.Rmd" class="external-link"><code>vignettes/biodivMapR_03.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_03.Rmd</code></div>
@@ -127,7 +127,7 @@ computed is also used.</p>
 <span></span>
 <span><span class="co"># 2- define parameters for biodivMapR</span></span>
 <span><span class="va">window_size</span> <span class="op">&lt;-</span> <span class="fl">10</span>         <span class="co"># window side size for computation of spectral diversity</span></span>
-<span><span class="va">nbclusters</span> <span class="op">&lt;-</span> <span class="fl">50</span>          <span class="co"># nb of clusters (spectral species)</span></span>
+<span><span class="va">nb_clusters</span> <span class="op">&lt;-</span> <span class="fl">50</span>          <span class="co"># nb of clusters (spectral species)</span></span>
 <span></span>
 <span><span class="co"># 3- define path for intermediate variables to be saved</span></span>
 <span><span class="co"># - information related to kmeans clustering defining spectral species</span></span>
@@ -144,9 +144,9 @@ computed is also used.</p>
 <span><span class="va">ab_info_SPCA</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/biodivMapR_full.html">biodivMapR_full</a></span><span class="op">(</span>input_raster_path <span class="op">=</span> <span class="va">PCA_Output</span><span class="op">$</span><span class="va">PCA_Files</span><span class="op">$</span><span class="va">PCA</span>, </span>
 <span>                                input_mask_path <span class="op">=</span> <span class="va">mask_path_PCA</span>,</span>
 <span>                                output_dir <span class="op">=</span> <span class="va">output_dir_PCA2</span>, </span>
-<span>                                SelectBands <span class="op">=</span> <span class="va">selectedPC</span>, </span>
+<span>                                selected_bands <span class="op">=</span> <span class="va">selectedPC</span>, </span>
 <span>                                window_size <span class="op">=</span> <span class="va">window_size</span>, </span>
-<span>                                nbclusters <span class="op">=</span> <span class="va">nbclusters</span>, </span>
+<span>                                nb_clusters <span class="op">=</span> <span class="va">nb_clusters</span>, </span>
 <span>                                Kmeans_info_save <span class="op">=</span> <span class="va">Kmeans_info_save</span>,</span>
 <span>                                Beta_info_save <span class="op">=</span> <span class="va">Beta_info_save</span>, </span>
 <span>                                maxRows <span class="op">=</span> <span class="va">maxRows</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span><span class="op">)</span></span></code></pre></div>
@@ -199,11 +199,11 @@ used.</p>
 <code class="sourceCode R"><span></span>
 <span><span class="co"># 1- define biodivMapR output directory </span></span>
 <span><span class="va">output_dir_SI2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">'./biodivMapR/SpectralIndices'</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">output_dir</span>, showWarnings <span class="op">=</span> <span class="cn">F</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">output_dir_SI2</span>, showWarnings <span class="op">=</span> <span class="cn">F</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># 2- define parameters for biodivMapR</span></span>
 <span><span class="va">window_size</span> <span class="op">&lt;-</span> <span class="fl">10</span>         <span class="co"># window side size for computation of spectral diversity</span></span>
-<span><span class="va">nbclusters</span> <span class="op">&lt;-</span> <span class="fl">50</span>          <span class="co"># nb of clusters (spectral species)</span></span>
+<span><span class="va">nb_clusters</span> <span class="op">&lt;-</span> <span class="fl">50</span>          <span class="co"># nb of clusters (spectral species)</span></span>
 <span></span>
 <span><span class="co"># 3- define path for intermediate variables to be saved</span></span>
 <span><span class="co"># - information related to kmeans clustering defining spectral species</span></span>
@@ -220,7 +220,7 @@ used.</p>
 <span>                              input_mask_path <span class="op">=</span> <span class="va">mask_path_SI</span>,</span>
 <span>                              output_dir <span class="op">=</span> <span class="va">output_dir_SI2</span>, </span>
 <span>                              window_size <span class="op">=</span> <span class="va">window_size</span>,</span>
-<span>                              nbclusters <span class="op">=</span> <span class="va">nbclusters</span>, </span>
+<span>                              nb_clusters <span class="op">=</span> <span class="va">nb_clusters</span>, </span>
 <span>                              Kmeans_info_save <span class="op">=</span> <span class="va">Kmeans_info_save</span>,</span>
 <span>                              Beta_info_save <span class="op">=</span> <span class="va">Beta_info_save</span>, </span>
 <span>                              maxRows <span class="op">=</span> <span class="va">maxRows</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span><span class="op">)</span></span></code></pre></div>
@@ -255,7 +255,7 @@ available Validation is described in this <a href="https://jbferet.github.io/bio
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.3.9</span>
       </span>
     </div>
 
@@ -80,16 +80,16 @@
 <span>  <span class="va">output_dir</span>,</span>
 <span>  <span class="va">window_size</span>,</span>
 <span>  <span class="va">Kmeans_info</span>,</span>
-<span>  SelectBands <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  selected_bands <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  input_mask <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  nbSamples <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span>  MinSun <span class="op">=</span> <span class="fl">0.25</span>,</span>
+<span>  nb_samples <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  min_sun <span class="op">=</span> <span class="fl">0.25</span>,</span>
 <span>  pcelim <span class="op">=</span> <span class="fl">0.02</span>,</span>
 <span>  dimPCoA <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  nbCPU <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  Beta_info_save <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  Beta_info_read <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">T</span></span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -113,7 +113,7 @@
 <dd><p>list. obtained from prepare_init_kmeans</p></dd>
 
 
-<dt id="arg-selectbands">SelectBands<a class="anchor" aria-label="anchor" href="#arg-selectbands"></a></dt>
+<dt id="arg-selected-bands">selected_bands<a class="anchor" aria-label="anchor" href="#arg-selected-bands"></a></dt>
 <dd><p>numeric. bands selected from input_rast</p></dd>
 
 
@@ -121,11 +121,11 @@
 <dd><p>SpatRaster. mask corresponding to raster to extract data from</p></dd>
 
 
-<dt id="arg-nbsamples">nbSamples<a class="anchor" aria-label="anchor" href="#arg-nbsamples"></a></dt>
+<dt id="arg-nb-samples">nb_samples<a class="anchor" aria-label="anchor" href="#arg-nb-samples"></a></dt>
 <dd><p>numeric. number of samples to be extracted</p></dd>
 
 
-<dt id="arg-minsun">MinSun<a class="anchor" aria-label="anchor" href="#arg-minsun"></a></dt>
+<dt id="arg-min-sun">min_sun<a class="anchor" aria-label="anchor" href="#arg-min-sun"></a></dt>
 <dd><p>numeric. minimum percentage of sunlit pixels</p></dd>
 
 
@@ -170,7 +170,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>

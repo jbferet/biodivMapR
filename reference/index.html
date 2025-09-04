@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.3.9</span>
       </span>
     </div>
 
@@ -85,10 +85,6 @@
         </td>
         <td><p>get max index for each row and convert into linear index</p></td>
       </tr><tr><td>
-          <p><code><a href="WeightedCoordsNN.html">WeightedCoordsNN()</a></code> </p>
-        </td>
-        <td><p>Compute the weighted coordinates of a spatial unit based on nearest neighbors used during PCoA</p></td>
-      </tr><tr><td>
           <p><code><a href="alphabeta_window.html">alphabeta_window()</a></code> </p>
         </td>
         <td><p>compute alpha and beta diversity metrics from pixel data corresponding to spectral species extracted from a window</p></td>
@@ -104,10 +100,6 @@
           <p><code><a href="apply_kmeans.html">apply_kmeans()</a></code> </p>
         </td>
         <td><p>apply kmeans to information extracted from an image and corresponding to a window</p></td>
-      </tr><tr><td>
-          <p><code><a href="biodivMapR_OptClusters.html">biodivMapR_OptClusters()</a></code> </p>
-        </td>
-        <td><p>apply biodivMapR on a test set for different numbers of clusters</p></td>
       </tr><tr><td>
           <p><code><a href="biodivMapR_SFS.html">biodivMapR_SFS()</a></code> </p>
         </td>
@@ -125,6 +117,10 @@
         </td>
         <td><p>computes diversity metrics from raster</p></td>
       </tr><tr><td>
+          <p><code><a href="biodivMapR_opt_clusters.html">biodivMapR_opt_clusters()</a></code> </p>
+        </td>
+        <td><p>apply biodivMapR on a test set for different numbers of clusters</p></td>
+      </tr><tr><td>
           <p><code><a href="center_reduce.html">center_reduce()</a></code> </p>
         </td>
         <td><p>center and reduce data matrix based on known mean and SD</p></td>
@@ -137,23 +133,23 @@
         </td>
         <td><p>cleans dataframe from NAs and Inf values</p></td>
       </tr><tr><td>
-          <p><code><a href="compute_BCdiss.html">compute_BCdiss()</a></code> </p>
-        </td>
-        <td><p>compute bray curtis dissimilarity matrix corresponding to a list of kernels (rows) defined by their spectral species (columns) SSDList is a list containing spectral species distribution for two sets of kernels pcelim is the threshold for minimum contributin of a spctral species to be kept</p></td>
-      </tr><tr><td>
-          <p><code><a href="compute_NN_from_ordination.html">compute_NN_from_ordination()</a></code> </p>
+          <p><code><a href="compute_NN_from_ordination.html">compute_nn_from_ordination()</a></code> </p>
         </td>
         <td><p>compute the nearest neighbors among kernels</p></td>
+      </tr><tr><td>
+          <p><code><a href="compute_bc_diss.html">compute_bc_diss()</a></code> </p>
+        </td>
+        <td><p>compute bray curtis dissimilarity matrix corresponding to a list of kernels (rows) defined by their spectral species (columns) ssd_list is a list containing spectral species distribution for two sets of kernels pcelim is the threshold for minimum contributin of a spctral species to be kept</p></td>
       </tr><tr><td>
           <p><code><a href="compute_mask_IQR.html">compute_mask_IQR()</a></code> </p>
         </td>
         <td><p>compute mask based on interquartile range criterion applied on input rasters</p></td>
       </tr><tr><td>
-          <p><code><a href="compute_mask_IQR_tiles.html">compute_mask_IQR_tiles()</a></code> </p>
+          <p><code><a href="compute_mask_IQR_tiles.html">compute_mask_iqr_tiles()</a></code> </p>
         </td>
         <td><p>get samples for alpha and beta diversity mapping</p></td>
       </tr><tr><td>
-          <p><code><a href="continuumRemoval.html">continuumRemoval()</a></code> </p>
+          <p><code><a href="continuum_removal.html">continuum_removal()</a></code> </p>
         </td>
         <td><p>Computes continuum removal for matrix shaped data: more efficient than processing individual spectra the convex hull is based on the computation of the derivative between R at a given spectral band and R at the following bands</p></td>
       </tr><tr><td>
@@ -177,7 +173,7 @@
         </td>
         <td><p>extract pixel information from a raster based on vector footprint</p></td>
       </tr><tr><td>
-          <p><code><a href="filter_prior_CR.html">filter_prior_CR()</a></code> </p>
+          <p><code><a href="filter_prior_CR.html">filter_prior_cr()</a></code> </p>
         </td>
         <td><p>Filter data prior to continuum removal: </p><ul><li><p>values are expected to be real reflectance values between 0 and 10000</p></li> <li><p>negative values may occur, so a +100 value is applied to avoid negative</p></li> <li><p>possibly remaining negative values are set to 0</p></li> <li><p>constant spectra are eliminated</p></li> </ul></td>
       </tr><tr><td>
@@ -193,10 +189,6 @@
         </td>
         <td><p>Computes BC dissimilarity for a given matrix</p></td>
       </tr><tr><td>
-          <p><code><a href="get_BCdiss_from_SSD.html">get_BCdiss_from_SSD()</a></code> </p>
-        </td>
-        <td><p>Computes BC dissimilarity for a list of spectral species distributions</p></td>
-      </tr><tr><td>
           <p><code><a href="get_HDR_name.html">get_HDR_name()</a></code> </p>
         </td>
         <td><p>get hdr name from image file name</p></td>
@@ -205,7 +197,7 @@
         </td>
         <td><p>computes hill number from a distribution The Hill numbers quantify biodiversity. The importance of the abundance distribution increases with increasing Hill order. For q=0, the Hill number is the richness, for q=1, it is the exponential Shannon entropy and for q=2, it is the inverse Simpson index. Note that the Hill order can also be a fraction, e.g. 0.5.</p></td>
       </tr><tr><td>
-          <p><code><a href="get_SSD_full.html">get_SSD_full()</a></code> </p>
+          <p><code><a href="get_SSD_full.html">get_ssd_full()</a></code> </p>
         </td>
         <td><p>get spectral species distribution for all clusters</p></td>
       </tr><tr><td>
@@ -217,13 +209,17 @@
         </td>
         <td><p>computes Simpson index from a distribution</p></td>
       </tr><tr><td>
-          <p><code><a href="get_alpha_from_SSD.html">get_alpha_from_SSD()</a></code> </p>
+          <p><code><a href="get_alpha_from_SSD.html">get_alpha_from_ssd()</a></code> </p>
         </td>
-        <td><p>computes alpha diversity metrics from SSD</p></td>
+        <td><p>computes alpha diversity metrics from ssd</p></td>
       </tr><tr><td>
           <p><code><a href="get_asset_path.html">get_asset_path()</a></code> </p>
         </td>
         <td><p>This function gets path from an asset in the JSON file</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_bc_diss_from_ssd.html">get_bc_diss_from_ssd()</a></code> </p>
+        </td>
+        <td><p>Computes BC dissimilarity for a list of spectral species distributions</p></td>
       </tr><tr><td>
           <p><code><a href="get_date.html">get_date()</a></code> </p>
         </td>
@@ -243,7 +239,7 @@
       </tr><tr><td>
           <p><code><a href="get_kmeans.html">get_kmeans()</a></code> </p>
         </td>
-        <td><p>computes k-means from nbIter subsets taken from dataPCA</p></td>
+        <td><p>computes k-means from nb_iter subsets taken from dataPCA</p></td>
       </tr><tr><td>
           <p><code><a href="get_plots_from_tiles.html">get_plots_from_tiles()</a></code> </p>
         </td>
@@ -268,6 +264,10 @@
           <p><code><a href="get_samples_from_tiles.html">get_samples_from_tiles()</a></code> </p>
         </td>
         <td><p>get samples for alpha diversity mapping</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_si_tiles_from_raster.html">get_si_tiles_from_raster()</a></code> </p>
+        </td>
+        <td><p>computes spectral indices over a spatial extent from a raster</p></td>
       </tr><tr><td>
           <p><code><a href="get_spectralSpecies.html">get_spectralSpecies()</a></code> </p>
         </td>
@@ -457,6 +457,10 @@
         </td>
         <td><p>update mask based on IQR for a series of rasters produced with preprocS2 function get_s2_tiling</p></td>
       </tr><tr><td>
+          <p><code><a href="weighted_coords_nn.html">weighted_coords_nn()</a></code> </p>
+        </td>
+        <td><p>Compute weighted coordinates of a spatial unit based on nearest neighbors used during PCoA</p></td>
+      </tr><tr><td>
           <p><code><a href="wrapperBig_PCA.html">wrapperBig_PCA()</a></code> </p>
         </td>
         <td><p>this function aims at applying PCA on a raster or list of rasters in combination with the function apply_bigRaster</p></td>
@@ -473,7 +477,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>

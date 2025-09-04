@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.3.9</span>
       </span>
     </div>
 
@@ -82,10 +82,10 @@
 <span>  input_mask_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  Continuum_Removal <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  TypePCA <span class="op">=</span> <span class="st">"SPCA"</span>,</span>
-<span>  NbPCs_To_Keep <span class="op">=</span> <span class="fl">30</span>,</span>
+<span>  nb_pcs_to_keep <span class="op">=</span> <span class="fl">30</span>,</span>
 <span>  Excluded_WL <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  nbPix_PCA <span class="op">=</span> <span class="fl">1e+06</span>,</span>
-<span>  nbIter <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  nb_pix_pca <span class="op">=</span> <span class="fl">1e+06</span>,</span>
+<span>  nb_iter <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  maxRows <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  filetype <span class="op">=</span> <span class="st">"GTiff"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -119,7 +119,7 @@
 <dd><p>character. Type of PCA: choose either "PCA" or "SPCA"</p></dd>
 
 
-<dt id="arg-nbpcs-to-keep">NbPCs_To_Keep<a class="anchor" aria-label="anchor" href="#arg-nbpcs-to-keep"></a></dt>
+<dt id="arg-nb-pcs-to-keep">nb_pcs_to_keep<a class="anchor" aria-label="anchor" href="#arg-nb-pcs-to-keep"></a></dt>
 <dd><p>numeric. number of components to ke saved in the PCA file. default = 30 if set to FALSE (or nb PC if &lt;30)</p></dd>
 
 
@@ -129,11 +129,11 @@ Can also be used to exclude spectific domains.
 dims = N x 2 (N = number of domains to be eliminated)</p></dd>
 
 
-<dt id="arg-nbpix-pca">nbPix_PCA<a class="anchor" aria-label="anchor" href="#arg-nbpix-pca"></a></dt>
+<dt id="arg-nb-pix-pca">nb_pix_pca<a class="anchor" aria-label="anchor" href="#arg-nb-pix-pca"></a></dt>
 <dd><p>numeric. number of pixels to use to compute PCA</p></dd>
 
 
-<dt id="arg-nbiter">nbIter<a class="anchor" aria-label="anchor" href="#arg-nbiter"></a></dt>
+<dt id="arg-nb-iter">nb_iter<a class="anchor" aria-label="anchor" href="#arg-nb-iter"></a></dt>
 <dd><p>numeric. nb of iterations averaged to compute diversity indices</p></dd>
 
 
@@ -162,7 +162,7 @@ dims = N x 2 (N = number of domains to be eliminated)</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>

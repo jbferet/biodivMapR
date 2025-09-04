@@ -14,25 +14,24 @@
 <url><loc>/reference/IQR_SpatRaster.html</loc></url>
 <url><loc>/reference/IQR_outliers.html</loc></url>
 <url><loc>/reference/RowToLinear.html</loc></url>
-<url><loc>/reference/WeightedCoordsNN.html</loc></url>
 <url><loc>/reference/alphabeta_window.html</loc></url>
 <url><loc>/reference/alphabeta_window_list.html</loc></url>
 <url><loc>/reference/apply_continuum_removal.html</loc></url>
 <url><loc>/reference/apply_kmeans.html</loc></url>
 <url><loc>/reference/biodivMapR-package.html</loc></url>
-<url><loc>/reference/biodivMapR_OptClusters.html</loc></url>
 <url><loc>/reference/biodivMapR_SFS.html</loc></url>
 <url><loc>/reference/biodivMapR_chunk.html</loc></url>
 <url><loc>/reference/biodivMapR_full.html</loc></url>
 <url><loc>/reference/biodivMapR_full_tiles.html</loc></url>
+<url><loc>/reference/biodivMapR_opt_clusters.html</loc></url>
 <url><loc>/reference/center_reduce.html</loc></url>
 <url><loc>/reference/check_data.html</loc></url>
 <url><loc>/reference/clean_NAsInf.html</loc></url>
-<url><loc>/reference/compute_BCdiss.html</loc></url>
 <url><loc>/reference/compute_NN_from_ordination.html</loc></url>
+<url><loc>/reference/compute_bc_diss.html</loc></url>
 <url><loc>/reference/compute_mask_IQR.html</loc></url>
 <url><loc>/reference/compute_mask_IQR_tiles.html</loc></url>
-<url><loc>/reference/continuumRemoval.html</loc></url>
+<url><loc>/reference/continuum_removal.html</loc></url>
 <url><loc>/reference/define_pixels_per_iter.html</loc></url>
 <url><loc>/reference/exclude_spectral_domains.html</loc></url>
 <url><loc>/reference/explore_kmeans.html</loc></url>
@@ -42,7 +41,6 @@
 <url><loc>/reference/functional_window.html</loc></url>
 <url><loc>/reference/functional_window_list.html</loc></url>
 <url><loc>/reference/get_BCdiss.html</loc></url>
-<url><loc>/reference/get_BCdiss_from_SSD.html</loc></url>
 <url><loc>/reference/get_HDR_name.html</loc></url>
 <url><loc>/reference/get_Hill.html</loc></url>
 <url><loc>/reference/get_SSD_full.html</loc></url>
@@ -50,6 +48,7 @@
 <url><loc>/reference/get_Simpson.html</loc></url>
 <url><loc>/reference/get_alpha_from_SSD.html</loc></url>
 <url><loc>/reference/get_asset_path.html</loc></url>
+<url><loc>/reference/get_bc_diss_from_ssd.html</loc></url>
 <url><loc>/reference/get_date.html</loc></url>
 <url><loc>/reference/get_diversity_from_plots.html</loc></url>
 <url><loc>/reference/get_functional_diversity.html</loc></url>
@@ -61,6 +60,7 @@
 <url><loc>/reference/get_raster_diversity_tile.html</loc></url>
 <url><loc>/reference/get_raster_extent.html</loc></url>
 <url><loc>/reference/get_samples_from_tiles.html</loc></url>
+<url><loc>/reference/get_si_tiles_from_raster.html</loc></url>
 <url><loc>/reference/get_spectralSpecies.html</loc></url>
 <url><loc>/reference/get_stats_from_tiles.html</loc></url>
 <url><loc>/reference/get_sunlitwindows.html</loc></url>
@@ -109,6 +109,7 @@
 <url><loc>/reference/split_chunk.html</loc></url>
 <url><loc>/reference/split_line.html</loc></url>
 <url><loc>/reference/update_mask_from_tiles.html</loc></url>
+<url><loc>/reference/weighted_coords_nn.html</loc></url>
 <url><loc>/reference/wrapperBig_PCA.html</loc></url>
 </urlset>
 

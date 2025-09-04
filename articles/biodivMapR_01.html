@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.3.9</span>
       </span>
     </div>
 
@@ -93,7 +93,7 @@
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2025-04-18</h4>
+            <h4 data-toc-skip class="date">2025-09-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR_01.Rmd" class="external-link"><code>vignettes/biodivMapR_01.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_01.Rmd</code></div>
@@ -170,30 +170,8 @@ as you will not be able to access it once you close the page.</p>
 <span>                            <span class="st">'xmax'</span> <span class="op">=</span> <span class="fl">366730</span>, <span class="st">'ymax'</span> <span class="op">=</span> <span class="fl">351236</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html" class="external-link">st_crs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">bbox</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">32633</span></span>
 <span></span>
-<span><span class="co"># 2- get tiling grid kml from https://sentiwiki.copernicus.eu/web/s2-products</span></span>
-<span><span class="va">path_S2tilinggrid</span> <span class="op">&lt;-</span> <span class="st">'Sentinel-2_tiling_grid.kml'</span></span>
-<span></span>
-<span><span class="co"># 3- get S2 acquisition and geometry of acquisition for study area</span></span>
-<span><span class="co"># OAuth client ID and secret password should be provided</span></span>
-<span><span class="co"># https://shapps.dataspace.copernicus.eu/dashboard/#/account/settings</span></span>
-<span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"sh-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"</span></span>
-<span><span class="va">secret</span> <span class="op">&lt;-</span> <span class="st">"XXXXXXXXXXXXXXXXXXXXXXXXXXXX"</span></span>
-<span></span>
-<span><span class="co"># tip to save credential on your computer: run the following command : </span></span>
-<span><span class="co"># &gt; file.edit("~/.Renviron")</span></span>
-<span><span class="co"># add ID and password for CDSE as well as CURL_SSL_BACKEND using this template</span></span>
-<span><span class="co"># &gt; CDSE_ID="sh-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"</span></span>
-<span><span class="co"># &gt; CDSE_SECRET="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"</span></span>
-<span><span class="co"># &gt; CURL_SSL_BACKEND="openssl"</span></span>
-<span><span class="co"># save .Renviron file and restart R session then load your credential this way: </span></span>
-<span><span class="co"># &gt; id &lt;- Sys.getenv("CDSE_ID")</span></span>
-<span><span class="co"># &gt; secret &lt;- Sys.getenv("CDSE_SECRET")</span></span>
-<span><span class="va">authentication</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">'id'</span> <span class="op">=</span> <span class="va">id</span>, <span class="st">'pwd'</span> <span class="op">=</span> <span class="va">secret</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># 3- get S2 acquisition for study area</span></span>
+<span><span class="co"># 2- get S2 acquisition for study area</span></span>
 <span><span class="va">list_files</span> <span class="op">&lt;-</span> <span class="fu">preprocS2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/preprocS2/man/get_s2_raster.html" class="external-link">get_s2_raster</a></span><span class="op">(</span>bbox <span class="op">=</span> <span class="va">bbox</span>, geomAcq <span class="op">=</span> <span class="cn">T</span>,</span>
-<span>                                       authentication <span class="op">=</span> <span class="va">authentication</span>, </span>
-<span>                                       path_S2tilinggrid <span class="op">=</span> <span class="va">path_S2tilinggrid</span>, </span>
 <span>                                       datetime <span class="op">=</span> <span class="va">datetime</span>, </span>
 <span>                                       output_dir <span class="op">=</span> <span class="va">output_dir_s2</span>, </span>
 <span>                                       siteName <span class="op">=</span> <span class="va">siteName</span><span class="op">)</span></span>
@@ -230,7 +208,7 @@ the raster data.</p>
 <span><span class="co"># url for the zip file</span></span>
 <span><span class="va">url</span> <span class="op">&lt;-</span> <span class="st">'https://gitlab.com/jbferet/myshareddata/-/raw/master/biodivMapR_S2_Sample/VECTOR/S2A_T33NUD_Plots.zip'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">url</span>, destfile <span class="op">=</span> <span class="va">destzip</span><span class="op">)</span></span>
-<span><span class="va">destunz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tmpdir</span>,<span class="st">'S2A_T33NUD_Plots'</span><span class="op">)</span></span>
+<span><span class="va">destunz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">output_dir_s2</span>,<span class="st">'S2A_T33NUD_Plots'</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://r-lib.github.io/zip/reference/unzip.html" class="external-link">unzip</a></span><span class="op">(</span>zipfile <span class="op">=</span> <span class="va">destzip</span>, exdir <span class="op">=</span> <span class="va">destunz</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">destzip</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
 <p><br><br></p>
@@ -254,7 +232,7 @@ the raster data.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer>
