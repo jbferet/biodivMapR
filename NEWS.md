@@ -1,3 +1,7 @@
+# biodivMapR2 v2.3.9
+## fix
+- create output_dir if does not exist when calling biodivMapR_full
+
 # biodivMapR2 v2.3.8
 ## fix
 - implement fix to adjust global extent when using CRS 4326 (e.g. modis) 

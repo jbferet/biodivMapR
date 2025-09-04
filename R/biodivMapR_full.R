@@ -38,6 +38,7 @@ biodivMapR_full <- function(input_raster_path, output_dir, window_size,
                             nb_samples_alpha = 1e5, dimPCoA = 3,
                             progressbar = TRUE, filetype = 'GTiff'){
 
+  dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
   # read input rasters
   if (inherits(x = input_raster_path, what = 'character')){
     input_rast <- terra::rast(input_raster_path)

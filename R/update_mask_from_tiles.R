@@ -40,6 +40,7 @@ update_mask_from_tiles <- function(plotID, listfiles, iqr_si, mask_dir,
     terra::writeRaster(x = mask, filename = filename, filetype = 'GTiff',
                        overwrite = TRUE)
   }
-  if (!is.null(p)) p()
+  if (!is.null(p))
+    p()
   return(filename)
 }
