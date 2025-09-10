@@ -1,3 +1,7 @@
+# biodivMapR2 v2.3.10
+## change
+- add option "BIGTIFF=IF_SAFER" when calling sf::gdal_utils to produce mosaics
+
 # biodivMapR2 v2.3.9
 ## fix
 - create output_dir if does not exist when calling biodivMapR_full

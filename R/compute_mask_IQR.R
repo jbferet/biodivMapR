@@ -10,7 +10,7 @@
 #' @importFrom terra rast values names varnames writeRaster
 #' @export
 
-compute_mask_IQR <- function(input_raster_path,
+compute_mask_iqr <- function(input_raster_path,
                              output_mask_path,
                              input_mask_path = NULL,
                              weightIRQ = 3,

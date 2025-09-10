@@ -159,7 +159,7 @@ SI_path <- spectralindices_from_raster(input_raster_path = input_raster_path,
 # (e.g. negative reflectance or extremely low values used in ratio)
 # this optional step ensures that erroneous vegetation indices are discarded. 
 mask_path_SI <- file.path(output_dir_SI, 'Mask_update_IQR.tif')
-compute_mask_IQR(input_raster_path = SI_path,
+compute_mask_iqr(input_raster_path = SI_path,
                  output_mask_path = mask_path_SI,
                  input_mask_path = input_mask_path)
 ```

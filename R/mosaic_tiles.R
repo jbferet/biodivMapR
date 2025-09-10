@@ -26,7 +26,7 @@ mosaic_tiles <- function(pattern, dir_path, vrt_save, siteName = NULL,
   if (!file.exists(mosaic_path) | overwrite)
     sf::gdal_utils(util = 'translate', source = output_vrt_path,
                    destination = mosaic_path,
-                   options = c("-co", "COMPRESS=LZW"))
+                   co = c("COMPRESS=LZW", "BIGTIFF=IF_SAFER"))
 
   # delete vrt
   file.remove(output_vrt_path)
