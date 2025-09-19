@@ -1,3 +1,7 @@
+# biodivMapR2 v2.3.11
+## change
+- use continuumRemoval from package prospectr instead of internal function
+
 # biodivMapR2 v2.3.10
 ## change
 - add option "BIGTIFF=IF_SAFER" when calling sf::gdal_utils to produce mosaics

@@ -18,6 +18,16 @@ apply_continuum_removal <- function(spectral_data, spectral) {
     # avoids memory crash
     max_nb_values <- 2e6
     nb_cr <- ceiling(nb_values / max_nb_values)
+
+    # # ensure first wavelength is not 0
+    # if (max(spectral_data[,1])>1)
+    #   offset <- 1
+    # if (max(spectral_data[,1])<1)
+    #   offset <- 1e-4
+    # sel <- which(spectral_data[,1]==0)
+    # if (length(sel)>0)
+    #   spectral_data[sel,1] <- spectral_data[sel,1] + offset
+
     spectral_data <- snow::splitRows(spectral_data, nb_cr)
     spectral_data_tmp <- lapply(spectral_data, FUN = continuum_removal,
                                 spectral_bands = spectral$Wavelength)
