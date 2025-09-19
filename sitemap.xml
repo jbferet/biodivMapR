@@ -31,7 +31,9 @@
 <url><loc>/reference/compute_bc_diss.html</loc></url>
 <url><loc>/reference/compute_mask_IQR.html</loc></url>
 <url><loc>/reference/compute_mask_IQR_tiles.html</loc></url>
+<url><loc>/reference/continuumRemoval.html</loc></url>
 <url><loc>/reference/continuum_removal.html</loc></url>
+<url><loc>/reference/crfun.html</loc></url>
 <url><loc>/reference/define_pixels_per_iter.html</loc></url>
 <url><loc>/reference/exclude_spectral_domains.html</loc></url>
 <url><loc>/reference/explore_kmeans.html</loc></url>
