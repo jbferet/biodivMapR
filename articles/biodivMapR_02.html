@@ -93,7 +93,7 @@
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2025-09-19</h4>
+            <h4 data-toc-skip class="date">2025-09-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR_02.Rmd" class="external-link"><code>vignettes/biodivMapR_02.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_02.Rmd</code></div>
@@ -291,7 +291,7 @@ Sentinel-2 reflectance with the R package <a href="https://gitlab.com/jbferet/sp
 <span><span class="co"># (e.g. negative reflectance or extremely low values used in ratio)</span></span>
 <span><span class="co"># this optional step ensures that erroneous vegetation indices are discarded. </span></span>
 <span><span class="va">mask_path_SI</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">output_dir_SI</span>, <span class="st">'Mask_update_IQR.tif'</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/compute_mask_IQR.html">compute_mask_iqr</a></span><span class="op">(</span>input_raster_path <span class="op">=</span> <span class="va">SI_path</span>,</span>
+<span><span class="fu">compute_mask_iqr</span><span class="op">(</span>input_raster_path <span class="op">=</span> <span class="va">SI_path</span>,</span>
 <span>                 output_mask_path <span class="op">=</span> <span class="va">mask_path_SI</span>,</span>
 <span>                 input_mask_path <span class="op">=</span> <span class="va">input_mask_path</span><span class="op">)</span></span></code></pre></div>
 <p>Spectral indices (SI) are computationally less demanding than
