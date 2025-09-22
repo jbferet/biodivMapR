@@ -38,5 +38,5 @@ extract_svc_from_rast <- function(SpatVector, input_rast,
   rast_sample <- do.call(rbind,rast_sample)
   Attributes <- do.call(rbind,AttributeTable)
   return(list('rast_sample_vect' = rast_sample,
-              'AttributeTable' = AttributeTable))
+              'AttributeTable' = Attributes))
 }
