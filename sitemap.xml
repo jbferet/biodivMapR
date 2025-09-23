@@ -30,6 +30,7 @@
 <url><loc>/reference/compute_NN_from_ordination.html</loc></url>
 <url><loc>/reference/compute_bc_diss.html</loc></url>
 <url><loc>/reference/compute_mask_IQR_tiles.html</loc></url>
+<url><loc>/reference/compute_mask_iqr.html</loc></url>
 <url><loc>/reference/continuumRemoval.html</loc></url>
 <url><loc>/reference/continuum_removal.html</loc></url>
 <url><loc>/reference/crfun.html</loc></url>
@@ -38,7 +39,6 @@
 <url><loc>/reference/explore_kmeans.html</loc></url>
 <url><loc>/reference/extract_svc_from_rast.html</loc></url>
 <url><loc>/reference/extract_vect_from_rast.html</loc></url>
-<url><loc>/reference/filter_prior_CR.html</loc></url>
 <url><loc>/reference/functional_window.html</loc></url>
 <url><loc>/reference/functional_window_list.html</loc></url>
 <url><loc>/reference/get_BCdiss.html</loc></url>
