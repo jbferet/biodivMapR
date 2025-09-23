@@ -130,7 +130,7 @@ biodivMapR_opt_clusters <- function(input_raster, obs_vect, obs2optimize,
     divIndex_est[[repet]] <- list()
     for (crit0 in obs_criterion){
       if (crit0 %in% c('richness', 'shannon', 'simpson', 'hill')){
-        Sel1 <- lapply(X = divPlots_kmeans, FUN = '[[', 'validation_AlphaBeta')
+        Sel1 <- lapply(X = divPlots_kmeans, FUN = '[[', 'specdiv')
         divIndex_est[[repet]][[crit0]] <- data.frame(lapply(X = Sel1,
                                                             FUN = '[[',
                                                             paste0(crit0, '_mean')))
