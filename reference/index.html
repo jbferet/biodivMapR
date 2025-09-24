@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.3.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.3.12</span>
       </span>
     </div>
 
@@ -180,6 +180,10 @@
           <p><code><a href="extract_vect_from_rast.html">extract_vect_from_rast()</a></code> </p>
         </td>
         <td><p>extract pixel information from a raster based on vector footprint</p></td>
+      </tr><tr><td>
+          <p><code><a href="filter_prior_cr.html">filter_prior_cr()</a></code> </p>
+        </td>
+        <td><p>Filter data prior to continuum removal: </p><ul><li><p>values are expected to be real reflectance values between 0 and 10000</p></li> <li><p>negative values may occur, so a +100 value is applied to avoid negative</p></li> <li><p>possibly remaining negative values are set to 0</p></li> <li><p>constant spectra are eliminated</p></li> </ul></td>
       </tr><tr><td>
           <p><code><a href="functional_window.html">functional_window()</a></code> </p>
         </td>
