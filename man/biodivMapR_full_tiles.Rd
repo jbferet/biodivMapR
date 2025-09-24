@@ -23,7 +23,8 @@ biodivMapR_full_tiles(
   pcelim = 0.02,
   maxRows = 1200,
   moving_window = FALSE,
-  siteName = NULL
+  siteName = NULL,
+  mosaic_output = TRUE
 )
 }
 \arguments{
@@ -64,6 +65,8 @@ biodivMapR_full_tiles(
 \item{moving_window}{boolean. should moving window be used?}
 
 \item{siteName}{character. name for the output files}
+
+\item{mosaic_output}{boolean. set TRUE if outputs need to be mosaiced}
 }
 \value{
 mosaic_path

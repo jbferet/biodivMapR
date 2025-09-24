@@ -1,3 +1,8 @@
+# biodivMapR2 v2.3.12
+## change
+- added mosaic_output as input variable for biodivMapR_full_tiles
+- fixed "BIGTIFF=IF_SAFER" when calling sf::gdal_utils to produce mosaics
+
 # biodivMapR2 v2.3.11
 ## change
 - use continuumRemoval from package prospectr instead of internal function

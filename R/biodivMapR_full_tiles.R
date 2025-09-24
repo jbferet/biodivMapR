@@ -19,6 +19,7 @@
 #' @param maxRows numeric. maximum number of rows
 #' @param moving_window boolean. should moving window be used?
 #' @param siteName character. name for the output files
+#' @param mosaic_output boolean. set TRUE if outputs need to be mosaiced
 #'
 #' @return mosaic_path
 #' @export
@@ -30,7 +31,8 @@ biodivMapR_full_tiles <- function(dsn_grid, feature_dir, list_features,
                                   alphametrics = 'shannon', Hill_order = 1,
                                   FDmetric = NULL, nbCPU = 1, nb_iter = 10,
                                   pcelim = 0.02, maxRows = 1200,
-                                  moving_window = FALSE, siteName = NULL){
+                                  moving_window = FALSE, siteName = NULL,
+                                  mosaic_output = TRUE){
 
   # update mask based on IQR filtering for each feature
   mask_path_list <- compute_mask_iqr_tiles(feature_dir = feature_dir,
@@ -132,30 +134,32 @@ biodivMapR_full_tiles <- function(dsn_grid, feature_dir, list_features,
     })
   }
 
-  # produce mosaic for outputs
-  indices <- c(alphametrics, 'beta', FDmetric)
-  mosaic_path <- list()
-  for (biodividx in indices){
-    # identify files
-    if (! biodividx %in% alphametrics){
-      selfiles <- list.files(path = output_dir, pattern = biodividx)
-    } else if (biodividx %in% alphametrics){
-      selfiles <- list.files(path = output_dir, pattern = biodividx)
-      selfiles <- selfiles[grepl(x = basename(selfiles), pattern = "mean.tiff")]
+  if (mosaic_output){
+    # produce mosaic for outputs
+    indices <- c(alphametrics, 'beta', FDmetric)
+    mosaic_path <- list()
+    for (biodividx in indices){
+      # identify files
+      if (! biodividx %in% alphametrics){
+        selfiles <- list.files(path = output_dir, pattern = biodividx)
+      } else if (biodividx %in% alphametrics){
+        selfiles <- list.files(path = output_dir, pattern = biodividx)
+        selfiles <- selfiles[grepl(x = basename(selfiles), pattern = "mean.tiff")]
+      }
+      selfiles <- file.path(output_dir, selfiles)
+      # create directory
+      diridx <- file.path(output_dir,biodividx)
+      dir.create(diridx, showWarnings = FALSE, recursive = TRUE)
+      # move files from - to
+      files_in <- selfiles
+      files_out <- as.list(file.path(diridx, basename(selfiles)))
+      mapply(FUN = file.rename, from = files_in, to = files_out)
+      mosaic_path[[biodividx]] <- mosaic_tiles(pattern = biodividx,
+                                               siteName = siteName,
+                                               dir_path = diridx,
+                                               overwrite = FALSE,
+                                               vrt_save = output_dir)
     }
-    selfiles <- file.path(output_dir, selfiles)
-    # create directory
-    diridx <- file.path(output_dir,biodividx)
-    dir.create(diridx, showWarnings = FALSE, recursive = TRUE)
-    # move files from - to
-    files_in <- selfiles
-    files_out <- as.list(file.path(diridx, basename(selfiles)))
-    mapply(FUN = file.rename, from = files_in, to = files_out)
-    mosaic_path[[biodividx]] <- mosaic_tiles(pattern = biodividx,
-                                             siteName = siteName,
-                                             dir_path = diridx,
-                                             overwrite = FALSE,
-                                             vrt_save = output_dir)
   }
   return(mosaic_path)
 }
