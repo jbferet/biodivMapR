@@ -42,7 +42,8 @@ biodivMapR_full_tiles <- function(feature_dir, list_features,
                                nb_clusters = nb_clusters,
                                nb_samples_alpha = nb_samples_alpha,
                                nb_samples_beta = nb_samples_beta,
-                               nbCPU = nbCPU, nb_iter = nb_iter)
+                               pcelim = pcelim, nbCPU = nbCPU,
+                               nb_iter = nb_iter)
 
   message('applying biodivMapR on tiles')
   maxCPU <- length(samples$ID_aoi)

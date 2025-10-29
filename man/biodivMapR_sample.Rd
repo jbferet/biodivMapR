@@ -15,6 +15,7 @@ biodivMapR_sample(
   nb_clusters = 50,
   nb_samples_alpha = 1e+05,
   nb_samples_beta = 2000,
+  pcelim = 0.02,
   nbCPU = 1,
   nb_iter = 10
 )
@@ -37,6 +38,8 @@ biodivMapR_sample(
 \item{nb_samples_alpha}{numeric. number of samples to compute alpha diversity}
 
 \item{nb_samples_beta}{numeric. number of samples to compute beta diversity}
+
+\item{pcelim}{numeric. minimum proportion of pixels to consider spectral species}
 
 \item{nbCPU}{numeric. Number of CPUs available}
 

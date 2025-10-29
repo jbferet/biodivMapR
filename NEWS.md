@@ -3,6 +3,7 @@
 - fix bug when feature names overlap (e.g. NDVI vs mNDVI705)
 - update biodivMapR_full_tiles
 - update biodivMapR_full_classif
+- add pcelim as input for biodivMapR_sample and biodivMapR_full_tiles
 
 # biodivMapR2 v2.3.13
 ## addition

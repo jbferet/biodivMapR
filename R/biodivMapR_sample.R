@@ -10,6 +10,7 @@
 #' @param nb_clusters numeric. number of clusters
 #' @param nb_samples_alpha numeric. number of samples to compute alpha diversity
 #' @param nb_samples_beta numeric. number of samples to compute beta diversity
+#' @param pcelim numeric. minimum proportion of pixels to consider spectral species
 #' @param nbCPU numeric. Number of CPUs available
 #' @param nb_iter numeric. Number of iterations required to compute diversity
 #'
@@ -19,7 +20,7 @@
 biodivMapR_sample <- function(feature_dir, list_features, mask_dir = NULL,
                               output_dir, window_size, plots, nb_clusters = 50,
                               nb_samples_alpha = 1e5, nb_samples_beta = 2e3,
-                              nbCPU = 1, nb_iter = 10){
+                              pcelim = 0.02, nbCPU = 1, nb_iter = 10){
 
   message('biodivMapR sampling')
   # update mask based on IQR filtering for each feature
@@ -68,6 +69,7 @@ biodivMapR_sample <- function(feature_dir, list_features, mask_dir = NULL,
       Beta_info <- init_PCoA_samples(rast_sample = beta_samples,
                                      output_dir = output_dir,
                                      Kmeans_info = Kmeans_info,
+                                     pcelim = pcelim,
                                      dimPCoA = 3, nbCPU = 1)
   }
   message('sampling succeeded')
