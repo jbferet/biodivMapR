@@ -27,17 +27,17 @@
 #' @return Kmeans_info and Beta_info
 #' @export
 
-biodivMapR_full <- function(input_raster_path, output_dir, window_size,
-                            maxRows = NULL, Kmeans_info_save = NULL,
-                            Kmeans_info_read = NULL, Beta_info_save = NULL,
-                            Beta_info_read = NULL, input_mask_path = NULL,
-                            nb_clusters = 50, nb_samples_beta = 1000,
-                            selected_bands = NULL, alphametrics = 'shannon',
-                            Hill_order = 1, FDmetric = NULL, pcelim = 0.02,
-                            nbCPU = 1, nb_iter = 10, min_sun = 0.25,
-                            nb_samples_alpha = 1e5, dimPCoA = 3,
-                            progressbar = TRUE, filetype = 'GTiff',
-                            classif_map = FALSE){
+biodivMapR_full_classif <- function(input_raster_path, output_dir, window_size,
+                                    maxRows = NULL, Kmeans_info_save = NULL,
+                                    Kmeans_info_read = NULL, Beta_info_save = NULL,
+                                    Beta_info_read = NULL, input_mask_path = NULL,
+                                    nb_clusters = 50, nb_samples_beta = 1000,
+                                    selected_bands = NULL, alphametrics = 'shannon',
+                                    Hill_order = 1, FDmetric = NULL, pcelim = 0.02,
+                                    nbCPU = 1, nb_iter = 10, min_sun = 0.25,
+                                    nb_samples_alpha = 1e5, dimPCoA = 3,
+                                    progressbar = TRUE, filetype = 'GTiff',
+                                    classif_map = FALSE){
 
   # read input rasters
   if (inherits(x = input_raster_path, what = 'character')){

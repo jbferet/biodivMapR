@@ -30,7 +30,8 @@ compute_mask_iqr_tiles <- function(feature_dir, feature_list, mask_dir, plots,
     tile_exists <- names(plots)[which(file.exists(mask_path))]
   } else {
     # check if features also exist
-    features_files <- lapply(X = feature_list,
+    feature_list_extended <- paste0('_',feature_list, '.')
+    features_files <- lapply(X = feature_list_extended,
                              FUN = list.files, path = feature_dir)
     names(features_files) <- feature_list
     feat_exists <- list()
@@ -44,7 +45,10 @@ compute_mask_iqr_tiles <- function(feature_dir, feature_list, mask_dir, plots,
 
   if (process_mask){
     # list files
-    listfiles <- list.files(feature_dir, full.names = TRUE)
+    feature_list_extended <- paste0('_',feature_list, '.')
+    listfiles <- unlist(lapply(X = feature_list_extended,
+                               FUN = list.files, path = feature_dir,
+                               full.names = TRUE))
     ############################################################################
     # get number of pixels per tile
     # if (nbCPU==1){

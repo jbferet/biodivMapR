@@ -1,7 +1,7 @@
 #' compute bray curtis dissimilarity matrix corresponding to a list of kernels
 #' (rows) defined by their spectral species (columns)
 #' ssd_list is a list containing spectral species distribution for two sets of kernels
-#' pcelim is the threshold for minimum contributin of a spctral species to be kept
+#' pcelim is the threshold for minimum contribution of a spectral species to be kept
 #
 #' @param ssd_list list. list of 2 groups to compute BC dissimilarity from
 #' @param pcelim numeric. minimum proportion required for a species to be included

@@ -5,7 +5,7 @@
 \title{compute bray curtis dissimilarity matrix corresponding to a list of kernels
 (rows) defined by their spectral species (columns)
 ssd_list is a list containing spectral species distribution for two sets of kernels
-pcelim is the threshold for minimum contributin of a spctral species to be kept}
+pcelim is the threshold for minimum contribution of a spectral species to be kept}
 \usage{
 compute_bc_diss(ssd_list, pcelim = 0.02)
 }
@@ -21,5 +21,5 @@ mat_bc matrix of bray curtis dissimilarity matrix
 compute bray curtis dissimilarity matrix corresponding to a list of kernels
 (rows) defined by their spectral species (columns)
 ssd_list is a list containing spectral species distribution for two sets of kernels
-pcelim is the threshold for minimum contributin of a spctral species to be kept
+pcelim is the threshold for minimum contribution of a spectral species to be kept
 }

@@ -28,7 +28,7 @@ get_samples_from_tiles <- function(plotID, pix2sel, listfiles, feat_list,
       rastID <- terra::rast(tileSI)
       for (feat in feat_list){
         whichfeat <- which(grepl(x = basename(terra::sources(rastID)),
-                                 pattern = feat))
+                                 pattern = paste0('_',feat, '.')))
         names(rastID)[whichfeat] <- feat
       }
       selpix <- terra::spatSample(x = rastID, size = as.numeric(pix2sel),

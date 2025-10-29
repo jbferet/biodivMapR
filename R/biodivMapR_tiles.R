@@ -6,14 +6,10 @@
 #' @param output_dir character. path where to save results
 #' @param window_size numeric. number of clusters used in kmeans
 #' @param plots list. list of sf plots
-#' @param nb_clusters numeric. number of clusters
-#' @param nb_samples_alpha numeric. number of samples to compute alpha diversity
-#' @param nb_samples_beta numeric. number of samples to compute beta diversity
 #' @param alphametrics character.
 #' @param Hill_order numeric.
 #' @param FDmetric character.
 #' @param nbCPU numeric. Number of CPUs available
-#' @param nb_iter numeric. Number of iterations required to compute diversity
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
 #' @param maxRows numeric. maximum number of rows
 #' @param moving_window boolean. should moving window be used?
@@ -23,29 +19,38 @@
 #' @return mosaic_path
 #' @export
 
-biodivMapR_full_tiles <- function(feature_dir, list_features,
-                                  mask_dir = NULL, output_dir, window_size,
-                                  plots, nb_clusters = 50, nb_samples_alpha = 1e5,
-                                  nb_samples_beta = 2e3,
-                                  alphametrics = 'shannon', Hill_order = 1,
-                                  FDmetric = NULL, nbCPU = 1, nb_iter = 10,
-                                  pcelim = 0.02, maxRows = 1200,
-                                  moving_window = FALSE, siteName = NULL,
-                                  mosaic_output = TRUE){
+biodivMapR_tiles <- function(feature_dir, list_features, mask_dir = NULL,
+                             output_dir, window_size, plots,
+                             alphametrics = 'shannon', Hill_order = 1,
+                             FDmetric = NULL, nbCPU = 1, pcelim = 0.02,
+                             maxRows = 1200, moving_window = FALSE,
+                             siteName = NULL, mosaic_output = TRUE){
 
-  samples <- biodivMapR_sample(feature_dir = feature_dir,
-                               list_features = list_features,
-                               mask_dir = mask_dir,
-                               output_dir = output_dir,
-                               window_size = window_size,
-                               plots = plots,
-                               nb_clusters = nb_clusters,
-                               nb_samples_alpha = nb_samples_alpha,
-                               nb_samples_beta = nb_samples_beta,
-                               nbCPU = nbCPU, nb_iter = nb_iter)
+  # update mask based on IQR filtering for each feature
+  mask_path_list <- compute_mask_iqr_tiles(feature_dir = feature_dir,
+                                           feature_list = list_features,
+                                           mask_dir = mask_dir,
+                                           plots = plots,
+                                           nbCPU = nbCPU)
+
+  # check which masks exist and discard plots with no masks
+  ID_aoi <- mask_path_list$tile_exists
+  plots <- plots[ID_aoi]
+
+  # load kmeans and beta info if exist
+  Kmeans_path <- file.path(output_dir, 'Kmeans_info.RData')
+  Beta_path <- file.path(output_dir, 'Beta_info.RData')
+  if (file.exists(Kmeans_path) & file.exists(Beta_path)){
+    load(Kmeans_path)
+    load(Beta_path)
+  } else {
+    message('please perform sampling with function "biodivMapR_sample"')
+    message('"Kmeans_info.RData" & "Beta_info.RData" missing. stopping process')
+    stop()
+  }
 
   message('applying biodivMapR on tiles')
-  maxCPU <- length(samples$ID_aoi)
+  maxCPU <- length(ID_aoi)
   if (nbCPU > maxCPU)
     nbCPU <-  maxCPU
 
@@ -55,23 +60,19 @@ biodivMapR_full_tiles <- function(feature_dir, list_features,
     handlers("cli")
     with_progress({
       p <- progressr::progressor(steps = maxCPU)
-      future.apply::future_lapply(X = samples$ID_aoi,
-                                  FUN = run_biodivMapR_plot,
+      future.apply::future_lapply(X = ID_aoi, FUN = run_biodivMapR_plot,
                                   feature_dir = feature_dir,
                                   mask_dir = mask_dir,
                                   list_features = list_features,
-                                  Kmeans_info = samples$Kmeans_info,
-                                  Beta_info = samples$Beta_info,
+                                  Kmeans_info = Kmeans_info,
+                                  Beta_info = Beta_info,
                                   alphametrics = alphametrics,
                                   Hill_order = Hill_order,
-                                  FDmetric = FDmetric,
-                                  output_dir = output_dir,
+                                  FDmetric = FDmetric, output_dir = output_dir,
                                   window_size = window_size,
-                                  maxRows = maxRows,
-                                  pcelim = pcelim,
+                                  maxRows = maxRows, pcelim = pcelim,
                                   moving_window = moving_window, p = p,
-                                  future.seed = TRUE,
-                                  future.chunk.size = NULL,
+                                  future.seed = TRUE, future.chunk.size = NULL,
                                   future.scheduling = structure(TRUE,
                                                                 ordering = "random"))
     })
@@ -81,20 +82,13 @@ biodivMapR_full_tiles <- function(feature_dir, list_features,
     handlers("cli")
     with_progress({
       p <- progressr::progressor(steps = maxCPU)
-      lapply(X = samples$ID_aoi,
-             FUN = run_biodivMapR_plot,
-             feature_dir = feature_dir,
-             mask_dir = mask_dir,
-             list_features = list_features,
-             Kmeans_info = samples$Kmeans_info,
-             Beta_info = samples$Beta_info,
-             alphametrics = alphametrics,
-             Hill_order = Hill_order,
-             FDmetric = FDmetric,
-             output_dir = output_dir,
-             window_size = window_size,
-             maxRows = maxRows,
-             moving_window = moving_window, p = p)
+      lapply(X = ID_aoi, FUN = run_biodivMapR_plot,
+             feature_dir = feature_dir, mask_dir = mask_dir,
+             list_features = list_features, Kmeans_info = Kmeans_info,
+             Beta_info = Beta_info, alphametrics = alphametrics,
+             Hill_order = Hill_order, FDmetric = FDmetric,
+             output_dir = output_dir, window_size = window_size,
+             maxRows = maxRows, moving_window = moving_window, p = p)
     })
   }
 
