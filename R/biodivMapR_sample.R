@@ -13,6 +13,7 @@
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
 #' @param nbCPU numeric. Number of CPUs available
 #' @param nb_iter numeric. Number of iterations required to compute diversity
+#' @param weightIRQ numeric. IQR applied to filter out features to be used
 #'
 #' @return mosaic_path
 #' @export
@@ -20,7 +21,8 @@
 biodivMapR_sample <- function(feature_dir, list_features, mask_dir = NULL,
                               output_dir, window_size, plots, nb_clusters = 50,
                               nb_samples_alpha = 1e5, nb_samples_beta = 2e3,
-                              pcelim = 0.02, nbCPU = 1, nb_iter = 10){
+                              pcelim = 0.02, nbCPU = 1, nb_iter = 10,
+                              weightIRQ = 4){
 
   message('biodivMapR sampling')
   # update mask based on IQR filtering for each feature
@@ -28,8 +30,9 @@ biodivMapR_sample <- function(feature_dir, list_features, mask_dir = NULL,
                                            feature_list = list_features,
                                            mask_dir = mask_dir,
                                            plots = plots,
-                                           nbCPU = nbCPU)
-
+                                           nbCPU = nbCPU,
+                                           weightIRQ = weightIRQ)
+  gc()
   # check which masks exist and discard plots with no masks
   ID_aoi <- mask_path_list$tile_exists
   plots <- plots[ID_aoi]

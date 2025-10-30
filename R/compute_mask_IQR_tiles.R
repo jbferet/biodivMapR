@@ -107,7 +107,9 @@ compute_mask_iqr_tiles <- function(feature_dir, feature_list, mask_dir, plots,
     }
     # compute IQR
     selpixAll <- do.call(what = 'rbind', selpix)
-    iqr_si <- lapply(X = selpixAll, FUN = biodivMapR::IQR_outliers, weightIRQ = weightIRQ)
+    iqr_si <- lapply(X = selpixAll,
+                     FUN = biodivMapR::IQR_outliers,
+                     weightIRQ = weightIRQ)
 
     ##############################################################################
     # produce mask for each tile

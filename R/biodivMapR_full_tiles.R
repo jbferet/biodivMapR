@@ -6,33 +6,45 @@
 #' @param output_dir character. path where to save results
 #' @param window_size numeric. number of clusters used in kmeans
 #' @param plots list. list of sf plots
-#' @param nb_clusters numeric. number of clusters
-#' @param nb_samples_alpha numeric. number of samples to compute alpha diversity
-#' @param nb_samples_beta numeric. number of samples to compute beta diversity
-#' @param alphametrics character.
-#' @param Hill_order numeric.
-#' @param FDmetric character.
 #' @param nbCPU numeric. Number of CPUs available
-#' @param nb_iter numeric. Number of iterations required to compute diversity
-#' @param pcelim numeric. minimum proportion of pixels to consider spectral species
-#' @param maxRows numeric. maximum number of rows
-#' @param moving_window boolean. should moving window be used?
 #' @param siteName character. name for the output files
-#' @param mosaic_output boolean. set TRUE if outputs need to be mosaiced
+#' @param options list. including
+#' - nb_clusters numeric. number of clusters
+#' - nb_samples_alpha numeric. number of samples to compute alpha diversity
+#' - nb_samples_beta numeric. number of samples to compute beta diversity
+#' - alphametrics character.
+#' - Hill_order numeric.
+#' - FDmetric character.
+#' - nb_iter numeric. Number of iterations required to compute diversity
+#' - pcelim numeric. minimum proportion of pixels to consider spectral species
+#' - maxRows numeric. maximum number of rows
+#' - moving_window boolean. should moving window be used?
+#' - mosaic_output boolean. set TRUE if outputs need to be mosaiced
+#' - weightIRQ numeric. IQR applied to filter out features to be used
 #'
 #' @return mosaic_path
 #' @export
 
-biodivMapR_full_tiles <- function(feature_dir, list_features,
-                                  mask_dir = NULL, output_dir, window_size,
-                                  plots, nb_clusters = 50, nb_samples_alpha = 1e5,
-                                  nb_samples_beta = 2e3,
-                                  alphametrics = 'shannon', Hill_order = 1,
-                                  FDmetric = NULL, nbCPU = 1, nb_iter = 10,
-                                  pcelim = 0.02, maxRows = 1200,
-                                  moving_window = FALSE, siteName = NULL,
-                                  mosaic_output = TRUE){
+biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
+                                  output_dir, window_size, plots, nbCPU = 1,
+                                  siteName = NULL, options = NULL){
 
+  # define options
+  options <- set_options(fun = 'biodivMapR_full_tiles', options = options)
+  nb_clusters <- options$nb_clusters
+  nb_samples_alpha<- options$nb_samples_alpha
+  nb_samples_beta <- options$nb_samples_beta
+  alphametrics <- options$alphametrics
+  Hill_order <- options$Hill_order
+  FDmetric <- options$FDmetric
+  nb_iter <- options$nb_iter
+  pcelim <- options$pcelim
+  maxRows <- options$maxRows
+  moving_window <- options$moving_window
+  mosaic_output <- options$mosaic_output
+  weightIRQ <- options$weightIRQ
+
+  # sample data if not already sampled
   samples <- biodivMapR_sample(feature_dir = feature_dir,
                                list_features = list_features,
                                mask_dir = mask_dir,

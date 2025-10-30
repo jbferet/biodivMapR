@@ -17,7 +17,8 @@ biodivMapR_sample(
   nb_samples_beta = 2000,
   pcelim = 0.02,
   nbCPU = 1,
-  nb_iter = 10
+  nb_iter = 10,
+  weightIRQ = 4
 )
 }
 \arguments{
@@ -44,6 +45,8 @@ biodivMapR_sample(
 \item{nbCPU}{numeric. Number of CPUs available}
 
 \item{nb_iter}{numeric. Number of iterations required to compute diversity}
+
+\item{weightIRQ}{numeric. IQR applied to filter out features to be used}
 }
 \value{
 mosaic_path

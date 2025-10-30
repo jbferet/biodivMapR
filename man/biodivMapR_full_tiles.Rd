@@ -11,19 +11,9 @@ biodivMapR_full_tiles(
   output_dir,
   window_size,
   plots,
-  nb_clusters = 50,
-  nb_samples_alpha = 1e+05,
-  nb_samples_beta = 2000,
-  alphametrics = "shannon",
-  Hill_order = 1,
-  FDmetric = NULL,
   nbCPU = 1,
-  nb_iter = 10,
-  pcelim = 0.02,
-  maxRows = 1200,
-  moving_window = FALSE,
   siteName = NULL,
-  mosaic_output = TRUE
+  options = NULL
 )
 }
 \arguments{
@@ -39,31 +29,25 @@ biodivMapR_full_tiles(
 
 \item{plots}{list. list of sf plots}
 
-\item{nb_clusters}{numeric. number of clusters}
-
-\item{nb_samples_alpha}{numeric. number of samples to compute alpha diversity}
-
-\item{nb_samples_beta}{numeric. number of samples to compute beta diversity}
-
-\item{alphametrics}{character.}
-
-\item{Hill_order}{numeric.}
-
-\item{FDmetric}{character.}
-
 \item{nbCPU}{numeric. Number of CPUs available}
-
-\item{nb_iter}{numeric. Number of iterations required to compute diversity}
-
-\item{pcelim}{numeric. minimum proportion of pixels to consider spectral species}
-
-\item{maxRows}{numeric. maximum number of rows}
-
-\item{moving_window}{boolean. should moving window be used?}
 
 \item{siteName}{character. name for the output files}
 
-\item{mosaic_output}{boolean. set TRUE if outputs need to be mosaiced}
+\item{options}{list. including
+\itemize{
+\item nb_clusters numeric. number of clusters
+\item nb_samples_alpha numeric. number of samples to compute alpha diversity
+\item nb_samples_beta numeric. number of samples to compute beta diversity
+\item alphametrics character.
+\item Hill_order numeric.
+\item FDmetric character.
+\item nb_iter numeric. Number of iterations required to compute diversity
+\item pcelim numeric. minimum proportion of pixels to consider spectral species
+\item maxRows numeric. maximum number of rows
+\item moving_window boolean. should moving window be used?
+\item mosaic_output boolean. set TRUE if outputs need to be mosaiced
+\item weightIRQ numeric. IQR applied to filter out features to be used
+}}
 }
 \value{
 mosaic_path

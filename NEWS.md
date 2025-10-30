@@ -1,3 +1,8 @@
+# biodivMapR2 v2.3.15
+## change
+- add options as input parameter for 'biodivMapR_full_tiles' in order to reduce nb of inputs
+- add possibility to define the IQR when sampling with 'biodivMapR_sample' and filtering
+
 # biodivMapR2 v2.3.14
 ## fix
 - fix bug when feature names overlap (e.g. NDVI vs mNDVI705)
