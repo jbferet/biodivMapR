@@ -40,6 +40,7 @@ biodivMapR_tiles <- function(feature_dir, list_features, mask_dir = NULL,
   # load kmeans and beta info if exist
   Kmeans_path <- file.path(output_dir, 'Kmeans_info.RData')
   Beta_path <- file.path(output_dir, 'Beta_info.RData')
+  Kmeans_info <- Beta_info <- NULL
   if (file.exists(Kmeans_path) & file.exists(Beta_path)){
     load(Kmeans_path)
     load(Beta_path)
