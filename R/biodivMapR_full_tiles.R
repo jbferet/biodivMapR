@@ -30,7 +30,7 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
                                   siteName = NULL, options = NULL){
 
   # define options
-  options <- set_options(fun = 'biodivMapR_full_tiles', options = options)
+  options <- set_options_biodivMapR(fun = 'biodivMapR_full_tiles', options = options)
   nb_clusters <- options$nb_clusters
   nb_samples_alpha<- options$nb_samples_alpha
   nb_samples_beta <- options$nb_samples_beta
