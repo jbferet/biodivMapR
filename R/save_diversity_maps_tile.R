@@ -39,7 +39,8 @@ save_diversity_maps_tile <- function(input_raster_path,
 
   for (idx in alphametrics) {
     idx2 <- idx
-    if (idx == 'hill') idx2 <- paste0(idx, '_', Hill_order)
+    if (idx == 'hill')
+      idx2 <- paste0(idx, '_', Hill_order)
     # Mean value
     # produce a template
     template_rast <- terra::rast(input_raster_path[[1]])

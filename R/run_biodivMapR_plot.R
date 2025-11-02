@@ -35,6 +35,8 @@ run_biodivMapR_plot <- function(id, feature_dir, mask_dir = NULL,
 
   betanames <- paste0('beta_',id)
   alphanames <- paste0(alphametrics,'_',id)
+  if ('hill' %in% alphametrics)
+    alphanames[alphametrics=='hill'] <- paste0('hill_', Hill_order,'_',id)
   functionalname <- NULL
   if (!is.null(FDmetric))
     functionalname <- paste0(FDmetric,'_',id)

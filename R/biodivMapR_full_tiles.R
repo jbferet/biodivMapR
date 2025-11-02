@@ -44,6 +44,11 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
   mosaic_output <- options$mosaic_output
   weightIRQ <- options$weightIRQ
 
+  # # adjust hill name if required
+  # if ('hill' %in% alphametrics){
+  #
+  # }
+
   # sample data if not already sampled
   samples <- biodivMapR_sample(feature_dir = feature_dir,
                                list_features = list_features,
