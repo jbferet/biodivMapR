@@ -40,7 +40,8 @@ run_biodivMapR_plot <- function(id, feature_dir, mask_dir = NULL,
     functionalname <- paste0(FDmetric,'_',id)
   alphanames_mean <- paste0(alphanames,'_mean')
   output_raster_name <- as.list(c(betanames, alphanames, functionalname))
-  output_raster_name_mean <- as.list(c(betanames, alphanames_mean, functionalname))
+  output_raster_name_mean <- as.list(c(betanames, alphanames_mean,
+                                       functionalname))
   names(output_raster_name) <- c('beta', alphametrics, FDmetric)
   if (FALSE %in% file.exists(file.path(output_dir,
                                        paste0(output_raster_name_mean,'.tiff')))){

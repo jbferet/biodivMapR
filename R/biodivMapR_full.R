@@ -23,6 +23,7 @@
 #' @param dimPCoA numeric. number of dimensions of PCoA
 #' @param progressbar boolean. set true for progress bar during clustering
 #' @param filetype character. driver for output diversity raster data
+#' @param moving_window boolean. should diversity be computed on moving window?
 #'
 #' @return Kmeans_info and Beta_info
 #' @export
@@ -36,7 +37,8 @@ biodivMapR_full <- function(input_raster_path, output_dir, window_size,
                             Hill_order = 1, FDmetric = NULL, pcelim = 0.02,
                             nbCPU = 1, nb_iter = 10, min_sun = 0.25,
                             nb_samples_alpha = 1e5, dimPCoA = 3,
-                            progressbar = TRUE, filetype = 'GTiff'){
+                            progressbar = TRUE, filetype = 'GTiff',
+                            moving_window = FALSE){
 
   dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
   # read input rasters
@@ -80,28 +82,67 @@ biodivMapR_full <- function(input_raster_path, output_dir, window_size,
   # input_rasters <- list('main' = input_raster_path,
   #                       'mask' = input_mask_path)
   options(fundiversity.memoise = FALSE)
-  ab_div_metrics <- get_raster_diversity(input_raster_path = input_raster_path,
-                                         input_mask_path = input_mask_path,
-                                         Kmeans_info = Kmeans_info,
-                                         Beta_info = Beta_info,
-                                         selected_bands = selected_bands,
-                                         window_size = window_size,
-                                         alphametrics = alphametrics,
-                                         Hill_order = Hill_order,
-                                         FDmetric = FDmetric,
-                                         pcelim = pcelim,
-                                         maxRows = maxRows, nbCPU = nbCPU,
-                                         min_sun = min_sun)
 
-  # save diversity metrics as raster data
-  save_diversity_maps(ab_div_metrics = ab_div_metrics,
-                      alphametrics = alphametrics,
-                      Hill_order = Hill_order,
-                      FDmetric = FDmetric,
-                      input_rast = input_rast,
-                      output_dir = output_dir,
-                      window_size = window_size,
-                      filetype = filetype)
-  return(list('Kmeans_info' = Kmeans_info,
+  if (!moving_window){
+    message('compute raster diversity using moving window')
+    message('please set "moving_window = FALSE" if this takes too much time')
+    ab_div_metrics <- get_raster_diversity(input_raster_path = input_raster_path,
+                                           input_mask_path = input_mask_path,
+                                           Kmeans_info = Kmeans_info,
+                                           Beta_info = Beta_info,
+                                           selected_bands = selected_bands,
+                                           window_size = window_size,
+                                           alphametrics = alphametrics,
+                                           Hill_order = Hill_order,
+                                           FDmetric = FDmetric,
+                                           pcelim = pcelim,
+                                           maxRows = maxRows, nbCPU = nbCPU,
+                                           min_sun = min_sun)
+
+    # save diversity metrics as raster data
+    diversity_maps <- save_diversity_maps(ab_div_metrics = ab_div_metrics,
+                                          alphametrics = alphametrics,
+                                          Hill_order = Hill_order,
+                                          FDmetric = FDmetric,
+                                          input_rast = input_rast,
+                                          output_dir = output_dir,
+                                          window_size = window_size,
+                                          filetype = filetype)
+  }
+
+  if (moving_window){
+    ab_div_metrics <- get_raster_diversity_mw(input_raster_path = input_raster_path,
+                                              input_mask_path = input_mask_path,
+                                              Kmeans_info = Kmeans_info,
+                                              Beta_info = Beta_info,
+                                              selected_bands = selected_bands,
+                                              window_size = window_size,
+                                              alphametrics = alphametrics,
+                                              Hill_order = Hill_order,
+                                              FDmetric = FDmetric,
+                                              pcelim = pcelim,
+                                              maxRows = maxRows, nbCPU = nbCPU,
+                                              min_sun = min_sun)
+
+    betanames <- 'beta_mw'
+    alphanames <- paste0(alphametrics,'_mw')
+    functionalname <- NULL
+    if (!is.null(FDmetric))
+      functionalname <- paste0(FDmetric,'_mw')
+    output_raster_name <- as.list(c(betanames, alphanames, functionalname))
+    names(output_raster_name) <- c('beta', alphametrics, FDmetric)
+    diversity_maps <- save_diversity_maps_mw(input_raster_path = input_raster_path,
+                                             ab_div_metrics = ab_div_metrics,
+                                             alphametrics = alphametrics,
+                                             Hill_order = Hill_order,
+                                             FDmetric = FDmetric,
+                                             input_rast = input_rast,
+                                             output_dir = output_dir,
+                                             output_raster_name = output_raster_name,
+                                             window_size = window_size,
+                                             filetype = filetype)
+  }
+  return(list('diversity_maps' = diversity_maps,
+              'Kmeans_info' = Kmeans_info,
               'Beta_info' = Beta_info))
 }

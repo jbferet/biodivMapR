@@ -1,3 +1,7 @@
+# biodivMapR2 v2.3.16
+## addition
+- add option moving_window for biodivMapR_full
+
 # biodivMapR2 v2.3.15
 ## change
 - add options as input parameter for 'biodivMapR_full_tiles' in order to reduce nb of inputs

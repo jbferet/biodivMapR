@@ -27,7 +27,8 @@ biodivMapR_full(
   nb_samples_alpha = 1e+05,
   dimPCoA = 3,
   progressbar = TRUE,
-  filetype = "GTiff"
+  filetype = "GTiff",
+  moving_window = FALSE
 )
 }
 \arguments{
@@ -76,6 +77,8 @@ biodivMapR_full(
 \item{progressbar}{boolean. set true for progress bar during clustering}
 
 \item{filetype}{character. driver for output diversity raster data}
+
+\item{moving_window}{boolean. should diversity be computed on moving window?}
 }
 \value{
 Kmeans_info and Beta_info

@@ -52,16 +52,16 @@ run_biodivMapR <- function(input_raster_path, input_mask_path = NULL,
                                                 nbCPU = nbCPU,
                                                 min_sun = min_sun)
     # save diversity metrics as raster data
-    save_diversity_maps_tile(input_raster_path = input_raster_path,
-                             ab_div_metrics = ab_div_metrics,
-                             alphametrics = alphametrics,
-                             Hill_order = Hill_order,
-                             FDmetric = FDmetric,
-                             input_rast = input_rast,
-                             output_dir = output_dir,
-                             output_raster_name = output_raster_name,
-                             window_size = window_size,
-                             filetype = filetype)
+    diversity_maps <- save_diversity_maps_tile(input_raster_path = input_raster_path,
+                                               ab_div_metrics = ab_div_metrics,
+                                               alphametrics = alphametrics,
+                                               Hill_order = Hill_order,
+                                               FDmetric = FDmetric,
+                                               input_rast = input_rast,
+                                               output_dir = output_dir,
+                                               output_raster_name = output_raster_name,
+                                               window_size = window_size,
+                                               filetype = filetype)
   }
   if (moving_window){
     ab_div_metrics <- get_raster_diversity_mw(input_raster_path = input_raster_path,
@@ -77,16 +77,16 @@ run_biodivMapR <- function(input_raster_path, input_mask_path = NULL,
                                               maxRows = maxRows, nbCPU = nbCPU,
                                               min_sun = min_sun)
 
-    save_diversity_maps_mw(input_raster_path = input_raster_path,
-                           ab_div_metrics = ab_div_metrics,
-                           alphametrics = alphametrics,
-                           Hill_order = Hill_order,
-                           FDmetric = FDmetric,
-                           input_rast = input_rast,
-                           output_dir = output_dir,
-                           output_raster_name = output_raster_name,
-                           window_size = window_size,
-                           filetype = filetype)
+    diversity_maps <- save_diversity_maps_mw(input_raster_path = input_raster_path,
+                                             ab_div_metrics = ab_div_metrics,
+                                             alphametrics = alphametrics,
+                                             Hill_order = Hill_order,
+                                             FDmetric = FDmetric,
+                                             input_rast = input_rast,
+                                             output_dir = output_dir,
+                                             output_raster_name = output_raster_name,
+                                             window_size = window_size,
+                                             filetype = filetype)
   }
   return()
 }

@@ -25,6 +25,8 @@ get_raster_diversity <- function(input_raster_path, Kmeans_info, Beta_info,
                                  alphametrics = 'shannon', Hill_order = 1,
                                  FDmetric = NULL, window_size, maxRows = NULL,
                                  pcelim = 0.02, nbCPU = 1, min_sun = 0.25){
+
+  message('compute raster diversity')
   if (is.null(maxRows))
     maxRows <- 20*window_size
   # prepare to read input raster data

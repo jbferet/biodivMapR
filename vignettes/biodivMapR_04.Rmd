@@ -27,6 +27,22 @@ This tutorial illustrates how to perform validation of spectral diversity metric
 Ground information should be associated with a vector layer including polygons.
 The size of the polygons is important, as it should be compatible with ground information.
 
+**biodivMapR does not aim at producing diversity metrics with absolute accuracy**:\
+the spectral diversity metrics produced with `biodivMapR` are not expected to 
+match the absolute value of diversity metrics. 
+Hence, when performing validation of diversity metrics with ground observations, 
+users should favor correlation analyses, rather than using error with measured 
+biodiversity indices. 
+
+The choice of the number of clusters is an important factor directly influencing 
+the range of the spectral $\alpha$ diversity metrics, higher number of clusters 
+leading to higher maximum potential values of spectral richness & Shannon index.
+
+The function `biodivMapR_opt_clusters` can be used to identify the number of 
+clusters maximizing the correlation between spectral diversity metrics and 
+observations. 
+
+
 **Ground information should not correspond to individual points**:\
 `biodivMapR` produces diversity metrics based on information extracted from a group of pixels.
 $\alpha$ and $\beta$ spectral diversity metrics are computed from the distribution of cluster populations is each polygon.

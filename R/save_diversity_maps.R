@@ -23,10 +23,13 @@ save_diversity_maps <- function(ab_div_metrics,
                                 output_raster_name = NULL,
                                 window_size,
                                 filetype = 'GTiff'){
+
+  diversity_maps <- list()
   # save alpha diversity indices
   for (idx in alphametrics) {
     idx2 <- idx
-    if (idx == 'hill') idx2 <- paste0(idx, '_', Hill_order)
+    if (idx == 'hill')
+      idx2 <- paste0(idx, '_', Hill_order)
     # Mean value
     # produce a template
     template_rast <- terra::aggregate(input_rast[[1]], fact = window_size)
@@ -48,6 +51,9 @@ save_diversity_maps <- function(ab_div_metrics,
     terra::writeRaster(x = template_rast, filename = output_raster,
                        filetype = filetype, overwrite = TRUE,
                        gdal = c("COMPRESS=LZW"))
+
+    diversity_maps[[paste0(idx2, '_mean')]] <- output_raster
+
     # SD value
     # produce a template
     template_rast <- terra::aggregate(input_rast[[1]], fact = window_size)
@@ -67,6 +73,7 @@ save_diversity_maps <- function(ab_div_metrics,
     terra::writeRaster(x = template_rast, filename = output_raster,
                        filetype = filetype, overwrite = TRUE,
                        gdal = c("COMPRESS=LZW"))
+    diversity_maps[[paste0(idx2, '_sd')]] <- output_raster
   }
 
   # save functional diversity indices
@@ -87,6 +94,7 @@ save_diversity_maps <- function(ab_div_metrics,
     terra::writeRaster(x = template_rast, filename = output_raster,
                        filetype = filetype, overwrite = TRUE,
                        gdal = c("COMPRESS=LZW"))
+    diversity_maps[[idx]] <- output_raster
   }
 
   # save beta diversity indices
@@ -113,5 +121,7 @@ save_diversity_maps <- function(ab_div_metrics,
   terra::writeRaster(x = template_rast, filename = output_raster,
                      filetype = filetype, overwrite = TRUE,
                      gdal = c("COMPRESS=LZW"))
-  return(invisible())
+  diversity_maps[['beta']] <- output_raster
+
+  return(diversity_maps)
 }

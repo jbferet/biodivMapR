@@ -18,16 +18,24 @@ mosaic_tiles <- function(pattern, dir_path, vrt_save, siteName = NULL,
     siteName <- paste0('_', siteName, '_')
   listfiles <- list.files(dir_path, pattern = pattern, full.names = TRUE)
   output_vrt_path <- file.path(getwd(), paste0(siteName, pattern,'_mosaic.vrt'))
-  if (!file.exists(output_vrt_path))
-    v <- terra::vrt(x = listfiles, filename = output_vrt_path)
+  # if (!file.exists(output_vrt_path))
+  v <- terra::vrt(x = listfiles, filename = output_vrt_path, overwrite = TRUE)
 
   # create tiff from vrt
   mosaic_path <- file.path(dir_path, paste0(siteName, pattern,'_mosaic.tiff'))
-  if (!file.exists(mosaic_path) | overwrite)
-    sf::gdal_utils(util = 'translate', source = output_vrt_path,
-                   destination = mosaic_path,
-                   options = c("COMPRESS=LZW", "BIGTIFF=IF_SAFER"))
-                   # co = c("COMPRESS=LZW", "BIGTIFF=IF_SAFER"))
+  if (!file.exists(mosaic_path) | overwrite){
+    if (dim(v)[[1]]*dim(v)[[2]]*5 < 1e8){
+      message(paste('write image for diversity metric', pattern))
+      sf::gdal_utils(util = 'translate', source = output_vrt_path,
+                     destination = mosaic_path)
+    } else {
+      message(paste('write compressed image for diversity metric', pattern))
+      sf::gdal_utils(util = 'translate', source = output_vrt_path,
+                     destination = mosaic_path,
+                     options = c("COMPRESS=LZW", "BIGTIFF=IF_SAFER"))
+                      # co = c("COMPRESS=LZW", "BIGTIFF=IF_SAFER"))
+    }
+  }
 
   # delete vrt
   file.remove(output_vrt_path)

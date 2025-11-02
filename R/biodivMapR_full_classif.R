@@ -133,14 +133,15 @@ biodivMapR_full_classif <- function(input_raster_path, output_dir, window_size,
 
 
   # save diversity metrics as raster data
-  save_diversity_maps(ab_div_metrics = ab_div_metrics,
-                      alphametrics = alphametrics,
-                      Hill_order = Hill_order,
-                      FDmetric = FDmetric,
-                      input_rast = input_rast,
-                      output_dir = output_dir,
-                      window_size = window_size,
-                      filetype = filetype)
-  return(list('Kmeans_info' = Kmeans_info,
+  diversity_maps <- save_diversity_maps(ab_div_metrics = ab_div_metrics,
+                                        alphametrics = alphametrics,
+                                        Hill_order = Hill_order,
+                                        FDmetric = FDmetric,
+                                        input_rast = input_rast,
+                                        output_dir = output_dir,
+                                        window_size = window_size,
+                                        filetype = filetype)
+  return(list('diversity_maps' = diversity_maps,
+              'Kmeans_info' = Kmeans_info,
               'Beta_info' = Beta_info))
 }

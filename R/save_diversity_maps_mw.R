@@ -37,9 +37,11 @@ save_diversity_maps_mw <- function(input_raster_path,
   #   }
   # }
 
+  diversity_maps <- list()
   for (idx in alphametrics) {
     idx2 <- idx
-    if (idx == 'hill') idx2 <- paste0(idx, '_', Hill_order)
+    if (idx == 'hill')
+      idx2 <- paste0(idx, '_', Hill_order)
     # Mean value
     # produce a template
     template_rast <- terra::rast(input_raster_path[[1]])
@@ -57,6 +59,7 @@ save_diversity_maps_mw <- function(input_raster_path,
     terra::writeRaster(x = template_rast, filename = output_raster,
                        filetype = filetype, overwrite = TRUE,
                        gdal = c("COMPRESS=LZW"))
+    diversity_maps[[paste0(idx2, '_mean')]] <- output_raster
     # SD value
     # produce a template
     template_rast <- terra::rast(input_raster_path[[1]])
@@ -73,6 +76,7 @@ save_diversity_maps_mw <- function(input_raster_path,
     terra::writeRaster(x = template_rast, filename = output_raster,
                        filetype = filetype, overwrite = TRUE,
                        gdal = c("COMPRESS=LZW"))
+    diversity_maps[[paste0(idx2, '_sd')]] <- output_raster
   }
 
   # save functional diversity indices
@@ -86,10 +90,12 @@ save_diversity_maps_mw <- function(input_raster_path,
       output_raster <- file.path(output_dir, idx)
     if (!is.null(output_raster_name[[idx]]))
       output_raster <- file.path(output_dir, output_raster_name[[idx]])
-    if (filetype%in%c('GTiff', 'COG')) output_raster <- paste0(output_raster, '.tiff')
+    if (filetype%in%c('GTiff', 'COG'))
+      output_raster <- paste0(output_raster, '.tiff')
     terra::writeRaster(x = template_rast, filename = output_raster,
                        filetype = filetype, overwrite = TRUE,
                        gdal = c("COMPRESS=LZW"))
+    diversity_maps[[idx]] <- output_raster
   }
 
   # save beta diversity indices
@@ -112,5 +118,6 @@ save_diversity_maps_mw <- function(input_raster_path,
   terra::writeRaster(x = template_rast, filename = output_raster,
                      filetype = filetype, overwrite = TRUE,
                      gdal = c("COMPRESS=LZW"))
-  return(invisible())
+  diversity_maps[['beta']] <- output_raster
+  return(diversity_maps)
 }
