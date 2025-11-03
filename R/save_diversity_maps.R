@@ -40,11 +40,11 @@ save_diversity_maps <- function(ab_div_metrics,
     terra::values(template_rast[[1]]) <- mat_idx_mean
     names(template_rast[[1]]) <- paste('mean', idx)
     # define output raster name
-    if (is.null(output_raster_name[[idx2]]))
+    if (is.null(output_raster_name[[idx]]))
       output_raster <- file.path(output_dir, paste0(idx2, '_mean'))
-    if (!is.null(output_raster_name[[idx2]]))
+    if (!is.null(output_raster_name[[idx]]))
       output_raster <- file.path(output_dir,
-                                 paste0(output_raster_name[[idx2]], '_mean'))
+                                 paste0(output_raster_name[[idx]], '_mean'))
 
     if (filetype%in%c('GTiff', 'COG'))
       output_raster <- paste0(output_raster, '.tiff')
@@ -63,10 +63,10 @@ save_diversity_maps <- function(ab_div_metrics,
     terra::values(template_rast[[1]]) <- mat_idx_sd
     names(template_rast[[1]]) <- paste('sd', idx)
     # define output raster name
-    if (is.null(output_raster_name[[idx2]]))
+    if (is.null(output_raster_name[[idx]]))
       output_raster <- file.path(output_dir, paste0(idx2, '_sd'))
-    if (!is.null(output_raster_name[[idx2]]))
-      output_raster <- file.path(output_dir, paste0(output_raster_name[[idx2]],
+    if (!is.null(output_raster_name[[idx]]))
+      output_raster <- file.path(output_dir, paste0(output_raster_name[[idx]],
                                                     '_sd'))
     if (filetype%in%c('GTiff', 'COG'))
       output_raster <- paste0(output_raster, '.tiff')
@@ -114,7 +114,7 @@ save_diversity_maps <- function(ab_div_metrics,
 
   if (is.null(output_raster_name[['beta']]))
     output_raster <- file.path(output_dir, 'beta')
-  if (!is.null(output_raster_name[[idx2]]))
+  if (!is.null(output_raster_name[['beta']]))
     output_raster <- file.path(output_dir, output_raster_name[['beta']])
   if (filetype%in%c('GTiff', 'COG'))
     output_raster <- paste0(output_raster, '.tiff')

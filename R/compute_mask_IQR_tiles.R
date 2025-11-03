@@ -24,8 +24,9 @@ compute_mask_iqr_tiles <- function(feature_dir, feature_list, mask_dir, plots,
   # first check missing masks
   mask_path <- file.path(mask_dir, paste0('mask_', names(plots), '_IQR.tiff'))
   tile_exists <- names(plots)[which(file.exists(mask_path))]
+  mask_missing0 <- names(plots)[which(!file.exists(mask_path))]
   mask_missing <- paste0('_', names(plots)[which(!file.exists(mask_path))], '_')
-  if (length(mask_missing)==0){
+  if (length(mask_missing0)==0){
     process_mask <- FALSE
     tile_exists <- names(plots)[which(file.exists(mask_path))]
   } else {

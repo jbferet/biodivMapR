@@ -24,7 +24,7 @@ mosaic_tiles <- function(pattern, dir_path, vrt_save, siteName = NULL,
   # create tiff from vrt
   mosaic_path <- file.path(dir_path, paste0(siteName, pattern,'_mosaic.tiff'))
   if (!file.exists(mosaic_path) | overwrite){
-    if (dim(v)[[1]]*dim(v)[[2]]*5 < 1e8){
+    if (dim(v)[[1]]*dim(v)[[2]] < 1e6){
       message(paste('write image for diversity metric', pattern))
       sf::gdal_utils(util = 'translate', source = output_vrt_path,
                      destination = mosaic_path)

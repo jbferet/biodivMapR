@@ -1,6 +1,12 @@
 # biodivMapR2 v2.3.16
 ## addition
-- add option moving_window for biodivMapR_full
+- add option moving_window for 'biodivMapR_full'
+- add option weightIQR for 'biodivMapR_full_tiles'
+
+## fix
+- fix bug when checking if mask files already exist
+- fix bug when generating hill index
+
 
 # biodivMapR2 v2.3.15
 ## change

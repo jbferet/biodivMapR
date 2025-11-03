@@ -48,11 +48,11 @@ save_diversity_maps_tile <- function(input_raster_path,
     terra::values(template_newres) <- c(ab_div_metrics[[idx]]$mean)
     names(template_newres[[1]]) <- paste('mean', idx)
     # define output raster name
-    if (is.null(output_raster_name[[idx2]]))
+    if (is.null(output_raster_name[[idx]]))
       output_raster <- file.path(output_dir, paste0(idx2, '_mean'))
-    if (!is.null(output_raster_name[[idx2]]))
+    if (!is.null(output_raster_name[[idx]]))
       output_raster <- file.path(output_dir,
-                                 paste0(output_raster_name[[idx2]], '_mean'))
+                                 paste0(output_raster_name[[idx]], '_mean'))
 
     if (filetype%in%c('GTiff', 'COG'))
       output_raster <- paste0(output_raster, '.tiff')
@@ -64,11 +64,11 @@ save_diversity_maps_tile <- function(input_raster_path,
     terra::values(template_newres[[1]]) <- c(ab_div_metrics[[idx]]$sd)
     names(template_newres[[1]]) <- paste('sd', idx)
     # define output raster name
-    if (is.null(output_raster_name[[idx2]]))
+    if (is.null(output_raster_name[[idx]]))
       output_raster <- file.path(output_dir, paste0(idx2, '_sd'))
-    if (!is.null(output_raster_name[[idx2]]))
+    if (!is.null(output_raster_name[[idx]]))
       output_raster <- file.path(output_dir,
-                                 paste0(output_raster_name[[idx2]], '_sd'))
+                                 paste0(output_raster_name[[idx]], '_sd'))
     if (filetype%in%c('GTiff', 'COG'))
       output_raster <- paste0(output_raster, '.tiff')
     terra::writeRaster(x = template_newres, filename = output_raster,
@@ -109,7 +109,7 @@ save_diversity_maps_tile <- function(input_raster_path,
 
   if (is.null(output_raster_name[['beta']]))
     output_raster <- file.path(output_dir, 'beta')
-  if (!is.null(output_raster_name[[idx2]]))
+  if (!is.null(output_raster_name[['beta']]))
     output_raster <- file.path(output_dir, output_raster_name[['beta']])
   if (filetype%in%c('GTiff', 'COG'))
     output_raster <- paste0(output_raster, '.tiff')

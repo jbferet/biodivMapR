@@ -60,7 +60,8 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
                                nb_samples_alpha = nb_samples_alpha,
                                nb_samples_beta = nb_samples_beta,
                                pcelim = pcelim, nbCPU = nbCPU,
-                               nb_iter = nb_iter)
+                               nb_iter = nb_iter,
+                               weightIRQ = weightIRQ)
 
   message('applying biodivMapR on tiles')
   maxCPU <- length(samples$ID_aoi)
@@ -121,27 +122,51 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
     indices <- c(alphametrics, 'beta', FDmetric)
     mosaic_path <- list()
     for (biodividx in indices){
-      # identify files
-      if (! biodividx %in% alphametrics){
-        selfiles <- list.files(path = output_dir, pattern = biodividx)
-      } else if (biodividx %in% alphametrics){
-        selfiles <- list.files(path = output_dir, pattern = biodividx)
-        selfiles <- selfiles[grepl(x = basename(selfiles),
-                                   pattern = "mean.tiff")]
-      }
-      selfiles <- file.path(output_dir, selfiles)
       # create directory
       diridx <- file.path(output_dir,biodividx)
       dir.create(diridx, showWarnings = FALSE, recursive = TRUE)
-      # move files from - to
-      files_in <- selfiles
-      files_out <- as.list(file.path(diridx, basename(selfiles)))
-      mapply(FUN = file.rename, from = files_in, to = files_out)
-      mosaic_path[[biodividx]] <- mosaic_tiles(pattern = biodividx,
-                                               siteName = siteName,
-                                               dir_path = diridx,
-                                               overwrite = FALSE,
-                                               vrt_save = output_dir)
+      # identify files
+      selfiles <- list.files(path = output_dir, pattern = biodividx)
+      if (! biodividx %in% alphametrics){
+        selfiles <- file.path(output_dir, selfiles)
+        # move files from - to
+        files_in <- selfiles
+        files_out <- as.list(file.path(diridx, basename(selfiles)))
+        mapply(FUN = file.rename, from = files_in, to = files_out)
+        mosaic_path[[biodividx]] <- mosaic_tiles(pattern = biodividx,
+                                                 siteName = siteName,
+                                                 dir_path = diridx,
+                                                 overwrite = FALSE,
+                                                 vrt_save = output_dir)
+      } else if (biodividx %in% alphametrics){
+        # compute mean mosaic
+        selfiles_mean <- selfiles[grepl(x = basename(selfiles),
+                                        pattern = "mean.tiff")]
+        selfiles_mean <- file.path(output_dir, selfiles_mean)
+        # move files from - to
+        files_in <- selfiles_mean
+        files_out <- as.list(file.path(diridx, basename(selfiles_mean)))
+        mapply(FUN = file.rename, from = files_in, to = files_out)
+        mosaic_path[[biodividx]] <- mosaic_tiles(pattern = 'mean.tiff',
+                                                 siteName = siteName,
+                                                 dir_path = diridx,
+                                                 overwrite = FALSE,
+                                                 vrt_save = output_dir)
+
+        # compute sd mosaic
+        selfiles_sd <- selfiles[grepl(x = basename(selfiles),
+                                        pattern = 'sd.tiff')]
+        selfiles_sd <- file.path(output_dir, selfiles_sd)
+        # move files from - to
+        files_in <- selfiles_sd
+        files_out <- as.list(file.path(diridx, basename(selfiles_sd)))
+        mapply(FUN = file.rename, from = files_in, to = files_out)
+        mosaic_path[[biodividx]] <- mosaic_tiles(pattern = 'sd.tiff',
+                                                 siteName = siteName,
+                                                 dir_path = diridx,
+                                                 overwrite = FALSE,
+                                                 vrt_save = output_dir)
+      }
     }
   }
   return(mosaic_path)
