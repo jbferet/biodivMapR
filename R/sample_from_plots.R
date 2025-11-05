@@ -21,7 +21,7 @@ sample_from_plots <- function(feature_dir, list_features, plots, mask_dir = NULL
                                             mask_dir = mask_dir)
   samples_alpha_terra <- samples_beta_terra <- NULL
   # sample the plot network for alpha diversity
-  if (!is.null(Kmeans_info))
+  if (is.null(Kmeans_info))
     samples_alpha_terra <- sample_from_plots_alpha(feature_dir = feature_dir,
                                                    list_features = list_features,
                                                    plots = plots,
