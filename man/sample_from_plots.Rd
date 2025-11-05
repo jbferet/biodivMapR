@@ -11,8 +11,9 @@ sample_from_plots(
   mask_dir = NULL,
   window_size,
   nbCPU = 1,
-  nb_samples_alpha = 1e+05,
+  Kmeans_info = NULL,
   beta_metrics = TRUE,
+  nb_samples_alpha = 1e+05,
   nb_samples_beta = 2000
 )
 }
@@ -29,9 +30,9 @@ sample_from_plots(
 
 \item{nbCPU}{numeric.}
 
-\item{nb_samples_alpha}{numeric.}
-
 \item{beta_metrics}{boolean. set TRUE to compute beta diversity}
+
+\item{nb_samples_alpha}{numeric.}
 
 \item{nb_samples_beta}{numeric.}
 }

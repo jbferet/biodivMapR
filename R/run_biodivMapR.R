@@ -36,6 +36,7 @@ run_biodivMapR <- function(input_raster_path, input_mask_path = NULL,
     input_rast <- terra::rast(input_raster_path)
   if (inherits(x = input_raster_path, what = 'list'))
     input_rast <- lapply(input_raster_path,terra::rast)
+  beta_metrics <- TRUE
   if (is.null(Beta_info))
     beta_metrics <- FALSE
 

@@ -14,22 +14,23 @@
 #' @export
 
 sample_from_plots <- function(feature_dir, list_features, plots, mask_dir = NULL,
-                              window_size, nbCPU = 1, nb_samples_alpha = 1e5,
-                              beta_metrics = TRUE, nb_samples_beta = 2e3){
+                              window_size, nbCPU = 1, Kmeans_info = NULL,
+                              beta_metrics = TRUE, nb_samples_alpha = 1e5, nb_samples_beta = 2e3){
 
   nb_pix_valid <- get_valid_pixels_from_tiles(feature_dir, plots, nbCPU = 1,
                                             mask_dir = mask_dir)
+  samples_alpha_terra <- samples_beta_terra <- NULL
   # sample the plot network for alpha diversity
-  samples_alpha_terra <- sample_from_plots_alpha(feature_dir = feature_dir,
-                                                 list_features = list_features,
-                                                 plots = plots,
-                                                 nb_pix_valid = nb_pix_valid,
-                                                 mask_dir = mask_dir,
-                                                 nb_samples_alpha = nb_samples_alpha,
-                                                 nbCPU = nbCPU)
+  if (!is.null(Kmeans_info))
+    samples_alpha_terra <- sample_from_plots_alpha(feature_dir = feature_dir,
+                                                   list_features = list_features,
+                                                   plots = plots,
+                                                   nb_pix_valid = nb_pix_valid,
+                                                   mask_dir = mask_dir,
+                                                   nb_samples_alpha = nb_samples_alpha,
+                                                   nbCPU = nbCPU)
 
   # sample the plot network for beta diversity
-  samples_beta_terra <- NULL
   if (beta_metrics){
     samples_beta_terra <- sample_from_plots_beta(feature_dir = feature_dir,
                                                  list_features = list_features,

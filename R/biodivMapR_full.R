@@ -1,34 +1,35 @@
 #' computes diversity metrics from raster
 #'
 #' @param input_raster_path character. path for the input rasters
+#' @param input_mask_path character. path for mask file
 #' @param output_dir character. path for the output files
 #' @param window_size numeric. window size for square plots
-#' @param maxRows numeric. max number of rows processed once by each CPU
+#' @param selected_bands numeric. bands selected from input_rast
 #' @param Kmeans_info_save character. path where to save Kmeans_info
 #' @param Kmeans_info_read character. path where to read Kmeans_info
 #' @param Beta_info_save character. path where to save Beta_info
 #' @param Beta_info_read character. path where to read Beta_info
-#' @param input_mask_path character. path for mask file
-#' @param nb_clusters numeric. number of clusters used in kmeans
-#' @param nb_samples_beta numeric. number of samples to compute beta diversity
-#' @param selected_bands numeric. bands selected from input_rast
-#' @param alpha_metrics list. alpha diversity metrics: richness, shannon, simpson
-#' @param beta_metrics boolean. set TRUE to compute beta diversity
-#' @param Hill_order numeric. Hill order
-#' @param fd_metrics character. list of functional metrics
-#' @param pcelim numeric. minimum proportion of pixels to consider spectral species
 #' @param nbCPU numeric. Number of CPUs available
-#' @param nb_iter numeric. nb of iterations averaged to compute diversity indices
-#' @param min_sun numeric. minimum amount of sunlit pixels in the plots
-#' @param nb_samples_alpha numeric. max number of pixels extracted for kmeans
-#' @param dimPCoA numeric. number of dimensions of PCoA
-#' @param progressbar boolean. set true for progress bar during clustering
-#' @param filetype character. driver for output diversity raster data
-#' @param moving_window boolean. should diversity be computed on moving window?
+#' @param options list. includes options
+#' - alpha_metrics list. alpha diversity metrics: richness, shannon, simpson
+#' - Hill_order numeric. Hill order
+#' - beta_metrics boolean. set TRUE to compute beta diversity
+#' - fd_metrics character. list of functional metrics
+#' - nb_samples_alpha numeric. max number of pixels extracted for kmeans
+#' - nb_samples_beta numeric. number of samples to compute beta diversity
+#' - nb_clusters numeric. number of clusters used in kmeans
+#' - nb_iter numeric. nb of iterations averaged to compute diversity indices
+#' - pcelim numeric. minimum proportion of pixels to consider spectral species
+#' - maxRows numeric. max number of rows processed once by each CPU
+#' - moving_window boolean. should diversity be computed on moving window?
+#' - min_sun numeric. minimum amount of sunlit pixels in the plots
+#' - dimPCoA numeric. number of dimensions of PCoA
+#' - progressbar boolean. set true for progress bar during clustering
+#' - filetype character. driver for output diversity raster data
 #'
-#' @return Kmeans_info and Beta_info
+#' @return path for diversity_maps, Kmeans_info and Beta_info
 #' @export
-
+#'
 biodivMapR_full <- function(input_raster_path, input_mask_path = NULL,
                             output_dir, window_size,
                             selected_bands = NULL, Kmeans_info_save = NULL,

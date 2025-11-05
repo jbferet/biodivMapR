@@ -39,38 +39,27 @@ biodivMapR_full(
 
 \item{nbCPU}{numeric. Number of CPUs available}
 
-\item{maxRows}{numeric. max number of rows processed once by each CPU}
-
-\item{nb_clusters}{numeric. number of clusters used in kmeans}
-
-\item{nb_samples_beta}{numeric. number of samples to compute beta diversity}
-
-\item{alpha_metrics}{list. alpha diversity metrics: richness, shannon, simpson}
-
-\item{beta_metrics}{boolean. set TRUE to compute beta diversity}
-
-\item{Hill_order}{numeric. Hill order}
-
-\item{fd_metrics}{character. list of functional metrics}
-
-\item{pcelim}{numeric. minimum proportion of pixels to consider spectral species}
-
-\item{nb_iter}{numeric. nb of iterations averaged to compute diversity indices}
-
-\item{min_sun}{numeric. minimum amount of sunlit pixels in the plots}
-
-\item{nb_samples_alpha}{numeric. max number of pixels extracted for kmeans}
-
-\item{dimPCoA}{numeric. number of dimensions of PCoA}
-
-\item{progressbar}{boolean. set true for progress bar during clustering}
-
-\item{filetype}{character. driver for output diversity raster data}
-
-\item{moving_window}{boolean. should diversity be computed on moving window?}
+\item{options}{list. includes options
+\itemize{
+\item alpha_metrics list. alpha diversity metrics: richness, shannon, simpson
+\item Hill_order numeric. Hill order
+\item beta_metrics boolean. set TRUE to compute beta diversity
+\item fd_metrics character. list of functional metrics
+\item nb_samples_alpha numeric. max number of pixels extracted for kmeans
+\item nb_samples_beta numeric. number of samples to compute beta diversity
+\item nb_clusters numeric. number of clusters used in kmeans
+\item nb_iter numeric. nb of iterations averaged to compute diversity indices
+\item pcelim numeric. minimum proportion of pixels to consider spectral species
+\item maxRows numeric. max number of rows processed once by each CPU
+\item moving_window boolean. should diversity be computed on moving window?
+\item min_sun numeric. minimum amount of sunlit pixels in the plots
+\item dimPCoA numeric. number of dimensions of PCoA
+\item progressbar boolean. set true for progress bar during clustering
+\item filetype character. driver for output diversity raster data
+}}
 }
 \value{
-Kmeans_info and Beta_info
+path for diversity_maps, Kmeans_info and Beta_info
 }
 \description{
 computes diversity metrics from raster
