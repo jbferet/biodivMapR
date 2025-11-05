@@ -7,7 +7,7 @@
 get_alpha_from_ssd(
   ssd,
   nb_pix_sunlit,
-  alphametrics = "shannon",
+  alpha_metrics = "shannon",
   pcelim = 0.02,
   hill_order = 1
 )
@@ -17,7 +17,7 @@ get_alpha_from_ssd(
 
 \item{nb_pix_sunlit}{numeric.}
 
-\item{alphametrics}{list. alpha diversity metrics: richness, shannon, simpson}
+\item{alpha_metrics}{list. alpha diversity metrics: richness, shannon, simpson}
 
 \item{pcelim}{numeric. minimum proportion of pixels to consider spectral species}
 

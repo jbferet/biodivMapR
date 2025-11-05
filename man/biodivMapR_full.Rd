@@ -6,39 +6,28 @@
 \usage{
 biodivMapR_full(
   input_raster_path,
+  input_mask_path = NULL,
   output_dir,
   window_size,
-  maxRows = NULL,
+  selected_bands = NULL,
   Kmeans_info_save = NULL,
   Kmeans_info_read = NULL,
   Beta_info_save = NULL,
   Beta_info_read = NULL,
-  input_mask_path = NULL,
-  nb_clusters = 50,
-  nb_samples_beta = 1000,
-  selected_bands = NULL,
-  alphametrics = "shannon",
-  Hill_order = 1,
-  FDmetric = NULL,
-  pcelim = 0.02,
   nbCPU = 1,
-  nb_iter = 10,
-  min_sun = 0.25,
-  nb_samples_alpha = 1e+05,
-  dimPCoA = 3,
-  progressbar = TRUE,
-  filetype = "GTiff",
-  moving_window = FALSE
+  options = NULL
 )
 }
 \arguments{
 \item{input_raster_path}{character. path for the input rasters}
 
+\item{input_mask_path}{character. path for mask file}
+
 \item{output_dir}{character. path for the output files}
 
 \item{window_size}{numeric. window size for square plots}
 
-\item{maxRows}{numeric. max number of rows processed once by each CPU}
+\item{selected_bands}{numeric. bands selected from input_rast}
 
 \item{Kmeans_info_save}{character. path where to save Kmeans_info}
 
@@ -48,23 +37,23 @@ biodivMapR_full(
 
 \item{Beta_info_read}{character. path where to read Beta_info}
 
-\item{input_mask_path}{character. path for mask file}
+\item{nbCPU}{numeric. Number of CPUs available}
+
+\item{maxRows}{numeric. max number of rows processed once by each CPU}
 
 \item{nb_clusters}{numeric. number of clusters used in kmeans}
 
 \item{nb_samples_beta}{numeric. number of samples to compute beta diversity}
 
-\item{selected_bands}{numeric. bands selected from input_rast}
+\item{alpha_metrics}{list. alpha diversity metrics: richness, shannon, simpson}
 
-\item{alphametrics}{list. alpha diversity metrics: richness, shannon, simpson}
+\item{beta_metrics}{boolean. set TRUE to compute beta diversity}
 
 \item{Hill_order}{numeric. Hill order}
 
-\item{FDmetric}{character. list of functional metrics}
+\item{fd_metrics}{character. list of functional metrics}
 
 \item{pcelim}{numeric. minimum proportion of pixels to consider spectral species}
-
-\item{nbCPU}{numeric. Number of CPUs available}
 
 \item{nb_iter}{numeric. nb of iterations averaged to compute diversity indices}
 

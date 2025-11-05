@@ -14,6 +14,7 @@ biodivMapR_sample(
   plots,
   nb_clusters = 50,
   nb_samples_alpha = 1e+05,
+  beta_metrics = TRUE,
   nb_samples_beta = 2000,
   pcelim = 0.02,
   nbCPU = 1,
@@ -37,6 +38,8 @@ biodivMapR_sample(
 \item{nb_clusters}{numeric. number of clusters}
 
 \item{nb_samples_alpha}{numeric. number of samples to compute alpha diversity}
+
+\item{beta_metrics}{boolean. set TRUE to compute beta diversity}
 
 \item{nb_samples_beta}{numeric. number of samples to compute beta diversity}
 

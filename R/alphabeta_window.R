@@ -5,7 +5,7 @@
 #' (window = elementary spatial unit of process)
 #' @param nb_clusters numeric. number of clusters used in kmeans
 #' @param Beta_info list. BC dissimilarity & associated beta metrics
-#' @param alphametrics list. alpha diversity metrics
+#' @param alpha_metrics list. alpha diversity metrics
 #' @param pcelim numeric. min proportion of pixels to consider spectral species
 #' @param Hill_order numeric. Hill order
 #' @param p list. progressor object for progress bar
@@ -15,7 +15,7 @@
 #' @export
 
 alphabeta_window <- function(SSwindow, nb_clusters,
-                             Beta_info, alphametrics,
+                             Beta_info, alpha_metrics,
                              pcelim = 0.02,
                              Hill_order = 1,
                              p = NULL){
@@ -25,7 +25,7 @@ alphabeta_window <- function(SSwindow, nb_clusters,
   nb_pix_sunlit <- dim(SSwindow)[1]
   alpha <- lapply(X = ssd,
                   FUN = get_alpha_from_ssd,
-                  alphametrics = alphametrics,
+                  alpha_metrics = alpha_metrics,
                   nb_pix_sunlit = nb_pix_sunlit,
                   pcelim = pcelim,
                   hill_order = Hill_order)

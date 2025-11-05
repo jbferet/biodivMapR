@@ -31,12 +31,14 @@ The size of the polygons is important, as it should be compatible with ground in
 the spectral diversity metrics produced with `biodivMapR` are not expected to 
 match the absolute value of diversity metrics. 
 Hence, when performing validation of diversity metrics with ground observations, 
-users should favor correlation analyses, rather than using error with measured 
-biodiversity indices. 
+users should favor correlation analyses, rather than using metrics such as 
+RMSE between biodiversity indices measured from inventories and diversity 
+metrics produced with`biodivMapR` . 
 
 The choice of the number of clusters is an important factor directly influencing 
 the range of the spectral $\alpha$ diversity metrics, higher number of clusters 
 leading to higher maximum potential values of spectral richness & Shannon index.
+
 
 The function `biodivMapR_opt_clusters` can be used to identify the number of 
 clusters maximizing the correlation between spectral diversity metrics and 

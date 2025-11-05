@@ -6,11 +6,11 @@
 #' @param Kmeans_info list. kmeans description obtained from function get_kmeans
 #' @param Beta_info list. BC dissimilarity & associated beta metrics from training set
 #' @param input_mask SpatRaster
-#' @param Functional character.
+#' @param fd_metrics character.
 #' @param selected_bands numeric. bands selected from input_rast
 #' @param rast_sample dataframe.
 #' @param AttributeTable dataframe.
-#' @param alphametrics character.
+#' @param alpha_metrics character.
 #' @param min_sun numeric. minimum amount of sunlit pixels in the plots
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
 #' @param nbCPU numeric. Number of CPUs available
@@ -25,10 +25,10 @@
 get_diversity_from_plots <- function(input_rast, validation_vect,
                                      Hill_order = 1,
                                      Kmeans_info, Beta_info = NULL,
-                                     input_mask  = NULL, Functional = NULL,
+                                     input_mask  = NULL, fd_metrics = NULL,
                                      selected_bands = NULL,
                                      rast_sample = NULL, AttributeTable = NULL,
-                                     alphametrics = c('richness', 'shannon', 'simpson', 'hill'),
+                                     alpha_metrics = c('richness', 'shannon', 'simpson', 'hill'),
                                      min_sun = 0.25, pcelim = 0.02, nbCPU = 1,
                                      getBeta = TRUE, verbose = FALSE){
   if (verbose)
@@ -52,7 +52,7 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
     for (ind_vect in seq_len(length(validation_vect))){
       ssvect <- spectralspecies_per_polygon(SpatVector = validation_vect[[ind_vect]],
                                             input_rast = input_rast,
-                                            Functional = Functional,
+                                            fd_metrics = fd_metrics,
                                             selected_bands = selected_bands,
                                             input_mask = input_mask,
                                             Kmeans_info = Kmeans_info,
@@ -83,7 +83,7 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
     ssvect <- spectralspecies_per_polygon(SpatVector = validation_vect,
                                           input_rast = input_rast,
                                           input_mask = input_mask,
-                                          Functional = Functional,
+                                          fd_metrics = fd_metrics,
                                           Kmeans_info = Kmeans_info,
                                           selected_bands = selected_bands,
                                           rast_sample = rast_sample,
@@ -117,7 +117,7 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
   alphabetaIdx_CPU <- lapply(X = windows_per_plot$SSwindow_perCPU,
                              FUN = alphabeta_window_list,
                              nb_clusters = nb_clusters,
-                             alphametrics = alphametrics,
+                             alpha_metrics = alpha_metrics,
                              Hill_order = Hill_order,
                              Beta_info = Beta_info, pcelim = pcelim)
 
@@ -179,7 +179,7 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
     Attributes$BetaPlots_PCoA_2 <- PCoA_BC[,2]
     Attributes$BetaPlots_PCoA_3 <- PCoA_BC[,3]
   }
-  if (!is.null(Functional)) {
+  if (!is.null(fd_metrics)) {
     # FunctDiv$ID_biodivMapR <- Attributes$ID_biodivMapR
     # FunctDiv$id <- Attributes$id
     # FunctDiv$source <- Attributes$source

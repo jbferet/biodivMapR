@@ -46,9 +46,9 @@ biodivMapR_opt_clusters <- function(input_raster, obs_vect, obs2optimize,
   betamet <- 'BC'
   fmet <- c('FRic', 'FEve', 'FDiv')
   # if computation of functional metrics required
-  alphametrics <- alphamet[which(alphamet %in% obs_criterion)]
-  if (length(alphametrics)==0)
-    alphametrics <- NULL
+  alpha_metrics <- alphamet[which(alphamet %in% obs_criterion)]
+  if (length(alpha_metrics)==0)
+    alpha_metrics <- NULL
   # computation of beta diversity required?
   betametrics <- betamet[which(betamet %in% obs_criterion)]
   if (length(betametrics)==0)
@@ -56,7 +56,7 @@ biodivMapR_opt_clusters <- function(input_raster, obs_vect, obs2optimize,
   if (length(betametrics)>0)
     getBeta <- TRUE
   # computation of functional metrics
-  Functional <- NULL
+  fd_metrics <- NULL
 
   # prepare sequence of clusters to test over multiple repetitions
   if (length(nb_clusters)==1)
@@ -110,8 +110,8 @@ biodivMapR_opt_clusters <- function(input_raster, obs_vect, obs2optimize,
                                              Kmeans_info = kmit,
                                              Beta_info = NULL,
                                              input_mask  = input_mask,
-                                             alphametrics = alphametrics,
-                                             Functional = Functional,
+                                             alpha_metrics = alpha_metrics,
+                                             fd_metrics = fd_metrics,
                                              getBeta = getBeta,
                                              rast_sample = rast_val,
                                              AttributeTable = Attributes,

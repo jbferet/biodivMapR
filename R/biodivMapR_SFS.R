@@ -46,9 +46,9 @@ biodivMapR_SFS <- function(input_raster, obs_vect, obs2optimize,
   betamet <- 'BC'
   fmet <- c('FRic', 'FEve', 'FDiv')
   # if computation of functional metrics required
-  alphametrics <- alphamet[which(alphamet %in% names(obs2optimize))]
-  if (length(alphametrics)==0)
-    alphametrics <- NULL
+  alpha_metrics <- alphamet[which(alphamet %in% names(obs2optimize))]
+  if (length(alpha_metrics)==0)
+    alpha_metrics <- NULL
   # computation of beta diversity required?
   betametrics <- betamet[which(betamet %in% names(obs2optimize))]
   if (length(betametrics)==0)
@@ -57,9 +57,9 @@ biodivMapR_SFS <- function(input_raster, obs_vect, obs2optimize,
     getBeta <- TRUE
   functionalmetrics <- fmet[which(fmet %in% names(obs2optimize))]
   if (length(functionalmetrics)==0)
-    Functional <- NULL
+    fd_metrics <- NULL
   if (length(functionalmetrics)>0)
-    Functional <- functionalmetrics
+    fd_metrics <- functionalmetrics
 
 
   # 1- prepare for kmeans over the full spatial extent
@@ -156,7 +156,7 @@ biodivMapR_SFS <- function(input_raster, obs_vect, obs2optimize,
                                   nb_iter = nb_iter,
                                   nb_clusters = nb_clusters,
                                   nbCPU = 1, progressbar = FALSE)
-        if (!is.null(Functional)){
+        if (!is.null(fd_metrics)){
           # center reduce data
           inputdata_cr <- center_reduce(x = rast_val[SelFeat_tmp],
                                         m = Kmeans_info$MinVal,
@@ -167,12 +167,12 @@ biodivMapR_SFS <- function(input_raster, obs_vect, obs2optimize,
                                  function(x) data.frame(x[ , !(names(x) %in% "ID")]))
           FunctDiv <- lapply(X = inputdata_cr,
                              FUN = get_functional_diversity,
-                             FDmetric = Functional)
+                             fd_metrics = fd_metrics)
           FunctDiv <- data.frame('FRic' = unlist(lapply(FunctDiv, '[[',1)),
                                  'FEve' = unlist(lapply(FunctDiv, '[[',2)),
                                  'FDiv' = unlist(lapply(FunctDiv, '[[',3)))
 
-          for (idx in Functional){
+          for (idx in fd_metrics){
             Assess[[idx]] <- FunctDiv[[idx]]
             CorrVal[[idx]]  <- cor.test(obs2optimize[[idx]],
                                         Assess[[idx]],
@@ -188,7 +188,7 @@ biodivMapR_SFS <- function(input_raster, obs_vect, obs2optimize,
         alphabetaIdx_CPU <- lapply(X = windows_per_plot$SSwindow_perCPU,
                                    FUN = alphabeta_window_list,
                                    nb_clusters = nb_clusters,
-                                   alphametrics = c('richness', 'shannon', 'simpson', 'hill'),
+                                   alpha_metrics = c('richness', 'shannon', 'simpson', 'hill'),
                                    Hill_order = Hill_order, pcelim = pcelim)
         alphabetaIdx <- unlist(alphabetaIdx_CPU,recursive = FALSE)
         rm(alphabetaIdx_CPU)

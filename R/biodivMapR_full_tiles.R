@@ -12,9 +12,9 @@
 #' - nb_clusters numeric. number of clusters
 #' - nb_samples_alpha numeric. number of samples to compute alpha diversity
 #' - nb_samples_beta numeric. number of samples to compute beta diversity
-#' - alphametrics character.
+#' - alpha_metrics character.
 #' - Hill_order numeric.
-#' - FDmetric character.
+#' - fd_metrics character.
 #' - nb_iter numeric. Number of iterations required to compute diversity
 #' - pcelim numeric. minimum proportion of pixels to consider spectral species
 #' - maxRows numeric. maximum number of rows
@@ -34,20 +34,16 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
   nb_clusters <- options$nb_clusters
   nb_samples_alpha<- options$nb_samples_alpha
   nb_samples_beta <- options$nb_samples_beta
-  alphametrics <- options$alphametrics
+  alpha_metrics <- options$alpha_metrics
   Hill_order <- options$Hill_order
-  FDmetric <- options$FDmetric
+  beta_metrics <- options$beta_metrics
+  fd_metrics <- options$fd_metrics
   nb_iter <- options$nb_iter
   pcelim <- options$pcelim
   maxRows <- options$maxRows
   moving_window <- options$moving_window
   mosaic_output <- options$mosaic_output
   weightIRQ <- options$weightIRQ
-
-  # # adjust hill name if required
-  # if ('hill' %in% alphametrics){
-  #
-  # }
 
   # sample data if not already sampled
   samples <- biodivMapR_sample(feature_dir = feature_dir,
@@ -58,6 +54,7 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
                                plots = plots,
                                nb_clusters = nb_clusters,
                                nb_samples_alpha = nb_samples_alpha,
+                               beta_metrics = beta_metrics,
                                nb_samples_beta = nb_samples_beta,
                                pcelim = pcelim, nbCPU = nbCPU,
                                nb_iter = nb_iter,
@@ -81,9 +78,9 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
                                   list_features = list_features,
                                   Kmeans_info = samples$Kmeans_info,
                                   Beta_info = samples$Beta_info,
-                                  alphametrics = alphametrics,
+                                  alpha_metrics = alpha_metrics,
                                   Hill_order = Hill_order,
-                                  FDmetric = FDmetric,
+                                  fd_metrics = fd_metrics,
                                   output_dir = output_dir,
                                   window_size = window_size,
                                   maxRows = maxRows,
@@ -107,9 +104,9 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
              list_features = list_features,
              Kmeans_info = samples$Kmeans_info,
              Beta_info = samples$Beta_info,
-             alphametrics = alphametrics,
+             alpha_metrics = alpha_metrics,
              Hill_order = Hill_order,
-             FDmetric = FDmetric,
+             fd_metrics = fd_metrics,
              output_dir = output_dir,
              window_size = window_size,
              maxRows = maxRows,
@@ -117,9 +114,14 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
     })
   }
 
+  mosaic_path <- NULL
   if (mosaic_output){
     # produce mosaic for outputs
-    indices <- c(alphametrics, 'beta', FDmetric)
+    if (beta_metrics){
+      indices <- c(alpha_metrics, 'beta', fd_metrics)
+    } else {
+      indices <- c(alpha_metrics, fd_metrics)
+    }
     mosaic_path <- list()
     for (biodividx in indices){
       # create directory
@@ -127,7 +129,7 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
       dir.create(diridx, showWarnings = FALSE, recursive = TRUE)
       # identify files
       selfiles <- list.files(path = output_dir, pattern = biodividx)
-      if (! biodividx %in% alphametrics){
+      if (! biodividx %in% alpha_metrics){
         selfiles <- file.path(output_dir, selfiles)
         # move files from - to
         files_in <- selfiles
@@ -138,7 +140,7 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
                                                  dir_path = diridx,
                                                  overwrite = FALSE,
                                                  vrt_save = output_dir)
-      } else if (biodividx %in% alphametrics){
+      } else if (biodividx %in% alpha_metrics){
         # compute mean mosaic
         selfiles_mean <- selfiles[grepl(x = basename(selfiles),
                                         pattern = "mean.tiff")]

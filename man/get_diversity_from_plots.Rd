@@ -11,11 +11,11 @@ get_diversity_from_plots(
   Kmeans_info,
   Beta_info = NULL,
   input_mask = NULL,
-  Functional = NULL,
+  fd_metrics = NULL,
   selected_bands = NULL,
   rast_sample = NULL,
   AttributeTable = NULL,
-  alphametrics = c("richness", "shannon", "simpson", "hill"),
+  alpha_metrics = c("richness", "shannon", "simpson", "hill"),
   min_sun = 0.25,
   pcelim = 0.02,
   nbCPU = 1,
@@ -36,7 +36,7 @@ get_diversity_from_plots(
 
 \item{input_mask}{SpatRaster}
 
-\item{Functional}{character.}
+\item{fd_metrics}{character.}
 
 \item{selected_bands}{numeric. bands selected from input_rast}
 
@@ -44,7 +44,7 @@ get_diversity_from_plots(
 
 \item{AttributeTable}{dataframe.}
 
-\item{alphametrics}{character.}
+\item{alpha_metrics}{character.}
 
 \item{min_sun}{numeric. minimum amount of sunlit pixels in the plots}
 

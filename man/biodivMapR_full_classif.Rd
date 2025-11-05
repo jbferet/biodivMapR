@@ -17,9 +17,9 @@ biodivMapR_full_classif(
   nb_clusters = 50,
   nb_samples_beta = 1000,
   selected_bands = NULL,
-  alphametrics = "shannon",
+  alpha_metrics = "shannon",
   Hill_order = 1,
-  FDmetric = NULL,
+  fd_metrics = NULL,
   pcelim = 0.02,
   nbCPU = 1,
   nb_iter = 10,
@@ -56,11 +56,11 @@ biodivMapR_full_classif(
 
 \item{selected_bands}{numeric. bands selected from input_rast}
 
-\item{alphametrics}{list. alpha diversity metrics: richness, shannon, simpson}
+\item{alpha_metrics}{list. alpha diversity metrics: richness, shannon, simpson}
 
 \item{Hill_order}{numeric. Hill order}
 
-\item{FDmetric}{character. list of functional metrics}
+\item{fd_metrics}{character. list of functional metrics}
 
 \item{pcelim}{numeric. minimum proportion of pixels to consider spectral species}
 

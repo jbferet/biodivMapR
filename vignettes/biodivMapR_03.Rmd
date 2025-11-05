@@ -50,15 +50,14 @@ nbCPU <- 4                # nb of threads for parallel processing
 
 # 5- apply biodivMapR 
 selectedPC <- c(1,5,6)
+options <- list('nb_clusters' = nb_clusters, 'maxRows' = maxRows)
 ab_info_SPCA <- biodivMapR_full(input_raster_path = PCA_Output$PCA_Files$PCA, 
                                 input_mask_path = mask_path_PCA,
                                 output_dir = output_dir_PCA2, 
                                 selected_bands = selectedPC, 
                                 window_size = window_size, 
-                                nb_clusters = nb_clusters, 
                                 Kmeans_info_save = Kmeans_info_save,
-                                Beta_info_save = Beta_info_save, 
-                                maxRows = maxRows, nbCPU = nbCPU)
+                                Beta_info_save = Beta_info_save, nbCPU = nbCPU)
 ```
 
 Here, `ab_info_SPCA` includes two lists:
@@ -102,14 +101,14 @@ maxRows <- 1000           # nb of lines processed at once (adjust based on RAM a
 nbCPU <- 4                # nb of threads for parallel processing
 
 # 4- apply biodivMapR 
+options <- list('nb_clusters' = nb_clusters, 'maxRows' = maxRows)
 ab_info_SI <- biodivMapR_full(input_raster_path = SI_path, 
                               input_mask_path = mask_path_SI,
                               output_dir = output_dir_SI2, 
                               window_size = window_size,
-                              nb_clusters = nb_clusters, 
                               Kmeans_info_save = Kmeans_info_save,
                               Beta_info_save = Beta_info_save, 
-                              maxRows = maxRows, nbCPU = nbCPU)
+                              nbCPU = nbCPU, options = options)
 ```
 
 |  |  |

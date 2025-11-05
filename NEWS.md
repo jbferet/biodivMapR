@@ -1,16 +1,18 @@
-# biodivMapR2 v2.3.16
+# biodivMapR2 v2.4.0
 ## addition
+- add option beta_metrics: set to FALSE to skip beta computation
 - add option moving_window for 'biodivMapR_full'
 - add option weightIQR for 'biodivMapR_full_tiles'
+- add function crop_border_tile to avoid artifacts between tiles
 
 ## fix
 - fix bug when checking if mask files already exist
 - fix bug when generating hill index
 
-
-# biodivMapR2 v2.3.15
 ## change
-- add options as input parameter for 'biodivMapR_full_tiles' in order to reduce nb of inputs
+- fd_metrics instead of FDmetric
+- alpha_metrics instead of alphametrics
+- add options as input parameter for 'biodivMapR_full_tiles' and 'biodivMapR_full' in order to reduce nb of inputs
 - add possibility to define the IQR when sampling with 'biodivMapR_sample' and filtering
 
 # biodivMapR2 v2.3.14

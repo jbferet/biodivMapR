@@ -10,9 +10,9 @@ biodivMapR_chunk(
   window_size,
   Kmeans_info,
   Beta_info = NULL,
-  alphametrics = "shannon",
+  alpha_metrics = "shannon",
   Hill_order = 1,
-  FDmetric = NULL,
+  fd_metrics = NULL,
   selected_bands = NULL,
   pcelim = 0.02,
   nbCPU = 1,
@@ -31,11 +31,11 @@ biodivMapR_chunk(
 
 \item{Beta_info}{list. BC dissimilarity & associated beta metrics}
 
-\item{alphametrics}{list. alpha diversity metrics}
+\item{alpha_metrics}{list. alpha diversity metrics}
 
 \item{Hill_order}{numeric. Hill order}
 
-\item{FDmetric}{character. list of functional metrics}
+\item{fd_metrics}{character. list of functional metrics}
 
 \item{selected_bands}{numeric. bands selected from input data}
 

@@ -5,9 +5,9 @@
 #' @param Beta_info list. BC dissimilarity & associated beta metrics from training set
 #' @param input_mask_path character. path for mask file
 #' @param selected_bands numeric. bands selected from input_rast
-#' @param alphametrics list. alpha diversity metrics: richness, shannon, simpson
+#' @param alpha_metrics list. alpha diversity metrics: richness, shannon, simpson
 #' @param Hill_order numeric. Hill order
-#' @param FDmetric character. list of functional metrics
+#' @param fd_metrics character. list of functional metrics
 #' @param window_size numeric. window size for square plots
 #' @param maxRows numeric. max number of rows processed once by each CPU
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
@@ -22,8 +22,8 @@
 
 get_raster_diversity <- function(input_raster_path, Kmeans_info, Beta_info,
                                  input_mask_path = NULL, selected_bands = NULL,
-                                 alphametrics = 'shannon', Hill_order = 1,
-                                 FDmetric = NULL, window_size, maxRows = NULL,
+                                 alpha_metrics = 'shannon', Hill_order = 1,
+                                 fd_metrics = NULL, window_size, maxRows = NULL,
                                  pcelim = 0.02, nbCPU = 1, min_sun = 0.25){
 
   message('compute raster diversity')
@@ -60,9 +60,9 @@ get_raster_diversity <- function(input_raster_path, Kmeans_info, Beta_info,
                              FUN = biodivMapR_chunk,
                              Kmeans_info = Kmeans_info,
                              Beta_info = Beta_info,
-                             alphametrics = alphametrics,
+                             alpha_metrics = alpha_metrics,
                              Hill_order = Hill_order,
-                             FDmetric = FDmetric,
+                             fd_metrics = fd_metrics,
                              r_in = r_in,
                              window_size = window_size,
                              selected_bands = selected_bands,
@@ -80,9 +80,9 @@ get_raster_diversity <- function(input_raster_path, Kmeans_info, Beta_info,
                                  FUN = biodivMapR_chunk,
                                  Kmeans_info = Kmeans_info,
                                  Beta_info = Beta_info,
-                                 alphametrics = alphametrics,
+                                 alpha_metrics = alpha_metrics,
                                  Hill_order = Hill_order,
-                                 FDmetric = FDmetric,
+                                 fd_metrics = fd_metrics,
                                  r_in = r_in,
                                  window_size = window_size,
                                  selected_bands = selected_bands,

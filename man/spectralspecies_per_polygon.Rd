@@ -9,7 +9,7 @@ spectralspecies_per_polygon(
   input_rast,
   Kmeans_info,
   selected_bands = NULL,
-  Functional = NULL,
+  fd_metrics = NULL,
   input_mask = NULL,
   rast_sample = NULL,
   AttributeTable = NULL,
@@ -25,7 +25,7 @@ spectralspecies_per_polygon(
 
 \item{selected_bands}{numeric. bands selected from input data}
 
-\item{Functional}{boolean. should functional diversity be computed as well?}
+\item{fd_metrics}{boolean. should functional diversity be computed as well?}
 
 \item{input_mask}{SpatRaster.}
 

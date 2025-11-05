@@ -5,9 +5,9 @@
 #' @param Beta_info list. BC dissimilarity & associated beta metrics from training set
 #' @param input_mask_path character. path for mask file
 #' @param selected_bands numeric. bands selected from input_rast
-#' @param alphametrics list. alpha diversity metrics: richness, shannon, simpson
+#' @param alpha_metrics list. alpha diversity metrics: richness, shannon, simpson
 #' @param Hill_order numeric. Hill order
-#' @param FDmetric character. list of functional metrics
+#' @param fd_metrics character. list of functional metrics
 #' @param window_size numeric. window size for square plots
 #' @param maxRows numeric. max number of rows in each block
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
@@ -22,8 +22,8 @@
 
 get_raster_diversity_tile <- function(input_raster_path, Kmeans_info, Beta_info,
                                       input_mask_path = NULL, selected_bands = NULL,
-                                      alphametrics = 'shannon', Hill_order = 1,
-                                      FDmetric = NULL, window_size, maxRows = NULL,
+                                      alpha_metrics = 'shannon', Hill_order = 1,
+                                      fd_metrics = NULL, window_size, maxRows = NULL,
                                       pcelim = 0.02, nbCPU = 1, min_sun = 0.25){
   # prepare to read input raster data
   r_in <- list()
@@ -54,14 +54,14 @@ get_raster_diversity_tile <- function(input_raster_path, Kmeans_info, Beta_info,
   names(sample_tmp) <- 'win_ID'
 
   res_shape_chunk <- list()
-  for (idx in alphametrics){
+  for (idx in alpha_metrics){
     res_shape_chunk[[idx]] <- list()
     for (crit in c('mean', 'sd'))
       res_shape_chunk[[idx]][[crit]] <- matrix(NA,
                                                nrow = nrow(sample_newres),
                                                ncol = ncol(sample_newres))
   }
-  for (idx in FDmetric)
+  for (idx in fd_metrics)
     res_shape_chunk[[idx]] <- matrix(NA,
                                      nrow = nrow(sample_newres),
                                      ncol = ncol(sample_newres))
@@ -101,14 +101,14 @@ get_raster_diversity_tile <- function(input_raster_path, Kmeans_info, Beta_info,
         alphabetaIdx_CPU <- lapply(X = SSwindows_per_CPU$SSwindow_perCPU,
                                    FUN = alphabeta_window_list,
                                    nb_clusters = nb_clusters,
-                                   alphametrics = alphametrics,
+                                   alpha_metrics = alpha_metrics,
                                    Beta_info = Beta_info,
                                    Hill_order = Hill_order,
                                    pcelim = pcelim)
         alphabetaIdx <- unlist(alphabetaIdx_CPU,recursive = FALSE)
 
 
-        if (!is.null(FDmetric)){
+        if (!is.null(fd_metrics)){
           inputdata <- cbind(center_reduce(x = inputdata[selected_bands],
                                            m = Kmeans_info$MinVal,
                                            sig = Kmeans_info$Range),
@@ -116,7 +116,7 @@ get_raster_diversity_tile <- function(input_raster_path, Kmeans_info, Beta_info,
           windows_per_CPU <- split_chunk(inputdata, nbCPU)
           funct_idx_cpu <- future.apply::future_lapply(X = windows_per_CPU$SSwindow_perCPU,
                                                        FUN = functional_window_list,
-                                                       FDmetric = FDmetric,
+                                                       fd_metrics = fd_metrics,
                                                        future.seed = TRUE)
           FunctionalIdx <- unlist(funct_idx_cpu, recursive = FALSE)
         }
@@ -124,7 +124,7 @@ get_raster_diversity_tile <- function(input_raster_path, Kmeans_info, Beta_info,
 
         # 7- reshape alpha diversity metrics
         IDwindow <- unlist(SSwindows_per_CPU$IDwindow_perCPU)
-        for (idx in alphametrics){
+        for (idx in alpha_metrics){
           for (crit in c('mean', 'sd')){
             elem <- paste0(idx,'_',crit)
             restmp <- unlist(lapply(alphabetaIdx,'[[',elem))
@@ -139,7 +139,7 @@ get_raster_diversity_tile <- function(input_raster_path, Kmeans_info, Beta_info,
 
         list_funct_idx <- c('FRic', 'FEve', 'FDiv', 'FDis', 'FRaoq')
         for (idx in list_funct_idx){
-          if (idx %in% FDmetric){
+          if (idx %in% fd_metrics){
             restmp <- unlist(lapply(FunctionalIdx,'[[',idx))
             res_shape_chunk[[idx]][IDwindow] <- restmp
             # res_shape_chunk_tmp <- rep(x = NA,nbWindows)

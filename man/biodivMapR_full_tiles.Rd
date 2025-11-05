@@ -38,9 +38,9 @@ biodivMapR_full_tiles(
 \item nb_clusters numeric. number of clusters
 \item nb_samples_alpha numeric. number of samples to compute alpha diversity
 \item nb_samples_beta numeric. number of samples to compute beta diversity
-\item alphametrics character.
+\item alpha_metrics character.
 \item Hill_order numeric.
-\item FDmetric character.
+\item fd_metrics character.
 \item nb_iter numeric. Number of iterations required to compute diversity
 \item pcelim numeric. minimum proportion of pixels to consider spectral species
 \item maxRows numeric. maximum number of rows

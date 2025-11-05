@@ -6,9 +6,10 @@
 \usage{
 save_diversity_maps(
   ab_div_metrics,
-  alphametrics = "shannon",
+  alpha_metrics = "shannon",
   Hill_order = 1,
-  FDmetric = NULL,
+  beta_metrics = TRUE,
+  fd_metrics = NULL,
   input_rast,
   output_dir,
   output_raster_name = NULL,
@@ -19,11 +20,13 @@ save_diversity_maps(
 \arguments{
 \item{ab_div_metrics}{list produced from get_raster_diversity}
 
-\item{alphametrics}{list. alpha diversity metrics}
+\item{alpha_metrics}{list. alpha diversity metrics}
 
 \item{Hill_order}{numeric. Hill order}
 
-\item{FDmetric}{character. list of functional metrics}
+\item{beta_metrics}{boolean. set TRUE to compute beta diversity}
+
+\item{fd_metrics}{character. list of functional metrics}
 
 \item{input_rast}{list. path for input rasters}
 

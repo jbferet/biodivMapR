@@ -8,7 +8,7 @@ alphabeta_window_list(
   SSwindow,
   nb_clusters,
   Beta_info = NULL,
-  alphametrics = "shannon",
+  alpha_metrics = "shannon",
   Hill_order = 1,
   pcelim = 0.02
 )
@@ -21,7 +21,7 @@ alphabeta_window_list(
 
 \item{Beta_info}{list. BC dissimilarity & associated beta metrics}
 
-\item{alphametrics}{list. alpha diversity metrics}
+\item{alpha_metrics}{list. alpha diversity metrics}
 
 \item{Hill_order}{numeric. Hill order}
 

@@ -15,9 +15,9 @@ run_biodivMapR_plot(
   output_dir,
   selected_bands = NULL,
   window_size,
-  alphametrics = "shannon",
+  alpha_metrics = "shannon",
   Hill_order = 1,
-  FDmetric = NULL,
+  fd_metrics = NULL,
   pcelim = 0.02,
   maxRows = NULL,
   nbCPU = 1,
@@ -46,11 +46,11 @@ run_biodivMapR_plot(
 
 \item{window_size}{numeric. window size for square plots}
 
-\item{alphametrics}{list. alpha diversity metrics}
+\item{alpha_metrics}{list. alpha diversity metrics}
 
 \item{Hill_order}{numeric. Hill order}
 
-\item{FDmetric}{character. list of functional metrics}
+\item{fd_metrics}{character. list of functional metrics}
 
 \item{pcelim}{numeric. min proportion of pix to consider spectral species}
 

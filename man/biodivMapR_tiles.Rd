@@ -11,9 +11,9 @@ biodivMapR_tiles(
   output_dir,
   window_size,
   plots,
-  alphametrics = "shannon",
+  alpha_metrics = "shannon",
   Hill_order = 1,
-  FDmetric = NULL,
+  fd_metrics = NULL,
   nbCPU = 1,
   pcelim = 0.02,
   maxRows = 1200,
@@ -35,11 +35,11 @@ biodivMapR_tiles(
 
 \item{plots}{list. list of sf plots}
 
-\item{alphametrics}{character.}
+\item{alpha_metrics}{character.}
 
 \item{Hill_order}{numeric.}
 
-\item{FDmetric}{character.}
+\item{fd_metrics}{character.}
 
 \item{nbCPU}{numeric. Number of CPUs available}
 

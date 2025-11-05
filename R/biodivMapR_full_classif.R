@@ -12,9 +12,9 @@
 #' @param nb_clusters numeric. number of clusters used in kmeans
 #' @param nb_samples_beta numeric. number of samples to compute beta diversity
 #' @param selected_bands numeric. bands selected from input_rast
-#' @param alphametrics list. alpha diversity metrics: richness, shannon, simpson
+#' @param alpha_metrics list. alpha diversity metrics: richness, shannon, simpson
 #' @param Hill_order numeric. Hill order
-#' @param FDmetric character. list of functional metrics
+#' @param fd_metrics character. list of functional metrics
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
 #' @param nbCPU numeric. Number of CPUs available
 #' @param nb_iter numeric. nb of iterations averaged to compute diversity indices
@@ -32,8 +32,8 @@ biodivMapR_full_classif <- function(input_raster_path, output_dir, window_size,
                                     Kmeans_info_read = NULL, Beta_info_save = NULL,
                                     Beta_info_read = NULL, input_mask_path = NULL,
                                     nb_clusters = 50, nb_samples_beta = 1000,
-                                    selected_bands = NULL, alphametrics = 'shannon',
-                                    Hill_order = 1, FDmetric = NULL, pcelim = 0.02,
+                                    selected_bands = NULL, alpha_metrics = 'shannon',
+                                    Hill_order = 1, fd_metrics = NULL, pcelim = 0.02,
                                     nbCPU = 1, nb_iter = 10, min_sun = 0.25,
                                     nb_samples_alpha = 1e5, dimPCoA = 3,
                                     progressbar = TRUE, filetype = 'GTiff',
@@ -87,9 +87,9 @@ biodivMapR_full_classif <- function(input_raster_path, output_dir, window_size,
                                            Beta_info = Beta_info,
                                            selected_bands = selected_bands,
                                            window_size = window_size,
-                                           alphametrics = alphametrics,
+                                           alpha_metrics = alpha_metrics,
                                            Hill_order = Hill_order,
-                                           FDmetric = FDmetric,
+                                           fd_metrics = fd_metrics,
                                            pcelim = pcelim,
                                            maxRows = maxRows, nbCPU = nbCPU,
                                            min_sun = min_sun)
@@ -119,9 +119,9 @@ biodivMapR_full_classif <- function(input_raster_path, output_dir, window_size,
                                            Beta_info = Beta_info,
                                            selected_bands = selected_bands,
                                            window_size = window_size,
-                                           alphametrics = alphametrics,
+                                           alpha_metrics = alpha_metrics,
                                            Hill_order = Hill_order,
-                                           FDmetric = FDmetric,
+                                           fd_metrics = fd_metrics,
                                            pcelim = pcelim,
                                            maxRows = maxRows, nbCPU = nbCPU,
                                            min_sun = min_sun)
@@ -134,9 +134,9 @@ biodivMapR_full_classif <- function(input_raster_path, output_dir, window_size,
 
   # save diversity metrics as raster data
   diversity_maps <- save_diversity_maps(ab_div_metrics = ab_div_metrics,
-                                        alphametrics = alphametrics,
+                                        alpha_metrics = alpha_metrics,
                                         Hill_order = Hill_order,
-                                        FDmetric = FDmetric,
+                                        fd_metrics = fd_metrics,
                                         input_rast = input_rast,
                                         output_dir = output_dir,
                                         window_size = window_size,

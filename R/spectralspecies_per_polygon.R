@@ -4,7 +4,7 @@
 #' @param input_rast SpatRaster.
 #' @param Kmeans_info list. kmeans description obtained from function get_kmeans
 #' @param selected_bands numeric. bands selected from input data
-#' @param Functional boolean. should functional diversity be computed as well?
+#' @param fd_metrics boolean. should functional diversity be computed as well?
 #' @param input_mask SpatRaster.
 #' @param rast_sample dataframe.
 #' @param AttributeTable dataframe.
@@ -15,11 +15,11 @@
 #' @importFrom terra sources values
 #' @export
 #'
-spectralspecies_per_polygon <- function(SpatVector, input_rast,
-                                        Kmeans_info, selected_bands = NULL,
-                                        Functional = NULL, input_mask = NULL,
-                                        rast_sample = NULL, AttributeTable = NULL,
-                                        min_sun = 0.25){
+spectralspecies_per_polygon <- function(SpatVector, input_rast, Kmeans_info,
+                                        selected_bands = NULL,
+                                        fd_metrics = NULL, input_mask = NULL,
+                                        rast_sample = NULL,
+                                        AttributeTable = NULL, min_sun = 0.25){
 
   FunctDiv <- SSValid <- NULL
   # extract pixel info from vector data
@@ -39,7 +39,8 @@ spectralspecies_per_polygon <- function(SpatVector, input_rast,
   nb_pix_per_plot <- data.frame(table(rast_sample$ID))
   # only get common plots between nb_pix_per_plot and nb_pix_per_plot_init
   if (length(nb_pix_per_plot$Freq)>0){
-    if (is.null(selected_bands)) selected_bands <- seq_len(dim(rast_sample)[2]-1)
+    if (is.null(selected_bands))
+      selected_bands <- seq_len(dim(rast_sample)[2]-1)
     rast_sample_noID <- rast_sample
     rast_sample_noID$ID <- NULL
     SSValid <- get_spectralSpecies(inputdata = rast_sample_noID,
@@ -47,23 +48,22 @@ spectralspecies_per_polygon <- function(SpatVector, input_rast,
                                    selected_bands = selected_bands)
     SSValid$win_ID <- rast_sample$ID
     # Functional diversity
-    if (!is.null(Functional)){
-      if (is.null(selected_bands)) selected_bands <- seq_len(ncol(rast_sample_noID))
+    if (!is.null(fd_metrics)){
+      if (is.null(selected_bands))
+        selected_bands <- seq_len(ncol(rast_sample_noID))
       # center reduce data
       inputdata_cr <- center_reduce(x = rast_sample_noID[selected_bands],
                                     m = Kmeans_info$MinVal,
                                     sig = Kmeans_info$Range)
       inputdata_cr$ID <- rast_sample$ID
       inputdata_cr <- inputdata_cr %>% split(.$ID)
-      inputdata_cr <- lapply(inputdata_cr, function(x) x[ , !(names(x) %in% "ID")])
+      inputdata_cr <- lapply(inputdata_cr,
+                             function(x) x[ , !(names(x) %in% "ID")])
       # in case only one dimension
       inputdata_cr <- lapply(inputdata_cr, data.frame)
       FunctDiv <- lapply(X = inputdata_cr,
                          FUN = get_functional_diversity,
-                         FDmetric = Functional)
-      # FunctDiv <- data.frame('FRic' = unlist(lapply(FunctDiv, '[[','FRic')),
-      #                        'FEve' = unlist(lapply(FunctDiv, '[[','FEve')),
-      #                        'FDiv' = unlist(lapply(FunctDiv, '[[','FDiv')))
+                         fd_metrics = fd_metrics)
       FunctDiv <- data.frame('FRic' = unlist(lapply(FunctDiv, '[[',1)),
                              'FEve' = unlist(lapply(FunctDiv, '[[',2)),
                              'FDiv' = unlist(lapply(FunctDiv, '[[',3)),

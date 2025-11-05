@@ -10,9 +10,9 @@ get_raster_diversity_tile(
   Beta_info,
   input_mask_path = NULL,
   selected_bands = NULL,
-  alphametrics = "shannon",
+  alpha_metrics = "shannon",
   Hill_order = 1,
-  FDmetric = NULL,
+  fd_metrics = NULL,
   window_size,
   maxRows = NULL,
   pcelim = 0.02,
@@ -31,11 +31,11 @@ get_raster_diversity_tile(
 
 \item{selected_bands}{numeric. bands selected from input_rast}
 
-\item{alphametrics}{list. alpha diversity metrics: richness, shannon, simpson}
+\item{alpha_metrics}{list. alpha diversity metrics: richness, shannon, simpson}
 
 \item{Hill_order}{numeric. Hill order}
 
-\item{FDmetric}{character. list of functional metrics}
+\item{fd_metrics}{character. list of functional metrics}
 
 \item{window_size}{numeric. window size for square plots}
 

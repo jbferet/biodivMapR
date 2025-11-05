@@ -10,9 +10,9 @@
 #' @param output_dir path where to save outputs
 #' @param selected_bands numeric. bands selected from input data
 #' @param window_size numeric. window size for square plots
-#' @param alphametrics list. alpha diversity metrics
+#' @param alpha_metrics list. alpha diversity metrics
 #' @param Hill_order numeric. Hill order
-#' @param FDmetric character. list of functional metrics
+#' @param fd_metrics character. list of functional metrics
 #' @param pcelim numeric. min proportion of pix to consider spectral species
 #' @param nbCPU numeric. Number of CPUs available
 #' @param maxRows numeric. maximum number or rows to process
@@ -27,24 +27,34 @@
 run_biodivMapR_plot <- function(id, feature_dir, mask_dir = NULL,
                                 list_features, Kmeans_info, Beta_info,
                                 output_dir, selected_bands = NULL, window_size,
-                                alphametrics = 'shannon', Hill_order = 1,
-                                FDmetric = NULL, pcelim = 0.02,
+                                alpha_metrics = 'shannon', Hill_order = 1,
+                                fd_metrics = NULL, pcelim = 0.02,
                                 maxRows = NULL, nbCPU = 1, min_sun = 0.25,
                                 filetype = 'GTiff', moving_window = FALSE,
                                 p = NULL){
 
   betanames <- paste0('beta_',id)
-  alphanames <- paste0(alphametrics,'_',id)
-  if ('hill' %in% alphametrics)
-    alphanames[alphametrics=='hill'] <- paste0('hill_', Hill_order,'_',id)
+  alphanames <- paste0(alpha_metrics,'_',id)
+  if ('hill' %in% alpha_metrics)
+    alphanames[alpha_metrics=='hill'] <- paste0('hill_', Hill_order,'_',id)
   functionalname <- NULL
-  if (!is.null(FDmetric))
-    functionalname <- paste0(FDmetric,'_',id)
+  if (!is.null(fd_metrics))
+    functionalname <- paste0(fd_metrics,'_',id)
   alphanames_mean <- paste0(alphanames,'_mean')
-  output_raster_name <- as.list(c(betanames, alphanames, functionalname))
-  output_raster_name_mean <- as.list(c(betanames, alphanames_mean,
-                                       functionalname))
-  names(output_raster_name) <- c('beta', alphametrics, FDmetric)
+  if (!is.null(Beta_info)){
+    output_raster_name <- as.list(c(betanames, alphanames, functionalname))
+    output_raster_name_mean <- as.list(c(betanames, alphanames_mean,
+                                         functionalname))
+  } else {
+    output_raster_name <- as.list(c(alphanames, functionalname))
+    output_raster_name_mean <- as.list(c(alphanames_mean,
+                                         functionalname))
+  }
+  if (!is.null(Beta_info)){
+    names(output_raster_name) <- c('beta', alpha_metrics, fd_metrics)
+  } else {
+    names(output_raster_name) <- c(alpha_metrics, fd_metrics)
+  }
   if (FALSE %in% file.exists(file.path(output_dir,
                                        paste0(output_raster_name_mean,'.tiff')))){
     list_feat <- list.files(path = feature_dir, pattern = paste0('_',id,'_'))
@@ -77,8 +87,8 @@ run_biodivMapR_plot <- function(id, feature_dir, mask_dir = NULL,
                        output_raster_name = output_raster_name,
                        selected_bands = selected_bands,
                        window_size = window_size,
-                       alphametrics = alphametrics, Hill_order = Hill_order,
-                       FDmetric = FDmetric, pcelim = pcelim,
+                       alpha_metrics = alpha_metrics, Hill_order = Hill_order,
+                       fd_metrics = fd_metrics, pcelim = pcelim,
                        maxRows = maxRows, nbCPU = nbCPU, min_sun = min_sun,
                        filetype = filetype, moving_window = moving_window)
     }

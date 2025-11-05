@@ -7,19 +7,19 @@ This function was inspired from FD package}
 \usage{
 get_functional_diversity(
   spectraits,
-  FDmetric = c("FRic", "FEve", "FDiv"),
+  fd_metrics = c("FRic", "FEve", "FDiv"),
   p = NULL
 )
 }
 \arguments{
 \item{spectraits}{numeric. dataframe containing species in rows and trait values in columns}
 
-\item{FDmetric}{character. Functional diversity metric}
+\item{fd_metrics}{character. Functional diversity metric}
 
 \item{p}{list. progressor object for progress bar}
 }
 \value{
-FDmetrics
+fd_metricss
 }
 \description{
 get functional diversity metrics from dataframe

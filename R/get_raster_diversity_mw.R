@@ -5,9 +5,9 @@
 #' @param Beta_info list. BC dissimilarity & associated beta metrics from training set
 #' @param input_mask_path character. path for mask file
 #' @param selected_bands numeric. bands selected from input_rast
-#' @param alphametrics list. alpha diversity metrics: richness, shannon, simpson
+#' @param alpha_metrics list. alpha diversity metrics: richness, shannon, simpson
 #' @param Hill_order numeric. Hill order
-#' @param FDmetric character. list of functional metrics
+#' @param fd_metrics character. list of functional metrics
 #' @param window_size numeric. window size for square plots
 #' @param maxRows numeric. max number of rows in each block
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
@@ -22,8 +22,8 @@
 
 get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
                                     input_mask_path = NULL, selected_bands = NULL,
-                                    alphametrics = 'shannon', Hill_order = 1,
-                                    FDmetric = NULL, window_size, maxRows = NULL,
+                                    alpha_metrics = 'shannon', Hill_order = 1,
+                                    fd_metrics = NULL, window_size, maxRows = NULL,
                                     pcelim = 0.02, nbCPU = 1, min_sun = 0.25){
   # prepare to read input raster data
   r_in <- list()
@@ -46,7 +46,7 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
   }
 
   res_shapeChunk <- list()
-  for (idx in alphametrics){
+  for (idx in alpha_metrics){
     res_shapeChunk[[idx]] <- list()
     for (crit in c('mean', 'sd'))
       res_shapeChunk[[idx]][[crit]] <- matrix(NA,
@@ -54,7 +54,8 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
                                               ncol = ncol(rast_in))
   }
   dimPCO <- 3
-  if (!is.null(Beta_info)) dimPCO <- ncol(Beta_info$BetaPCO$points)
+  if (!is.null(Beta_info))
+    dimPCO <- ncol(Beta_info$BetaPCO$points)
   PCoA_raster <- list('PCoA1' = matrix(NA, nrow = nrow(rast_in),
                                        ncol = ncol(rast_in)),
                       'PCoA2' = matrix(NA, nrow = nrow(rast_in),
@@ -120,14 +121,14 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
         alphabetaIdx_CPU <- lapply(X = SSwindows_per_CPU$SSwindow_perCPU,
                                    FUN = alphabeta_window_list,
                                    nb_clusters = nb_clusters,
-                                   alphametrics = alphametrics,
+                                   alpha_metrics = alpha_metrics,
                                    Beta_info = Beta_info,
                                    Hill_order = Hill_order,
                                    pcelim = pcelim)
         alphabetaIdx <- unlist(alphabetaIdx_CPU, recursive = FALSE)
         # 7- reshape alpha diversity metrics
         IDwindow <- unlist(SSwindows_per_CPU$IDwindow_perCPU)
-        for (idx in alphametrics){
+        for (idx in alpha_metrics){
           for (crit in c('mean', 'sd')){
             elem <- paste0(idx,'_',crit)
             restmp <- unlist(lapply(alphabetaIdx,'[[',elem))
@@ -206,7 +207,7 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
   #   alphabetaIdx_CPU <- lapply(X = SSwindows_per_CPU$SSwindow_perCPU,
   #                              FUN = alphabeta_window_list,
   #                              nb_clusters = nb_clusters,
-  #                              alphametrics = alphametrics,
+  #                              alpha_metrics = alpha_metrics,
   #                              Beta_info = Beta_info,
   #                              Hill_order = Hill_order,
   #                              pcelim = pcelim)
@@ -215,7 +216,7 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
   #   gc()
   #   # 7- reshape alpha diversity metrics
   #   IDwindow <- unlist(SSwindows_per_CPU$IDwindow_perCPU)
-  #   for (idx in alphametrics){
+  #   for (idx in alpha_metrics){
   #     for (crit in c('mean', 'sd')){
   #       elem <- paste0(idx,'_',crit)
   #       restmp <- unlist(lapply(alphabetaIdx,'[[',elem))

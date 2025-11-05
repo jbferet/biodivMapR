@@ -5,13 +5,13 @@
 \title{compute functional diversity metrics from pixel data corresponding to
 features extracted from a window}
 \usage{
-functional_window(SSwindow, FDmetric = c("FRic", "FEve", "FDiv"), p = NULL)
+functional_window(SSwindow, fd_metrics = c("FRic", "FEve", "FDiv"), p = NULL)
 }
 \arguments{
 \item{SSwindow}{dataframe. spectral species corresponding to a raster subset
 (window = elementary spatial unit of process)}
 
-\item{FDmetric}{list. alpha diversity metrics: richness, shannon, simpson}
+\item{fd_metrics}{list. alpha diversity metrics: richness, shannon, simpson}
 
 \item{p}{list. progressor object for progress bar}
 }

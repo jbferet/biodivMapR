@@ -8,9 +8,9 @@
 #' @param output_raster_name raster file names
 #' @param selected_bands numeric. bands selected from input data
 #' @param window_size numeric. window size for square plots
-#' @param alphametrics list. alpha diversity metrics: richness, shannon, simpson
+#' @param alpha_metrics list. alpha diversity metrics: richness, shannon, simpson
 #' @param Hill_order numeric. Hill order
-#' @param FDmetric character. list of functional metrics
+#' @param fd_metrics character. list of functional metrics
 #' @param pcelim numeric. min proportion of pixels to consider spectral species
 #' @param maxRows numeric. maximum number or rows to process
 #' @param nbCPU numeric. Number of CPUs available
@@ -25,8 +25,8 @@ run_biodivMapR <- function(input_raster_path, input_mask_path = NULL,
                            Kmeans_info, Beta_info,
                            output_dir, output_raster_name,
                            selected_bands = NULL, window_size,
-                           alphametrics = 'shannon',
-                           Hill_order = 1, FDmetric = NULL, pcelim = 0.02,
+                           alpha_metrics = 'shannon',
+                           Hill_order = 1, fd_metrics = NULL, pcelim = 0.02,
                            maxRows = NULL, nbCPU = 1, min_sun = 0.25,
                            filetype = 'GTiff',
                            moving_window = FALSE){
@@ -36,6 +36,8 @@ run_biodivMapR <- function(input_raster_path, input_mask_path = NULL,
     input_rast <- terra::rast(input_raster_path)
   if (inherits(x = input_raster_path, what = 'list'))
     input_rast <- lapply(input_raster_path,terra::rast)
+  if (is.null(Beta_info))
+    beta_metrics <- FALSE
 
   if (!moving_window){
     ab_div_metrics <- get_raster_diversity_tile(input_raster_path = input_raster_path,
@@ -44,9 +46,9 @@ run_biodivMapR <- function(input_raster_path, input_mask_path = NULL,
                                                 Beta_info = Beta_info,
                                                 selected_bands = selected_bands,
                                                 window_size = window_size,
-                                                alphametrics = alphametrics,
+                                                alpha_metrics = alpha_metrics,
                                                 Hill_order = Hill_order,
-                                                FDmetric = FDmetric,
+                                                fd_metrics = fd_metrics,
                                                 pcelim = pcelim,
                                                 maxRows = maxRows,
                                                 nbCPU = nbCPU,
@@ -54,9 +56,10 @@ run_biodivMapR <- function(input_raster_path, input_mask_path = NULL,
     # save diversity metrics as raster data
     diversity_maps <- save_diversity_maps_tile(input_raster_path = input_raster_path,
                                                ab_div_metrics = ab_div_metrics,
-                                               alphametrics = alphametrics,
+                                               alpha_metrics = alpha_metrics,
                                                Hill_order = Hill_order,
-                                               FDmetric = FDmetric,
+                                               beta_metrics = beta_metrics,
+                                               fd_metrics = fd_metrics,
                                                input_rast = input_rast,
                                                output_dir = output_dir,
                                                output_raster_name = output_raster_name,
@@ -70,18 +73,19 @@ run_biodivMapR <- function(input_raster_path, input_mask_path = NULL,
                                               Beta_info = Beta_info,
                                               selected_bands = selected_bands,
                                               window_size = window_size,
-                                              alphametrics = alphametrics,
+                                              alpha_metrics = alpha_metrics,
                                               Hill_order = Hill_order,
-                                              FDmetric = FDmetric,
+                                              fd_metrics = fd_metrics,
                                               pcelim = pcelim,
                                               maxRows = maxRows, nbCPU = nbCPU,
                                               min_sun = min_sun)
 
     diversity_maps <- save_diversity_maps_mw(input_raster_path = input_raster_path,
                                              ab_div_metrics = ab_div_metrics,
-                                             alphametrics = alphametrics,
+                                             alpha_metrics = alpha_metrics,
                                              Hill_order = Hill_order,
-                                             FDmetric = FDmetric,
+                                             beta_metrics = beta_metrics,
+                                             fd_metrics = fd_metrics,
                                              input_rast = input_rast,
                                              output_dir = output_dir,
                                              output_raster_name = output_raster_name,

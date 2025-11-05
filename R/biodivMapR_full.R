@@ -12,9 +12,10 @@
 #' @param nb_clusters numeric. number of clusters used in kmeans
 #' @param nb_samples_beta numeric. number of samples to compute beta diversity
 #' @param selected_bands numeric. bands selected from input_rast
-#' @param alphametrics list. alpha diversity metrics: richness, shannon, simpson
+#' @param alpha_metrics list. alpha diversity metrics: richness, shannon, simpson
+#' @param beta_metrics boolean. set TRUE to compute beta diversity
 #' @param Hill_order numeric. Hill order
-#' @param FDmetric character. list of functional metrics
+#' @param fd_metrics character. list of functional metrics
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
 #' @param nbCPU numeric. Number of CPUs available
 #' @param nb_iter numeric. nb of iterations averaged to compute diversity indices
@@ -28,17 +29,29 @@
 #' @return Kmeans_info and Beta_info
 #' @export
 
-biodivMapR_full <- function(input_raster_path, output_dir, window_size,
-                            maxRows = NULL, Kmeans_info_save = NULL,
-                            Kmeans_info_read = NULL, Beta_info_save = NULL,
-                            Beta_info_read = NULL, input_mask_path = NULL,
-                            nb_clusters = 50, nb_samples_beta = 1000,
-                            selected_bands = NULL, alphametrics = 'shannon',
-                            Hill_order = 1, FDmetric = NULL, pcelim = 0.02,
-                            nbCPU = 1, nb_iter = 10, min_sun = 0.25,
-                            nb_samples_alpha = 1e5, dimPCoA = 3,
-                            progressbar = TRUE, filetype = 'GTiff',
-                            moving_window = FALSE){
+biodivMapR_full <- function(input_raster_path, input_mask_path = NULL,
+                            output_dir, window_size,
+                            selected_bands = NULL, Kmeans_info_save = NULL,
+                            Kmeans_info_read = NULL,  Beta_info_save = NULL,
+                            Beta_info_read = NULL,  nbCPU = 1, options = NULL){
+
+  # define options
+  options <- set_options_biodivMapR(fun = 'biodivMapR_full', options = options)
+  alpha_metrics <- options$alpha_metrics
+  Hill_order <- options$Hill_order
+  beta_metrics <- options$beta_metrics
+  fd_metrics <- options$fd_metrics
+  nb_samples_alpha <- options$nb_samples_alpha
+  nb_samples_beta <- options$nb_samples_beta
+  nb_clusters <- options$nb_clusters
+  nb_iter <- options$nb_iter
+  pcelim <- options$pcelim
+  maxRows <- options$maxRows
+  moving_window <- options$moving_window
+  min_sun <- options$min_sun
+  dimPCoA <- options$dimPCoA
+  progressbar <- options$progressbar
+  filetype <- options$filetype
 
   dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
   # read input rasters
@@ -52,7 +65,7 @@ biodivMapR_full <- function(input_raster_path, output_dir, window_size,
     input_mask <- terra::rast(input_mask_path)
   if (is.null(Kmeans_info_save))
     Kmeans_info_save <- file.path(output_dir,'Kmeans_info.RData')
-  if (is.null(Beta_info_save))
+  if (is.null(Beta_info_save) & beta_metrics)
     Beta_info_save <- file.path(output_dir,'Beta_info.RData')
   # compute kmeans from random subset of image
   Kmeans_info <- init_kmeans(input_rast = input_rast,
@@ -67,16 +80,18 @@ biodivMapR_full <- function(input_raster_path, output_dir, window_size,
                              nbCPU = nbCPU)
 
   # compute beta diversity for training data
-  Beta_info <- init_PCoA(input_rast = input_rast,
-                         input_mask = input_mask,
-                         window_size = window_size,
-                         nb_samples = nb_samples_beta,
-                         Kmeans_info = Kmeans_info,
-                         selected_bands = selected_bands,
-                         nbCPU = nbCPU, min_sun = min_sun,
-                         pcelim = pcelim, dimPCoA = dimPCoA,
-                         Beta_info_save = Beta_info_save,
-                         Beta_info_read = Beta_info_read)
+  Beta_info <- NULL
+  if (beta_metrics)
+    Beta_info <- init_PCoA(input_rast = input_rast,
+                           input_mask = input_mask,
+                           window_size = window_size,
+                           nb_samples = nb_samples_beta,
+                           Kmeans_info = Kmeans_info,
+                           selected_bands = selected_bands,
+                           nbCPU = nbCPU, min_sun = min_sun,
+                           pcelim = pcelim, dimPCoA = dimPCoA,
+                           Beta_info_save = Beta_info_save,
+                           Beta_info_read = Beta_info_read)
 
   # compute alpha and beta diversity from raster data
   # input_rasters <- list('main' = input_raster_path,
@@ -92,18 +107,19 @@ biodivMapR_full <- function(input_raster_path, output_dir, window_size,
                                            Beta_info = Beta_info,
                                            selected_bands = selected_bands,
                                            window_size = window_size,
-                                           alphametrics = alphametrics,
+                                           alpha_metrics = alpha_metrics,
                                            Hill_order = Hill_order,
-                                           FDmetric = FDmetric,
+                                           fd_metrics = fd_metrics,
                                            pcelim = pcelim,
                                            maxRows = maxRows, nbCPU = nbCPU,
                                            min_sun = min_sun)
 
     # save diversity metrics as raster data
     diversity_maps <- save_diversity_maps(ab_div_metrics = ab_div_metrics,
-                                          alphametrics = alphametrics,
+                                          alpha_metrics = alpha_metrics,
                                           Hill_order = Hill_order,
-                                          FDmetric = FDmetric,
+                                          beta_metrics = beta_metrics,
+                                          fd_metrics = fd_metrics,
                                           input_rast = input_rast,
                                           output_dir = output_dir,
                                           window_size = window_size,
@@ -117,25 +133,26 @@ biodivMapR_full <- function(input_raster_path, output_dir, window_size,
                                               Beta_info = Beta_info,
                                               selected_bands = selected_bands,
                                               window_size = window_size,
-                                              alphametrics = alphametrics,
+                                              alpha_metrics = alpha_metrics,
                                               Hill_order = Hill_order,
-                                              FDmetric = FDmetric,
+                                              fd_metrics = fd_metrics,
                                               pcelim = pcelim,
                                               maxRows = maxRows, nbCPU = nbCPU,
                                               min_sun = min_sun)
 
     betanames <- 'beta_mw'
-    alphanames <- paste0(alphametrics,'_mw')
+    alphanames <- paste0(alpha_metrics,'_mw')
     functionalname <- NULL
-    if (!is.null(FDmetric))
-      functionalname <- paste0(FDmetric,'_mw')
+    if (!is.null(fd_metrics))
+      functionalname <- paste0(fd_metrics,'_mw')
     output_raster_name <- as.list(c(betanames, alphanames, functionalname))
-    names(output_raster_name) <- c('beta', alphametrics, FDmetric)
+    names(output_raster_name) <- c('beta', alpha_metrics, fd_metrics)
     diversity_maps <- save_diversity_maps_mw(input_raster_path = input_raster_path,
                                              ab_div_metrics = ab_div_metrics,
-                                             alphametrics = alphametrics,
+                                             alpha_metrics = alpha_metrics,
                                              Hill_order = Hill_order,
-                                             FDmetric = FDmetric,
+                                             beta_metrics = beta_metrics,
+                                             fd_metrics = fd_metrics,
                                              input_rast = input_rast,
                                              output_dir = output_dir,
                                              output_raster_name = output_raster_name,

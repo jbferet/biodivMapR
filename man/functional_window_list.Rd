@@ -4,13 +4,13 @@
 \alias{functional_window_list}
 \title{apply functional_window to a list of lists}
 \usage{
-functional_window_list(SSwindow, FDmetric = c("FRic", "FEve", "FDiv"))
+functional_window_list(SSwindow, fd_metrics = c("FRic", "FEve", "FDiv"))
 }
 \arguments{
 \item{SSwindow}{dataframe. spectral species corresponding to a raster subset
 (window = elementary spatial unit of process)}
 
-\item{FDmetric}{list. functional diversity metrics: FRic, FEve, FDiv}
+\item{fd_metrics}{list. functional diversity metrics: FRic, FEve, FDiv}
 }
 \value{
 list of alpha and beta diversity metrics
