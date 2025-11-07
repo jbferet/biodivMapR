@@ -6,6 +6,7 @@
 #' @param mask_dir character.
 #' @param window_size numeric.
 #' @param nbCPU numeric.
+#' @param Kmeans_info list.
 #' @param nb_samples_alpha numeric.
 #' @param beta_metrics boolean. set TRUE to compute beta diversity
 #' @param nb_samples_beta numeric.
@@ -15,7 +16,8 @@
 
 sample_from_plots <- function(feature_dir, list_features, plots, mask_dir = NULL,
                               window_size, nbCPU = 1, Kmeans_info = NULL,
-                              beta_metrics = TRUE, nb_samples_alpha = 1e5, nb_samples_beta = 2e3){
+                              beta_metrics = TRUE, nb_samples_alpha = 1e5,
+                              nb_samples_beta = 2e3){
 
   nb_pix_valid <- get_valid_pixels_from_tiles(feature_dir, plots, nbCPU = 1,
                                             mask_dir = mask_dir)

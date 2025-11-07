@@ -24,17 +24,29 @@ mosaic_tiles <- function(pattern, dir_path, vrt_save, siteName = NULL,
   # create tiff from vrt
   mosaic_path <- file.path(dir_path, paste0(siteName, pattern,'_mosaic.tiff'))
   if (!file.exists(mosaic_path) | overwrite){
-    if (dim(v)[[1]]*dim(v)[[2]] < 1e6){
-      message(paste('write image for diversity metric', pattern))
-      sf::gdal_utils(util = 'translate', source = output_vrt_path,
-                     destination = mosaic_path)
-    } else {
-      message(paste('write compressed image for diversity metric', pattern))
+    message(paste('write image for diversity metric', pattern))
+    result <- try({
       sf::gdal_utils(util = 'translate', source = output_vrt_path,
                      destination = mosaic_path,
                      options = c("COMPRESS=LZW", "BIGTIFF=IF_SAFER"))
-                      # co = c("COMPRESS=LZW", "BIGTIFF=IF_SAFER"))
+      # co = c("COMPRESS=LZW", "BIGTIFF=IF_SAFER"))
+    }, silent = TRUE)
+    if ( "try-error" %in% class(result) ) {
+      # err_msg <- geterrmessage()
+      sf::gdal_utils(util = 'translate', source = output_vrt_path,
+                     destination = mosaic_path)
     }
+    # if (dim(v)[[1]]*dim(v)[[2]] < 1e6){
+    #   message(paste('write image for diversity metric', pattern))
+    #   sf::gdal_utils(util = 'translate', source = output_vrt_path,
+    #                  destination = mosaic_path)
+    # } else {
+    #   message(paste('write compressed image for diversity metric', pattern))
+    #   sf::gdal_utils(util = 'translate', source = output_vrt_path,
+    #                  destination = mosaic_path,
+    #                  options = c("COMPRESS=LZW", "BIGTIFF=IF_SAFER"))
+    #                   # co = c("COMPRESS=LZW", "BIGTIFF=IF_SAFER"))
+    # }
   }
 
   # delete vrt

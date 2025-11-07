@@ -30,6 +30,8 @@ sample_from_plots(
 
 \item{nbCPU}{numeric.}
 
+\item{Kmeans_info}{list.}
+
 \item{beta_metrics}{boolean. set TRUE to compute beta diversity}
 
 \item{nb_samples_alpha}{numeric.}

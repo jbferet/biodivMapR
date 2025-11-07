@@ -8,6 +8,7 @@
 ## fix
 - fix bug when checking if mask files already exist
 - fix bug when generating hill index
+- use try to avoid error when using compression when calling gdal_utils
 
 ## change
 - fd_metrics instead of FDmetric
