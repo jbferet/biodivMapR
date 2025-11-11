@@ -50,9 +50,6 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
   weightIRQ <- options$weightIRQ
   Kmeans_path <- options$Kmeans_path
   Beta_path <- options$Beta_path
-  Kmeans_info <- samples$Kmeans_info
-  Beta_info <- samples$Beta_info
-
 
   # sample data if not already sampled
   samples <- biodivMapR_sample(feature_dir = feature_dir,
@@ -71,6 +68,8 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
                                Kmeans_path = Kmeans_path,
                                Beta_path = Beta_path)
 
+  Kmeans_info <- samples$Kmeans_info
+  Beta_info <- samples$Beta_info
   message('applying biodivMapR on tiles')
   maxCPU <- length(samples$ID_aoi)
   if (nbCPU > maxCPU)
