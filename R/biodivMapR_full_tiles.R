@@ -51,6 +51,11 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
   Kmeans_path <- options$Kmeans_path
   Beta_path <- options$Beta_path
 
+  # adjust number of clusters if less than number of plots
+  maxCPU <- length(plots)
+  if (nbCPU > maxCPU)
+    nbCPU <-  maxCPU
+
   # sample data if not already sampled
   samples <- biodivMapR_sample(feature_dir = feature_dir,
                                list_features = list_features,

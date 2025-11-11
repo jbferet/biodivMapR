@@ -20,6 +20,10 @@ compute_mask_iqr_tiles <- function(feature_dir, feature_list, mask_dir, plots,
                                    weightIRQ = 4, filetype = 'GTiff', nbCPU = 1,
                                    nb_pixstats = 5e6){
 
+  maxCPU <- length(plots)
+  if (nbCPU > maxCPU)
+    nbCPU <-  maxCPU
+
   process_mask <- TRUE
   # first check missing masks
   mask_path <- file.path(mask_dir, paste0('mask_', names(plots), '_IQR.tiff'))
