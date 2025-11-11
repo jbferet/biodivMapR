@@ -19,7 +19,9 @@ biodivMapR_sample(
   pcelim = 0.02,
   nbCPU = 1,
   nb_iter = 10,
-  weightIRQ = 4
+  weightIRQ = 4,
+  Kmeans_path = NULL,
+  Beta_path = NULL
 )
 }
 \arguments{
@@ -50,6 +52,10 @@ biodivMapR_sample(
 \item{nb_iter}{numeric. Number of iterations required to compute diversity}
 
 \item{weightIRQ}{numeric. IQR applied to filter out features to be used}
+
+\item{Kmeans_path}{character. path for Kmeans_info}
+
+\item{Beta_path}{character. path for Beta_info}
 }
 \value{
 mosaic_path

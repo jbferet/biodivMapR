@@ -60,6 +60,8 @@ run_biodivMapR_plot <- function(id, feature_dir, mask_dir = NULL,
     list_feat <- list.files(path = feature_dir, pattern = paste0('_',id,'_'))
     list_feat <- unique(gsub(pattern = '.aux.xml', replacement = '',
                              x = list_feat))
+    list_feat <- unique(gsub(pattern = '.tfw', replacement = '.tiff',
+                             x = list_feat))
     if (!is.null(mask_dir)){
       input_mask_path <- list.files(path = mask_dir,
                                     pattern = paste0('_',id,'_'),

@@ -32,6 +32,8 @@ compute_mask_iqr_tiles <- function(feature_dir, feature_list, mask_dir, plots,
   } else {
     # check if features also exist
     feature_list_extended <- paste0('_',feature_list, '.')
+    if (filetype == 'GTiff')
+      feature_list_extended <- paste0('_',feature_list, '.tiff')
     features_files <- lapply(X = feature_list_extended,
                              FUN = list.files, path = feature_dir)
     names(features_files) <- feature_list
@@ -47,6 +49,8 @@ compute_mask_iqr_tiles <- function(feature_dir, feature_list, mask_dir, plots,
   if (process_mask){
     # list files
     feature_list_extended <- paste0('_',feature_list, '.')
+    if (filetype == 'GTiff')
+      feature_list_extended <- paste0('_',feature_list, '.tiff')
     listfiles <- unlist(lapply(X = feature_list_extended,
                                FUN = list.files, path = feature_dir,
                                full.names = TRUE))

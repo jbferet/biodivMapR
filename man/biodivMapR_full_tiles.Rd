@@ -12,7 +12,7 @@ biodivMapR_full_tiles(
   window_size,
   plots,
   nbCPU = 1,
-  siteName = NULL,
+  site_name = NULL,
   options = NULL
 )
 }
@@ -31,7 +31,7 @@ biodivMapR_full_tiles(
 
 \item{nbCPU}{numeric. Number of CPUs available}
 
-\item{siteName}{character. name for the output files}
+\item{site_name}{character. name for the output files}
 
 \item{options}{list. including
 \itemize{

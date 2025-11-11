@@ -15,7 +15,7 @@ get_si_tiles_from_raster(
   radiometric_filter = list(cloudMask = NULL, shadeMask = NULL, NDVIMask = NULL),
   p = NULL,
   overwrite = FALSE,
-  siteName = NULL
+  site_name = NULL
 )
 }
 \arguments{
@@ -39,7 +39,7 @@ get_si_tiles_from_raster(
 
 \item{overwrite}{boolean.}
 
-\item{siteName}{character.}
+\item{site_name}{character.}
 }
 \value{
 xxx

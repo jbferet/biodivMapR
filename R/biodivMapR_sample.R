@@ -15,6 +15,8 @@
 #' @param nbCPU numeric. Number of CPUs available
 #' @param nb_iter numeric. Number of iterations required to compute diversity
 #' @param weightIRQ numeric. IQR applied to filter out features to be used
+#' @param Kmeans_path character. path for Kmeans_info
+#' @param Beta_path character. path for Beta_info
 #'
 #' @return mosaic_path
 #' @export
@@ -23,7 +25,8 @@ biodivMapR_sample <- function(feature_dir, list_features, mask_dir = NULL,
                               output_dir, window_size, plots, nb_clusters = 50,
                               nb_samples_alpha = 1e5, beta_metrics = TRUE,
                               nb_samples_beta = 2e3, pcelim = 0.02, nbCPU = 1,
-                              nb_iter = 10, weightIRQ = 4){
+                              nb_iter = 10, weightIRQ = 4, Kmeans_path = NULL,
+                              Beta_path = NULL){
 
   message('biodivMapR sampling')
   # update mask based on IQR filtering for each feature
@@ -38,10 +41,13 @@ biodivMapR_sample <- function(feature_dir, list_features, mask_dir = NULL,
   ID_aoi <- mask_path_list$tile_exists
   plots <- plots[ID_aoi]
 
-  # load kmeans and beta info if exist
-  Kmeans_path <- file.path(output_dir, 'Kmeans_info.RData')
-  Beta_path <- file.path(output_dir, 'Beta_info.RData')
+  # set default path for Kmeans_info and Beta_info
+  if (is.null(Kmeans_path))
+    Kmeans_path <- file.path(output_dir, 'Kmeans_info.RData')
+  if (is.null(Beta_path))
+    Beta_path <- file.path(output_dir, 'Beta_info.RData')
   Kmeans_info <- Beta_info <- NULL
+  # load kmeans and beta info if exist
   if (file.exists(Kmeans_path))
     load(Kmeans_path)
   if (file.exists(Beta_path) & beta_metrics)

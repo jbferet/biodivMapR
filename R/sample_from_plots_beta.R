@@ -28,11 +28,14 @@ sample_from_plots_beta <- function(feature_dir, list_features, plots,
 
   # define features to sample
   if (is.null(mask_dir)){
-    listfiles <- list.files(feature_dir, full.names = TRUE)
+    listfiles <- list.files(path = feature_dir, pattern = '.tiff',
+                            full.names = TRUE)
     feat_list <- list_features
   } else {
-    listfiles <- c(list.files(feature_dir, full.names = TRUE),
-                   list.files(mask_dir, full.names = TRUE))
+    listfiles <- c(list.files(path = feature_dir, pattern = '.tiff',
+                              full.names = TRUE),
+                   list.files(path = mask_dir, pattern = '.tiff',
+                              full.names = TRUE))
     feat_list <- c(list_features, 'mask')
   }
 

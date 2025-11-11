@@ -31,15 +31,18 @@ sample_from_plots_alpha <- function(feature_dir, list_features, plots, nbCPU = 1
 
   # define features to sample
   if (is.null(mask_dir)){
-    listfiles <- list.files(feature_dir, full.names = TRUE)
+    listfiles <- list.files(path = feature_dir, pattern = '.tiff',
+                            full.names = TRUE)
     listfiles <- unique(gsub(pattern = '.aux.xml', x = listfiles,
                              replacement = ''))
     feat_list <- list_features
   } else {
-    listfiles1 <- list.files(feature_dir, full.names = TRUE)
+    listfiles1 <- list.files(path = feature_dir, pattern = '.tiff',
+                             full.names = TRUE)
     listfiles1 <- unique(gsub(pattern = '.aux.xml', x = listfiles1,
                               replacement = ''))
-    listfiles2 <- list.files(mask_dir, full.names = TRUE)
+    listfiles2 <- list.files(path = mask_dir, pattern = '.tiff',
+                             full.names = TRUE)
     listfiles2 <- unique(gsub(pattern = '.aux.xml', x = listfiles2,
                               replacement = ''))
     listfiles <- c(listfiles1, listfiles2)

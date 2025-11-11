@@ -10,7 +10,7 @@
 #' @param radiometric_filter list.
 #' @param p object
 #' @param overwrite boolean.
-#' @param siteName character.
+#' @param site_name character.
 #'
 #' @return xxx
 #' @importFrom terra vect crop res writeRaster values
@@ -23,11 +23,11 @@ get_si_tiles_from_raster <- function(aoi, aoi_ID, rastobj, si_list, output_dir,
                                      radiometric_filter = list('cloudMask' = NULL,
                                                                'shadeMask' = NULL,
                                                                'NDVIMask' = NULL),
-                                     p = NULL, overwrite = FALSE, siteName = NULL){
+                                     p = NULL, overwrite = FALSE, site_name = NULL){
 
-  # define default siteName
-  if (is.null(siteName))
-    siteName <- 'plot'
+  # define default site_name
+  if (is.null(site_name))
+    site_name <- 'plot'
   # make sure directories are already created
   output_dir_mask <- file.path(output_dir, 'mask')
   dir.create(path = output_dir_mask, showWarnings = FALSE, recursive = TRUE)
@@ -37,7 +37,7 @@ get_si_tiles_from_raster <- function(aoi, aoi_ID, rastobj, si_list, output_dir,
   # which files are expected as outputs
   filename_mask <- file.path(output_dir_mask, paste0('mask_',aoi_ID,'.tiff'))
   filename_si <- as.list(file.path(output_dir_si,
-                                   paste0(siteName, '_', aoi_ID,
+                                   paste0(site_name, '_', aoi_ID,
                                           '_', si_list, '.tiff')))
   names(filename_si) <- si_list
 

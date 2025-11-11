@@ -13,10 +13,14 @@
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
 #' @param maxRows numeric. maximum number of rows
 #' @param moving_window boolean. should moving window be used?
-#' @param siteName character. name for the output files
+#' @param site_name character. name for the output files
 #' @param mosaic_output boolean. set TRUE if outputs need to be mosaiced
 #'
 #' @return mosaic_path
+#' @importFrom parallel makeCluster stopCluster
+#' @importFrom future plan sequential
+#' @importFrom future.apply future_mapply
+#' @importFrom progressr with_progress progressor handlers
 #' @export
 
 biodivMapR_tiles <- function(feature_dir, list_features, mask_dir = NULL,
@@ -24,7 +28,7 @@ biodivMapR_tiles <- function(feature_dir, list_features, mask_dir = NULL,
                              alpha_metrics = 'shannon', Hill_order = 1,
                              fd_metrics = NULL, nbCPU = 1, pcelim = 0.02,
                              maxRows = 1200, moving_window = FALSE,
-                             siteName = NULL, mosaic_output = TRUE){
+                             site_name = NULL, mosaic_output = TRUE){
 
   # update mask based on IQR filtering for each feature
   mask_path_list <- compute_mask_iqr_tiles(feature_dir = feature_dir,
@@ -115,7 +119,7 @@ biodivMapR_tiles <- function(feature_dir, list_features, mask_dir = NULL,
       files_out <- as.list(file.path(diridx, basename(selfiles)))
       mapply(FUN = file.rename, from = files_in, to = files_out)
       mosaic_path[[biodividx]] <- mosaic_tiles(pattern = biodividx,
-                                               siteName = siteName,
+                                               site_name = site_name,
                                                dir_path = diridx,
                                                overwrite = FALSE,
                                                vrt_save = output_dir)

@@ -13,9 +13,11 @@
 #'
 update_mask_from_tiles <- function(plotID, listfiles, iqr_si, mask_dir,
                                    p = NULL){
-  plotID <- paste0('_',plotID,'_')
-  # tileSI <- listfiles[stringr::str_detect(string = listfiles, pattern = plotID)]
-  tileSI <- listfiles[grepl(x = basename(listfiles), pattern = plotID)]
+
+  dir.create(path = mask_dir, showWarnings = F, recursive = T)
+  plotID_ <- paste0('_',plotID,'_')
+  # tileSI <- listfiles[stringr::str_detect(string = listfiles, pattern = plotID_)]
+  tileSI <- listfiles[grepl(x = basename(listfiles), pattern = plotID_)]
   # get statistics on data availability
   namefeatures <- names(iqr_si)
   filename <- NULL
@@ -36,7 +38,7 @@ update_mask_from_tiles <- function(plotID, listfiles, iqr_si, mask_dir,
       if (length(elim)>0)
         mask[elim] <- NA
     }
-    filename <- file.path(mask_dir, paste0('mask', plotID, 'IQR.tiff'))
+    filename <- file.path(mask_dir, paste0('mask', plotID_, 'IQR.tiff'))
     terra::writeRaster(x = mask, filename = filename, filetype = 'GTiff',
                        overwrite = TRUE)
   }

@@ -66,7 +66,7 @@ library(sf)
 # 1- define input & output directories
 output_dir_s2 <- './S2_image'
 datetime <- '2018-12-25'
-siteName <- 'S2_subset_Cameroon'
+site_name <- 'S2_subset_Cameroon'
 
 bbox <- sf::st_bbox(obj = c('xmin' = 357001, 'ymin' = 341701, 
                             'xmax' = 366730, 'ymax' = 351236))
@@ -76,7 +76,7 @@ sf::st_crs(x = bbox) <- 32633
 list_files <- preprocS2::get_s2_raster(bbox = bbox, geomAcq = T,
                                        datetime = datetime, 
                                        output_dir = output_dir_s2, 
-                                       siteName = siteName)
+                                       site_name = site_name)
 # Sentinel-2 L2A reflectance
 Refl_L2A <- list_files$Refl_L2A
 # Sentinel-2 binary mask identifying vegetation, discarding clouds & shadows

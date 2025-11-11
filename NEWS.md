@@ -15,6 +15,7 @@
 - alpha_metrics instead of alphametrics
 - add options as input parameter for 'biodivMapR_full_tiles' and 'biodivMapR_full' in order to reduce nb of inputs
 - add possibility to define the IQR when sampling with 'biodivMapR_sample' and filtering
+- change name for site_name
 
 # biodivMapR2 v2.3.14
 ## fix
