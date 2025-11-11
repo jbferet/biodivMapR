@@ -163,6 +163,7 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
                                                     site_name = site_name,
                                                     dir_path = diridx,
                                                     overwrite = FALSE,
+                                                    idx = biodiv_index,
                                                     vrt_save = output_dir)
 
         # compute sd mosaic
@@ -177,6 +178,7 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
                                                     site_name = site_name,
                                                     dir_path = diridx,
                                                     overwrite = FALSE,
+                                                    idx = biodiv_index,
                                                     vrt_save = output_dir)
       }
     }

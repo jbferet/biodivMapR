@@ -4,6 +4,7 @@
 #' @param dir_path character. firectory where rasters to mosaic are stored
 #' @param vrt_save character. where to save vrt
 #' @param site_name character. name of the site
+#' @param idx character. index if not provided as pattern
 #' @param overwrite boolean
 #'
 #' @return mosaic_path
@@ -12,7 +13,7 @@
 #' @export
 #'
 mosaic_tiles <- function(pattern, dir_path, vrt_save, site_name = NULL,
-                         overwrite = FALSE){
+                         idx = NULL, overwrite = FALSE){
   # create vrt
   if (! is.null(site_name))
     site_name <- paste0(site_name, '_')
@@ -25,6 +26,10 @@ mosaic_tiles <- function(pattern, dir_path, vrt_save, site_name = NULL,
 
   # create tiff from vrt
   mosaic_path <- file.path(dir_path, paste0(site_name, pattern,'_mosaic.tiff'))
+  if (!is.null(idx))
+    mosaic_path <- file.path(dir_path, paste0(site_name, idx,
+                                              pattern,'_mosaic.tiff'))
+
   if (!file.exists(mosaic_path) | overwrite){
     message(paste('write image for diversity metric', pattern))
     result <- try({

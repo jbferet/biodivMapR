@@ -4,7 +4,14 @@
 \alias{mosaic_tiles}
 \title{compute spectral indices and composite for a given period of time}
 \usage{
-mosaic_tiles(pattern, dir_path, vrt_save, site_name = NULL, overwrite = FALSE)
+mosaic_tiles(
+  pattern,
+  dir_path,
+  vrt_save,
+  site_name = NULL,
+  idx = NULL,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{pattern}{character. identify which files to mosaic}
@@ -14,6 +21,8 @@ mosaic_tiles(pattern, dir_path, vrt_save, site_name = NULL, overwrite = FALSE)
 \item{vrt_save}{character. where to save vrt}
 
 \item{site_name}{character. name of the site}
+
+\item{idx}{character. index if not provided as pattern}
 
 \item{overwrite}{boolean}
 }
