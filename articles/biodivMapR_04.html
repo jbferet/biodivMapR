@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.3.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.0</span>
       </span>
     </div>
 
@@ -93,7 +93,7 @@
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2025-10-30</h4>
+            <h4 data-toc-skip class="date">2025-11-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR_04.Rmd" class="external-link"><code>vignettes/biodivMapR_04.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_04.Rmd</code></div>
@@ -107,6 +107,23 @@ diversity metrics based on ground information. Ground information should
 be associated with a vector layer including polygons. The size of the
 polygons is important, as it should be compatible with ground
 information.</p>
+<p><strong>biodivMapR does not aim at producing diversity metrics with
+absolute accuracy</strong>:<br>
+the spectral diversity metrics produced with <code>biodivMapR</code> are
+not expected to match the absolute value of diversity metrics. Hence,
+when performing validation of diversity metrics with ground
+observations, users should favor correlation analyses, rather than using
+metrics such as RMSE between biodiversity indices measured from
+inventories and diversity metrics produced with<code>biodivMapR</code>
+.</p>
+<p>The choice of the number of clusters is an important factor directly
+influencing the range of the spectral
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
+diversity metrics, higher number of clusters leading to higher maximum
+potential values of spectral richness &amp; Shannon index.</p>
+<p>The function <code>biodivMapR_opt_clusters</code> can be used to
+identify the number of clusters maximizing the correlation between
+spectral diversity metrics and observations.</p>
 <p><strong>Ground information should not correspond to individual
 points</strong>:<br><code>biodivMapR</code> produces diversity metrics based on information
 extracted from a group of pixels.
@@ -280,7 +297,7 @@ highlighted when focusing on a subset of plots.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer>

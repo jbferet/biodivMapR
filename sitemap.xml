@@ -32,11 +32,12 @@
 <url><loc>/reference/clean_NAsInf.html</loc></url>
 <url><loc>/reference/compute_NN_from_ordination.html</loc></url>
 <url><loc>/reference/compute_bc_diss.html</loc></url>
-<url><loc>/reference/compute_mask_IQR_tiles.html</loc></url>
 <url><loc>/reference/compute_mask_iqr.html</loc></url>
+<url><loc>/reference/compute_mask_iqr_tiles.html</loc></url>
 <url><loc>/reference/continuumRemoval.html</loc></url>
 <url><loc>/reference/continuum_removal.html</loc></url>
 <url><loc>/reference/crfun.html</loc></url>
+<url><loc>/reference/crop_border_tile.html</loc></url>
 <url><loc>/reference/define_pixels_per_iter.html</loc></url>
 <url><loc>/reference/exclude_spectral_domains.html</loc></url>
 <url><loc>/reference/explore_kmeans.html</loc></url>
@@ -81,6 +82,7 @@
 <url><loc>/reference/kmeans_progressr.html</loc></url>
 <url><loc>/reference/maxRows_chunk.html</loc></url>
 <url><loc>/reference/mnf.html</loc></url>
+<url><loc>/reference/mosaic_from_vrt.html</loc></url>
 <url><loc>/reference/mosaic_tiles.html</loc></url>
 <url><loc>/reference/nbRows_chunk.html</loc></url>
 <url><loc>/reference/noise.html</loc></url>
@@ -110,6 +112,7 @@
 <url><loc>/reference/save_diversity_maps_tile.html</loc></url>
 <url><loc>/reference/scatter_alphabeta.html</loc></url>
 <url><loc>/reference/select_PCA_components.html</loc></url>
+<url><loc>/reference/set_options_biodivMapR.html</loc></url>
 <url><loc>/reference/spectralspecies_per_polygon.html</loc></url>
 <url><loc>/reference/split_chunk.html</loc></url>
 <url><loc>/reference/split_line.html</loc></url>
