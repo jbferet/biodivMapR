@@ -4,6 +4,7 @@
 - add option moving_window for 'biodivMapR_full'
 - add option weightIQR for 'biodivMapR_full_tiles'
 - add function crop_border_tile to avoid artifacts between tiles
+- add function mosaic_from_vrt to produce a mosaic from a vrt
 
 ## fix
 - fix bug when checking if mask files already exist
@@ -16,6 +17,7 @@
 - add options as input parameter for 'biodivMapR_full_tiles' and 'biodivMapR_full' in order to reduce nb of inputs
 - add possibility to define the IQR when sampling with 'biodivMapR_sample' and filtering
 - change name for site_name
+- updated vignettes
 
 # biodivMapR2 v2.3.14
 ## fix

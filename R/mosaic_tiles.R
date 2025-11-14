@@ -31,17 +31,18 @@ mosaic_tiles <- function(pattern, dir_path, vrt_save, site_name = NULL,
                                               pattern,'_mosaic.tiff'))
 
   if (!file.exists(mosaic_path) | overwrite){
-    message(paste('write image for diversity metric', pattern))
-    result <- try({
-      sf::gdal_utils(util = 'translate', source = output_vrt_path,
-                     destination = mosaic_path,
-                     options = c("COMPRESS=LZW", "BIGTIFF=IF_SAFER"))
-      # co = c("COMPRESS=LZW", "BIGTIFF=IF_SAFER"))
-    }, silent = TRUE)
-    if ( "try-error" %in% class(result) ) {
-      sf::gdal_utils(util = 'translate', source = output_vrt_path,
-                     destination = mosaic_path)
-    }
+    mosaic_from_vrt(vrt_path = output_vrt_path, mosaic_path = mosaic_path)
+    # message(paste('write image for diversity metric', pattern))
+    # result <- try({
+    #   sf::gdal_utils(util = 'translate', source = output_vrt_path,
+    #                  destination = mosaic_path,
+    #                  options = c("COMPRESS=LZW", "BIGTIFF=IF_SAFER"))
+    #   # co = c("COMPRESS=LZW", "BIGTIFF=IF_SAFER"))
+    # }, silent = TRUE)
+    # if ( "try-error" %in% class(result) ) {
+    #   sf::gdal_utils(util = 'translate', source = output_vrt_path,
+    #                  destination = mosaic_path)
+    # }
   }
   # delete vrt
   file.remove(output_vrt_path)

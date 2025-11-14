@@ -49,15 +49,25 @@ maxRows <- 1000           # nb of lines processed at once (adjust based on RAM a
 nbCPU <- 4                # nb of threads for parallel processing
 
 # 5- apply biodivMapR 
-selectedPC <- c(1,5,6)
-options <- list('nb_clusters' = nb_clusters, 'maxRows' = maxRows)
+selected_bands <- c(1,5,6)
+options <- set_options_biodivMapR(fun = 'biodivMapR_full')
+options$nb_clusters <- nb_clusters
+options$maxRows <- maxRows
+biodivMapR_full <- function(input_raster_path, input_mask_path = NULL,
+                            output_dir, window_size,
+                            selected_bands = NULL, Kmeans_info_save = NULL,
+                            Kmeans_info_read = NULL,  Beta_info_save = NULL,
+                            Beta_info_read = NULL,  nbCPU = 1, options = NULL){
+
+
 ab_info_SPCA <- biodivMapR_full(input_raster_path = PCA_Output$PCA_Files$PCA, 
                                 input_mask_path = mask_path_PCA,
                                 output_dir = output_dir_PCA2, 
-                                selected_bands = selectedPC, 
+                                selected_bands = selected_bands, 
                                 window_size = window_size, 
                                 Kmeans_info_save = Kmeans_info_save,
-                                Beta_info_save = Beta_info_save, nbCPU = nbCPU)
+                                Beta_info_save = Beta_info_save, 
+                                nbCPU = nbCPU)
 ```
 
 Here, `ab_info_SPCA` includes two lists:
@@ -101,7 +111,9 @@ maxRows <- 1000           # nb of lines processed at once (adjust based on RAM a
 nbCPU <- 4                # nb of threads for parallel processing
 
 # 4- apply biodivMapR 
-options <- list('nb_clusters' = nb_clusters, 'maxRows' = maxRows)
+options <- set_options_biodivMapR(fun = 'biodivMapR_full')
+options$nb_clusters <- nb_clusters
+options$maxRows <- maxRows
 ab_info_SI <- biodivMapR_full(input_raster_path = SI_path, 
                               input_mask_path = mask_path_SI,
                               output_dir = output_dir_SI2, 

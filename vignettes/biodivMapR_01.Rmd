@@ -73,10 +73,14 @@ bbox <- sf::st_bbox(obj = c('xmin' = 357001, 'ymin' = 341701,
 sf::st_crs(x = bbox) <- 32633
 
 # 2- get S2 acquisition for study area
+options <- set_options_preprocS2(fun = 'get_s2_raster')
+options$geom_acq <- TRUE
+options$overwrite <- FALSE
 list_files <- preprocS2::get_s2_raster(bbox = bbox, geomAcq = T,
                                        datetime = datetime, 
                                        output_dir = output_dir_s2, 
-                                       site_name = site_name)
+                                       site_name = site_name, 
+                                       options = options)
 # Sentinel-2 L2A reflectance
 Refl_L2A <- list_files$Refl_L2A
 # Sentinel-2 binary mask identifying vegetation, discarding clouds & shadows
