@@ -16,6 +16,7 @@
 #' @importFrom terra vect crop res writeRaster values
 #' @importFrom methods as
 #' @importFrom sf st_sf
+#' @importFrom spinR compute_S2SI_Raster
 #' @export
 
 get_si_tiles_from_raster <- function(aoi, aoi_ID, rastobj, si_list, output_dir,

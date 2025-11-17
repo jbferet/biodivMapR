@@ -36,8 +36,7 @@ biodivMapR_full_classif <- function(input_raster_path, output_dir, window_size,
                                     Hill_order = 1, fd_metrics = NULL, pcelim = 0.02,
                                     nbCPU = 1, nb_iter = 10, min_sun = 0.25,
                                     nb_samples_alpha = 1e5, dimPCoA = 3,
-                                    progressbar = TRUE, filetype = 'GTiff',
-                                    classif_map = FALSE){
+                                    progressbar = TRUE, filetype = 'GTiff'){
 
   # read input rasters
   if (inherits(x = input_raster_path, what = 'character')){

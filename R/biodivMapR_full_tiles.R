@@ -143,7 +143,16 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
       diridx <- file.path(output_dir,biodiv_index)
       dir.create(diridx, showWarnings = FALSE, recursive = TRUE)
       # identify files
-      selfiles <- list.files(path = output_dir, pattern = biodiv_index)
+      selfiles <- list.files(path = output_dir, pattern = biodiv_index,
+                             include.dirs = FALSE, recursive = FALSE)
+      seldirs <- list.dirs(path = output_dir, full.names = FALSE,
+                           recursive = FALSE)
+      # discard directories when already
+      if (length(seldirs)>0){
+        elim <- match(seldirs, selfiles)
+        if (length(na.omit(elim))>0)
+          selfiles <- selfiles[-elim]
+      }
       if (! biodiv_index %in% alpha_metrics){
         selfiles <- file.path(output_dir, selfiles)
         # move files from - to

@@ -27,8 +27,7 @@ biodivMapR_full_classif(
   nb_samples_alpha = 1e+05,
   dimPCoA = 3,
   progressbar = TRUE,
-  filetype = "GTiff",
-  classif_map = FALSE
+  filetype = "GTiff"
 )
 }
 \arguments{
