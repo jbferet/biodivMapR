@@ -56,7 +56,7 @@ Suggests:
     testthat (>= 2.0.0)
 Remotes: gitlab::jbferet/bigRaster, 
          gitlab::jbferet/spinR, 
-         github::jbferet/preprocS2, 
+         github::jbferet/preprocS2
 VignetteBuilder: knitr
 URL: https://github.com/jbferet/biodivMapR
 BugReports: https://github.com/jbferet/biodivMapR/issues
