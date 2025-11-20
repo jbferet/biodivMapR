@@ -23,7 +23,7 @@
 #' - weightIRQ numeric. IQR applied to filter out features to be used
 #'
 #' @return mosaic_path
-#' @importFrom parallel makeCluster stopCluster
+#' @importFrom parallel makeCluster stopCluster detectCores
 #' @importFrom future plan sequential
 #' @importFrom future.apply future_mapply
 #' @importFrom progressr with_progress progressor handlers
@@ -55,6 +55,8 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
   maxCPU <- length(plots)
   if (nbCPU > maxCPU)
     nbCPU <-  maxCPU
+  if (nbCPU > parallel::detectCores(logical = F))
+    nbCPU <- parallel::detectCores(logical = F)
 
   # sample data if not already sampled
   samples <- biodivMapR_sample(feature_dir = feature_dir,
@@ -150,6 +152,7 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
       # discard directories when already
       if (length(seldirs)>0){
         elim <- match(seldirs, selfiles)
+        elim <- na.omit(elim)
         if (length(na.omit(elim))>0)
           selfiles <- selfiles[-elim]
       }
