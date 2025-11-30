@@ -1,3 +1,8 @@
+# biodivMapR2 v2.4.1
+## addition
+- add biodivMapR_full_classif to produce diversity metrics from classification map
+
+
 # biodivMapR2 v2.4.0
 ## addition
 - add option beta_metrics: set to FALSE to skip beta computation

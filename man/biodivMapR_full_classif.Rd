@@ -8,26 +8,10 @@ biodivMapR_full_classif(
   input_raster_path,
   output_dir,
   window_size,
-  maxRows = NULL,
-  Kmeans_info_save = NULL,
-  Kmeans_info_read = NULL,
-  Beta_info_save = NULL,
-  Beta_info_read = NULL,
   input_mask_path = NULL,
-  nb_clusters = 50,
-  nb_samples_beta = 1000,
-  selected_bands = NULL,
-  alpha_metrics = "shannon",
-  Hill_order = 1,
-  fd_metrics = NULL,
+  site_name = NULL,
   pcelim = 0.02,
-  nbCPU = 1,
-  nb_iter = 10,
-  min_sun = 0.25,
-  nb_samples_alpha = 1e+05,
-  dimPCoA = 3,
-  progressbar = TRUE,
-  filetype = "GTiff"
+  nb_samples_beta = 1000
 )
 }
 \arguments{
@@ -37,48 +21,16 @@ biodivMapR_full_classif(
 
 \item{window_size}{numeric. window size for square plots}
 
-\item{maxRows}{numeric. max number of rows in each block}
-
-\item{Kmeans_info_save}{character. path where to save Kmeans_info}
-
-\item{Kmeans_info_read}{character. path where to read Kmeans_info}
-
-\item{Beta_info_save}{character. path where to save Beta_info}
-
-\item{Beta_info_read}{character. path where to read Beta_info}
-
 \item{input_mask_path}{character. path for mask file}
 
-\item{nb_clusters}{numeric. number of clusters used in kmeans}
-
-\item{nb_samples_beta}{numeric. number of samples to compute beta diversity}
-
-\item{selected_bands}{numeric. bands selected from input_rast}
-
-\item{alpha_metrics}{list. alpha diversity metrics: richness, shannon, simpson}
-
-\item{Hill_order}{numeric. Hill order}
-
-\item{fd_metrics}{character. list of functional metrics}
+\item{site_name}{character. nname of site}
 
 \item{pcelim}{numeric. minimum proportion of pixels to consider spectral species}
 
-\item{nbCPU}{numeric. Number of CPUs available}
-
-\item{nb_iter}{numeric. nb of iterations averaged to compute diversity indices}
-
-\item{min_sun}{numeric. minimum amount of sunlit pixels in the plots}
-
-\item{nb_samples_alpha}{numeric. max number of pixels extracted for kmeans}
-
-\item{dimPCoA}{numeric. number of dimensions of PCoA}
-
-\item{progressbar}{boolean. set true for progress bar during clustering}
-
-\item{filetype}{character. driver for output diversity raster data}
+\item{nb_samples_beta}{numeric. number of samples to compute beta diversity}
 }
 \value{
-Kmeans_info and Beta_info
+diversity_maps_ground
 }
 \description{
 computes diversity metrics from raster
