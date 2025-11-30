@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.1</span>
       </span>
     </div>
 
@@ -79,26 +79,10 @@
 <span>  <span class="va">input_raster_path</span>,</span>
 <span>  <span class="va">output_dir</span>,</span>
 <span>  <span class="va">window_size</span>,</span>
-<span>  maxRows <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  Kmeans_info_save <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  Kmeans_info_read <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  Beta_info_save <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  Beta_info_read <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  input_mask_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  nb_clusters <span class="op">=</span> <span class="fl">50</span>,</span>
-<span>  nb_samples_beta <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span>  selected_bands <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  alpha_metrics <span class="op">=</span> <span class="st">"shannon"</span>,</span>
-<span>  Hill_order <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  fd_metrics <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  site_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pcelim <span class="op">=</span> <span class="fl">0.02</span>,</span>
-<span>  nbCPU <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  nb_iter <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  min_sun <span class="op">=</span> <span class="fl">0.25</span>,</span>
-<span>  nb_samples_alpha <span class="op">=</span> <span class="fl">1e+05</span>,</span>
-<span>  dimPCoA <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  progressbar <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  filetype <span class="op">=</span> <span class="st">"GTiff"</span></span>
+<span>  nb_samples_beta <span class="op">=</span> <span class="fl">1000</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -118,89 +102,25 @@
 <dd><p>numeric. window size for square plots</p></dd>
 
 
-<dt id="arg-maxrows">maxRows<a class="anchor" aria-label="anchor" href="#arg-maxrows"></a></dt>
-<dd><p>numeric. max number of rows in each block</p></dd>
-
-
-<dt id="arg-kmeans-info-save">Kmeans_info_save<a class="anchor" aria-label="anchor" href="#arg-kmeans-info-save"></a></dt>
-<dd><p>character. path where to save Kmeans_info</p></dd>
-
-
-<dt id="arg-kmeans-info-read">Kmeans_info_read<a class="anchor" aria-label="anchor" href="#arg-kmeans-info-read"></a></dt>
-<dd><p>character. path where to read Kmeans_info</p></dd>
-
-
-<dt id="arg-beta-info-save">Beta_info_save<a class="anchor" aria-label="anchor" href="#arg-beta-info-save"></a></dt>
-<dd><p>character. path where to save Beta_info</p></dd>
-
-
-<dt id="arg-beta-info-read">Beta_info_read<a class="anchor" aria-label="anchor" href="#arg-beta-info-read"></a></dt>
-<dd><p>character. path where to read Beta_info</p></dd>
-
-
 <dt id="arg-input-mask-path">input_mask_path<a class="anchor" aria-label="anchor" href="#arg-input-mask-path"></a></dt>
 <dd><p>character. path for mask file</p></dd>
 
 
-<dt id="arg-nb-clusters">nb_clusters<a class="anchor" aria-label="anchor" href="#arg-nb-clusters"></a></dt>
-<dd><p>numeric. number of clusters used in kmeans</p></dd>
-
-
-<dt id="arg-nb-samples-beta">nb_samples_beta<a class="anchor" aria-label="anchor" href="#arg-nb-samples-beta"></a></dt>
-<dd><p>numeric. number of samples to compute beta diversity</p></dd>
-
-
-<dt id="arg-selected-bands">selected_bands<a class="anchor" aria-label="anchor" href="#arg-selected-bands"></a></dt>
-<dd><p>numeric. bands selected from input_rast</p></dd>
-
-
-<dt id="arg-alpha-metrics">alpha_metrics<a class="anchor" aria-label="anchor" href="#arg-alpha-metrics"></a></dt>
-<dd><p>list. alpha diversity metrics: richness, shannon, simpson</p></dd>
-
-
-<dt id="arg-hill-order">Hill_order<a class="anchor" aria-label="anchor" href="#arg-hill-order"></a></dt>
-<dd><p>numeric. Hill order</p></dd>
-
-
-<dt id="arg-fd-metrics">fd_metrics<a class="anchor" aria-label="anchor" href="#arg-fd-metrics"></a></dt>
-<dd><p>character. list of functional metrics</p></dd>
+<dt id="arg-site-name">site_name<a class="anchor" aria-label="anchor" href="#arg-site-name"></a></dt>
+<dd><p>character. nname of site</p></dd>
 
 
 <dt id="arg-pcelim">pcelim<a class="anchor" aria-label="anchor" href="#arg-pcelim"></a></dt>
 <dd><p>numeric. minimum proportion of pixels to consider spectral species</p></dd>
 
 
-<dt id="arg-nbcpu">nbCPU<a class="anchor" aria-label="anchor" href="#arg-nbcpu"></a></dt>
-<dd><p>numeric. Number of CPUs available</p></dd>
-
-
-<dt id="arg-nb-iter">nb_iter<a class="anchor" aria-label="anchor" href="#arg-nb-iter"></a></dt>
-<dd><p>numeric. nb of iterations averaged to compute diversity indices</p></dd>
-
-
-<dt id="arg-min-sun">min_sun<a class="anchor" aria-label="anchor" href="#arg-min-sun"></a></dt>
-<dd><p>numeric. minimum amount of sunlit pixels in the plots</p></dd>
-
-
-<dt id="arg-nb-samples-alpha">nb_samples_alpha<a class="anchor" aria-label="anchor" href="#arg-nb-samples-alpha"></a></dt>
-<dd><p>numeric. max number of pixels extracted for kmeans</p></dd>
-
-
-<dt id="arg-dimpcoa">dimPCoA<a class="anchor" aria-label="anchor" href="#arg-dimpcoa"></a></dt>
-<dd><p>numeric. number of dimensions of PCoA</p></dd>
-
-
-<dt id="arg-progressbar">progressbar<a class="anchor" aria-label="anchor" href="#arg-progressbar"></a></dt>
-<dd><p>boolean. set true for progress bar during clustering</p></dd>
-
-
-<dt id="arg-filetype">filetype<a class="anchor" aria-label="anchor" href="#arg-filetype"></a></dt>
-<dd><p>character. driver for output diversity raster data</p></dd>
+<dt id="arg-nb-samples-beta">nb_samples_beta<a class="anchor" aria-label="anchor" href="#arg-nb-samples-beta"></a></dt>
+<dd><p>numeric. number of samples to compute beta diversity</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Kmeans_info and Beta_info</p>
+    <p>diversity_maps_ground</p>
     </div>
 
   </div>
