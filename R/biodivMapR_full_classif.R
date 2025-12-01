@@ -103,6 +103,7 @@ biodivMapR_full_classif <- function(input_raster_path, output_dir, window_size,
       alpha <- output_rast_tmp
       alpha[cell_order] <-alphabeta[[idx]]
       filename <- file.path(output_dir, paste0(idx, '_classif.tiff'))
+      names(alpha) <- idx
       if (!is.null(site_name))
         filename <- file.path(output_dir, paste(site_name, idx, 'classif.tiff', sep = '_'))
       terra::writeRaster(x = alpha, filename = filename, overwrite = TRUE)
