@@ -97,7 +97,7 @@ biodivMapR_full_classif <- function(input_raster_path, output_dir, window_size,
       filename <- file.path(output_dir, 'beta_classif.tiff')
       if (!is.null(site_name))
         filename <- file.path(output_dir, paste0(site_name, '_beta_classif.tiff'))
-      terra::writeRaster(x = beta, filename = filename)
+      terra::writeRaster(x = beta, filename = filename, overwrite = TRUE)
       diversity_maps_ground$beta <- filename
     } else {
       alpha <- output_rast_tmp
@@ -105,7 +105,7 @@ biodivMapR_full_classif <- function(input_raster_path, output_dir, window_size,
       filename <- file.path(output_dir, paste0(idx, '_classif.tiff'))
       if (!is.null(site_name))
         filename <- file.path(output_dir, paste(site_name, idx, 'classif.tiff', sep = '_'))
-      terra::writeRaster(x = alpha, filename = filename)
+      terra::writeRaster(x = alpha, filename = filename, overwrite = TRUE)
       diversity_maps_ground[[idx]] <- filename
     }
   }
