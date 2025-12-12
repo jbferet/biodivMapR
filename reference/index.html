@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.2</span>
       </span>
     </div>
 
@@ -81,10 +81,6 @@
         </td>
         <td><p>This function computes interquartile range (IQR) criterion, which can be used as a criterion for outlier detection</p></td>
       </tr><tr><td>
-          <p><code><a href="RowToLinear.html">RowToLinear()</a></code> </p>
-        </td>
-        <td><p>get max index for each row and convert into linear index</p></td>
-      </tr><tr><td>
           <p><code><a href="alphabeta_window.html">alphabeta_window()</a></code> </p>
         </td>
         <td><p>compute alpha and beta diversity metrics from pixel data corresponding to spectral species extracted from a window</p></td>
@@ -97,6 +93,10 @@
         </td>
         <td><p>apply alphabeta_window to a list of lists</p></td>
       </tr><tr><td>
+          <p><code><a href="alphabeta_window_sdm.html">alphabeta_window_sdm()</a></code> </p>
+        </td>
+        <td><p>compute alpha and beta diversity metrics from pixel data corresponding to spectral species extracted from a window</p></td>
+      </tr><tr><td>
           <p><code><a href="apply_continuum_removal.html">apply_continuum_removal()</a></code> </p>
         </td>
         <td><p>prepares data into list to apply continuum removal</p></td>
@@ -104,10 +104,6 @@
           <p><code><a href="apply_kmeans.html">apply_kmeans()</a></code> </p>
         </td>
         <td><p>apply kmeans to information extracted from an image and corresponding to a window</p></td>
-      </tr><tr><td>
-          <p><code><a href="biodivMapR_SFS.html">biodivMapR_SFS()</a></code> </p>
-        </td>
-        <td><p>performs SFS to identify combination of input variables maximizing a criterion</p></td>
       </tr><tr><td>
           <p><code><a href="biodivMapR_chunk.html">biodivMapR_chunk()</a></code> </p>
         </td>
@@ -132,6 +128,10 @@
           <p><code><a href="biodivMapR_sample.html">biodivMapR_sample()</a></code> </p>
         </td>
         <td><p>sample pixels and plots to produce alpha and beta models, including clustering, dissimilarity &amp; PCoA</p></td>
+      </tr><tr><td>
+          <p><code><a href="biodivMapR_sdm.html">biodivMapR_sdm()</a></code> </p>
+        </td>
+        <td><p>computes diversity metrics from raster</p></td>
       </tr><tr><td>
           <p><code><a href="biodivMapR_tiles.html">biodivMapR_tiles()</a></code> </p>
         </td>
@@ -180,6 +180,10 @@
           <p><code><a href="crop_border_tile.html">crop_border_tile()</a></code> </p>
         </td>
         <td><p>save diversity maps as raster data once moving window process done</p></td>
+      </tr><tr><td>
+          <p><code><a href="define_grid.html">define_grid()</a></code> </p>
+        </td>
+        <td><p>define a grid over a raster</p></td>
       </tr><tr><td>
           <p><code><a href="define_pixels_per_iter.html">define_pixels_per_iter()</a></code> </p>
         </td>
@@ -412,6 +416,10 @@
           <p><code><a href="rm_invariant_bands.html">rm_invariant_bands()</a></code> </p>
         </td>
         <td><p>remove constant bands</p></td>
+      </tr><tr><td>
+          <p><code><a href="row_to_linear.html">row_to_linear()</a></code> </p>
+        </td>
+        <td><p>get max index for each row and convert into linear index</p></td>
       </tr><tr><td>
           <p><code><a href="run_biodivMapR.html">run_biodivMapR()</a></code> </p>
         </td>
