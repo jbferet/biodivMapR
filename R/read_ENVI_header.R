@@ -39,10 +39,11 @@ read_ENVI_header <- function(HDRpath) {
   tmp <- names(HDR) %in% c(
     "samples", "lines", "bands", "header offset", "data type",
     "byte order", "default bands", "data ignore value",
-    "wavelength", "fwhm", "data gain values"
+    "wavelength", "fwhm", "data gain values", "band names"
   )
-  HDR [tmp] <- lapply(HDR [tmp], function(x) {
-    as.numeric(unlist(strsplit(x, ",")))
+  HDR[tmp] <- lapply(HDR[tmp], function(x) {
+    tryCatch({as.numeric(unlist(strsplit(x, ","))) },
+             warning = function(w){ x })
   })
   return(HDR)
 }
