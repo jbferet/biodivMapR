@@ -9,7 +9,8 @@ get_alpha_from_ssd(
   nb_pix_sunlit,
   alpha_metrics = "shannon",
   pcelim = 0.02,
-  hill_order = 1
+  hill_order = 1,
+  p = NULL
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ get_alpha_from_ssd(
 \item{pcelim}{numeric. minimum proportion of pixels to consider spectral species}
 
 \item{hill_order}{numeric. Hill order}
+
+\item{p}{progressor object}
 }
 \value{
 Shannon index correspnding to the distribution

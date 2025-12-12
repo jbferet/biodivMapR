@@ -6,7 +6,7 @@
 #' @return MaxCont
 #' @export
 
-RowToLinear <- function(MM, nbi, nbj) {
+row_to_linear <- function(MM, nbi, nbj) {
   adj <- seq_len(nbi)
   MaxCont <- ((MM - 1) * (nbi)) + adj
   return(MaxCont)

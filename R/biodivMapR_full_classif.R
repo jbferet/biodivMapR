@@ -31,7 +31,8 @@ biodivMapR_full_classif <- function(input_raster_path, output_dir, window_size,
     input_mask <- terra::rast(input_mask_path)
 
   # define plot selection for beta diversity and sample from raster
-  plots_beta <- plots[sample(x = seq_along(plots), nb_samples_beta, replace = FALSE)]
+  plots_beta <- plots[sample(x = seq_along(plots), nb_samples_beta,
+                             replace = FALSE)]
   get_samples_from_plots <- function(x, y){
     x <- terra::vect(x)
     res <- terra::extract(x = y, y = x, raw = TRUE, ID = FALSE)
@@ -96,7 +97,8 @@ biodivMapR_full_classif <- function(input_raster_path, output_dir, window_size,
       names(beta) <- c('pco1', 'pco2', 'pco3')
       filename <- file.path(output_dir, 'beta_classif.tiff')
       if (!is.null(site_name))
-        filename <- file.path(output_dir, paste0(site_name, '_beta_classif.tiff'))
+        filename <- file.path(output_dir,
+                              paste0(site_name, '_beta_classif.tiff'))
       terra::writeRaster(x = beta, filename = filename, overwrite = TRUE)
       diversity_maps_ground$beta <- filename
     } else {
@@ -105,7 +107,8 @@ biodivMapR_full_classif <- function(input_raster_path, output_dir, window_size,
       filename <- file.path(output_dir, paste0(idx, '_classif.tiff'))
       names(alpha) <- idx
       if (!is.null(site_name))
-        filename <- file.path(output_dir, paste(site_name, idx, 'classif.tiff', sep = '_'))
+        filename <- file.path(output_dir, paste(site_name, idx,
+                                                'classif.tiff', sep = '_'))
       terra::writeRaster(x = alpha, filename = filename, overwrite = TRUE)
       diversity_maps_ground[[idx]] <- filename
     }

@@ -32,7 +32,7 @@
 #'
 #' @export
 
-biodivMapR_SFS <- function(input_raster, obs_vect, obs2optimize,
+biodivMapR_sfs <- function(input_raster, obs_vect, obs2optimize,
                            obs_criterion = 'shannon', corrMethod = 'spearman',
                            input_mask = NULL, Hill_order = 1, nb_clusters = 50,
                            min_sun = 0.25, nb_pix = 1e5, nb_iter = 10,
@@ -188,7 +188,8 @@ biodivMapR_SFS <- function(input_raster, obs_vect, obs2optimize,
         alphabetaIdx_CPU <- lapply(X = windows_per_plot$SSwindow_perCPU,
                                    FUN = alphabeta_window_list,
                                    nb_clusters = nb_clusters,
-                                   alpha_metrics = c('richness', 'shannon', 'simpson', 'hill'),
+                                   alpha_metrics = c('richness', 'shannon',
+                                                     'simpson', 'hill'),
                                    Hill_order = Hill_order, pcelim = pcelim)
         alphabetaIdx <- unlist(alphabetaIdx_CPU,recursive = FALSE)
         rm(alphabetaIdx_CPU)

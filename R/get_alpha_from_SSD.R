@@ -5,13 +5,14 @@
 #' @param alpha_metrics list. alpha diversity metrics: richness, shannon, simpson
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
 #' @param hill_order numeric. Hill order
+#' @param p progressor object
 #'
 #' @return Shannon index correspnding to the distribution
 #' @importFrom vegan fisher.alpha
 #' @export
 
 get_alpha_from_ssd <- function(ssd, nb_pix_sunlit, alpha_metrics = 'shannon',
-                               pcelim = 0.02, hill_order = 1){
+                               pcelim = 0.02, hill_order = 1, p = NULL){
   ClusterID <- as.numeric(names(ssd))
   if (pcelim > 0) {
     KeepSS <- which(ssd >= pcelim * nb_pix_sunlit)
@@ -29,6 +30,8 @@ get_alpha_from_ssd <- function(ssd, nb_pix_sunlit, alpha_metrics = 'shannon',
     simpson <- get_Simpson(ssd)
   if ('fisher' %in% alpha_metrics & length(ssd)>1)
     fisher <- vegan::fisher.alpha(ssd)
+  if (!is.null(p))
+    p()
   return(list('richness' = richness, 'shannon' = shannon,
               'simpson' = simpson, 'fisher' = fisher, 'hill' = hill))
 }
