@@ -55,8 +55,8 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
   maxCPU <- length(plots)
   if (nbCPU > maxCPU)
     nbCPU <-  maxCPU
-  if (nbCPU > parallel::detectCores(logical = F))
-    nbCPU <- parallel::detectCores(logical = F)
+  if (nbCPU > parallel::detectCores(logical = FALSE))
+    nbCPU <- parallel::detectCores(logical = FALSE)
 
   # sample data if not already sampled
   samples <- biodivMapR_sample(feature_dir = feature_dir,

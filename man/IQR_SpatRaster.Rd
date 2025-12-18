@@ -4,12 +4,12 @@
 \alias{IQR_SpatRaster}
 \title{This function computes interquartile range (IQR) for a SpatRaster}
 \usage{
-IQR_SpatRaster(input_rast, weightIRQ = 3)
+IQR_SpatRaster(input_rast, weightIQR = 3)
 }
 \arguments{
 \item{input_rast}{SpatRaster.}
 
-\item{weightIRQ}{numeric. weighting factor applied to IRQ to define
+\item{weightIQR}{numeric. weighting factor applied to IQR to define
 lower and upper boundaries for outliers}
 }
 \value{

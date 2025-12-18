@@ -2,6 +2,9 @@
 ## addition
 - add biodivMapR_full_sdm and alphabeta_window_sdm to produce diversity metrics from sdm
 
+## fix
+- name weightIQR instead of weightIRQ
+
 # biodivMapR2 v2.4.1
 ## addition
 - add biodivMapR_full_classif to produce diversity metrics from classification map

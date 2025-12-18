@@ -5,12 +5,12 @@
 \title{This function computes interquartile range (IQR) criterion, which can be used
 as a criterion for outlier detection}
 \usage{
-IQR_outliers(DistVal, weightIRQ = 1.5)
+IQR_outliers(DistVal, weightIQR = 1.5)
 }
 \arguments{
 \item{DistVal}{numeric. vector of distribution of values}
 
-\item{weightIRQ}{numeric. weighting factor applied to IRQ to define
+\item{weightIQR}{numeric. weighting factor applied to IQR to define
 lower and upper boundaries for outliers}
 }
 \value{
