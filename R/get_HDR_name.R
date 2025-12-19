@@ -4,7 +4,6 @@
 #' @param showWarnings boolean. set TRUE if warning because HDR does not exist
 #'
 #' @return corresponding hdr
-#' @import tools
 #' @export
 
 get_HDR_name <- function(ImPath,showWarnings=TRUE) {

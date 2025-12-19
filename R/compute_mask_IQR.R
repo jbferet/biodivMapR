@@ -3,7 +3,7 @@
 #' @param input_raster_path character. path for input rasters.
 #' @param output_mask_path character. path for output mask
 #' @param input_mask_path character. path for optional input mask
-#' @param weightIRQ numeric. weight to define SD range for IQR
+#' @param weightIQR numeric. weight to define SD range for IQR
 #' @param filetype character. GDAL driver
 #'
 #' @return estimated NMDS position based on nearest neighbors from NMDS
@@ -13,7 +13,7 @@
 compute_mask_iqr <- function(input_raster_path,
                              output_mask_path,
                              input_mask_path = NULL,
-                             weightIRQ = 3,
+                             weightIQR = 3,
                              filetype = 'GTiff'){
   # initialize output mask: either input_mask, or only 1
   output_mask <- 1+0*terra::rast(input_raster_path[[1]])
@@ -30,7 +30,7 @@ compute_mask_iqr <- function(input_raster_path,
     input_rast <- terra::rast(si)
     masked_raster <- terra::mask(x = input_rast,
                                  mask = input_mask)
-    IQR <- IQR_SpatRaster(masked_raster, weightIRQ = 3)
+    IQR <- IQR_SpatRaster(masked_raster, weightIQR = 3)
     elim <- which(terra::values(masked_raster) < IQR$lowBound |
                     terra::values(masked_raster) > IQR$upBound)
     if (length(elim)>0)

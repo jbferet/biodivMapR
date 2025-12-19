@@ -22,9 +22,9 @@ get_kmeans <- function(rast_sample, nb_iter, nb_clusters = 50,
                        nbCPU = 1, algorithm = 'Hartigan-Wong',
                        progressbar = TRUE) {
   # define boundaries defining outliers based on IQR
-  # IQRsubset <- lapply(X = rast_sample, IQR_outliers, weightIRQ = 2)
+  # IQRsubset <- lapply(X = rast_sample, IQR_outliers, weightIQR = 2)
   # 2025-03-05 update range allowed by IQR
-  IQRsubset <- lapply(X = rast_sample, IQR_outliers, weightIRQ = 3)
+  IQRsubset <- lapply(X = rast_sample, IQR_outliers, weightIQR = 3)
   m0 <- unlist(lapply(IQRsubset,'[[',1))
   M0 <- unlist(lapply(IQRsubset,'[[',2))
   d0 <- M0 - m0

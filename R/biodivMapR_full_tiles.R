@@ -20,7 +20,7 @@
 #' - maxRows numeric. maximum number of rows
 #' - moving_window boolean. should moving window be used?
 #' - mosaic_output boolean. set TRUE if outputs need to be mosaiced
-#' - weightIRQ numeric. IQR applied to filter out features to be used
+#' - weightIQR numeric. IQR applied to filter out features to be used
 #'
 #' @return mosaic_path
 #' @importFrom parallel makeCluster stopCluster detectCores
@@ -47,7 +47,7 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
   maxRows <- options$maxRows
   moving_window <- options$moving_window
   mosaic_output <- options$mosaic_output
-  weightIRQ <- options$weightIRQ
+  weightIQR <- options$weightIQR
   Kmeans_path <- options$Kmeans_path
   Beta_path <- options$Beta_path
 
@@ -71,7 +71,7 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
                                nb_samples_beta = nb_samples_beta,
                                pcelim = pcelim, nbCPU = nbCPU,
                                nb_iter = nb_iter,
-                               weightIRQ = weightIRQ,
+                               weightIQR = weightIQR,
                                Kmeans_path = Kmeans_path,
                                Beta_path = Beta_path)
 

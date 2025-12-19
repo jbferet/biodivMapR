@@ -19,7 +19,7 @@ biodivMapR_sample(
   pcelim = 0.02,
   nbCPU = 1,
   nb_iter = 10,
-  weightIRQ = 4,
+  weightIQR = 4,
   Kmeans_path = NULL,
   Beta_path = NULL
 )
@@ -51,7 +51,7 @@ biodivMapR_sample(
 
 \item{nb_iter}{numeric. Number of iterations required to compute diversity}
 
-\item{weightIRQ}{numeric. IQR applied to filter out features to be used}
+\item{weightIQR}{numeric. IQR applied to filter out features to be used}
 
 \item{Kmeans_path}{character. path for Kmeans_info}
 

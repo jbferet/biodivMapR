@@ -46,7 +46,7 @@ biodivMapR_full_tiles(
 \item maxRows numeric. maximum number of rows
 \item moving_window boolean. should moving window be used?
 \item mosaic_output boolean. set TRUE if outputs need to be mosaiced
-\item weightIRQ numeric. IQR applied to filter out features to be used
+\item weightIQR numeric. IQR applied to filter out features to be used
 }}
 }
 \value{

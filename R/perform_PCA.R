@@ -109,7 +109,7 @@ perform_PCA  <- function(input_raster_path, output_dir, input_rast_wl = NULL,
 
   if (length(input_raster_path)>1){
     mainlist <- as.list(input_raster_path)
-    names(mainlist) <- tools::file_path_sans_ext(basename(input_raster_path))
+    names(mainlist) <- file_path_sans_ext(basename(input_raster_path))
   } else {
     mainlist <- input_raster_path
   }

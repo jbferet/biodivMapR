@@ -5,6 +5,12 @@
 ## fix
 - name weightIQR instead of weightIRQ
 
+## change
+- remove compute_bc_diss and use only dissUtils::diss instead
+- rename 'get_ssd_full' 'get_normalized_ssd'
+- added function 'file_path_sans_ext' (copied from zonator) to avoid importing 'tools'
+- use 'progressr' instead of 'progress'
+
 # biodivMapR2 v2.4.1
 ## addition
 - add biodivMapR_full_classif to produce diversity metrics from classification map

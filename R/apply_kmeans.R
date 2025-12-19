@@ -6,6 +6,7 @@
 #' @param select_bands numeric. bands selected from input data
 #'
 #' @return Kmeans_info
+#' @importFrom fields rdist
 #' @export
 
 apply_kmeans <- function(inputdata_window, Kmeans_info, select_bands = NULL){
@@ -20,7 +21,7 @@ apply_kmeans <- function(inputdata_window, Kmeans_info, select_bands = NULL){
                                 sig = Kmeans_info$Range)
   centroids_array <- do.call("rbind", Kmeans_info$Centroids)
   # compute distance between each pixel and each centroid
-  cluster_dist <- rdist(inputdata_cr, centroids_array)
+  cluster_dist <- fields::rdist(inputdata_cr, centroids_array)
   # reshape distance into a matrix: pixels from it 1, then pixels from it2
   cluster_dist <- matrix(aperm(array(cluster_dist,
                                      c(nb_pixels, nb_clusters, nb_iter)),

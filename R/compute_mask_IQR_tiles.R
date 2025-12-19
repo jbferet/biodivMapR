@@ -4,7 +4,7 @@
 #' @param feature_list character.
 #' @param mask_dir character.
 #' @param plots list.
-#' @param weightIRQ numeric.
+#' @param weightIQR numeric.
 #' @param filetype character.
 #' @param nbCPU numeric.
 #' @param nb_pixstats numeric.
@@ -17,7 +17,7 @@
 #' @export
 #'
 compute_mask_iqr_tiles <- function(feature_dir, feature_list, mask_dir, plots,
-                                   weightIRQ = 4, filetype = 'GTiff', nbCPU = 1,
+                                   weightIQR = 4, filetype = 'GTiff', nbCPU = 1,
                                    nb_pixstats = 5e6){
 
   maxCPU <- length(plots)
@@ -118,7 +118,7 @@ compute_mask_iqr_tiles <- function(feature_dir, feature_list, mask_dir, plots,
     selpixAll <- do.call(what = 'rbind', selpix)
     iqr_si <- lapply(X = selpixAll,
                      FUN = biodivMapR::IQR_outliers,
-                     weightIRQ = weightIRQ)
+                     weightIQR = weightIQR)
 
     ##############################################################################
     # produce mask for each tile

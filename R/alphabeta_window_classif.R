@@ -10,7 +10,7 @@
 #' @param Hill_order numeric. Hill order
 #'
 #' @return list of alpha and beta diversity metrics
-#' @importFrom stats sd
+#' @importFrom dissUtils diss
 #' @export
 
 alphabeta_window_classif <- function(SSwindow, nb_clusters,
@@ -29,14 +29,16 @@ alphabeta_window_classif <- function(SSwindow, nb_clusters,
                   hill_order = Hill_order)
   # get BETA diversity
   # full spectral species distribution = missing clusters set to 0
-  ssd_full <- lapply(X = ssd, FUN = get_ssd_full,
+  ssd_full <- lapply(X = ssd, FUN = get_normalized_ssd,
                      nb_clusters = nb_clusters, pcelim = pcelim)
   mat_bc <- list()
   pcoa_bc <- list()
   for (i in seq_along(ssd_full)){
-    mat_bc <- list('mat1' = ssd_full[[i]],
-                   'mat2' = Beta_info$SSD)
-    mat_bc_tmp <- compute_bc_diss(ssd_list = mat_bc, pcelim = pcelim)
+    mat_bc_tmp <- dissUtils::diss(ssd_full[[i]], Beta_info$SSD,
+                                  method = 'braycurtis')
+    # mat_bc <- list('mat1' = ssd_full[[i]],
+    #                'mat2' = Beta_info$SSD)
+    # mat_bc_tmp <- compute_bc_diss(ssd_list = mat_bc, pcelim = pcelim)
     pcoa_bc[[i]] <- compute_nn_from_ordination(mat_bc = mat_bc_tmp, knn = 3,
                                                pcoa_train = Beta_info$BetaPCO$points)
   }

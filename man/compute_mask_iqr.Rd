@@ -8,7 +8,7 @@ compute_mask_iqr(
   input_raster_path,
   output_mask_path,
   input_mask_path = NULL,
-  weightIRQ = 3,
+  weightIQR = 3,
   filetype = "GTiff"
 )
 }
@@ -19,7 +19,7 @@ compute_mask_iqr(
 
 \item{input_mask_path}{character. path for optional input mask}
 
-\item{weightIRQ}{numeric. weight to define SD range for IQR}
+\item{weightIQR}{numeric. weight to define SD range for IQR}
 
 \item{filetype}{character. GDAL driver}
 }

@@ -8,6 +8,7 @@
 #' @param nb_samples_beta numeric. number of samples to compute beta diversity
 #'
 #' @return diversity_maps_ground
+#' @importFrom dissUtils diss
 #' @export
 
 biodivMapR_sdm <- function(input_raster_path, output_dir,
@@ -43,8 +44,9 @@ biodivMapR_sdm <- function(input_raster_path, output_dir,
   names(ssd) <- seq_len(nb_clusters)
   ssd <- as.matrix(ssd)
   # compute spectral dissimilarity
-  ssd_list <- list(ssd, ssd)
-  mat_bc <- compute_bc_diss(ssd_list, pcelim = 0)
+  mat_bc <- dissUtils::diss(ssd, ssd, method = 'braycurtis')
+  # ssd_list <- list(ssd, ssd)
+  # mat_bc <- compute_bc_diss(ssd_list, pcelim = 0)
   mat_bc_dist <- stats::as.dist(mat_bc, diag = FALSE, upper = FALSE)
   BetaPCO <- pco(mat_bc_dist, k = 3)
   Beta_info <- list('SSD' = ssd, 'MatBC' = mat_bc, 'BetaPCO' = BetaPCO)

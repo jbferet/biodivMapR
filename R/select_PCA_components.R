@@ -6,7 +6,6 @@
 #'
 #' @return Sel_PC
 #' @importFrom utils file.edit read.csv
-#' @importFrom tools file_path_sans_ext
 #' @export
 
 select_PCA_components <- function(pca_rast_path,
@@ -20,8 +19,10 @@ select_PCA_components <- function(pca_rast_path,
   Sel_PC <- file.path(output_dir, 'Selected_Components.txt')
   message("")
   message("Then press 'Save'")
-  if (!file.exists(Sel_PC)) file.create(Sel_PC)
-  if (File_Open == TRUE) utils::file.edit(Sel_PC, title=basename(Sel_PC))
+  if (!file.exists(Sel_PC))
+    file.create(Sel_PC)
+  if (File_Open == TRUE)
+    utils::file.edit(Sel_PC, title=basename(Sel_PC))
   message("")
   message("Selected components were saved here")
   print(Sel_PC)

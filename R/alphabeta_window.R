@@ -31,16 +31,18 @@ alphabeta_window <- function(SSwindow, nb_clusters,
                   hill_order = Hill_order)
   # get BETA diversity
   # full spectral species distribution = missing clusters set to 0
-  ssd_full <- lapply(X = ssd, FUN = get_ssd_full,
+  ssd_full <- lapply(X = ssd, FUN = get_normalized_ssd,
                      nb_clusters = nb_clusters, pcelim = pcelim)
   mat_bc <- list()
   nb_iter <- length(ssd_full)
   pcoa_bc <- NULL
   if (!is.null(Beta_info)){
-    for (i in seq_len(nb_iter))
-      mat_bc[[i]] <- list('mat1' = ssd_full[[i]],
-                          'mat2' = Beta_info$SSD[[i]])
-    mat_bc_tmp <- lapply(X = mat_bc, FUN = compute_bc_diss, pcelim)
+    dissUtils::diss(X = )
+    mat_bc_tmp <- mapply(FUN = dissUtils::diss, X = ssd_full, Y= Beta_info$SSD)
+    # for (i in seq_len(nb_iter))
+    #   mat_bc[[i]] <- list('mat1' = ssd_full[[i]],
+    #                       'mat2' = Beta_info$SSD[[i]])
+    # mat_bc_tmp <- lapply(X = mat_bc, FUN = compute_bc_diss, pcelim)
     mat_bc <- Reduce('+', mat_bc_tmp)/nb_iter
     pcoa_bc <- compute_nn_from_ordination(mat_bc = mat_bc, knn = 3,
                                           pcoa_train = Beta_info$BetaPCO$points)

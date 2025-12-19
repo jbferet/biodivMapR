@@ -11,11 +11,12 @@
 
 get_bc_diss_from_ssd <- function(ss_dist, nb_clusters, pcelim, p = NULL){
   ssd <- lapply(X = ss_dist,FUN = table)
-  ssd <- lapply(X = ssd,FUN = get_ssd_full,
+  ssd <- lapply(X = ssd,FUN = get_normalized_ssd,
                 nb_clusters = nb_clusters, pcelim = pcelim)
   ssd <- do.call(rbind,ssd)
-  ssd_list <- list(ssd, ssd)
-  mat_bc <- compute_bc_diss(ssd_list, pcelim)
+  mat_bc <- dissUtils::diss(ssd, ssd, method = 'braycurtis')
+  # ssd_list <- list(ssd, ssd)
+  # mat_bc <- compute_bc_diss(ssd_list, pcelim)
   if (!is.null(p))
     p()
   return(list('SSD' = ssd, 'MatBC' = mat_bc))

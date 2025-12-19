@@ -14,7 +14,7 @@
 #' - maxRows numeric. maximum number of rows
 #' - moving_window boolean. should moving window be used?
 #' - mosaic_output boolean. set TRUE if outputs need to be mosaiced
-#' - weightIRQ numeric. IQR applied to filter out features to be used
+#' - weightIQR numeric. IQR applied to filter out features to be used
 #'
 #' @return options with default values when missing
 #' @export
@@ -79,8 +79,8 @@ set_options_biodivMapR <- function(fun, options = NULL){
       options$moving_window <- FALSE
     if (is.null(options$mosaic_output))
       options$mosaic_output <- TRUE
-    if (is.null(options$weightIRQ))
-      options$weightIRQ <- 4
+    if (is.null(options$weightIQR))
+      options$weightIQR <- 4
   }
   return(options)
 }

@@ -8,6 +8,7 @@
 #'
 #' @return list of alpha and beta diversity metrics
 #' @importFrom pbapply pblapply
+#' @importFrom dissUtils diss
 #' @export
 
 alphabeta_window_sdm <- function(ssd, Beta_info, alpha_metrics, Hill_order = 1){
@@ -32,14 +33,19 @@ alphabeta_window_sdm <- function(ssd, Beta_info, alpha_metrics, Hill_order = 1){
 
   # get BETA diversity
   # full spectral species distribution = missing clusters set to 0
-  for (i in 1:length(ssd))
+  for (i in 1:length(ssd)){
     if (any(is.na(ssd[[i]])))
       ssd[[i]][which(is.na(ssd[[i]]))] <- 0
+    ssd[[i]] <- ssd[[i]]/sum(ssd[[i]])
+  }
+
 
   get_poca_from_bc <- function(ssd, Beta_info, p = NULL){
-    mat_bc <- list('mat1' = matrix(ssd, nrow = 1),
-                   'mat2' = Beta_info$SSD)
-    mat_bc_tmp <- compute_bc_diss(ssd_list = mat_bc, pcelim = 0)
+    mat_bc_tmp <- dissUtils::diss(matrix(ssd, nrow = 1), Beta_info$SSD,
+                                  method = 'braycurtis')
+    # mat_bc <- list('mat1' = matrix(ssd, nrow = 1),
+    #                'mat2' = Beta_info$SSD)
+    # mat_bc_tmp <- compute_bc_diss(ssd_list = mat_bc, pcelim = 0)
     pcoa_bc <- compute_nn_from_ordination(mat_bc = mat_bc_tmp, knn = 3,
                                           pcoa_train = Beta_info$BetaPCO$points)
     if (!is.null(p))

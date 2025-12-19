@@ -8,7 +8,7 @@
 #' @importFrom stats kmeans
 #' @export
 
-get_ssd_full <- function(ssd, nb_clusters, pcelim = 0.02){
+get_normalized_ssd <- function(ssd, nb_clusters, pcelim = 0.02){
   ssd_map <- 0*vector(length = nb_clusters)
   keep_ss <- which(ssd >= pcelim * sum(ssd))
   cluster_id <- as.numeric(names(ssd))[keep_ss]

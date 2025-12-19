@@ -9,7 +9,7 @@ compute_mask_iqr_tiles(
   feature_list,
   mask_dir,
   plots,
-  weightIRQ = 4,
+  weightIQR = 4,
   filetype = "GTiff",
   nbCPU = 1,
   nb_pixstats = 5e+06
@@ -24,7 +24,7 @@ compute_mask_iqr_tiles(
 
 \item{plots}{list.}
 
-\item{weightIRQ}{numeric.}
+\item{weightIQR}{numeric.}
 
 \item{filetype}{character.}
 
