@@ -157,10 +157,6 @@
         </td>
         <td><p>compute the nearest neighbors among kernels</p></td>
       </tr><tr><td>
-          <p><code><a href="compute_bc_diss.html">compute_bc_diss()</a></code> </p>
-        </td>
-        <td><p>compute bray curtis dissimilarity matrix corresponding to a list of kernels (rows) defined by their spectral species (columns) ssd_list is a list containing spectral species distribution for two sets of kernels pcelim is the threshold for minimum contribution of a spectral species to be kept</p></td>
-      </tr><tr><td>
           <p><code><a href="compute_mask_iqr.html">compute_mask_iqr()</a></code> </p>
         </td>
         <td><p>compute mask based on interquartile range criterion applied on input rasters</p></td>
@@ -209,6 +205,10 @@
         </td>
         <td><p>extract pixel information from a raster based on vector footprint</p></td>
       </tr><tr><td>
+          <p><code><a href="file_path_sans_ext.html">file_path_sans_ext()</a></code> </p>
+        </td>
+        <td><p>Re-implementation of <code>file_path_sans_ext</code> in <code>tools</code>. This version can handle "." just before the file extenstion, unlike the original implementation. taken from https://github.com/cbig/zonator</p></td>
+      </tr><tr><td>
           <p><code><a href="filter_prior_cr.html">filter_prior_cr()</a></code> </p>
         </td>
         <td><p>Filter data prior to continuum removal: </p><ul><li><p>values are expected to be real reflectance values between 0 and 10000</p></li> <li><p>negative values may occur, so a +100 value is applied to avoid negative</p></li> <li><p>possibly remaining negative values are set to 0</p></li> <li><p>constant spectra are eliminated</p></li> </ul></td>
@@ -221,10 +221,6 @@
         </td>
         <td><p>apply functional_window to a list of lists</p></td>
       </tr><tr><td>
-          <p><code><a href="get_BCdiss.html">get_BCdiss()</a></code> </p>
-        </td>
-        <td><p>Computes BC dissimilarity for a given matrix</p></td>
-      </tr><tr><td>
           <p><code><a href="get_HDR_name.html">get_HDR_name()</a></code> </p>
         </td>
         <td><p>get hdr name from image file name</p></td>
@@ -232,10 +228,6 @@
           <p><code><a href="get_Hill.html">get_Hill()</a></code> </p>
         </td>
         <td><p>computes hill number from a distribution The Hill numbers quantify biodiversity. The importance of the abundance distribution increases with increasing Hill order. For q=0, the Hill number is the richness, for q=1, it is the exponential Shannon entropy and for q=2, it is the inverse Simpson index. Note that the Hill order can also be a fraction, e.g. 0.5.</p></td>
-      </tr><tr><td>
-          <p><code><a href="get_SSD_full.html">get_ssd_full()</a></code> </p>
-        </td>
-        <td><p>get spectral species distribution for all clusters</p></td>
       </tr><tr><td>
           <p><code><a href="get_Shannon.html">get_Shannon()</a></code> </p>
         </td>
@@ -276,6 +268,10 @@
           <p><code><a href="get_kmeans.html">get_kmeans()</a></code> </p>
         </td>
         <td><p>computes k-means from nb_iter subsets taken from dataPCA</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_normalized_ssd.html">get_normalized_ssd()</a></code> </p>
+        </td>
+        <td><p>get spectral species distribution for all clusters</p></td>
       </tr><tr><td>
           <p><code><a href="get_plots_from_tiles.html">get_plots_from_tiles()</a></code> </p>
         </td>
