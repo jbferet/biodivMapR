@@ -12,6 +12,7 @@
 #'
 #' @return list of alpha and beta diversity metrics
 #' @importFrom stats sd
+#' @importFrom dissUtils diss
 #' @export
 
 alphabeta_window <- function(SSwindow, nb_clusters,
@@ -37,12 +38,13 @@ alphabeta_window <- function(SSwindow, nb_clusters,
   nb_iter <- length(ssd_full)
   pcoa_bc <- NULL
   if (!is.null(Beta_info)){
-    dissUtils::diss(X = )
-    mat_bc_tmp <- mapply(FUN = dissUtils::diss, X = ssd_full, Y= Beta_info$SSD)
-    # for (i in seq_len(nb_iter))
-    #   mat_bc[[i]] <- list('mat1' = ssd_full[[i]],
-    #                       'mat2' = Beta_info$SSD[[i]])
-    # mat_bc_tmp <- lapply(X = mat_bc, FUN = compute_bc_diss, pcelim)
+    # dissUtils::diss(X = )
+    # mat_bc_tmp0 <- mapply(FUN = dissUtils::diss, X = ssd_full, Y= Beta_info$SSD)
+    # mat_bc0 <- rowSums(mat_bc_tmp0)/nb_iter
+    for (i in seq_len(nb_iter))
+      mat_bc[[i]] <- list('mat1' = ssd_full[[i]],
+                          'mat2' = Beta_info$SSD[[i]])
+    mat_bc_tmp <- lapply(X = mat_bc, FUN = compute_bc_diss, pcelim)
     mat_bc <- Reduce('+', mat_bc_tmp)/nb_iter
     pcoa_bc <- compute_nn_from_ordination(mat_bc = mat_bc, knn = 3,
                                           pcoa_train = Beta_info$BetaPCO$points)
