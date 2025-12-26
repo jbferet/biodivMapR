@@ -33,6 +33,7 @@
 <url><loc>/reference/check_data.html</loc></url>
 <url><loc>/reference/clean_NAsInf.html</loc></url>
 <url><loc>/reference/compute_NN_from_ordination.html</loc></url>
+<url><loc>/reference/compute_bc_diss.html</loc></url>
 <url><loc>/reference/compute_mask_iqr.html</loc></url>
 <url><loc>/reference/compute_mask_iqr_tiles.html</loc></url>
 <url><loc>/reference/continuumRemoval.html</loc></url>
