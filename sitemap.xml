@@ -19,6 +19,7 @@
 <url><loc>/reference/alphabeta_window_sdm.html</loc></url>
 <url><loc>/reference/apply_continuum_removal.html</loc></url>
 <url><loc>/reference/apply_kmeans.html</loc></url>
+<url><loc>/reference/apply_spectral_species_plot.html</loc></url>
 <url><loc>/reference/biodivMapR-package.html</loc></url>
 <url><loc>/reference/biodivMapR_chunk.html</loc></url>
 <url><loc>/reference/biodivMapR_full.html</loc></url>
@@ -32,6 +33,7 @@
 <url><loc>/reference/center_reduce.html</loc></url>
 <url><loc>/reference/check_data.html</loc></url>
 <url><loc>/reference/clean_NAsInf.html</loc></url>
+<url><loc>/reference/clean_tiff_list.html</loc></url>
 <url><loc>/reference/compute_NN_from_ordination.html</loc></url>
 <url><loc>/reference/compute_bc_diss.html</loc></url>
 <url><loc>/reference/compute_mask_iqr.html</loc></url>
@@ -117,6 +119,7 @@
 <url><loc>/reference/scatter_alphabeta.html</loc></url>
 <url><loc>/reference/select_PCA_components.html</loc></url>
 <url><loc>/reference/set_options_biodivMapR.html</loc></url>
+<url><loc>/reference/spectral_species_full_tiles.html</loc></url>
 <url><loc>/reference/spectralspecies_per_polygon.html</loc></url>
 <url><loc>/reference/split_chunk.html</loc></url>
 <url><loc>/reference/split_line.html</loc></url>
