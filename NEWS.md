@@ -1,3 +1,10 @@
+# biodivMapR2 v2.4.3
+## fix
+- add nested 'try' in mosaic_from_vrt
+
+## addition
+- add spectral_species_full_tiles to produce spectral species
+
 # biodivMapR2 v2.4.2
 ## addition
 - add biodivMapR_full_sdm and alphabeta_window_sdm to produce diversity metrics from sdm

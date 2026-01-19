@@ -11,7 +11,8 @@
 
 get_spectralSpecies <- function(inputdata, Kmeans_info,
                                 selected_bands = NULL, nbCPU = 1){
-  if (is.null(selected_bands)) selected_bands <- seq_len(ncol(inputdata))
+  if (is.null(selected_bands))
+    selected_bands <- seq_len(ncol(inputdata))
   nb_iter <- length(Kmeans_info$Centroids)
   nb_clusters <- dim(Kmeans_info$Centroids[[1]])[1]
   nb_pixels <- nrow(inputdata)
