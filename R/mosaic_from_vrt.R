@@ -11,14 +11,15 @@ mosaic_from_vrt <- function(vrt_path, mosaic_path){
   result <- try({
     sf::gdal_utils(util = 'translate', source = vrt_path,
                    destination = mosaic_path,
-                   options = c("COMPRESS=LZW", "BIGTIFF=IF_SAFER"))
+                   options = c("-co", "COMPRESS=DEFLATE",
+                               "-co", "BIGTIFF=IF_SAFER"))
     # co = c("COMPRESS=LZW", "BIGTIFF=IF_SAFER"))
   }, silent = TRUE)
   if ( "try-error" %in% class(result) ) {
     result <- try({
       sf::gdal_utils(util = 'translate', source = vrt_path,
                      destination = mosaic_path,
-                     co = c("COMPRESS=LZW", "BIGTIFF=IF_SAFER"))
+                     options = c("COMPRESS=DEFLATE", "BIGTIFF=IF_SAFER"))
     }, silent = TRUE)
     if ( "try-error" %in% class(result) ) {
       sf::gdal_utils(util = 'translate', source = vrt_path,

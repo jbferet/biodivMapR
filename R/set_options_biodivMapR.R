@@ -77,12 +77,42 @@ set_options_biodivMapR <- function(fun, options = NULL){
       options$nb_samples_beta <- 2e3
     if (is.null(options$alpha_metrics))
       options$alpha_metrics <- 'shannon'
+    if (options$alpha_metrics==FALSE)
+      options$alpha_metrics <- NULL
     if (is.null(options$Hill_order))
       options$Hill_order <- 1
     if (is.null(options$beta_metrics))
       options$beta_metrics <- TRUE
     if (is.null(options$fd_metrics))
       options$fd_metrics <- NULL
+    if (is.null(options$nb_iter))
+      options$nb_iter <- 10
+    if (is.null(options$pcelim))
+      options$pcelim <- 0.02
+    if (is.null(options$maxRows))
+      options$maxRows <- 1200
+    if (is.null(options$moving_window))
+      options$moving_window <- FALSE
+    if (is.null(options$mosaic_output))
+      options$mosaic_output <- TRUE
+    if (is.null(options$weightIQR))
+      options$weightIQR <- 4
+  }
+  if (fun == 'biodivMapR_functional_full_tiles'){
+    if (is.null(options$nb_clusters))
+      options$nb_clusters <- 1
+    if (is.null(options$nb_samples_alpha))
+      options$nb_samples_alpha <- 1e5
+    if (is.null(options$nb_samples_beta))
+      options$nb_samples_beta <- 2e3
+    if (is.null(options$alpha_metrics))
+      options$alpha_metrics <- NULL
+    if (is.null(options$Hill_order))
+      options$Hill_order <- 1
+    if (is.null(options$beta_metrics))
+      options$beta_metrics <- TRUE
+    if (is.null(options$fd_metrics))
+      options$fd_metrics <- 'FRic'
     if (is.null(options$nb_iter))
       options$nb_iter <- 10
     if (is.null(options$pcelim))

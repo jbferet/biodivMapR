@@ -81,7 +81,7 @@ biodivMapR_chunk <- function(blk, r_in, window_size, Kmeans_info,
       nb_clusters <- dim(Kmeans_info$Centroids[[1]])[1]
       if (nbCPU>1) {
         cl <- parallel::makeCluster(nbCPU)
-        plan("cluster", workers = cl)
+        with(plan("cluster", workers = cl), local = TRUE)
         alphabetaIdx_CPU <- future.apply::future_lapply(X = SSwindows_per_CPU$SSwindow_perCPU,
                                                         FUN = alphabeta_window_list,
                                                         nb_clusters = nb_clusters,

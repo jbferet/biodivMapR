@@ -1,3 +1,13 @@
+# biodivMapR2 v2.4.4
+## fix
+- use lapply instead of future_lapply when calling 'functional_window_list' in 'get_raster_diversity_tile'
+- compute taxonomic and functional diversity metrics in two steps
+- compute functional diversity metrics one after the other
+- fix compression of diversity maps
+
+## change
+- use with(..., local = TRUE) when using future::plan
+
 # biodivMapR2 v2.4.3
 ## fix
 - add nested 'try' in mosaic_from_vrt

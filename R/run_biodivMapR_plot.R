@@ -34,13 +34,15 @@ run_biodivMapR_plot <- function(id, feature_dir, mask_dir = NULL,
                                 p = NULL){
 
   betanames <- paste0('beta_',id)
-  alphanames <- paste0(alpha_metrics,'_',id)
-  if ('hill' %in% alpha_metrics)
-    alphanames[alpha_metrics=='hill'] <- paste0('hill_', Hill_order,'_',id)
-  functionalname <- NULL
+  alphanames <- alphanames_mean <- functionalname <- NULL
+  if (!is.null(alpha_metrics)){
+    alphanames <- paste0(alpha_metrics,'_',id)
+    alphanames_mean <- paste0(alphanames,'_mean')
+    if ('hill' %in% alpha_metrics)
+      alphanames[alpha_metrics=='hill'] <- paste0('hill_', Hill_order,'_',id)
+  }
   if (!is.null(fd_metrics))
     functionalname <- paste0(fd_metrics,'_',id)
-  alphanames_mean <- paste0(alphanames,'_mean')
   if (!is.null(Beta_info)){
     output_raster_name <- as.list(c(betanames, alphanames, functionalname))
     output_raster_name_mean <- as.list(c(betanames, alphanames_mean,
@@ -97,5 +99,6 @@ run_biodivMapR_plot <- function(id, feature_dir, mask_dir = NULL,
   }
   if (!is.null(p))
     p()
+  gc()
   return()
 }

@@ -133,8 +133,7 @@ biodivMapR_sfs <- function(input_raster, obs_vect, obs2optimize,
   registerDoFuture()
   # plan(multisession, workers = nbWorkers)
   cl <- parallel::makeCluster(nbWorkers)
-  plan("cluster", workers = cl)  ## same as plan(multisession, workers = nbCPU)
-
+  with(plan("cluster", workers = cl), local = TRUE)	
 
   Corr_criterion <- EvolCorr <-   CorrSFS <- AssessSFS <- list()
   SelectedVars <- EvolCorr$richness <- EvolCorr$shannon <- EvolCorr$simpson <-

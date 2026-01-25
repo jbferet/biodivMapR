@@ -39,8 +39,7 @@ get_kmeans <- function(rast_sample, nb_iter, nb_clusters = 50,
     if (nbCPU>1){
       # plan(multisession, workers = nbCPU) ## Parallelize using four cores
       cl <- parallel::makeCluster(nbCPU)
-      plan("cluster", workers = cl)  ## same as plan(multisession, workers = nbCPU)
-
+      with(plan("cluster", workers = cl), local = TRUE)	
       fun_apply <- future_lapply
     } else {
       fun_apply <- lapply

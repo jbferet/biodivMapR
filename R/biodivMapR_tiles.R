@@ -61,7 +61,7 @@ biodivMapR_tiles <- function(feature_dir, list_features, mask_dir = NULL,
 
   if (nbCPU>1){
     cl <- parallel::makeCluster(nbCPU)
-    plan("cluster", workers = cl)
+    with(plan("cluster", workers = cl), local = TRUE)	
     handlers("cli")
     with_progress({
       p <- progressr::progressor(steps = maxCPU)

@@ -16,18 +16,18 @@ mosaic_tiles <- function(pattern, dir_path, vrt_save, site_name = NULL,
                          idx = NULL, overwrite = FALSE){
   # create vrt
   if (! is.null(site_name))
-    site_name <- paste0(site_name, '_')
+    site_name_ <- paste0(site_name, '_')
     # site_name <- paste0('_', site_name, '_')
   listfiles <- list.files(dir_path, pattern = pattern, full.names = TRUE)
   output_vrt_path <- file.path(getwd(),
-                               paste0(site_name, pattern,'_mosaic.vrt'))
+                               paste0(site_name_, idx, pattern,'_mosaic.vrt'))
   # if (!file.exists(output_vrt_path))
   v <- terra::vrt(x = listfiles, filename = output_vrt_path, overwrite = TRUE)
 
   # create tiff from vrt
-  mosaic_path <- file.path(dir_path, paste0(site_name, pattern,'_mosaic.tiff'))
+  mosaic_path <- file.path(dir_path, paste0(site_name_, pattern,'_mosaic.tiff'))
   if (!is.null(idx))
-    mosaic_path <- file.path(dir_path, paste0(site_name, idx,
+    mosaic_path <- file.path(dir_path, paste0(site_name_, idx,
                                               pattern,'_mosaic.tiff'))
 
   if (!file.exists(mosaic_path) | overwrite){

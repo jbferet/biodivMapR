@@ -103,7 +103,7 @@ compute_mask_iqr_tiles <- function(feature_dir, feature_list, mask_dir, plots,
     } else {
       message('compute stats')
       cl <- parallel::makeCluster(nbCPU)
-      plan("cluster", workers = cl)
+      with(plan("cluster", workers = cl), local = TRUE)	
       selpix <- future.apply::future_mapply(FUN = get_samples_from_tiles,
                                             plotID = names(plots),
                                             pix2sel = pix2sel,

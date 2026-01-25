@@ -48,7 +48,7 @@ init_PCoA_samples <- function(rast_sample, output_dir, Kmeans_info,
   # plan(multisession, workers = nbCPU)
   if (nbCPU>1){
     cl <- parallel::makeCluster(nbCPU)
-    future::plan("cluster", workers = cl)
+    with(future::plan("cluster", workers = cl), local = TRUE)
     # progressr::handlers(global = TRUE)
     suppressWarnings(progressr::handlers("cli"))
     # progressr::handlers("debug")

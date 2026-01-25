@@ -55,7 +55,7 @@ sample_from_plots_beta <- function(feature_dir, list_features, plots,
   } else {
     message('get samples for beta diversity')
     cl <- parallel::makeCluster(nbCPU)
-    plan("cluster", workers = cl)
+    with(future::plan("cluster", workers = cl), local = TRUE)
     samples_beta_terra <- future.apply::future_mapply(FUN = get_plots_from_tiles,
                                                       plotID = names(plots),
                                                       plots2sel = plots2sel,

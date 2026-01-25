@@ -44,7 +44,7 @@ explore_kmeans <- function(input_rast,
   # multi-thread
   registerDoFuture()
   cl <- parallel::makeCluster(nbCPU)
-  plan("cluster", workers = cl)
+  with(plan("cluster", workers = cl), local = TRUE)	
   nbclust <- NULL
   get_kmeans_list <- function() {
     foreach(nbclust = nbClust_list) %dopar% {

@@ -82,54 +82,111 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
   if (nbCPU > maxCPU)
     nbCPU <-  maxCPU
 
-  if (nbCPU>1){
-    cl <- parallel::makeCluster(nbCPU)
-    plan("cluster", workers = cl)
-    handlers("cli")
-    with_progress({
-      p <- progressr::progressor(steps = maxCPU)
-      future.apply::future_lapply(X = samples$ID_aoi,
-                                  FUN = run_biodivMapR_plot,
-                                  feature_dir = feature_dir,
-                                  mask_dir = mask_dir,
-                                  list_features = list_features,
-                                  Kmeans_info = Kmeans_info,
-                                  Beta_info = Beta_info,
-                                  alpha_metrics = alpha_metrics,
-                                  Hill_order = Hill_order,
-                                  fd_metrics = fd_metrics,
-                                  output_dir = output_dir,
-                                  window_size = window_size,
-                                  maxRows = maxRows,
-                                  pcelim = pcelim,
-                                  moving_window = moving_window, p = p,
-                                  future.seed = TRUE,
-                                  future.chunk.size = NULL,
-                                  future.scheduling = structure(TRUE,
-                                                                ordering = "random"))
-    })
-    parallel::stopCluster(cl)
-    plan(sequential)
-  } else if (nbCPU==1){
-    handlers("cli")
-    with_progress({
-      p <- progressr::progressor(steps = maxCPU)
-      lapply(X = samples$ID_aoi,
-             FUN = run_biodivMapR_plot,
-             feature_dir = feature_dir,
-             mask_dir = mask_dir,
-             list_features = list_features,
-             Kmeans_info = Kmeans_info,
-             Beta_info = Beta_info,
-             alpha_metrics = alpha_metrics,
-             Hill_order = Hill_order,
-             fd_metrics = fd_metrics,
-             output_dir = output_dir,
-             window_size = window_size,
-             maxRows = maxRows,
-             moving_window = moving_window, p = p)
-    })
+  if (!is.null(alpha_metrics) | beta_metrics){
+    if (nbCPU>1){
+      cl <- parallel::makeCluster(nbCPU)
+      with(plan("cluster", workers = cl), local = TRUE)
+      handlers("cli")
+      with_progress({
+        p <- progressr::progressor(steps = maxCPU)
+        future.apply::future_lapply(X = samples$ID_aoi,
+                                    FUN = run_biodivMapR_plot,
+                                    feature_dir = feature_dir,
+                                    mask_dir = mask_dir,
+                                    list_features = list_features,
+                                    Kmeans_info = Kmeans_info,
+                                    Beta_info = Beta_info,
+                                    alpha_metrics = alpha_metrics,
+                                    Hill_order = Hill_order,
+                                    fd_metrics = NULL,
+                                    output_dir = output_dir,
+                                    window_size = window_size,
+                                    maxRows = maxRows,
+                                    pcelim = pcelim,
+                                    moving_window = moving_window, p = p,
+                                    future.seed = TRUE,
+                                    future.chunk.size = NULL,
+                                    future.scheduling = structure(TRUE,
+                                                                  ordering = "random"))
+      })
+      parallel::stopCluster(cl)
+      plan(sequential)
+    } else if (nbCPU==1){
+      handlers("cli")
+      with_progress({
+        p <- progressr::progressor(steps = maxCPU)
+        lapply(X = samples$ID_aoi,
+               FUN = run_biodivMapR_plot,
+               feature_dir = feature_dir,
+               mask_dir = mask_dir,
+               list_features = list_features,
+               Kmeans_info = Kmeans_info,
+               Beta_info = Beta_info,
+               alpha_metrics = alpha_metrics,
+               Hill_order = Hill_order,
+               fd_metrics = NULL,
+               output_dir = output_dir,
+               window_size = window_size,
+               maxRows = maxRows,
+               moving_window = moving_window, p = p)
+      })
+    }
   }
+
+  if (!is.null(fd_metrics)){
+    for (fd_metric in fd_metrics){
+      message(paste('computing functional metric: ', fd_metric))
+      if (nbCPU>1){
+        cl <- parallel::makeCluster(nbCPU)
+        with(plan("cluster", workers = cl), local = TRUE)
+        handlers("cli")
+        with_progress({
+          p <- progressr::progressor(steps = maxCPU)
+          future.apply::future_lapply(X = samples$ID_aoi,
+                                      FUN = run_biodivMapR_plot,
+                                      feature_dir = feature_dir,
+                                      mask_dir = mask_dir,
+                                      list_features = list_features,
+                                      Kmeans_info = Kmeans_info,
+                                      Beta_info = NULL,
+                                      alpha_metrics = NULL,
+                                      Hill_order = Hill_order,
+                                      fd_metrics = fd_metric,
+                                      output_dir = output_dir,
+                                      window_size = window_size,
+                                      maxRows = maxRows,
+                                      pcelim = pcelim,
+                                      moving_window = moving_window, p = p,
+                                      future.seed = TRUE,
+                                      future.chunk.size = NULL,
+                                      future.scheduling = structure(TRUE,
+                                                                    ordering = "random"))
+        })
+        parallel::stopCluster(cl)
+        plan(sequential)
+      } else if (nbCPU==1){
+        handlers("cli")
+        with_progress({
+          p <- progressr::progressor(steps = maxCPU)
+          lapply(X = samples$ID_aoi,
+                 FUN = run_biodivMapR_plot,
+                 feature_dir = feature_dir,
+                 mask_dir = mask_dir,
+                 list_features = list_features,
+                 Kmeans_info = Kmeans_info,
+                 Beta_info = NULL,
+                 alpha_metrics = NULL,
+                 Hill_order = Hill_order,
+                 fd_metrics = fd_metric,
+                 output_dir = output_dir,
+                 window_size = window_size,
+                 maxRows = maxRows,
+                 moving_window = moving_window, p = p)
+        })
+      }
+    }
+  }
+
 
   mosaic_path <- NULL
   if (is.null(site_name))

@@ -104,7 +104,7 @@ biodivMapR_opt_clusters <- function(input_raster, obs_vect, obs2optimize,
       gc()
       registerDoFuture()
       cl <- parallel::makeCluster(nbCPU)
-      plan("cluster", workers = cl)
+      with(plan("cluster", workers = cl), local = TRUE)	
       kmit <- NULL
       get_diversity_from_plots_list <- function() {
         foreach(kmit = Kmeans_info) %dopar% {

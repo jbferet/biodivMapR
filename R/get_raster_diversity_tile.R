@@ -75,7 +75,6 @@ get_raster_diversity_tile <- function(input_raster_path, Kmeans_info, Beta_info,
                       'PCoA3' = matrix(NA, nrow = nrow(sample_newres),
                                        ncol = ncol(sample_newres)))
 
-
   rast_in <- c(rast_in, sample_tmp)
   # v1: line per line
   inputdata <- as.data.frame(terra::values(rast_in))
@@ -86,7 +85,7 @@ get_raster_diversity_tile <- function(input_raster_path, Kmeans_info, Beta_info,
   selpix <- which(inputdata$win_ID %in% selWin)
   inputdata <- inputdata[selpix, ]
   nbWindows <- max(inputdata$win_ID)
-
+  alphabetaIdx <- NULL
   # compute diversity
   if (!is.null(inputdata)){
     if (length(inputdata)>0){
@@ -96,17 +95,18 @@ get_raster_diversity_tile <- function(input_raster_path, Kmeans_info, Beta_info,
       # 5- split data chunk by window and by nbCPU to ensure parallel computing
       if (dim(SSchunk)[1]>0){
         SSwindows_per_CPU <- split_chunk(SSchunk, nbCPU)
-        # 6- compute diversity metrics
-        nb_clusters <- dim(Kmeans_info$Centroids[[1]])[1]
-        alphabetaIdx_CPU <- lapply(X = SSwindows_per_CPU$SSwindow_perCPU,
-                                   FUN = alphabeta_window_list,
-                                   nb_clusters = nb_clusters,
-                                   alpha_metrics = alpha_metrics,
-                                   Beta_info = Beta_info,
-                                   Hill_order = Hill_order,
-                                   pcelim = pcelim)
-        alphabetaIdx <- unlist(alphabetaIdx_CPU,recursive = FALSE)
-
+        if (!is.null(alpha_metrics) | !is.null(Beta_info)){
+          # 6- compute diversity metrics
+          nb_clusters <- dim(Kmeans_info$Centroids[[1]])[1]
+          alphabetaIdx_CPU <- lapply(X = SSwindows_per_CPU$SSwindow_perCPU,
+                                     FUN = alphabeta_window_list,
+                                     nb_clusters = nb_clusters,
+                                     alpha_metrics = alpha_metrics,
+                                     Beta_info = Beta_info,
+                                     Hill_order = Hill_order,
+                                     pcelim = pcelim)
+          alphabetaIdx <- unlist(alphabetaIdx_CPU,recursive = FALSE)
+        }
 
         if (!is.null(fd_metrics)){
           inputdata <- cbind(center_reduce(x = inputdata[selected_bands],
@@ -114,14 +114,17 @@ get_raster_diversity_tile <- function(input_raster_path, Kmeans_info, Beta_info,
                                            sig = Kmeans_info$Range),
                              'win_ID' = inputdata$win_ID)
           windows_per_CPU <- split_chunk(inputdata, nbCPU)
-          funct_idx_cpu <- future.apply::future_lapply(X = windows_per_CPU$SSwindow_perCPU,
-                                                       FUN = functional_window_list,
-                                                       fd_metrics = fd_metrics,
-                                                       future.seed = TRUE)
+          if (nbCPU>1){
+            funct_idx_cpu <- lapply(X = windows_per_CPU$SSwindow_perCPU,
+                                    FUN = functional_window_list,
+                                    fd_metrics = fd_metrics)
+          } else if (nbCPU==1){
+            funct_idx_cpu <- list()
+            funct_idx_cpu[[1]] <- functional_window_list(SSwindow = windows_per_CPU$SSwindow_perCPU[[1]],
+                                                         fd_metrics = fd_metrics)
+          }
           FunctionalIdx <- unlist(funct_idx_cpu, recursive = FALSE)
         }
-
-
         # 7- reshape alpha diversity metrics
         IDwindow <- unlist(SSwindows_per_CPU$IDwindow_perCPU)
         for (idx in alpha_metrics){

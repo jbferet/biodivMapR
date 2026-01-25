@@ -6,18 +6,61 @@
 #
 #' @return fd_metricss
 #' @importFrom fundiversity fd_fric fd_fdiv fd_feve fd_fdis fd_raoq
+#' @importFrom future plan
 #' @export
 
 get_functional_diversity <- function(spectraits,
                                      fd_metrics = c('FRic', 'FEve', 'FDiv'),
                                      p = NULL){
   FRic <- FDiv <- FEve <- FDis <- FRaoq <- NA
-  if ('FRic' %in% fd_metrics) FRic <- fundiversity::fd_fric(spectraits)$FRic
-  if ('FDiv' %in% fd_metrics) FDiv <- fundiversity::fd_fdiv(spectraits)$FDiv
-  if ('FEve' %in% fd_metrics) FEve <- fundiversity::fd_feve(spectraits)$FEve
-  if ('FDis' %in% fd_metrics) FDis <- fundiversity::fd_fdis(spectraits)$FDis
-  if ('FRaoq' %in% fd_metrics) FRaoq <- fundiversity::fd_raoq(spectraits)$Q
-  if (!is.null(p)){p()}
+  future::plan(future::sequential)
+  if ('FRic' %in% fd_metrics){
+    FRic <- try({
+      fundiversity::fd_fric(spectraits)$FRic
+    }, silent = TRUE)
+    if ( "try-error" %in% class(FRic)){
+      FRic <- NA
+    }
+  }
+
+  if ('FDiv' %in% fd_metrics){
+    FDiv <- try({
+       fundiversity::fd_fdiv(spectraits)$FDiv
+    }, silent = TRUE)
+    if ( "try-error" %in% class(FDiv)){
+      FDiv <- NA
+    }
+  }
+
+  if ('FEve' %in% fd_metrics){
+    FEve <- try({
+      fundiversity::fd_feve(spectraits)$FEve
+    }, silent = TRUE)
+    if ( "try-error" %in% class(FEve)){
+      FEve <- NA
+    }
+  }
+
+  if ('FDis' %in% fd_metrics){
+    FDis <- try({
+      fundiversity::fd_fdis(spectraits)$FDis
+    }, silent = TRUE)
+    if ( "try-error" %in% class(FDis)){
+      FDis <- NA
+    }
+  }
+
+  if ('FRaoq' %in% fd_metrics){
+    FRaoq <- try({
+      fundiversity::fd_raoq(spectraits)$Q
+    }, silent = TRUE)
+    if ( "try-error" %in% class(FRaoq)){
+      FRaoq <- NA
+    }
+  }
+
+  if (!is.null(p))
+    p()
   return(list('FRic' = FRic, 'FEve' = FEve, 'FDiv' = FDiv,
               'FDis' = FDis, 'FRaoq' = FRaoq))
 }

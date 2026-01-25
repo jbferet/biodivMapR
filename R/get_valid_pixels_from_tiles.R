@@ -8,8 +8,6 @@
 #' @return nb_pix_valid
 #' @import cli
 #' @importFrom progressr progressor handlers with_progress
-#' @importFrom future plan multisession sequential
-#' @importFrom future.apply future_lapply
 
 #' @export
 
