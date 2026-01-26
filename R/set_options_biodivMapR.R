@@ -77,7 +77,7 @@ set_options_biodivMapR <- function(fun, options = NULL){
       options$nb_samples_beta <- 2e3
     if (is.null(options$alpha_metrics))
       options$alpha_metrics <- 'shannon'
-    if (options$alpha_metrics==FALSE)
+    if (length(options$alpha_metrics)==1 & options$alpha_metrics[1]==FALSE)
       options$alpha_metrics <- NULL
     if (is.null(options$Hill_order))
       options$Hill_order <- 1

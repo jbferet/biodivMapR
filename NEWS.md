@@ -4,6 +4,7 @@
 - compute taxonomic and functional diversity metrics in two steps
 - compute functional diversity metrics one after the other
 - fix compression of diversity maps
+- fix bug when setting more than 1 metric in options$alpha_metrics
 
 ## change
 - use with(..., local = TRUE) when using future::plan
