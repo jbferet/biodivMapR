@@ -1,3 +1,9 @@
+# biodivMapR2 v2.4.5
+## change
+- biodivMapR_full_classif: add possibility to set compute_beta = TRUE or FALSE 
+- remove TODO.md
+- use regular expression '\\.' when searching for strings including '.': 
+
 # biodivMapR2 v2.4.4
 ## fix
 - use lapply instead of future_lapply when calling 'functional_window_list' in 'get_raster_diversity_tile'

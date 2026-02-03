@@ -108,7 +108,7 @@ biodivMapR_tiles <- function(feature_dir, list_features, mask_dir = NULL,
       } else if (biodividx %in% alpha_metrics){
         selfiles <- list.files(path = output_dir, pattern = biodividx)
         selfiles <- selfiles[grepl(x = basename(selfiles),
-                                   pattern = "mean.tiff")]
+                                   pattern = "mean\\.tiff")]
       }
       selfiles <- file.path(output_dir, selfiles)
       # create directory

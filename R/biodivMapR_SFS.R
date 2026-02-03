@@ -39,12 +39,12 @@ biodivMapR_sfs <- function(input_raster, obs_vect, obs2optimize,
                            pcelim = 0.02, verbose = TRUE, nbWorkers = 1,
                            nbCPU = 1){
 
-  FullListIndices <- c("richness", "shannon", "simpson", "hill", "BC",
-                       "FRic", "FEve", "FDiv")
+  FullListIndices <- c('richness', 'shannon', 'simpson', 'hill', 'BC',
+                       'FRic', 'FEve', 'FDiv', 'FDis', 'FRaoq')
   #### Which diversity metrics should be computed?
   alphamet <- c('richness', 'shannon', 'simpson', 'hill')
   betamet <- 'BC'
-  fmet <- c('FRic', 'FEve', 'FDiv')
+  fmet <- c('FRic', 'FEve', 'FDiv', 'FDis', 'FRaoq')
   # if computation of functional metrics required
   alpha_metrics <- alphamet[which(alphamet %in% names(obs2optimize))]
   if (length(alpha_metrics)==0)
@@ -133,7 +133,7 @@ biodivMapR_sfs <- function(input_raster, obs_vect, obs2optimize,
   registerDoFuture()
   # plan(multisession, workers = nbWorkers)
   cl <- parallel::makeCluster(nbWorkers)
-  with(plan("cluster", workers = cl), local = TRUE)	
+  with(plan('cluster', workers = cl), local = TRUE)
 
   Corr_criterion <- EvolCorr <-   CorrSFS <- AssessSFS <- list()
   SelectedVars <- EvolCorr$richness <- EvolCorr$shannon <- EvolCorr$simpson <-
@@ -146,7 +146,7 @@ biodivMapR_sfs <- function(input_raster, obs_vect, obs2optimize,
     p <- progressr::progressor(steps = nb_pcs_to_keep)
 
   # pb <- progress::progress_bar$new(
-  #   format = "Perform feature selection [:bar] :percent in :elapsedfull",
+  #   format = 'Perform feature selection [:bar] :percent in :elapsedfull',
   #   total = nb_pcs_to_keep, clear = FALSE, width= 100)
 
     for (nbvars2select in seq_len(nb_pcs_to_keep)){
@@ -169,7 +169,7 @@ biodivMapR_sfs <- function(input_raster, obs_vect, obs2optimize,
             inputdata_cr$ID <- IDplot
             inputdata_cr <- inputdata_cr %>% split(.$ID)
             inputdata_cr <- lapply(inputdata_cr,
-                                   function(x) data.frame(x[ , !(names(x) %in% "ID")]))
+                                   function(x) data.frame(x[ , !(names(x) %in% 'ID')]))
             FunctDiv <- lapply(X = inputdata_cr,
                                FUN = get_functional_diversity,
                                fd_metrics = fd_metrics)
@@ -256,7 +256,7 @@ biodivMapR_sfs <- function(input_raster, obs_vect, obs2optimize,
         }
       }
       subSFS <- subfeatures_SFS()
-      p(message = sprintf("Perform feature selection %g", nbvars2select))
+      p(message = sprintf('Perform feature selection %g', nbvars2select))
       # pb$tick()
       CorrSFS[[nbvars2select]] <- list()
       for (ind in FullListIndices)

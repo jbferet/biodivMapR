@@ -28,7 +28,7 @@ get_plots_from_tiles <- function(plotID, plots2sel, listfiles, feat_list,
       for (feat in feat_list){
         feat2 <- feat
         if (!feat == 'mask')
-          feat2 <- paste0('_',feat, '.')
+          feat2 <- paste0('_',feat, '\\.')
         # whichfeat <- which(stringr::str_detect(basename(terra::sources(rastID)), feat) )
         whichfeat <- which(grepl(x = basename(terra::sources(rastID)),
                                  pattern = feat2))

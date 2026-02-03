@@ -11,6 +11,7 @@ biodivMapR_full_classif(
   input_mask_path = NULL,
   site_name = NULL,
   pcelim = 0.02,
+  compute_beta = TRUE,
   nb_samples_beta = 1000
 )
 }
@@ -26,6 +27,8 @@ biodivMapR_full_classif(
 \item{site_name}{character. nname of site}
 
 \item{pcelim}{numeric. minimum proportion of pixels to consider spectral species}
+
+\item{compute_beta}{boolean. set TRUE if beta is to be computed}
 
 \item{nb_samples_beta}{numeric. number of samples to compute beta diversity}
 }

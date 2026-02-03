@@ -14,7 +14,7 @@
 #' @export
 
 alphabeta_window_classif <- function(SSwindow, nb_clusters,
-                                     Beta_info, alpha_metrics,
+                                     Beta_info = NULL, alpha_metrics,
                                      pcelim = 0.02,
                                      Hill_order = 1){
   # get spectral species distribution from individual pixels within a window
@@ -27,20 +27,24 @@ alphabeta_window_classif <- function(SSwindow, nb_clusters,
                   nb_pix_sunlit = nb_pix_sunlit,
                   pcelim = pcelim,
                   hill_order = Hill_order)
-  # get BETA diversity
-  # full spectral species distribution = missing clusters set to 0
-  ssd_full <- lapply(X = ssd, FUN = get_normalized_ssd,
-                     nb_clusters = nb_clusters, pcelim = pcelim)
-  mat_bc <- list()
-  pcoa_bc <- list()
-  for (i in seq_along(ssd_full)){
-    mat_bc_tmp <- dissUtils::diss(ssd_full[[i]], Beta_info$SSD,
-                                  method = 'braycurtis')
-    # mat_bc <- list('mat1' = ssd_full[[i]],
-    #                'mat2' = Beta_info$SSD)
-    # mat_bc_tmp <- compute_bc_diss(ssd_list = mat_bc, pcelim = pcelim)
-    pcoa_bc[[i]] <- compute_nn_from_ordination(mat_bc = mat_bc_tmp, knn = 3,
-                                               pcoa_train = Beta_info$BetaPCO$points)
+
+  pcoa_bc <- NULL
+  if (!is.null(Beta_info)){
+    # get BETA diversity
+    # full spectral species distribution = missing clusters set to 0
+    ssd_full <- lapply(X = ssd, FUN = get_normalized_ssd,
+                       nb_clusters = nb_clusters, pcelim = pcelim)
+    mat_bc <- list()
+    pcoa_bc <- list()
+    for (i in seq_along(ssd_full)){
+      mat_bc_tmp <- dissUtils::diss(ssd_full[[i]], Beta_info$SSD,
+                                    method = 'braycurtis')
+      # mat_bc <- list('mat1' = ssd_full[[i]],
+      #                'mat2' = Beta_info$SSD)
+      # mat_bc_tmp <- compute_bc_diss(ssd_list = mat_bc, pcelim = pcelim)
+      pcoa_bc[[i]] <- compute_nn_from_ordination(mat_bc = mat_bc_tmp, knn = 3,
+                                                 pcoa_train = Beta_info$BetaPCO$points)
+    }
   }
   return(list('richness' = unlist(lapply(alpha, '[[', 'richness')),
               'shannon' = unlist(lapply(alpha, '[[', 'shannon')),

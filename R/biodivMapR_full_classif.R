@@ -6,6 +6,7 @@
 #' @param input_mask_path character. path for mask file
 #' @param site_name character. nname of site
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
+#' @param compute_beta boolean. set TRUE if beta is to be computed
 #' @param nb_samples_beta numeric. number of samples to compute beta diversity
 #'
 #' @return diversity_maps_ground
@@ -14,7 +15,8 @@
 
 biodivMapR_full_classif <- function(input_raster_path, output_dir, window_size,
                                     input_mask_path = NULL, site_name = NULL,
-                                    pcelim = 0.02, nb_samples_beta = 1000){
+                                    pcelim = 0.02, compute_beta = TRUE,
+                                    nb_samples_beta = 1000){
 
   # define all alpha metrics
   alpha_metrics <- c('richness', 'shannon', 'simpson', 'hill')
@@ -32,35 +34,41 @@ biodivMapR_full_classif <- function(input_raster_path, output_dir, window_size,
     input_mask <- terra::rast(input_mask_path)
 
   # define plot selection for beta diversity and sample from raster
-  plots_beta <- plots[sample(x = seq_along(plots), nb_samples_beta,
-                             replace = FALSE)]
-  get_samples_from_plots <- function(x, y){
-    x <- terra::vect(x)
-    res <- terra::extract(x = y, y = x, raw = TRUE, ID = FALSE)
-    res <- c(unlist(res))
-    return(res)
-  }
-  samples <- lapply(X = plots_beta, FUN = get_samples_from_plots,
-                    y = terra::rast(input_raster_path))
+  Beta_info <- NULL
+  if (compute_beta){
+    if (nb_samples_beta > length(plots))
+      nb_samples_beta <- length(plots)
 
-  # compute spectral dissimilarity
-  ssd <- lapply(X = samples,FUN = table)
-  ssd <- lapply(X = ssd,FUN = get_normalized_ssd,
-                nb_clusters = nb_clusters, pcelim = pcelim)
-  ssd <- do.call(rbind,ssd)
-  mat_bc <- dissUtils::diss(ssd, ssd, method = 'braycurtis')
-  # ssd_list <- list(ssd, ssd)
-  # mat_bc <- compute_bc_diss(ssd_list, pcelim)
-  Beta_info <- list('SSD' = ssd, 'MatBC' = mat_bc)
-  mat_bc_dist <- stats::as.dist(mat_bc, diag = FALSE, upper = FALSE)
-  BetaPCO <- pco(mat_bc_dist, k = 3)
-  Beta_info <- list('SSD' = ssd,
-                    'MatBC' = mat_bc,
-                    'BetaPCO' = BetaPCO)
-  # # save spectral dissimilarity
-  # if (is.null(Beta_info_save))
-  #   Beta_info_save <- file.path(output_dir, 'Beta_info_classif.RData')
-  # save(Beta_info, file = Beta_info_save)
+    plots_beta <- plots[sample(x = seq_along(plots), nb_samples_beta,
+                               replace = FALSE)]
+    get_samples_from_plots <- function(x, y){
+      x <- terra::vect(x)
+      res <- terra::extract(x = y, y = x, raw = TRUE, ID = FALSE)
+      res <- c(unlist(res))
+      return(res)
+    }
+    samples <- lapply(X = plots_beta, FUN = get_samples_from_plots,
+                      y = terra::rast(input_raster_path))
+
+    # compute spectral dissimilarity
+    ssd <- lapply(X = samples,FUN = table)
+    ssd <- lapply(X = ssd,FUN = get_normalized_ssd,
+                  nb_clusters = nb_clusters, pcelim = pcelim)
+    ssd <- do.call(rbind,ssd)
+    mat_bc <- dissUtils::diss(ssd, ssd, method = 'braycurtis')
+    # ssd_list <- list(ssd, ssd)
+    # mat_bc <- compute_bc_diss(ssd_list, pcelim)
+    Beta_info <- list('SSD' = ssd, 'MatBC' = mat_bc)
+    mat_bc_dist <- stats::as.dist(mat_bc, diag = FALSE, upper = FALSE)
+    BetaPCO <- pco(mat_bc_dist, k = 3)
+    Beta_info <- list('SSD' = ssd,
+                      'MatBC' = mat_bc,
+                      'BetaPCO' = BetaPCO)
+    # # save spectral dissimilarity
+    # if (is.null(Beta_info_save))
+    #   Beta_info_save <- file.path(output_dir, 'Beta_info_classif.RData')
+    # save(Beta_info, file = Beta_info_save)
+  }
 
   # compute alpha and beta diversity over the full image
   input_rast_tmp <- input_rast
@@ -91,7 +99,7 @@ biodivMapR_full_classif <- function(input_raster_path, output_dir, window_size,
   # save diversity maps
   diversity_maps_ground <- list()
   for (idx in names(alphabeta)){
-    if (idx == 'PCoA_BC'){
+    if (idx == 'PCoA_BC' & !is.null(Beta_info)){
       beta <- list(output_rast_tmp, output_rast_tmp, output_rast_tmp)
       for (i in 1:3)
         beta[[i]][cell_order] <- unlist(lapply(alphabeta[[idx]], '[[', i))

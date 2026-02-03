@@ -8,7 +8,7 @@ spectral species extracted from a window}
 alphabeta_window_classif(
   SSwindow,
   nb_clusters,
-  Beta_info,
+  Beta_info = NULL,
   alpha_metrics,
   pcelim = 0.02,
   Hill_order = 1

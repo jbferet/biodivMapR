@@ -7,7 +7,7 @@
 
 read_ENVI_header <- function(HDRpath) {
   # header <- paste(header, collapse = "\n")
-  if (!grepl(".hdr$", HDRpath) & !grepl(".HDR$", HDRpath))
+  if (!grepl("\\.hdr$", HDRpath) & !grepl("\\.HDR$", HDRpath))
     stop("File extension should be .hdr or .HDR")
 
   HDR <- readLines(HDRpath)
