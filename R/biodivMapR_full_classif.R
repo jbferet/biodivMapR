@@ -11,6 +11,7 @@
 #'
 #' @return diversity_maps_ground
 #' @importFrom dissUtils diss
+#' @importFrom terra vect crs rast extract values aggregate writeRaster
 #' @export
 
 biodivMapR_full_classif <- function(input_raster_path, output_dir, window_size,
@@ -41,12 +42,6 @@ biodivMapR_full_classif <- function(input_raster_path, output_dir, window_size,
 
     plots_beta <- plots[sample(x = seq_along(plots), nb_samples_beta,
                                replace = FALSE)]
-    get_samples_from_plots <- function(x, y){
-      x <- terra::vect(x)
-      res <- terra::extract(x = y, y = x, raw = TRUE, ID = FALSE)
-      res <- c(unlist(res))
-      return(res)
-    }
     samples <- lapply(X = plots_beta, FUN = get_samples_from_plots,
                       y = terra::rast(input_raster_path))
 
@@ -95,6 +90,12 @@ biodivMapR_full_classif <- function(input_raster_path, output_dir, window_size,
                                         alpha_metrics = alpha_metrics,
                                         Hill_order = 1, pcelim = pcelim)
   cell_order <- unlist(lapply(extracted_val, '[[', 'cell'))
+  if (is.null(Beta_info)){
+    elim <- which(names(alphabeta)=='PCoA_BC')
+    if (length(elim) > 0)
+      alphabeta <- alphabeta[-elim]
+  }
+
 
   # save diversity maps
   diversity_maps_ground <- list()

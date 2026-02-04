@@ -8,7 +8,8 @@
 
 define_grid <- function(raster_path, cellsize){
   rast_obj <- terra::rast(raster_path)[[1]]
-  mask_polygon <- terra::as.polygons(x = terra::ext(rast_obj))
+  mask_polygon <- terra::as.polygons(x = terra::ext(rast_obj),
+                                     crs=terra::crs(rast_obj))
   aoi <- sf::st_as_sf(mask_polygon, quiet = T)
   crs_init <- sf::st_crs(aoi)
   aoi <- sf::st_multipolygon(aoi$geometry)

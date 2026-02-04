@@ -3,6 +3,7 @@
 - biodivMapR_full_classif: add possibility to set compute_beta = TRUE or FALSE 
 - remove TODO.md
 - use regular expression '\\.' when searching for strings including '.': 
+- define 'get_samples_from_tiles' in independent file
 
 # biodivMapR2 v2.4.4
 ## fix
