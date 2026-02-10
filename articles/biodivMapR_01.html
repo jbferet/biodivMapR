@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Get Sentinel-2 data and validation • biodivMapR</title>
+<title>get Sentinel-2 data • biodivMapR</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Get Sentinel-2 data and validation">
+<script src="../pkgdown.js"></script><meta property="og:title" content="get Sentinel-2 data">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -52,13 +52,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/biodivMapR_01.html">Get Sentinel-2 data and validation</a>
+      <a href="../articles/biodivMapR_01.html">get Sentinel-2 data</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_02.html">Produce features from original raster</a>
+      <a href="../articles/biodivMapR_02.html">produce features from a raster</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_03.html">Produce diversity maps from a set of features</a>
+      <a href="../articles/biodivMapR_03.html">produce diversity maps from a set of features</a>
     </li>
     <li>
       <a href="../articles/biodivMapR_04.html">Validation</a>
@@ -89,7 +89,7 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Get Sentinel-2 data and validation</h1>
+      <h1 data-toc-skip>get Sentinel-2 data</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
@@ -102,31 +102,36 @@ Féret, Florian de Boissieu</h4>
 
     
     
-<p><code>biodivMapR</code> aims at producing spectral diversity maps
-based on raster data. While its application is technically not limited
-to optical imagery, users experimenting with other types of remote
-sensing data are expected to make sure that the input information used
-to produce remotely sensed diversity maps are ‘ecologically relevant’
-features to describe vegetation biodiversity as expected in
-<code>biodivMapR</code>.</p>
-<p>Raster data are handled with the R package <a href="https://rspatial.github.io/terra/reference/terra-package.html" class="external-link"><code>terra</code></a>.
-Data format should then be compliant with the drivers available with
-this package. Use <code>gdal(drivers=TRUE)</code> to see what drivers
-are available in your installation.</p>
-<p>Here, we want to use Sentinel-2 imagery to illustrate the main
-functionalities of <code>biodivMapR</code>. This first tutorial will
-guide you through the download of Sentinel-2 data with R packages</p>
-<div class="section level3">
-<h3 id="access-sentinel-2-imagery-with-preprocs2">access Sentinel-2 imagery with <code>preprocS2</code><a class="anchor" aria-label="anchor" href="#access-sentinel-2-imagery-with-preprocs2"></a>
-</h3>
+<p><code>biodivMapR</code> produces spectral diversity maps from raster
+data. Its application is technically not limited to optical imagery.
+Users experimenting with other types of remote sensing data are invited
+to ensure that the input information provided for remotely sensed
+diversity mapping are ‘ecologically relevant’ features describing
+vegetation biodiversity as expected in <code>biodivMapR</code>.</p>
+<p>Raster data are mainly handled with the R package <a href="https://rspatial.github.io/terra/reference/terra-package.html" class="external-link"><code>terra</code></a>.
+Data format should be compliant with the drivers available with this
+package. Use <code>gdal(drivers=TRUE)</code> to check which drivers are
+available in your installation.</p>
+<p>Here, Sentinel-2 imagery is used to illustrate the main
+functionalities of <code>biodivMapR</code>. This tutorial will first
+guide you through the download of Sentinel-2 data with R packages .</p>
+<div class="section level2">
+<h2 id="access-sentinel-2-imagery-with-preprocs2">access Sentinel-2 imagery with <code>preprocS2</code><a class="anchor" aria-label="anchor" href="#access-sentinel-2-imagery-with-preprocs2"></a>
+</h2>
 <p><a href="https://gitlab.com/jbferet/preprocs2" class="external-link"><code>preprocS2</code></a>
-is a package dedicated to Sentinel-2 data handling, including a wrapper
-of the <a href="https://brazil-data-cube.github.io/rstac/" class="external-link"><code>rstac</code></a>
-package. It aims at downloading and preparing Sentinel-2 images for
+is a package dedicated to Sentinel-2 data handling, which provides
+access to Spatio Temporal Asset Catalogs (<a href="https://stacspec.org/en" class="external-link">STAC</a>) via R scripts. It including
+wrapper functions for the <a href="https://brazil-data-cube.github.io/rstac/" class="external-link"><code>rstac</code></a>
+package. It allows downloading and preparing Sentinel-2 images for
 further processings using <code>biodivMapR</code>.</p>
-<p><code>preprocS2</code> will download Sentinel-2 data from a STAC
-catalog based on spatial and temporal information. The default STAC
-collection is <code>sentinel-2-l2a</code> from the <strong><a href="https://planetarycomputer.microsoft.com/dataset/sentinel-2-l2a" class="external-link"><code>Microsoft Planetary Computer</code></a></strong>
+<p>The STAC specification is a common language to describe geospatial
+information. STAC resources are available online from various
+institutional and private providers (such as Copernicus dataspace and
+Nicrosoft Planetary Computers). STAC catalogs provides access to imagery
+data via spatio-temporal queries. Hence, the first step is to define an
+area of interest (aoi), and a period or day of interest.</p>
+<p>The default STAC collection is <code>sentinel-2-l2a</code> from the
+<strong><a href="https://planetarycomputer.microsoft.com/dataset/sentinel-2-l2a" class="external-link"><code>Microsoft Planetary Computer</code></a></strong>
 catalog.</p>
 <p>Optionally, <code>preprocS2</code> can download the geometry of
 acquisition (sun &amp; view angles) corresponding to the Sentinel-2
@@ -135,19 +140,8 @@ package <a href="https://zivankaraman.github.io/CDSE/" class="external-link"><co
 <p>Please follow instructions for proper installation of the package,
 and provide authentication for CDSE if you want to get geometry of
 acquisition by activating OAuth clients following <a href="https://shapps.dataspace.copernicus.eu/dashboard/#/account/settings" class="external-link"><code>this link</code></a>.</p>
-</div>
-<div class="section level2">
-<h2 id="perform-spatio-temporal-query-to-access-sentinel-2-imagery">perform spatio-temporal query to access Sentinel-2 imagery<a class="anchor" aria-label="anchor" href="#perform-spatio-temporal-query-to-access-sentinel-2-imagery"></a>
-</h2>
-<p><code>preprocS2</code> can access Spatio Temporal Asset Catalogs (<a href="https://stacspec.org/en" class="external-link">STAC</a>). The STAC specification is a
-common language to describe geospatial information. STAC resources are
-available online from various institutional and private providers (such
-as Copernicus dataspace and Nicrosoft Planetary Computers). STAC
-catalogs allow performing spatio-temporal query. Hence, the first step
-is to define an area of interest (aoi), and a period or day of
-interest.</p>
 <div class="section level3">
-<h3 id="define-an-area-of-interest-aoi">define an area of interest (aoi)<a class="anchor" aria-label="anchor" href="#define-an-area-of-interest-aoi"></a>
+<h3 id="spatial-extent-define-an-area-of-interest-aoi">spatial extent: define an area of interest (aoi)<a class="anchor" aria-label="anchor" href="#spatial-extent-define-an-area-of-interest-aoi"></a>
 </h3>
 <p>First, load required packages and prepare input and output
 directories.</p>
@@ -168,9 +162,9 @@ directories.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">input_dir_vect</span>, showWarnings <span class="op">=</span> <span class="cn">F</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
 <p>The spatial extent of the area of interest (aoi) needs to be defined
 as a vector file. Such aoi can be defined with <code>QGIS</code>,
-<code>Google Earth</code>, or you rfavorite tool.</p>
-<p>Here we will define an aoi located in amazon forest is defined. The
-site is located next to <strong>Guedes, Japurá - State of Amazonas,
+<code>Google Earth</code>, or your favorite tool.</p>
+<p>Here an aoi located in Brazilian Amazon forest is defined. The site
+is located next to <strong>Guedes, Japurá - State of Amazonas,
 Brazil</strong>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># 1.2- define area of interest</span></span>
@@ -182,22 +176,23 @@ Brazil</strong>.</p>
 <span>             driver <span class="op">=</span> <span class="st">'GPKG'</span>, delete_layer <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="define-a-date-of-acquisition">define a date of acquisition<a class="anchor" aria-label="anchor" href="#define-a-date-of-acquisition"></a>
+<h3 id="time-range-define-a-date-of-acquisition">time range: define a date of acquisition<a class="anchor" aria-label="anchor" href="#time-range-define-a-date-of-acquisition"></a>
 </h3>
 <p>A Sentinel-2 acquisition with minimal cloud cover needs to be
-identified. The <a href="https://browser.dataspace.copernicus.eu/?zoom=9&amp;lat=-2.22284&amp;lng=-65.91522&amp;themeId=DEFAULT-THEME&amp;visualizationUrl=U2FsdGVkX19GH3b3Siq5FfHluLof8XtUblFGafppf9MVedVDtBKRkPmdW%2Bv3%2BAnb4ANBBziNJjGk6d1M%2BfZ%2BBGmq6s%2BjJ03ZEeZzHnbMe9dk%2BURYuxtDRoIpHsndMPAW&amp;datasetId=S2_L2A_CDAS&amp;fromTime=2025-09-10T00%3A00%3A00.000Z&amp;toTime=2025-09-10T23%3A59%3A59.999Z&amp;layerId=1_TRUE_COLOR&amp;demSource3D=%22MAPZEN%22&amp;cloudCoverage=30&amp;dateMode=SINGLE" class="external-link">Copernicus
-Browser</a> is a useful tool to explore the availability of Sentinel-2
-acquisitions, using filters such as the maximum cloud cover.</p>
-<p>Here, we focus on the aoi, and filter out cloudy images to keep only
-Max. cloud coverage &lt; 5%, for August 2024. We identify an acquisition
-from 23 August 2024 which shows good conditions of acquisition.</p>
+identified. The <a href="https://browser.dataspace.copernicus.eu" class="external-link">Copernicus Browser</a> is
+a useful service to explore the availability of Sentinel-2 acquisitions.
+In addition to spatio-temporal filters, it includes filters such as the
+maximum cloud cover.</p>
+<p>Images with a maximum cloud cover &lt; 5%, are identified for August
+2024. An acquisition from 23 August 2024 shows good conditions of
+acquisition.</p>
 </div>
 <div class="section level3">
 <h3 id="download-sentinel-2-acquisition-from-online-stac-resource">download Sentinel-2 acquisition from online STAC resource<a class="anchor" aria-label="anchor" href="#download-sentinel-2-acquisition-from-online-stac-resource"></a>
 </h3>
 <p><code>preprocS2</code> allows downloading from multiple providers.
 Microsoft Planetary computer is currently the default option.</p>
-<p>The function <code>get_s2_raster</code> downloads Setinel-2 data
+<p>The function <code>get_s2_raster</code> downloads Sentinel-2 data
 corresponding to the spatio-temporal query.</p>
 <ul>
 <li>
@@ -236,7 +231,8 @@ higher level processing</li>
 <span><span class="va">rast_path</span> <span class="op">&lt;-</span> <span class="va">list_files</span><span class="op">$</span><span class="va">Refl_L2A</span>                <span class="co"># S2 L2A reflectance</span></span>
 <span><span class="va">mask_path</span> <span class="op">&lt;-</span> <span class="va">list_files</span><span class="op">$</span><span class="va">vegetation_mask</span>         <span class="co"># S2 binary mask identifying vegetation, discarding clouds &amp; shadows</span></span></code></pre></div>
 <p>The information resulting from the spatiotemporal query are saved in
-<code>input_dir_rast</code>.</p>
+the directory defined with the variable <code>input_dir_rast</code>. It
+follows this file/folder structure:</p>
 <pre><code>├── collections
     ├── plot_001.rds
 ├── raster_samples
@@ -255,14 +251,13 @@ collection resulting from the spatiotemporal query. Use the R function
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/serialize.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="st">'./01_DATA/amazon/raster_data/sentinel-2/collections/plot_001.rds'</span><span class="op">)</span></span>
 <span></span>
-<span><span class="st">"###Items</span></span>
-<span><span class="st">- features (1 item(s)):</span></span>
-<span><span class="st">  - S2A_MSIL2A_20240823T144731_R139_T19MHT_20240823T215907</span></span>
-<span><span class="st">- assets: </span></span>
-<span><span class="st">AOT, B01, B02, B03, B04, B05, B06, B07, B08, B09, B11, B12, B8A, datastrip-metadata, granule-metadata, inspire-metadata, product-metadata, rendered_preview, safe-manifest, SCL, tilejson, visual, WVP</span></span>
-<span><span class="st">- item's fields: </span></span>
-<span><span class="st">assets, bbox, collection, geometry, id, links, properties, stac_extensions, stac_version, type</span></span>
-<span><span class="st">"</span></span></code></pre></div>
+<span><span class="co"># ###Items</span></span>
+<span><span class="co"># - features (1 item(s)):</span></span>
+<span><span class="co">#   - S2A_MSIL2A_20240823T144731_R139_T19MHT_20240823T215907</span></span>
+<span><span class="co"># - assets: </span></span>
+<span><span class="co"># AOT, B01, B02, B03, B04, B05, B06, B07, B08, B09, B11, B12, B8A, datastrip-metadata, granule-metadata, inspire-metadata, product-metadata, rendered_preview, safe-manifest, SCL, tilejson, visual, WVP</span></span>
+<span><span class="co"># - item's fields: </span></span>
+<span><span class="co"># assets, bbox, collection, geometry, id, links, properties, stac_extensions, stac_version, type</span></span></code></pre></div>
 <ul>
 <li>
 <code>raster_samples</code> includes ─
@@ -284,14 +279,13 @@ for the scene</p>
 Sentinel-2 tile ID</p>
 <p>The animated gif shows the Sentinel-2 acquisition. The pixels masked
 by the binary mask <code>amazon_001_2024-08-23_BIN_v2.tiff</code> are
-greyed. The surface reflectance is rescaled from 0-1 to 0-10000 and the
-data is stored in INT16 to save space (50% space saved compared to
-FLOAT32).</p>
-<ul>
-<li>Red band: Band 04 (0 - 1000).</li>
-<li>Green band: Band 03 (0 - 1000).</li>
-<li>Blue band: Band 02 (0 - 1000).</li>
-</ul>
+greyed. The surface reflectance in sentinel-2 L2A products is rescaled
+from 0-1 to 0-10000 and the data are stored in INT16 to save space. This
+allows 50% space saved compared to FLOAT32.</p>
+<p>The following animation displays the sentinel-2 acquisition along
+with the vegetation mask and with the following color dynamic: - Red
+band: Band 04 (0 - 1000). - Green band: Band 03 (0 - 1000). - Blue band:
+Band 02 (0 - 1000).</p>
 <p>
 <img src="../reference/figures/01_amazon.gif" width="100%" height="100%" class="center"></p>
 <center>

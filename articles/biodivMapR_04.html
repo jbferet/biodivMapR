@@ -52,13 +52,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/biodivMapR_01.html">Get Sentinel-2 data and validation</a>
+      <a href="../articles/biodivMapR_01.html">get Sentinel-2 data</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_02.html">Produce features from original raster</a>
+      <a href="../articles/biodivMapR_02.html">produce features from a raster</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_03.html">Produce diversity maps from a set of features</a>
+      <a href="../articles/biodivMapR_03.html">produce diversity maps from a set of features</a>
     </li>
     <li>
       <a href="../articles/biodivMapR_04.html">Validation</a>
@@ -245,10 +245,13 @@ obtained from previous tutorials.</p>
 <span>                  PCoA_3 <span class="op">=</span> <span class="va">validation</span><span class="op">$</span><span class="va">specdiv</span><span class="op">$</span><span class="va">BetaFull_PCoA_3</span>,</span>
 <span>                  classes <span class="op">=</span> <span class="va">validation</span><span class="op">$</span><span class="va">specdiv</span><span class="op">$</span><span class="va">source</span>, </span>
 <span>                  filename <span class="op">=</span> <span class="va">filename</span><span class="op">)</span></span></code></pre></div>
-<p>The figures below illustrates the consistency in alpha and beta
-diversity metrics produced with biodivMapR over the same site with two
-different inputs (components selected from SPCA and spectral
-indices).</p>
+<p>The figures below illustrates the consistency in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
+diversity metrics produced with <code>biodivMapR</code> over the same
+site with two different inputs (components selected from SPCA and
+spectral indices).</p>
 <p float="left">
 <img src="../reference/figures/04_shannon_pca_vs_si.png" width="30%"><img src="../reference/figures/04_hill_pca_vs_si.png" width="30%"><img src="../reference/figures/04_bc_pca_vs_si.png" width="30%"></p>
 <center>

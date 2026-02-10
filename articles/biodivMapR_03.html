@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Produce diversity maps from a set of features • biodivMapR</title>
+<title>produce diversity maps from a set of features • biodivMapR</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Produce diversity maps from a set of features">
+<script src="../pkgdown.js"></script><meta property="og:title" content="produce diversity maps from a set of features">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -52,13 +52,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/biodivMapR_01.html">Get Sentinel-2 data and validation</a>
+      <a href="../articles/biodivMapR_01.html">get Sentinel-2 data</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_02.html">Produce features from original raster</a>
+      <a href="../articles/biodivMapR_02.html">produce features from a raster</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_03.html">Produce diversity maps from a set of features</a>
+      <a href="../articles/biodivMapR_03.html">produce diversity maps from a set of features</a>
     </li>
     <li>
       <a href="../articles/biodivMapR_04.html">Validation</a>
@@ -89,7 +89,7 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Produce diversity maps from a set of
+      <h1 data-toc-skip>produce diversity maps from a set of
 features</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
@@ -110,15 +110,23 @@ followed compared to <code>biodivMapR v1</code>. A unique function named
 <code>biodivMapR_full</code> runs the full workflow and produces a
 limited set of outputs.</p>
 <div class="section level2">
-<h2 id="produce-diversity-maps-from-spca-file">Produce diversity maps from SPCA file<a class="anchor" aria-label="anchor" href="#produce-diversity-maps-from-spca-file"></a>
+<h2 id="produce-diversity-maps-from-spca-file">produce diversity maps from SPCA file<a class="anchor" aria-label="anchor" href="#produce-diversity-maps-from-spca-file"></a>
 </h2>
 <p>SPCA was previously computed and the relevant spectral features were
-identified based on visual interpretation. This selection of components
-will be used here to produce diversity maps with
-<code>biodivMapR</code>. The SPCA file is a unique raster file stacking
-all components. <code>biodivMapR</code> needs the path for the stacked
-data as well as the list of selected features. The mask previously
-computed is also used.</p>
+identified based on visual interpretation. These selected components are
+used to produce diversity maps with <code>biodivMapR</code>. The SPCA
+file is a unique raster file stacking all components.
+<code>biodivMapR</code> requires - the path for the input raster: it can
+be a unique stacked raster, or a set of individual features. The current
+version does not accept combination of stacked raster and individual
+raster layers as input.</p>
+<ul>
+<li><p>optionally, if <code>biodivMapR</code> is expected to run on a
+selection of features from the input raster, these can be specified with
+the variable <code>selected_bands</code>.</p></li>
+<li><p>here, we also take advantage of the mask previously
+computed.</p></li>
+</ul>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># 1- define biodivMapR output directory </span></span>
@@ -126,8 +134,8 @@ computed is also used.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">output_dir_biodivMapR</span>, showWarnings <span class="op">=</span> <span class="cn">F</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># 2- define parameters for biodivMapR</span></span>
-<span><span class="va">window_size</span> <span class="op">&lt;-</span> <span class="fl">10</span>         <span class="co"># window side size for computation of spectral diversity</span></span>
-<span><span class="va">nb_clusters</span> <span class="op">&lt;-</span> <span class="fl">50</span>          <span class="co"># nb of clusters (spectral species)</span></span>
+<span><span class="va">window_size</span> <span class="op">&lt;-</span> <span class="fl">10</span>     <span class="co"># window side size for computation of spectral diversity</span></span>
+<span><span class="va">nb_clusters</span> <span class="op">&lt;-</span> <span class="fl">50</span>     <span class="co"># nb of clusters (spectral species)</span></span>
 <span></span>
 <span><span class="co"># 3- define path for intermediate variables to be saved</span></span>
 <span><span class="co"># - information related to kmeans clustering defining spectral species</span></span>
@@ -136,7 +144,7 @@ computed is also used.</p>
 <span><span class="va">Beta_info_save</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">output_dir_biodivMapR</span>,<span class="st">'Beta_info.RData'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># 4- adjust parameters for multithread &amp; computational efficiency</span></span>
-<span><span class="va">nbCPU</span> <span class="op">&lt;-</span> <span class="fl">4</span>                <span class="co"># nb of threads for parallel processing</span></span>
+<span><span class="va">nbCPU</span> <span class="op">&lt;-</span> <span class="fl">4</span>            <span class="co"># nb of threads for parallel processing</span></span>
 <span><span class="co"># 5- apply biodivMapR </span></span>
 <span><span class="va">selected_bands</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">6</span><span class="op">)</span></span>
 <span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_options_biodivMapR.html">set_options_biodivMapR</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="st">'biodivMapR_full'</span><span class="op">)</span></span>
@@ -150,7 +158,8 @@ computed is also used.</p>
 <span>                                Kmeans_info_save <span class="op">=</span> <span class="va">Kmeans_info_save</span>,</span>
 <span>                                Beta_info_save <span class="op">=</span> <span class="va">Beta_info_save</span>, </span>
 <span>                                nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span></code></pre></div>
-<p>Here, <code>ab_info_SPCA</code> includes two lists:</p>
+<p><code>ab_info_SPCA</code> produced from the
+<code>biodivMapR_full</code> function includes two lists:</p>
 <ul>
 <li><p><code>Kmeans_info</code>, which gathers all information related
 to the k-means clustering: centroid, min and max values for each
@@ -230,9 +239,12 @@ process the image tile per tile in parallel.</p>
 <img src="../reference/figures/03_beta_si.gif" width="100%" height="100%" class="center"></p>
 
 <center>
-Fig. 2. maps of shannon index and beta-diversity obtained from
-biodivMapR analysis on selected spectral indices from sentinel-2
-acquisition.
+Fig. 2. maps of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>-diversity
+(shannon’ H) and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>-diversity
+obtained from <code>biodivMapR</code> analysis on spectral indices from
+sentinel-2 acquisition.
 </center>
 <p>
  
