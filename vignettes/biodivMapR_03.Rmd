@@ -1,5 +1,5 @@
 ---
-title: "Produce diversity maps from a set of features"
+title: "produce diversity maps from a set of features"
 author: "Jean-Baptiste Féret, Florian de Boissieu"
 date: "`r Sys.Date()`"
 output: 
@@ -28,16 +28,22 @@ Starting from `biodivMapR v2`, a simplified procedure is followed compared to
 A unique function named `biodivMapR_full` runs the full workflow and produces a 
 limited set of outputs.
 
-## Produce diversity maps from SPCA file
+## produce diversity maps from SPCA file
 
 SPCA was previously computed and the relevant spectral features were identified 
 based on visual interpretation. 
-This selection of components will be used here to produce diversity maps with 
-`biodivMapR`. 
+These selected components are used to produce diversity maps with `biodivMapR`. 
 The SPCA file is a unique raster file stacking all components. 
-`biodivMapR` needs the path for the stacked data as well as the list of 
-selected features. 
-The mask previously computed is also used.
+`biodivMapR` requires 
+- the path for the input raster: it can be a unique stacked raster, or a set of 
+individual features.
+The current version does not accept combination of stacked raster and individual 
+raster layers as input. 
+
+- optionally, if `biodivMapR` is expected to run on a selection of features from 
+the input raster, these can be specified with the variable `selected_bands`.
+
+- here, we also take advantage of the mask previously computed.
 
 ```{r run biodivMapR with slected components from SPCA file}
 
@@ -46,8 +52,8 @@ output_dir_biodivMapR <- file.path(output_dir, 'biodivMapR/SPCA')
 dir.create(output_dir_biodivMapR, showWarnings = F, recursive = T)
 
 # 2- define parameters for biodivMapR
-window_size <- 10         # window side size for computation of spectral diversity
-nb_clusters <- 50          # nb of clusters (spectral species)
+window_size <- 10     # window side size for computation of spectral diversity
+nb_clusters <- 50     # nb of clusters (spectral species)
 
 # 3- define path for intermediate variables to be saved
 # - information related to kmeans clustering defining spectral species
@@ -56,7 +62,7 @@ Kmeans_info_save <- file.path(output_dir_biodivMapR,'Kmeans_info.RData')
 Beta_info_save <- file.path(output_dir_biodivMapR,'Beta_info.RData')
 
 # 4- adjust parameters for multithread & computational efficiency
-nbCPU <- 4                # nb of threads for parallel processing
+nbCPU <- 4            # nb of threads for parallel processing
 # 5- apply biodivMapR 
 selected_bands <- c(1, 4, 5, 6)
 options <- set_options_biodivMapR(fun = 'biodivMapR_full')
@@ -72,7 +78,7 @@ ab_info_SPCA <- biodivMapR_full(input_raster_path = PCA_Output$PCA_Files$PCA,
                                 nbCPU = nbCPU, options = options)
 ```
 
-Here, `ab_info_SPCA` includes two lists:
+`ab_info_SPCA` produced from the `biodivMapR_full` function includes two lists:
 
 -   `Kmeans_info`, which gathers all information related to the k-means 
 clustering: centroid, min and max values for each feature
@@ -154,8 +160,8 @@ ab_info_SI <- biodivMapR_full_tiles(feature_dir = output_dir_si,
 </p>
 </p>
 <center>
-  Fig. 2. maps of shannon index and beta-diversity obtained from biodivMapR 
-  analysis on selected spectral indices from sentinel-2 acquisition.
+  Fig. 2. maps of $\alpha$-diversity (shannon' H) and $\beta$-diversity obtained 
+  from `biodivMapR` analysis on spectral indices from sentinel-2 acquisition.
 </center> 
 <p>&nbsp;</p>
 

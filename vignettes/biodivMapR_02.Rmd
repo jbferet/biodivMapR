@@ -1,5 +1,5 @@
 ---
-title: "Produce features from original raster"
+title: "produce features from a raster"
 author: "Jean-Baptiste Féret, Florian de Boissieu"
 date: "`r Sys.Date()`"
 output: 
@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
-## producing features from reflectance data: principle
+## producing spectral features from reflectance data: principle
 
 A pre-processing step is usually required in order to produce relevant features 
 from remote sensing data. 
@@ -58,10 +58,11 @@ Artificial surfaces and mineral surfaces should also be masked as they usually
 strongly contribute to spectral variability and do not inform about biological 
 diversity.
 
-insufficient masking of irrelevant pixels may lead to poor estimation of 
-vegetation diversity: interfaces between vegetation non-vegetated regions (soil, 
-artificial surface, water) will show very high local spectral heterogeneity, 
-possibly leading to high spectral diversity, unrelated to species diversity. 
+__Insufficient masking of irrelevant pixels may lead to poor estimation of vegetation diversity__: 
+interfaces between vegetation non-vegetated regions (soil, artificial surface, 
+water) will show very high local spectral heterogeneity.  
+This will most probably lead to high spectral diversity, unrelated to species 
+diversity. 
 
 ## spectral transformation
 
@@ -97,7 +98,7 @@ It proved to be relatively efficient in decreasing the effect of changes in
 illumination within individual tree crowns, when using high spatial resolution
 imaging spectroscopy over tropical forests.
 
-**Continuum Removal** is recommended when processing high spatial resolution 
+Continuum Removal is recommended when processing high spatial resolution 
 (spatial resolution $\leq$ 10 m) multi and hyperspectral data.
 
 ```{r compute SPCA}
@@ -240,7 +241,7 @@ A total of 84 tiles are defined over the aoi.
 </center> 
 <p>&nbsp;</p>
 
-### computing spectral indices from the gridded S2 acquisition
+#### computing spectral indices from the gridded S2 acquisition
 
 Spectral indices can then be computed for each of the 84 cells of the grid with 
 the function `compute_si_from_grid`.
@@ -279,7 +280,7 @@ output_dir_si <- dirname(output_si[[1]][[1]])
 The spectral indices corresponding to individual tiles are then saved in the 
 `output_dir_si` directory. 
 
-### visualizing spectral indices
+#### visualizing spectral indices
 
 A virtual raster (.vrt) is automatically produced for each spectral index and 
 saved in the directory `./03_RESULTS/amazon/sentinel-2/spectral_indices_vrt`.
@@ -350,17 +351,17 @@ parameterization may lead to suboptimal estimations, with possible saturation.
 
 
 
-## choosing the right spectral features
+## selecting the right spectral features
 
-As describe above, several procedures can be applied in order to produce 
-features which will feed `biodivMapR`.
+As describe above, several procedures can be considered to produce features 
+then used with `biodivMapR`.
 
-The authors of this package currently do not have firm recommendations. 
+**The authors of this package currently do not have firm recommendations**. 
 Users should test, explore and compare resulting spectral diversity metrics to 
 ecological information obtained from ground observations.
 
-We consider spectral indices as a good trade-off when using Sentinel-2 data, 
-given the straightforward computation and the possibility to relate these 
+We consider spectral indices as an acceptable trade-off when using Sentinel-2 
+data, given the straightforward computation and the possibility to relate these 
 spectral indices to specific spectral domains and to vegetation properties, or 
 groups of vegetation properties.
 

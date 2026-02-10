@@ -1,5 +1,5 @@
 ---
-title: "Get Sentinel-2 data and validation"
+title: "get Sentinel-2 data"
 author: "Jean-Baptiste Féret, Florian de Boissieu"
 date: "`r Sys.Date()`"
 output: 
@@ -23,32 +23,41 @@ knitr::opts_chunk$set(
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
-`biodivMapR` aims at producing spectral diversity maps based on raster data.
-While its application is technically not limited to optical imagery, users 
-experimenting with other types of remote sensing data are expected to make sure 
-that the input information used to produce remotely sensed diversity maps are 
-'ecologically relevant' features to describe vegetation biodiversity as expected
+`biodivMapR` produces spectral diversity maps from raster data.
+Its application is technically not limited to optical imagery. 
+Users experimenting with other types of remote sensing data are invited to ensure 
+that the input information provided for remotely sensed diversity mapping are 
+'ecologically relevant' features describing vegetation biodiversity as expected
 in `biodivMapR`.
 
-Raster data are handled with the R package [`terra`](https://rspatial.github.io/terra/reference/terra-package.html).
-Data format should then be compliant with the drivers available with this package.
-Use `gdal(drivers=TRUE)` to see what drivers are available in your installation.
+Raster data are mainly handled with the R package 
+[`terra`](https://rspatial.github.io/terra/reference/terra-package.html).
+Data format should be compliant with the drivers available with this package.
+Use `gdal(drivers=TRUE)` to check which drivers are available in your 
+installation.
 
-Here, we want to use Sentinel-2 imagery to illustrate the main functionalities 
+Here, Sentinel-2 imagery is used to illustrate the main functionalities 
 of `biodivMapR`.
-This first tutorial will guide you through the download of Sentinel-2 data
-with R packages 
+This tutorial will first guide you through the download of Sentinel-2 data with 
+R packages .
 
-### access Sentinel-2 imagery with `preprocS2`
+## access Sentinel-2 imagery with `preprocS2`
 
 [`preprocS2`](https://gitlab.com/jbferet/preprocs2) is a package dedicated to 
-Sentinel-2 data handling, including a wrapper of the 
+Sentinel-2 data handling, which provides access to Spatio Temporal Asset 
+Catalogs ([STAC](https://stacspec.org/en)) via R scripts. 
+It including wrapper functions for the 
 [`rstac`](https://brazil-data-cube.github.io/rstac/) package.
-It aims at downloading and preparing Sentinel-2 images for further processings 
+It allows downloading and preparing Sentinel-2 images for further processings 
 using `biodivMapR`.
 
-`preprocS2` will download Sentinel-2 data from a STAC catalog based on spatial 
-and temporal information.
+The STAC specification is a common language to describe geospatial information.
+STAC resources are available online from various institutional and private 
+providers (such as Copernicus dataspace and Nicrosoft Planetary Computers). 
+STAC catalogs provides access to imagery data via spatio-temporal queries. 
+Hence, the first step is to define an area of interest (aoi), and a period or 
+day of interest. 
+
 The default STAC collection is `sentinel-2-l2a` from the **[`Microsoft Planetary Computer`](https://planetarycomputer.microsoft.com/dataset/sentinel-2-l2a)** 
 catalog.
 
@@ -59,20 +68,11 @@ Access to geometry of acquisition is provided by the package
 
 Please follow instructions for proper installation of the package, and provide 
 authentication for CDSE if you want to get geometry of acquisition by activating 
-OAuth clients following [`this link`](https://shapps.dataspace.copernicus.eu/dashboard/#/account/settings).
+OAuth clients following 
+[`this link`](https://shapps.dataspace.copernicus.eu/dashboard/#/account/settings).
 
 
-## perform spatio-temporal query to access Sentinel-2 imagery
-
-`preprocS2` can access Spatio Temporal Asset Catalogs ([STAC](https://stacspec.org/en)). 
-The STAC specification is a common language to describe geospatial information.
-STAC resources are available online from various institutional and private 
-providers (such as Copernicus dataspace and Nicrosoft Planetary Computers). 
-STAC catalogs allow performing spatio-temporal query. 
-Hence, the first step is to define an area of interest (aoi), and a period or 
-day of interest. 
-
-### define an area of interest (aoi)
+### spatial extent: define an area of interest (aoi)
 
 First, load required packages and prepare input and output directories.
 
@@ -97,9 +97,9 @@ dir.create(path = input_dir_vect, showWarnings = F, recursive = T)
 
 The spatial extent of the area of interest (aoi) needs to be defined as a vector 
 file. 
-Such aoi can be defined with `QGIS`, `Google Earth`, or you rfavorite tool. 
+Such aoi can be defined with `QGIS`, `Google Earth`, or your favorite tool. 
 
-Here we will define an aoi located in amazon forest is defined. 
+Here an aoi located in Brazilian Amazon forest is defined. 
 The site is located next to **Guedes, Japurá - State of Amazonas, Brazil**. 
 
 
@@ -114,24 +114,23 @@ sf::st_write(obj = bbox_to_poly(x = bbox), dsn = aoi_path,
 ```
 
 
-### define a date of acquisition
+### time range: define a date of acquisition
 
 A Sentinel-2 acquisition with minimal cloud cover needs to be identified. 
-The [Copernicus Browser](https://browser.dataspace.copernicus.eu/?zoom=9&lat=-2.22284&lng=-65.91522&themeId=DEFAULT-THEME&visualizationUrl=U2FsdGVkX19GH3b3Siq5FfHluLof8XtUblFGafppf9MVedVDtBKRkPmdW%2Bv3%2BAnb4ANBBziNJjGk6d1M%2BfZ%2BBGmq6s%2BjJ03ZEeZzHnbMe9dk%2BURYuxtDRoIpHsndMPAW&datasetId=S2_L2A_CDAS&fromTime=2025-09-10T00%3A00%3A00.000Z&toTime=2025-09-10T23%3A59%3A59.999Z&layerId=1_TRUE_COLOR&demSource3D=%22MAPZEN%22&cloudCoverage=30&dateMode=SINGLE)
-is a useful tool to explore the availability of Sentinel-2 acquisitions, using 
-filters such as the maximum cloud cover. 
+The [Copernicus Browser](https://browser.dataspace.copernicus.eu) is a useful 
+service to explore the availability of Sentinel-2 acquisitions. 
+In addition to spatio-temporal filters, it includes filters such as the maximum 
+cloud cover.
 
-Here, we focus on the aoi, and filter out cloudy images to keep only Max. cloud 
-coverage < 5%, for August 2024. 
-We identify an acquisition from 23 August 2024 which shows good conditions of 
-acquisition. 
+Images with a maximum cloud cover  < 5%, are identified for August 2024. 
+An acquisition from 23 August 2024 shows good conditions of acquisition. 
 
 ### download Sentinel-2 acquisition from online STAC resource
 
 `preprocS2` allows downloading from multiple providers. 
 Microsoft Planetary computer is currently the default option. 
 
-The function `get_s2_raster` downloads Setinel-2 data corresponding to the
+The function `get_s2_raster` downloads Sentinel-2 data corresponding to the
 spatio-temporal query. 
 
 - `aoi_path`: path for vector layer. Must include a **unique polygon** 
@@ -159,7 +158,9 @@ rast_path <- list_files$Refl_L2A                # S2 L2A reflectance
 mask_path <- list_files$vegetation_mask         # S2 binary mask identifying vegetation, discarding clouds & shadows
 ```
 
-The information resulting from the spatiotemporal query are saved in `input_dir_rast`. 
+The information resulting from the spatiotemporal query are saved in the 
+directory defined with the variable `input_dir_rast`. 
+It follows this file/folder structure: 
 
 ```
 ├── collections
@@ -173,22 +174,21 @@ The information resulting from the spatiotemporal query are saved in `input_dir_
 └── s2_footprint_amazon.gpkg
 ```
 
-- `collections/plot_001.rds` corresponds to the item collection resulting from the 
-spatiotemporal query. Use the R function `readRDS` to access the content of the file.
+- `collections/plot_001.rds` corresponds to the item collection resulting from 
+the spatiotemporal query. 
+Use the R function `readRDS` to access the content of the file.
 
 
 ```{r read collection}
 readRDS('./01_DATA/amazon/raster_data/sentinel-2/collections/plot_001.rds')
 
-"###Items
-- features (1 item(s)):
-  - S2A_MSIL2A_20240823T144731_R139_T19MHT_20240823T215907
-- assets: 
-AOT, B01, B02, B03, B04, B05, B06, B07, B08, B09, B11, B12, B8A, datastrip-metadata, granule-metadata, inspire-metadata, product-metadata, rendered_preview, safe-manifest, SCL, tilejson, visual, WVP
-- item's fields: 
-assets, bbox, collection, geometry, id, links, properties, stac_extensions, stac_version, type
-"
-
+# ###Items
+# - features (1 item(s)):
+#   - S2A_MSIL2A_20240823T144731_R139_T19MHT_20240823T215907
+# - assets: 
+# AOT, B01, B02, B03, B04, B05, B06, B07, B08, B09, B11, B12, B8A, datastrip-metadata, granule-metadata, inspire-metadata, product-metadata, rendered_preview, safe-manifest, SCL, tilejson, visual, WVP
+# - item's fields: 
+# assets, bbox, collection, geometry, id, links, properties, stac_extensions, stac_version, type
 ```
 
 - `raster_samples` includes 
@@ -199,7 +199,8 @@ assets, bbox, collection, geometry, id, links, properties, stac_extensions, stac
   radiometric criteria, including NDVI mask to remove non vegetated pixels, 
   Blue mask to remove hazy/cloudy pixels, and NIR mask to remove shaded pixels.
   You can adjust threshold for cloudMask (B02), shadeMask (B08), and NDVIMask.
-  ─ `amazon_001_2024-08-23_SCL.tiff`: scene classification provided by sen2cor atmospheric correction
+  ─ `amazon_001_2024-08-23_SCL.tiff`: scene classification provided by sen2cor 
+  atmospheric correction
   
 ─ `s2_tiles_amazon.rds` contains the Sentinel-2 tile ID for the scene
 
@@ -208,9 +209,12 @@ assets, bbox, collection, geometry, id, links, properties, stac_extensions, stac
 The animated gif shows the Sentinel-2 acquisition. 
 The pixels masked by the binary mask `amazon_001_2024-08-23_BIN_v2.tiff` are 
 greyed.
-The surface reflectance is rescaled from 0-1 to 0-10000 and the data is stored 
-in INT16 to save space (50% space saved compared to FLOAT32).
+The surface reflectance in sentinel-2 L2A products is rescaled from 0-1 to 
+0-10000 and the data are stored in INT16 to save space. This allows 50% space 
+saved compared to FLOAT32.
 
+The following animation displays the sentinel-2 acquisition along with the 
+vegetation mask and with the following color dynamic: 
 - Red band: Band 04 (0 - 1000).
 - Green band: Band 03 (0 - 1000).
 - Blue band: Band 02 (0 - 1000).

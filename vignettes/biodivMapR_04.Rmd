@@ -126,8 +126,10 @@ diversity_si <- get_diversity_from_plots(input_rast = input_rast_si,
 
 ### Validation `biodivMapR` using spectral indices
 
-The validation can also be performed using the `biodivMapR` spectral diversity models adjusted on spectral indices.
-The following code illustrates how to proceed, based on results obtained from previous tutorials.
+The validation can also be performed using the `biodivMapR` spectral diversity 
+models adjusted on spectral indices.
+The following code illustrates how to proceed, based on results obtained from 
+previous tutorials.
 
 ```{r spectral diversity indices from vector layer and spectral indices}
 library(ggplot2)
@@ -173,8 +175,8 @@ scatter_alphabeta(alpha = validation$specdiv$shannon_mean,
 ```
 
 
-The figures below illustrates the consistency in alpha and beta diversity 
-metrics produced with biodivMapR over the same site with two different inputs 
+The figures below illustrates the consistency in $\alpha$ and $\beta$ diversity 
+metrics produced with `biodivMapR` over the same site with two different inputs 
 (components selected from SPCA and spectral indices). 
 
 
