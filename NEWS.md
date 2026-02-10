@@ -1,3 +1,7 @@
+# biodivMapR2 v2.5.0
+## change
+- fully update documentation
+
 # biodivMapR2 v2.4.5
 ## change
 - biodivMapR_full_classif: add possibility to set compute_beta = TRUE or FALSE 

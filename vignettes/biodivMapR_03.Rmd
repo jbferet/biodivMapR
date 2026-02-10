@@ -20,19 +20,30 @@ knitr::opts_chunk$set(
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
-Once spectral features are computed from optical data, they can be used as input variables in `biodivMapR`.
+Once spectral features are computed from optical data, they can be used as 
+input variables in `biodivMapR`.
 
-`biodivMapR v2` provides a simplified procedure compared to `biodivMapR v1`. A unique function named `biodivMapR_full` runs the full workflow and produces a limited set of outputs.
+Starting from `biodivMapR v2`, a simplified procedure is followed compared to 
+`biodivMapR v1`. 
+A unique function named `biodivMapR_full` runs the full workflow and produces a 
+limited set of outputs.
 
 ## Produce diversity maps from SPCA file
 
-SPCA was previously computed and the relevant spectral features were identified based on visual interpretation. This selection of components will be used here to produce diversity maps with `biodivMapR.` The SPCA file is a unique raster file stacking all components. `biodivMapR` needs the path for the stacked data as well as the list of selected features. The mask previously computed is also used.
+SPCA was previously computed and the relevant spectral features were identified 
+based on visual interpretation. 
+This selection of components will be used here to produce diversity maps with 
+`biodivMapR`. 
+The SPCA file is a unique raster file stacking all components. 
+`biodivMapR` needs the path for the stacked data as well as the list of 
+selected features. 
+The mask previously computed is also used.
 
 ```{r run biodivMapR with slected components from SPCA file}
 
 # 1- define biodivMapR output directory 
-output_dir_PCA2 <- file.path('./biodivMapR/SPCA')
-dir.create(output_dir_PCA2, showWarnings = F, recursive = T)
+output_dir_biodivMapR <- file.path(output_dir, 'biodivMapR/SPCA')
+dir.create(output_dir_biodivMapR, showWarnings = F, recursive = T)
 
 # 2- define parameters for biodivMapR
 window_size <- 10         # window side size for computation of spectral diversity
@@ -40,92 +51,115 @@ nb_clusters <- 50          # nb of clusters (spectral species)
 
 # 3- define path for intermediate variables to be saved
 # - information related to kmeans clustering defining spectral species
-Kmeans_info_save <- file.path(output_dir_PCA2,'Kmeans_info.RData')
+Kmeans_info_save <- file.path(output_dir_biodivMapR,'Kmeans_info.RData')
 # - information related to beta diversity mapping (BC dissimilarity + PCoA)
-Beta_info_save <- file.path(output_dir_PCA2,'Beta_info.RData')
+Beta_info_save <- file.path(output_dir_biodivMapR,'Beta_info.RData')
 
 # 4- adjust parameters for multithread & computational efficiency
-maxRows <- 1000           # nb of lines processed at once (adjust based on RAM available)
 nbCPU <- 4                # nb of threads for parallel processing
-
 # 5- apply biodivMapR 
-selected_bands <- c(1,5,6)
+selected_bands <- c(1, 4, 5, 6)
 options <- set_options_biodivMapR(fun = 'biodivMapR_full')
 options$nb_clusters <- nb_clusters
-options$maxRows <- maxRows
-biodivMapR_full <- function(input_raster_path, input_mask_path = NULL,
-                            output_dir, window_size,
-                            selected_bands = NULL, Kmeans_info_save = NULL,
-                            Kmeans_info_read = NULL,  Beta_info_save = NULL,
-                            Beta_info_read = NULL,  nbCPU = 1, options = NULL){
-
-
+options$maxRows <- 1000
 ab_info_SPCA <- biodivMapR_full(input_raster_path = PCA_Output$PCA_Files$PCA, 
                                 input_mask_path = mask_path_PCA,
-                                output_dir = output_dir_PCA2, 
+                                output_dir = output_dir_biodivMapR, 
                                 selected_bands = selected_bands, 
                                 window_size = window_size, 
                                 Kmeans_info_save = Kmeans_info_save,
                                 Beta_info_save = Beta_info_save, 
-                                nbCPU = nbCPU)
+                                nbCPU = nbCPU, options = options)
 ```
 
 Here, `ab_info_SPCA` includes two lists:
 
--   `Kmeans_info`, which gathers all information related to the k-means clustering: centroid, min and max values for each feature
+-   `Kmeans_info`, which gathers all information related to the k-means 
+clustering: centroid, min and max values for each feature
 
--   `Beta_info`, which gathers all information related to the computation of the beta diversity
+-   `Beta_info`, which gathers all information related to the computation of the 
+beta diversity
 
-These lists are saved as `Rdata` files corresponding to the files defined by `Kmeans_info_save` and `Beta_info_save`. These files can then be used for an independent process with `biodivMapR_full`. The path for these files can then be provided for input variables `Kmeans_info_read`, `Beta_info_read`.
+These lists are saved as `Rdata` files corresponding to the files defined by 
+`Kmeans_info_save` and `Beta_info_save`. 
+These files can then be used for an independent process with `biodivMapR_full`. 
+The path for these files can then be provided for input variables 
+`Kmeans_info_read` and `Beta_info_read`.
 
-`biodivMapR` will not recompute this information, if user provides a valid path for `Kmeans_info` and `Beta_info`. This option is interesting when adjusting `Kmeans_info` and `Beta_info` for a region including multiple tiles, and processing each tile independently.
+`biodivMapR` will not recompute this information, if user provides a valid path 
+for `Kmeans_info` and `Beta_info`. 
+This option is interesting when adjusting `Kmeans_info` and `Beta_info` for a 
+region including multiple tiles, and processing each tile independently.
 
-$\alpha$ and $\beta$ diversity maps produced from the analysis of selected PCs are displayed below.
+$\alpha$ and $\beta$ diversity maps produced from the analysis of selected PCs 
+are displayed below.
 
-|  |  |
-|------------------------------------|------------------------------------|
-| ![](../man/figures/alphaPCA.png) | ![](../man/figures/betaPCA.png) |
+
+<p>
+<img src="../man/figures/03_shannon.gif" width="100%" height="100%" class="center">
+</p>
+<p>
+<img src="../man/figures/03_beta.gif" width="100%" height="100%" class="center">
+</p>
+<center>
+  Fig. 1. maps of shannon index and beta-diversity obtained from biodivMapR 
+  analysis on selected components computed from sentinel-2 acquisition.
+</center> 
+<p>&nbsp;</p>
+
 
 ## Produce diversity maps from spectral indices with `biodivMapR`
 
-Spectral indices computed previously will be used here to produce diversity maps with `biodivMapR`. Each spectral index was saved as an individual raster file. `biodivMapR` needs a list of paths for input features and corresponding names. The mask previously computed based on interquartile ranges of spectral indices is also used.
+Spectral indices computed previously will be used here to produce diversity maps 
+with `biodivMapR`. 
+Each spectral index was saved following a tiling system, and a vrt was produced. 
+`biodivMapR` can use the path for the vrt as `input_raster_path` for 
+`biodivMapR_full`. 
+Alternatively, it can take advantage of the tiling system in order to process 
+the image tile per tile in parallel. 
 
 ```{r run biodivMapR with spectral indices}
 
 # 1- define biodivMapR output directory 
-output_dir_SI2 <- file.path('./biodivMapR/SpectralIndices')
-dir.create(output_dir_SI2, showWarnings = F, recursive = T)
-
-# 2- define parameters for biodivMapR
-window_size <- 10         # window side size for computation of spectral diversity
-nb_clusters <- 50          # nb of clusters (spectral species)
+output_dir_biodivMapR_si <- file.path(output_dir, 'biodivMapR/spectral_indices')
+output_dir_mask <- file.path(output_dir, 'biodivMapR/spectral_indices_mask')
+dir.create(output_dir_biodivMapR_si, showWarnings = F, recursive = T)
+dir.create(output_dir_mask, showWarnings = F, recursive = T)
 
 # 3- define path for intermediate variables to be saved
 # - information related to kmeans clustering defining spectral species
-Kmeans_info_save <- file.path(output_dir_SI2,'Kmeans_info.RData')
+Kmeans_info_save <- file.path(output_dir_biodivMapR_si,'Kmeans_info.RData')
 # - information related to beta diversity mapping (BC dissimilarity + PCoA)
-Beta_info_save <- file.path(output_dir_SI2,'Beta_info.RData')
-
-# 4- adjust parameters for multithread & computational efficiency
-maxRows <- 1000           # nb of lines processed at once (adjust based on RAM available)
-nbCPU <- 4                # nb of threads for parallel processing
+Beta_info_save <- file.path(output_dir_biodivMapR_si,'Beta_info.RData')
 
 # 4- apply biodivMapR 
-options <- set_options_biodivMapR(fun = 'biodivMapR_full')
+options <- set_options_biodivMapR(fun = 'biodivMapR_full_tiles')
 options$nb_clusters <- nb_clusters
-options$maxRows <- maxRows
-ab_info_SI <- biodivMapR_full(input_raster_path = SI_path, 
-                              input_mask_path = mask_path_SI,
-                              output_dir = output_dir_SI2, 
-                              window_size = window_size,
-                              Kmeans_info_save = Kmeans_info_save,
-                              Beta_info_save = Beta_info_save, 
-                              nbCPU = nbCPU, options = options)
+options$alpha_metrics <- c('richness', 'shannon', 'hill')
+
+ab_info_SI <- biodivMapR_full_tiles(feature_dir = output_dir_si, 
+                                    list_features = si_list, 
+                                    output_dir = output_dir_biodivMapR_si, 
+                                    mask_dir = output_dir_mask, 
+                                    window_size = window_size, 
+                                    plots = plots, nbCPU = nbCPU, 
+                                    site_name = site_name, options = options)
 ```
 
-|  |  |
-|------------------------------------|------------------------------------|
-| ![](../man/figures/alphaSI.png) | ![](../man/figures/betaSI.png) |
+<p>
+<img src="../man/figures/03_shannon_si.gif" width="100%" height="100%" class="center">
+</p>
+<p>
+<img src="../man/figures/03_beta_si.gif" width="100%" height="100%" class="center">
+</p>
+</p>
+<center>
+  Fig. 2. maps of shannon index and beta-diversity obtained from biodivMapR 
+  analysis on selected spectral indices from sentinel-2 acquisition.
+</center> 
+<p>&nbsp;</p>
+
+
 
 <br/><br/>
 

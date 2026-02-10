@@ -23,104 +23,205 @@ knitr::opts_chunk$set(
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
-`biodivMapR` aims at producing spectral diversity maps based on multidimensional raster data.
-While its application is technically not limited to optical imagery, users experimenting with other types of remote sensing data are expected to make sure that the input information used to produce remotely sensed diversity maps are actually relevant to describe vegetation biodiversity as intended in `biodivMapR`.
+`biodivMapR` aims at producing spectral diversity maps based on raster data.
+While its application is technically not limited to optical imagery, users 
+experimenting with other types of remote sensing data are expected to make sure 
+that the input information used to produce remotely sensed diversity maps are 
+'ecologically relevant' features to describe vegetation biodiversity as expected
+in `biodivMapR`.
 
-## Data requirements
-
-`biodivMapR` requires raster data as input.
 Raster data are handled with the R package [`terra`](https://rspatial.github.io/terra/reference/terra-package.html).
 Data format should then be compliant with the drivers available with this package.
+Use `gdal(drivers=TRUE)` to see what drivers are available in your installation.
 
-If using multispectral/hyperspectral optical data, **the central wavelength should be properly identified for each spectral band provided**.
-Central wavelength is required for the computation of spectral indices or the application of continuum removal.
+Here, we want to use Sentinel-2 imagery to illustrate the main functionalities 
+of `biodivMapR`.
+This first tutorial will guide you through the download of Sentinel-2 data
+with R packages 
 
-## Download Sentinel-2 image sample
+### access Sentinel-2 imagery with `preprocS2`
 
-The S2 subset used for this tutorial corresponds to a forested area in Cameroon.
-We previously identified a S2 acquisition with minimum cloud cover.
-Visualization can be done with the [Copenicus Browser](https://browser.dataspace.copernicus.eu/)
+[`preprocS2`](https://gitlab.com/jbferet/preprocs2) is a package dedicated to 
+Sentinel-2 data handling, including a wrapper of the 
+[`rstac`](https://brazil-data-cube.github.io/rstac/) package.
+It aims at downloading and preparing Sentinel-2 images for further processings 
+using `biodivMapR`.
 
-Once a correct acquisition identified, Sentinel-2 imagery is obtained with the R package [`preprocS2`](https://jbferet.gitlab.io/preprocs2/).
+`preprocS2` will download Sentinel-2 data from a STAC catalog based on spatial 
+and temporal information.
+The default STAC collection is `sentinel-2-l2a` from the **[`Microsoft Planetary Computer`](https://planetarycomputer.microsoft.com/dataset/sentinel-2-l2a)** 
+catalog.
 
-The chunk of code below downloads Sentinel-2 products corresponding to a bounding box from the STAC catalog provided by Microsoft Planetary Computer.
+Optionally, `preprocS2` can download the geometry of acquisition (sun & view 
+angles) corresponding to the Sentinel-2 acquisition.
+Access to geometry of acquisition is provided by the package 
+[`CDSE`](https://zivankaraman.github.io/CDSE/).
 
--   `Refl_L2A` is the L-2A reflectance for the bounding box
--   `provider_mask` is the corresponding SCL (scene classification layer)
--   `Binary_mask` is a binary vegetation mask extracted from the SCL
--   `vegetation_mask` is an updated binary vegetation mask after application of NDVI and radiometric thresholds to remove non-vegetated, shaded and hazy pixels (very basic filtering)
-
-Additionally, The rasters corresponding to the geometry of acquisition can be downloaded from the [CDSE](https://dataspace.copernicus.eu/analyse/apis), if valid authentication is provided and `geomAcq = T`.
-
-Authentication for CDSE should be obtained by activating an OAuth clients ID, following [`this link`](https://shapps.dataspace.copernicus.eu/dashboard/#/account/settings). 
-Please make sure you copy the password related to your OAuth clients ID as you will 
-not be able to access it once you close the page. 
+Please follow instructions for proper installation of the package, and provide 
+authentication for CDSE if you want to get geometry of acquisition by activating 
+OAuth clients following [`this link`](https://shapps.dataspace.copernicus.eu/dashboard/#/account/settings).
 
 
-```{r download S2 sample}
-# load useful libraries 
-library(preprocS2)
+## perform spatio-temporal query to access Sentinel-2 imagery
+
+`preprocS2` can access Spatio Temporal Asset Catalogs ([STAC](https://stacspec.org/en)). 
+The STAC specification is a common language to describe geospatial information.
+STAC resources are available online from various institutional and private 
+providers (such as Copernicus dataspace and Nicrosoft Planetary Computers). 
+STAC catalogs allow performing spatio-temporal query. 
+Hence, the first step is to define an area of interest (aoi), and a period or 
+day of interest. 
+
+### define an area of interest (aoi)
+
+First, load required packages and prepare input and output directories.
+
+
+```{r prepare download s2}
+# clean workspace
+rm(list = ls(all=TRUE)); gc()
+if (rstudioapi::isAvailable()) 
+  setwd(dirname(rstudioapi::getSourceEditorContext()$path))
+library(preprocS2)  # install instructions: https://github.com/jbferet/preprocS2
+library(biodivMapR) # install instructions: https://github.com/jbferet/biodivMapR
+library(spinR)      # install instructions: https://github.com/jbferet/spinR
+library(terra)
 library(sf)
-
-################################################################################
-# 1- define input & output directories
-output_dir_s2 <- './S2_image'
-datetime <- '2018-12-25'
-site_name <- 'S2_subset_Cameroon'
-
-bbox <- sf::st_bbox(obj = c('xmin' = 357001, 'ymin' = 341701, 
-                            'xmax' = 366730, 'ymax' = 351236))
-sf::st_crs(x = bbox) <- 32633
-
-# 2- get S2 acquisition for study area
-options <- set_options_preprocS2(fun = 'get_s2_raster')
-options$geom_acq <- TRUE
-options$overwrite <- FALSE
-list_files <- preprocS2::get_s2_raster(bbox = bbox, geomAcq = T,
-                                       datetime = datetime, 
-                                       output_dir = output_dir_s2, 
-                                       site_name = site_name, 
-                                       options = options)
-# Sentinel-2 L2A reflectance
-Refl_L2A <- list_files$Refl_L2A
-# Sentinel-2 binary mask identifying vegetation, discarding clouds & shadows
-vegetation_mask <- list_files$vegetation_mask
-# Sentinel-2 mask from provider ( = SCL from ESA products)
-SCL <- list_files$provider_mask
-# Sentinel-2 geometry of acquisition (if requested from CDSE)
-geometryAcquisition <- list_files$geometryAcquisition
+# 1.1- define input & output directories
+input_dir_vect <- './01_DATA/amazon/vector_data'
+input_dir_rast <- './01_DATA/amazon/raster_data/sentinel-2'
+dir.create(path = input_dir_rast, showWarnings = F, recursive = T)
+dir.create(path = input_dir_vect, showWarnings = F, recursive = T)
 ```
+
+
+The spatial extent of the area of interest (aoi) needs to be defined as a vector 
+file. 
+Such aoi can be defined with `QGIS`, `Google Earth`, or you rfavorite tool. 
+
+Here we will define an aoi located in amazon forest is defined. 
+The site is located next to **Guedes, Japurá - State of Amazonas, Brazil**. 
+
+
+```{r, eval=FALSE}
+# 1.2- define area of interest
+bbox <- sf::st_bbox(obj = c('xmin' = -66.23, 'ymin' = -2.11, 
+                            'xmax' = -65.76, 'ymax' = -1.91))
+sf::st_crs(x = bbox) <- 4326
+aoi_path <- file.path(input_dir_vect, 'amazon.gpkg')
+sf::st_write(obj = bbox_to_poly(x = bbox), dsn = aoi_path, 
+             driver = 'GPKG', delete_layer = TRUE)
+```
+
+
+### define a date of acquisition
+
+A Sentinel-2 acquisition with minimal cloud cover needs to be identified. 
+The [Copernicus Browser](https://browser.dataspace.copernicus.eu/?zoom=9&lat=-2.22284&lng=-65.91522&themeId=DEFAULT-THEME&visualizationUrl=U2FsdGVkX19GH3b3Siq5FfHluLof8XtUblFGafppf9MVedVDtBKRkPmdW%2Bv3%2BAnb4ANBBziNJjGk6d1M%2BfZ%2BBGmq6s%2BjJ03ZEeZzHnbMe9dk%2BURYuxtDRoIpHsndMPAW&datasetId=S2_L2A_CDAS&fromTime=2025-09-10T00%3A00%3A00.000Z&toTime=2025-09-10T23%3A59%3A59.999Z&layerId=1_TRUE_COLOR&demSource3D=%22MAPZEN%22&cloudCoverage=30&dateMode=SINGLE)
+is a useful tool to explore the availability of Sentinel-2 acquisitions, using 
+filters such as the maximum cloud cover. 
+
+Here, we focus on the aoi, and filter out cloudy images to keep only Max. cloud 
+coverage < 5%, for August 2024. 
+We identify an acquisition from 23 August 2024 which shows good conditions of 
+acquisition. 
+
+### download Sentinel-2 acquisition from online STAC resource
+
+`preprocS2` allows downloading from multiple providers. 
+Microsoft Planetary computer is currently the default option. 
+
+The function `get_s2_raster` downloads Setinel-2 data corresponding to the
+spatio-temporal query. 
+
+- `aoi_path`: path for vector layer. Must include a **unique polygon** 
+- `datetime`: date of acquisition, provided as a _Date_ object.
+- `stac_info`: list including provider identifier (default = `mpc`)
+- `output_dir`: output directory where to store data
+- `site_name`: this will allow identifying rasters later
+- `options`: options including maximum cloud cover and higher level processing
+
+```{r, eval=FALSE}
+# 1.4- download  S2 acquisition
+datetime <- as.Date('2024-08-23')
+stac_info <- list('provider' = 'mpc')
+site_name = 'amazon'
+options <- set_options_preprocS2(fun = 'get_s2_raster')
+options$overwrite <- FALSE
+list_files <- get_s2_raster(aoi_path = aoi_path, 
+                            datetime = datetime, 
+                            stac_info = stac_info, 
+                            output_dir = input_dir_rast, 
+                            site_name = site_name, 
+                            options = options)
+
+rast_path <- list_files$Refl_L2A                # S2 L2A reflectance
+mask_path <- list_files$vegetation_mask         # S2 binary mask identifying vegetation, discarding clouds & shadows
+```
+
+The information resulting from the spatiotemporal query are saved in `input_dir_rast`. 
+
+```
+├── collections
+    ├── plot_001.rds
+├── raster_samples
+    ├── amazon_001_2024-08-23.tiff
+    ├── amazon_001_2024-08-23_BIN.tiff
+    ├── amazon_001_2024-08-23_BIN_v2.tiff
+    └── amazon_001_2024-08-23_SCL.tiff
+├── s2_tiles_amazon.rds
+└── s2_footprint_amazon.gpkg
+```
+
+- `collections/plot_001.rds` corresponds to the item collection resulting from the 
+spatiotemporal query. Use the R function `readRDS` to access the content of the file.
+
+
+```{r read collection}
+readRDS('./01_DATA/amazon/raster_data/sentinel-2/collections/plot_001.rds')
+
+"###Items
+- features (1 item(s)):
+  - S2A_MSIL2A_20240823T144731_R139_T19MHT_20240823T215907
+- assets: 
+AOT, B01, B02, B03, B04, B05, B06, B07, B08, B09, B11, B12, B8A, datastrip-metadata, granule-metadata, inspire-metadata, product-metadata, rendered_preview, safe-manifest, SCL, tilejson, visual, WVP
+- item's fields: 
+assets, bbox, collection, geometry, id, links, properties, stac_extensions, stac_version, type
+"
+
+```
+
+- `raster_samples` includes 
+  ─ `amazon_001_2024-08-23.tiff`: L2A (surface reflectance) Sentinel-2 data
+  ─ `amazon_001_2024-08-23_BIN.tiff`: binary mask derived from 
+  `amazon_001_2024-08-23_SCL.tiff` and focusing on vegetation class.  
+  ─ `amazon_001_2024-08-23_BIN_v2.tiff`: binary mask produced from alternative 
+  radiometric criteria, including NDVI mask to remove non vegetated pixels, 
+  Blue mask to remove hazy/cloudy pixels, and NIR mask to remove shaded pixels.
+  You can adjust threshold for cloudMask (B02), shadeMask (B08), and NDVIMask.
+  ─ `amazon_001_2024-08-23_SCL.tiff`: scene classification provided by sen2cor atmospheric correction
+  
+─ `s2_tiles_amazon.rds` contains the Sentinel-2 tile ID for the scene
+
+─ `s2_footprint_amazon.gpkg` contains the footprint of the Sentinel-2 tile ID
+
+The animated gif shows the Sentinel-2 acquisition. 
+The pixels masked by the binary mask `amazon_001_2024-08-23_BIN_v2.tiff` are 
+greyed.
+The surface reflectance is rescaled from 0-1 to 0-10000 and the data is stored 
+in INT16 to save space (50% space saved compared to FLOAT32).
+
+- Red band: Band 04 (0 - 1000).
+- Green band: Band 03 (0 - 1000).
+- Blue band: Band 02 (0 - 1000).
 
 <p>
-
-<img src="../man/figures/SiteRGB.png" width="100%" height="100%" class="center">
-
+<img src="../man/figures/01_amazon.gif" width="100%" height="100%" class="center">
 </p>
+<center>
+  Fig. 1. sentinel-2 acquisition of Brazilian Amazon forest downloaded with 
+  `preprocS2`
+</center> 
+<p>&nbsp;</p>
 
-Once the image is downloaded, it can be processed with `biodivMapR`.
-
-### Download vector files used for 'validation'
-
-A set of vector files is downloaded here, corresponding to circular plots identified in the raster.
-It will be used in the final step of the tutorial ([**Validation with ground information**](https://jbferet.github.io/biodivMapR/articles/biodivMapR_04.html){target="_blank"}.).
-
-The following code allows downloading the zip file containing the vector data, and unzipping it in the same directory as the one including the raster data.
-
-```{r download vector data}
-library(zip)
-# name zip file including plots located on the tile
-output_dir_val <- file.path(output_dir_s2, 'GroundData')
-dir.create(path = output_dir_val, showWarnings = F, recursive = T)
-destzip <- file.path(output_dir_val,'S2A_T33NUD_Plots.zip')
-# url for the zip file
-url <- 'https://gitlab.com/jbferet/myshareddata/-/raw/master/biodivMapR_S2_Sample/VECTOR/S2A_T33NUD_Plots.zip'
-download.file(url = url, destfile = destzip)
-destunz <- file.path(output_dir_s2,'S2A_T33NUD_Plots')
-unzip(zipfile = destzip, exdir = destunz)
-unlink(x = destzip, recursive = T)
-
-```
-
-<br/><br/>
-
-Now that the necessary data is downloaded, we can start the [tutorial](https://jbferet.github.io/biodivMapR/articles/biodivMapR_02.html){target="_blank"}.
+[Next step here](https://jbferet.github.io/biodivMapR/articles/biodivMapR_02.html){target="_blank"}.
