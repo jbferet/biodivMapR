@@ -1,7 +1,6 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>/404.html</loc></url>
 <url><loc>/LICENSE-text.html</loc></url>
-<url><loc>/TODO.html</loc></url>
 <url><loc>/articles/biodivMapR.html</loc></url>
 <url><loc>/articles/biodivMapR_01.html</loc></url>
 <url><loc>/articles/biodivMapR_02.html</loc></url>
@@ -70,6 +69,7 @@
 <url><loc>/reference/get_raster_diversity_mw.html</loc></url>
 <url><loc>/reference/get_raster_diversity_tile.html</loc></url>
 <url><loc>/reference/get_raster_extent.html</loc></url>
+<url><loc>/reference/get_samples_from_plots.html</loc></url>
 <url><loc>/reference/get_samples_from_tiles.html</loc></url>
 <url><loc>/reference/get_si_tiles_from_raster.html</loc></url>
 <url><loc>/reference/get_spectralSpecies.html</loc></url>

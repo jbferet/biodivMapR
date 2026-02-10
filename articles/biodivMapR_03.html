@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.5.0</span>
       </span>
     </div>
 
@@ -61,7 +61,7 @@
       <a href="../articles/biodivMapR_03.html">Produce diversity maps from a set of features</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_04.html">Validation with ground information</a>
+      <a href="../articles/biodivMapR_04.html">Validation</a>
     </li>
   </ul>
 </li>
@@ -94,7 +94,7 @@ features</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2026-01-26</h4>
+            <h4 data-toc-skip class="date">2026-02-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR_03.Rmd" class="external-link"><code>vignettes/biodivMapR_03.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_03.Rmd</code></div>
@@ -105,8 +105,8 @@ Féret, Florian de Boissieu</h4>
     
 <p>Once spectral features are computed from optical data, they can be
 used as input variables in <code>biodivMapR</code>.</p>
-<p><code>biodivMapR v2</code> provides a simplified procedure compared
-to <code>biodivMapR v1</code>. A unique function named
+<p>Starting from <code>biodivMapR v2</code>, a simplified procedure is
+followed compared to <code>biodivMapR v1</code>. A unique function named
 <code>biodivMapR_full</code> runs the full workflow and produces a
 limited set of outputs.</p>
 <div class="section level2">
@@ -115,49 +115,41 @@ limited set of outputs.</p>
 <p>SPCA was previously computed and the relevant spectral features were
 identified based on visual interpretation. This selection of components
 will be used here to produce diversity maps with
-<code>biodivMapR.</code> The SPCA file is a unique raster file stacking
+<code>biodivMapR</code>. The SPCA file is a unique raster file stacking
 all components. <code>biodivMapR</code> needs the path for the stacked
 data as well as the list of selected features. The mask previously
 computed is also used.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a></span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="co"># 1- define biodivMapR output directory </span></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>output_dir_PCA2 <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="st">'./biodivMapR/SPCA'</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">dir.create</span>(output_dir_PCA2, <span class="at">showWarnings =</span> F, <span class="at">recursive =</span> T)</span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co"># 2- define parameters for biodivMapR</span></span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>window_size <span class="ot">&lt;-</span> <span class="dv">10</span>         <span class="co"># window side size for computation of spectral diversity</span></span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>nb_clusters <span class="ot">&lt;-</span> <span class="dv">50</span>          <span class="co"># nb of clusters (spectral species)</span></span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co"># 3- define path for intermediate variables to be saved</span></span>
-<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="co"># - information related to kmeans clustering defining spectral species</span></span>
-<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>Kmeans_info_save <span class="ot">&lt;-</span> <span class="fu">file.path</span>(output_dir_PCA2,<span class="st">'Kmeans_info.RData'</span>)</span>
-<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="co"># - information related to beta diversity mapping (BC dissimilarity + PCoA)</span></span>
-<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>Beta_info_save <span class="ot">&lt;-</span> <span class="fu">file.path</span>(output_dir_PCA2,<span class="st">'Beta_info.RData'</span>)</span>
-<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a><span class="co"># 4- adjust parameters for multithread &amp; computational efficiency</span></span>
-<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>maxRows <span class="ot">&lt;-</span> <span class="dv">1000</span>           <span class="co"># nb of lines processed at once (adjust based on RAM available)</span></span>
-<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>nbCPU <span class="ot">&lt;-</span> <span class="dv">4</span>                <span class="co"># nb of threads for parallel processing</span></span>
-<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a><span class="co"># 5- apply biodivMapR </span></span>
-<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a>selected_bands <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">5</span>,<span class="dv">6</span>)</span>
-<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a>options <span class="ot">&lt;-</span> <span class="fu">set_options_biodivMapR</span>(<span class="at">fun =</span> <span class="st">'biodivMapR_full'</span>)</span>
-<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a>options<span class="sc">$</span>nb_clusters <span class="ot">&lt;-</span> nb_clusters</span>
-<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a>options<span class="sc">$</span>maxRows <span class="ot">&lt;-</span> maxRows</span>
-<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a>biodivMapR_full <span class="ot">&lt;-</span> <span class="cf">function</span>(input_raster_path, <span class="at">input_mask_path =</span> <span class="cn">NULL</span>,</span>
-<span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a>                            output_dir, window_size,</span>
-<span id="cb1-27"><a href="#cb1-27" tabindex="-1"></a>                            <span class="at">selected_bands =</span> <span class="cn">NULL</span>, <span class="at">Kmeans_info_save =</span> <span class="cn">NULL</span>,</span>
-<span id="cb1-28"><a href="#cb1-28" tabindex="-1"></a>                            <span class="at">Kmeans_info_read =</span> <span class="cn">NULL</span>,  <span class="at">Beta_info_save =</span> <span class="cn">NULL</span>,</span>
-<span id="cb1-29"><a href="#cb1-29" tabindex="-1"></a>                            <span class="at">Beta_info_read =</span> <span class="cn">NULL</span>,  <span class="at">nbCPU =</span> <span class="dv">1</span>, <span class="at">options =</span> <span class="cn">NULL</span>){</span>
-<span id="cb1-30"><a href="#cb1-30" tabindex="-1"></a></span>
-<span id="cb1-31"><a href="#cb1-31" tabindex="-1"></a></span>
-<span id="cb1-32"><a href="#cb1-32" tabindex="-1"></a>ab_info_SPCA <span class="ot">&lt;-</span> <span class="fu">biodivMapR_full</span>(<span class="at">input_raster_path =</span> PCA_Output<span class="sc">$</span>PCA_Files<span class="sc">$</span>PCA, </span>
-<span id="cb1-33"><a href="#cb1-33" tabindex="-1"></a>                                <span class="at">input_mask_path =</span> mask_path_PCA,</span>
-<span id="cb1-34"><a href="#cb1-34" tabindex="-1"></a>                                <span class="at">output_dir =</span> output_dir_PCA2, </span>
-<span id="cb1-35"><a href="#cb1-35" tabindex="-1"></a>                                <span class="at">selected_bands =</span> selected_bands, </span>
-<span id="cb1-36"><a href="#cb1-36" tabindex="-1"></a>                                <span class="at">window_size =</span> window_size, </span>
-<span id="cb1-37"><a href="#cb1-37" tabindex="-1"></a>                                <span class="at">Kmeans_info_save =</span> Kmeans_info_save,</span>
-<span id="cb1-38"><a href="#cb1-38" tabindex="-1"></a>                                <span class="at">Beta_info_save =</span> Beta_info_save, </span>
-<span id="cb1-39"><a href="#cb1-39" tabindex="-1"></a>                                <span class="at">nbCPU =</span> nbCPU)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># 1- define biodivMapR output directory </span></span>
+<span><span class="va">output_dir_biodivMapR</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">output_dir</span>, <span class="st">'biodivMapR/SPCA'</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">output_dir_biodivMapR</span>, showWarnings <span class="op">=</span> <span class="cn">F</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 2- define parameters for biodivMapR</span></span>
+<span><span class="va">window_size</span> <span class="op">&lt;-</span> <span class="fl">10</span>         <span class="co"># window side size for computation of spectral diversity</span></span>
+<span><span class="va">nb_clusters</span> <span class="op">&lt;-</span> <span class="fl">50</span>          <span class="co"># nb of clusters (spectral species)</span></span>
+<span></span>
+<span><span class="co"># 3- define path for intermediate variables to be saved</span></span>
+<span><span class="co"># - information related to kmeans clustering defining spectral species</span></span>
+<span><span class="va">Kmeans_info_save</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">output_dir_biodivMapR</span>,<span class="st">'Kmeans_info.RData'</span><span class="op">)</span></span>
+<span><span class="co"># - information related to beta diversity mapping (BC dissimilarity + PCoA)</span></span>
+<span><span class="va">Beta_info_save</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">output_dir_biodivMapR</span>,<span class="st">'Beta_info.RData'</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 4- adjust parameters for multithread &amp; computational efficiency</span></span>
+<span><span class="va">nbCPU</span> <span class="op">&lt;-</span> <span class="fl">4</span>                <span class="co"># nb of threads for parallel processing</span></span>
+<span><span class="co"># 5- apply biodivMapR </span></span>
+<span><span class="va">selected_bands</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">6</span><span class="op">)</span></span>
+<span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_options_biodivMapR.html">set_options_biodivMapR</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="st">'biodivMapR_full'</span><span class="op">)</span></span>
+<span><span class="va">options</span><span class="op">$</span><span class="va">nb_clusters</span> <span class="op">&lt;-</span> <span class="va">nb_clusters</span></span>
+<span><span class="va">options</span><span class="op">$</span><span class="va">maxRows</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span>
+<span><span class="va">ab_info_SPCA</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/biodivMapR_full.html">biodivMapR_full</a></span><span class="op">(</span>input_raster_path <span class="op">=</span> <span class="va">PCA_Output</span><span class="op">$</span><span class="va">PCA_Files</span><span class="op">$</span><span class="va">PCA</span>, </span>
+<span>                                input_mask_path <span class="op">=</span> <span class="va">mask_path_PCA</span>,</span>
+<span>                                output_dir <span class="op">=</span> <span class="va">output_dir_biodivMapR</span>, </span>
+<span>                                selected_bands <span class="op">=</span> <span class="va">selected_bands</span>, </span>
+<span>                                window_size <span class="op">=</span> <span class="va">window_size</span>, </span>
+<span>                                Kmeans_info_save <span class="op">=</span> <span class="va">Kmeans_info_save</span>,</span>
+<span>                                Beta_info_save <span class="op">=</span> <span class="va">Beta_info_save</span>, </span>
+<span>                                nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span></code></pre></div>
 <p>Here, <code>ab_info_SPCA</code> includes two lists:</p>
 <ul>
 <li><p><code>Kmeans_info</code>, which gathers all information related
@@ -171,7 +163,7 @@ the files defined by <code>Kmeans_info_save</code> and
 <code>Beta_info_save</code>. These files can then be used for an
 independent process with <code>biodivMapR_full</code>. The path for
 these files can then be provided for input variables
-<code>Kmeans_info_read</code>, <code>Beta_info_read</code>.</p>
+<code>Kmeans_info_read</code> and <code>Beta_info_read</code>.</p>
 <p><code>biodivMapR</code> will not recompute this information, if user
 provides a valid path for <code>Kmeans_info</code> and
 <code>Beta_info</code>. This option is interesting when adjusting
@@ -182,16 +174,18 @@ and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
 diversity maps produced from the analysis of selected PCs are displayed
 below.</p>
-<table class="table">
-<colgroup>
-<col width="50%">
-<col width="50%">
-</colgroup>
-<tbody><tr class="odd">
-<td><img src="../reference/figures/alphaPCA.png"></td>
-<td><img src="../reference/figures/betaPCA.png"></td>
-</tr></tbody>
-</table>
+<p>
+<img src="../reference/figures/03_shannon.gif" width="100%" height="100%" class="center"></p>
+<p>
+<img src="../reference/figures/03_beta.gif" width="100%" height="100%" class="center"></p>
+<center>
+Fig. 1. maps of shannon index and beta-diversity obtained from
+biodivMapR analysis on selected components computed from sentinel-2
+acquisition.
+</center>
+<p>
+ 
+</p>
 </div>
 <div class="section level2">
 <h2 id="produce-diversity-maps-from-spectral-indices-with-biodivmapr">Produce diversity maps from spectral indices with
@@ -199,51 +193,50 @@ below.</p>
 </h2>
 <p>Spectral indices computed previously will be used here to produce
 diversity maps with <code>biodivMapR</code>. Each spectral index was
-saved as an individual raster file. <code>biodivMapR</code> needs a list
-of paths for input features and corresponding names. The mask previously
-computed based on interquartile ranges of spectral indices is also
-used.</p>
+saved following a tiling system, and a vrt was produced.
+<code>biodivMapR</code> can use the path for the vrt as
+<code>input_raster_path</code> for <code>biodivMapR_full</code>.
+Alternatively, it can take advantage of the tiling system in order to
+process the image tile per tile in parallel.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># 1- define biodivMapR output directory </span></span>
-<span><span class="va">output_dir_SI2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">'./biodivMapR/SpectralIndices'</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">output_dir_SI2</span>, showWarnings <span class="op">=</span> <span class="cn">F</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># 2- define parameters for biodivMapR</span></span>
-<span><span class="va">window_size</span> <span class="op">&lt;-</span> <span class="fl">10</span>         <span class="co"># window side size for computation of spectral diversity</span></span>
-<span><span class="va">nb_clusters</span> <span class="op">&lt;-</span> <span class="fl">50</span>          <span class="co"># nb of clusters (spectral species)</span></span>
+<span><span class="va">output_dir_biodivMapR_si</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">output_dir</span>, <span class="st">'biodivMapR/spectral_indices'</span><span class="op">)</span></span>
+<span><span class="va">output_dir_mask</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">output_dir</span>, <span class="st">'biodivMapR/spectral_indices_mask'</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">output_dir_biodivMapR_si</span>, showWarnings <span class="op">=</span> <span class="cn">F</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">output_dir_mask</span>, showWarnings <span class="op">=</span> <span class="cn">F</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># 3- define path for intermediate variables to be saved</span></span>
 <span><span class="co"># - information related to kmeans clustering defining spectral species</span></span>
-<span><span class="va">Kmeans_info_save</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">output_dir_SI2</span>,<span class="st">'Kmeans_info.RData'</span><span class="op">)</span></span>
+<span><span class="va">Kmeans_info_save</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">output_dir_biodivMapR_si</span>,<span class="st">'Kmeans_info.RData'</span><span class="op">)</span></span>
 <span><span class="co"># - information related to beta diversity mapping (BC dissimilarity + PCoA)</span></span>
-<span><span class="va">Beta_info_save</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">output_dir_SI2</span>,<span class="st">'Beta_info.RData'</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># 4- adjust parameters for multithread &amp; computational efficiency</span></span>
-<span><span class="va">maxRows</span> <span class="op">&lt;-</span> <span class="fl">1000</span>           <span class="co"># nb of lines processed at once (adjust based on RAM available)</span></span>
-<span><span class="va">nbCPU</span> <span class="op">&lt;-</span> <span class="fl">4</span>                <span class="co"># nb of threads for parallel processing</span></span>
+<span><span class="va">Beta_info_save</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">output_dir_biodivMapR_si</span>,<span class="st">'Beta_info.RData'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># 4- apply biodivMapR </span></span>
-<span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_options_biodivMapR.html">set_options_biodivMapR</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="st">'biodivMapR_full'</span><span class="op">)</span></span>
+<span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_options_biodivMapR.html">set_options_biodivMapR</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="st">'biodivMapR_full_tiles'</span><span class="op">)</span></span>
 <span><span class="va">options</span><span class="op">$</span><span class="va">nb_clusters</span> <span class="op">&lt;-</span> <span class="va">nb_clusters</span></span>
-<span><span class="va">options</span><span class="op">$</span><span class="va">maxRows</span> <span class="op">&lt;-</span> <span class="va">maxRows</span></span>
-<span><span class="va">ab_info_SI</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/biodivMapR_full.html">biodivMapR_full</a></span><span class="op">(</span>input_raster_path <span class="op">=</span> <span class="va">SI_path</span>, </span>
-<span>                              input_mask_path <span class="op">=</span> <span class="va">mask_path_SI</span>,</span>
-<span>                              output_dir <span class="op">=</span> <span class="va">output_dir_SI2</span>, </span>
-<span>                              window_size <span class="op">=</span> <span class="va">window_size</span>,</span>
-<span>                              Kmeans_info_save <span class="op">=</span> <span class="va">Kmeans_info_save</span>,</span>
-<span>                              Beta_info_save <span class="op">=</span> <span class="va">Beta_info_save</span>, </span>
-<span>                              nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<colgroup>
-<col width="50%">
-<col width="50%">
-</colgroup>
-<tbody><tr class="odd">
-<td><img src="../reference/figures/alphaSI.png"></td>
-<td><img src="../reference/figures/betaSI.png"></td>
-</tr></tbody>
-</table>
+<span><span class="va">options</span><span class="op">$</span><span class="va">alpha_metrics</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'richness'</span>, <span class="st">'shannon'</span>, <span class="st">'hill'</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ab_info_SI</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/biodivMapR_full_tiles.html">biodivMapR_full_tiles</a></span><span class="op">(</span>feature_dir <span class="op">=</span> <span class="va">output_dir_si</span>, </span>
+<span>                                    list_features <span class="op">=</span> <span class="va">si_list</span>, </span>
+<span>                                    output_dir <span class="op">=</span> <span class="va">output_dir_biodivMapR_si</span>, </span>
+<span>                                    mask_dir <span class="op">=</span> <span class="va">output_dir_mask</span>, </span>
+<span>                                    window_size <span class="op">=</span> <span class="va">window_size</span>, </span>
+<span>                                    plots <span class="op">=</span> <span class="va">plots</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, </span>
+<span>                                    site_name <span class="op">=</span> <span class="va">site_name</span>, options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span></code></pre></div>
+<p>
+<img src="../reference/figures/03_shannon_si.gif" width="100%" height="100%" class="center"></p>
+<p>
+<img src="../reference/figures/03_beta_si.gif" width="100%" height="100%" class="center"></p>
+
+<center>
+Fig. 2. maps of shannon index and beta-diversity obtained from
+biodivMapR analysis on selected spectral indices from sentinel-2
+acquisition.
+</center>
+<p>
+ 
+</p>
 <p><br><br></p>
 <p>The validation can then be performed if ground information is
 available Validation is described in this <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_04.html" target="_blank" class="external-link">tutorial</a>.</p>

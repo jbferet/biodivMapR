@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.5.0</span>
       </span>
     </div>
 
@@ -61,7 +61,7 @@
       <a href="../articles/biodivMapR_03.html">Produce diversity maps from a set of features</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_04.html">Validation with ground information</a>
+      <a href="../articles/biodivMapR_04.html">Validation</a>
     </li>
   </ul>
 </li>
@@ -93,7 +93,7 @@
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2026-01-26</h4>
+            <h4 data-toc-skip class="date">2026-02-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR_01.Rmd" class="external-link"><code>vignettes/biodivMapR_01.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_01.Rmd</code></div>
@@ -103,120 +103,205 @@ Féret, Florian de Boissieu</h4>
     
     
 <p><code>biodivMapR</code> aims at producing spectral diversity maps
-based on multidimensional raster data. While its application is
-technically not limited to optical imagery, users experimenting with
-other types of remote sensing data are expected to make sure that the
-input information used to produce remotely sensed diversity maps are
-actually relevant to describe vegetation biodiversity as intended in
+based on raster data. While its application is technically not limited
+to optical imagery, users experimenting with other types of remote
+sensing data are expected to make sure that the input information used
+to produce remotely sensed diversity maps are ‘ecologically relevant’
+features to describe vegetation biodiversity as expected in
 <code>biodivMapR</code>.</p>
-<div class="section level2">
-<h2 id="data-requirements">Data requirements<a class="anchor" aria-label="anchor" href="#data-requirements"></a>
-</h2>
-<p><code>biodivMapR</code> requires raster data as input. Raster data
-are handled with the R package <a href="https://rspatial.github.io/terra/reference/terra-package.html" class="external-link"><code>terra</code></a>.
+<p>Raster data are handled with the R package <a href="https://rspatial.github.io/terra/reference/terra-package.html" class="external-link"><code>terra</code></a>.
 Data format should then be compliant with the drivers available with
-this package.</p>
-<p>If using multispectral/hyperspectral optical data, <strong>the
-central wavelength should be properly identified for each spectral band
-provided</strong>. Central wavelength is required for the computation of
-spectral indices or the application of continuum removal.</p>
+this package. Use <code>gdal(drivers=TRUE)</code> to see what drivers
+are available in your installation.</p>
+<p>Here, we want to use Sentinel-2 imagery to illustrate the main
+functionalities of <code>biodivMapR</code>. This first tutorial will
+guide you through the download of Sentinel-2 data with R packages</p>
+<div class="section level3">
+<h3 id="access-sentinel-2-imagery-with-preprocs2">access Sentinel-2 imagery with <code>preprocS2</code><a class="anchor" aria-label="anchor" href="#access-sentinel-2-imagery-with-preprocs2"></a>
+</h3>
+<p><a href="https://gitlab.com/jbferet/preprocs2" class="external-link"><code>preprocS2</code></a>
+is a package dedicated to Sentinel-2 data handling, including a wrapper
+of the <a href="https://brazil-data-cube.github.io/rstac/" class="external-link"><code>rstac</code></a>
+package. It aims at downloading and preparing Sentinel-2 images for
+further processings using <code>biodivMapR</code>.</p>
+<p><code>preprocS2</code> will download Sentinel-2 data from a STAC
+catalog based on spatial and temporal information. The default STAC
+collection is <code>sentinel-2-l2a</code> from the <strong><a href="https://planetarycomputer.microsoft.com/dataset/sentinel-2-l2a" class="external-link"><code>Microsoft Planetary Computer</code></a></strong>
+catalog.</p>
+<p>Optionally, <code>preprocS2</code> can download the geometry of
+acquisition (sun &amp; view angles) corresponding to the Sentinel-2
+acquisition. Access to geometry of acquisition is provided by the
+package <a href="https://zivankaraman.github.io/CDSE/" class="external-link"><code>CDSE</code></a>.</p>
+<p>Please follow instructions for proper installation of the package,
+and provide authentication for CDSE if you want to get geometry of
+acquisition by activating OAuth clients following <a href="https://shapps.dataspace.copernicus.eu/dashboard/#/account/settings" class="external-link"><code>this link</code></a>.</p>
 </div>
 <div class="section level2">
-<h2 id="download-sentinel-2-image-sample">Download Sentinel-2 image sample<a class="anchor" aria-label="anchor" href="#download-sentinel-2-image-sample"></a>
+<h2 id="perform-spatio-temporal-query-to-access-sentinel-2-imagery">perform spatio-temporal query to access Sentinel-2 imagery<a class="anchor" aria-label="anchor" href="#perform-spatio-temporal-query-to-access-sentinel-2-imagery"></a>
 </h2>
-<p>The S2 subset used for this tutorial corresponds to a forested area
-in Cameroon. We previously identified a S2 acquisition with minimum
-cloud cover. Visualization can be done with the <a href="https://browser.dataspace.copernicus.eu/" class="external-link">Copenicus
-Browser</a></p>
-<p>Once a correct acquisition identified, Sentinel-2 imagery is obtained
-with the R package <a href="https://jbferet.gitlab.io/preprocs2/" class="external-link"><code>preprocS2</code></a>.</p>
-<p>The chunk of code below downloads Sentinel-2 products corresponding
-to a bounding box from the STAC catalog provided by Microsoft Planetary
-Computer.</p>
+<p><code>preprocS2</code> can access Spatio Temporal Asset Catalogs (<a href="https://stacspec.org/en" class="external-link">STAC</a>). The STAC specification is a
+common language to describe geospatial information. STAC resources are
+available online from various institutional and private providers (such
+as Copernicus dataspace and Nicrosoft Planetary Computers). STAC
+catalogs allow performing spatio-temporal query. Hence, the first step
+is to define an area of interest (aoi), and a period or day of
+interest.</p>
+<div class="section level3">
+<h3 id="define-an-area-of-interest-aoi">define an area of interest (aoi)<a class="anchor" aria-label="anchor" href="#define-an-area-of-interest-aoi"></a>
+</h3>
+<p>First, load required packages and prepare input and output
+directories.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># clean workspace</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span>list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ls.html" class="external-link">ls</a></span><span class="op">(</span>all<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/rstudioapi/reference/isAvailable.html" class="external-link">isAvailable</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">setwd</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">dirname</a></span><span class="op">(</span><span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/rstudioapi/reference/rstudio-editors.html" class="external-link">getSourceEditorContext</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">path</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://gitlab.com/jbferet/preprocS2" class="external-link">preprocS2</a></span><span class="op">)</span>  <span class="co"># install instructions: https://github.com/jbferet/preprocS2</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jbferet/biodivMapR" class="external-link">biodivMapR</a></span><span class="op">)</span> <span class="co"># install instructions: https://github.com/jbferet/biodivMapR</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">spinR</span><span class="op">)</span>      <span class="co"># install instructions: https://github.com/jbferet/spinR</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
+<span><span class="co"># 1.1- define input &amp; output directories</span></span>
+<span><span class="va">input_dir_vect</span> <span class="op">&lt;-</span> <span class="st">'./01_DATA/amazon/vector_data'</span></span>
+<span><span class="va">input_dir_rast</span> <span class="op">&lt;-</span> <span class="st">'./01_DATA/amazon/raster_data/sentinel-2'</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">input_dir_rast</span>, showWarnings <span class="op">=</span> <span class="cn">F</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">input_dir_vect</span>, showWarnings <span class="op">=</span> <span class="cn">F</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+<p>The spatial extent of the area of interest (aoi) needs to be defined
+as a vector file. Such aoi can be defined with <code>QGIS</code>,
+<code>Google Earth</code>, or you rfavorite tool.</p>
+<p>Here we will define an aoi located in amazon forest is defined. The
+site is located next to <strong>Guedes, Japurá - State of Amazonas,
+Brazil</strong>.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 1.2- define area of interest</span></span>
+<span><span class="va">bbox</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_bbox.html" class="external-link">st_bbox</a></span><span class="op">(</span>obj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'xmin'</span> <span class="op">=</span> <span class="op">-</span><span class="fl">66.23</span>, <span class="st">'ymin'</span> <span class="op">=</span> <span class="op">-</span><span class="fl">2.11</span>, </span>
+<span>                            <span class="st">'xmax'</span> <span class="op">=</span> <span class="op">-</span><span class="fl">65.76</span>, <span class="st">'ymax'</span> <span class="op">=</span> <span class="op">-</span><span class="fl">1.91</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html" class="external-link">st_crs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">bbox</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">4326</span></span>
+<span><span class="va">aoi_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">input_dir_vect</span>, <span class="st">'amazon.gpkg'</span><span class="op">)</span></span>
+<span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_write.html" class="external-link">st_write</a></span><span class="op">(</span>obj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/preprocS2/man/bbox_to_poly.html" class="external-link">bbox_to_poly</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">bbox</span><span class="op">)</span>, dsn <span class="op">=</span> <span class="va">aoi_path</span>, </span>
+<span>             driver <span class="op">=</span> <span class="st">'GPKG'</span>, delete_layer <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="define-a-date-of-acquisition">define a date of acquisition<a class="anchor" aria-label="anchor" href="#define-a-date-of-acquisition"></a>
+</h3>
+<p>A Sentinel-2 acquisition with minimal cloud cover needs to be
+identified. The <a href="https://browser.dataspace.copernicus.eu/?zoom=9&amp;lat=-2.22284&amp;lng=-65.91522&amp;themeId=DEFAULT-THEME&amp;visualizationUrl=U2FsdGVkX19GH3b3Siq5FfHluLof8XtUblFGafppf9MVedVDtBKRkPmdW%2Bv3%2BAnb4ANBBziNJjGk6d1M%2BfZ%2BBGmq6s%2BjJ03ZEeZzHnbMe9dk%2BURYuxtDRoIpHsndMPAW&amp;datasetId=S2_L2A_CDAS&amp;fromTime=2025-09-10T00%3A00%3A00.000Z&amp;toTime=2025-09-10T23%3A59%3A59.999Z&amp;layerId=1_TRUE_COLOR&amp;demSource3D=%22MAPZEN%22&amp;cloudCoverage=30&amp;dateMode=SINGLE" class="external-link">Copernicus
+Browser</a> is a useful tool to explore the availability of Sentinel-2
+acquisitions, using filters such as the maximum cloud cover.</p>
+<p>Here, we focus on the aoi, and filter out cloudy images to keep only
+Max. cloud coverage &lt; 5%, for August 2024. We identify an acquisition
+from 23 August 2024 which shows good conditions of acquisition.</p>
+</div>
+<div class="section level3">
+<h3 id="download-sentinel-2-acquisition-from-online-stac-resource">download Sentinel-2 acquisition from online STAC resource<a class="anchor" aria-label="anchor" href="#download-sentinel-2-acquisition-from-online-stac-resource"></a>
+</h3>
+<p><code>preprocS2</code> allows downloading from multiple providers.
+Microsoft Planetary computer is currently the default option.</p>
+<p>The function <code>get_s2_raster</code> downloads Setinel-2 data
+corresponding to the spatio-temporal query.</p>
 <ul>
 <li>
-<code>Refl_L2A</code> is the L-2A reflectance for the bounding
-box</li>
+<code>aoi_path</code>: path for vector layer. Must include a
+<strong>unique polygon</strong>
+</li>
 <li>
-<code>provider_mask</code> is the corresponding SCL (scene
-classification layer)</li>
+<code>datetime</code>: date of acquisition, provided as a
+<em>Date</em> object.</li>
 <li>
-<code>Binary_mask</code> is a binary vegetation mask extracted from
-the SCL</li>
+<code>stac_info</code>: list including provider identifier (default
+= <code>mpc</code>)</li>
 <li>
-<code>vegetation_mask</code> is an updated binary vegetation mask
-after application of NDVI and radiometric thresholds to remove
-non-vegetated, shaded and hazy pixels (very basic filtering)</li>
+<code>output_dir</code>: output directory where to store data</li>
+<li>
+<code>site_name</code>: this will allow identifying rasters
+later</li>
+<li>
+<code>options</code>: options including maximum cloud cover and
+higher level processing</li>
 </ul>
-<p>Additionally, The rasters corresponding to the geometry of
-acquisition can be downloaded from the <a href="https://dataspace.copernicus.eu/analyse/apis" class="external-link">CDSE</a>, if valid
-authentication is provided and <code>geomAcq = T</code>.</p>
-<p>Authentication for CDSE should be obtained by activating an OAuth
-clients ID, following <a href="https://shapps.dataspace.copernicus.eu/dashboard/#/account/settings" class="external-link"><code>this link</code></a>.
-Please make sure you copy the password related to your OAuth clients ID
-as you will not be able to access it once you close the page.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># load useful libraries </span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://gitlab.com/jbferet/preprocS2" class="external-link">preprocS2</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">################################################################################</span></span>
-<span><span class="co"># 1- define input &amp; output directories</span></span>
-<span><span class="va">output_dir_s2</span> <span class="op">&lt;-</span> <span class="st">'./S2_image'</span></span>
-<span><span class="va">datetime</span> <span class="op">&lt;-</span> <span class="st">'2018-12-25'</span></span>
-<span><span class="va">site_name</span> <span class="op">&lt;-</span> <span class="st">'S2_subset_Cameroon'</span></span>
-<span></span>
-<span><span class="va">bbox</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_bbox.html" class="external-link">st_bbox</a></span><span class="op">(</span>obj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'xmin'</span> <span class="op">=</span> <span class="fl">357001</span>, <span class="st">'ymin'</span> <span class="op">=</span> <span class="fl">341701</span>, </span>
-<span>                            <span class="st">'xmax'</span> <span class="op">=</span> <span class="fl">366730</span>, <span class="st">'ymax'</span> <span class="op">=</span> <span class="fl">351236</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html" class="external-link">st_crs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">bbox</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">32633</span></span>
-<span></span>
-<span><span class="co"># 2- get S2 acquisition for study area</span></span>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 1.4- download  S2 acquisition</span></span>
+<span><span class="va">datetime</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">'2024-08-23'</span><span class="op">)</span></span>
+<span><span class="va">stac_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">'provider'</span> <span class="op">=</span> <span class="st">'mpc'</span><span class="op">)</span></span>
+<span><span class="va">site_name</span> <span class="op">=</span> <span class="st">'amazon'</span></span>
 <span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/preprocS2/man/set_options_preprocS2.html" class="external-link">set_options_preprocS2</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="st">'get_s2_raster'</span><span class="op">)</span></span>
-<span><span class="va">options</span><span class="op">$</span><span class="va">geom_acq</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></span>
 <span><span class="va">options</span><span class="op">$</span><span class="va">overwrite</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span></span>
-<span><span class="va">list_files</span> <span class="op">&lt;-</span> <span class="fu">preprocS2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/preprocS2/man/get_s2_raster.html" class="external-link">get_s2_raster</a></span><span class="op">(</span>bbox <span class="op">=</span> <span class="va">bbox</span>, geomAcq <span class="op">=</span> <span class="cn">T</span>,</span>
-<span>                                       datetime <span class="op">=</span> <span class="va">datetime</span>, </span>
-<span>                                       output_dir <span class="op">=</span> <span class="va">output_dir_s2</span>, </span>
-<span>                                       site_name <span class="op">=</span> <span class="va">site_name</span>, </span>
-<span>                                       options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
-<span><span class="co"># Sentinel-2 L2A reflectance</span></span>
-<span><span class="va">Refl_L2A</span> <span class="op">&lt;-</span> <span class="va">list_files</span><span class="op">$</span><span class="va">Refl_L2A</span></span>
-<span><span class="co"># Sentinel-2 binary mask identifying vegetation, discarding clouds &amp; shadows</span></span>
-<span><span class="va">vegetation_mask</span> <span class="op">&lt;-</span> <span class="va">list_files</span><span class="op">$</span><span class="va">vegetation_mask</span></span>
-<span><span class="co"># Sentinel-2 mask from provider ( = SCL from ESA products)</span></span>
-<span><span class="va">SCL</span> <span class="op">&lt;-</span> <span class="va">list_files</span><span class="op">$</span><span class="va">provider_mask</span></span>
-<span><span class="co"># Sentinel-2 geometry of acquisition (if requested from CDSE)</span></span>
-<span><span class="va">geometryAcquisition</span> <span class="op">&lt;-</span> <span class="va">list_files</span><span class="op">$</span><span class="va">geometryAcquisition</span></span></code></pre></div>
+<span><span class="va">list_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/preprocS2/man/get_s2_raster.html" class="external-link">get_s2_raster</a></span><span class="op">(</span>aoi_path <span class="op">=</span> <span class="va">aoi_path</span>, </span>
+<span>                            datetime <span class="op">=</span> <span class="va">datetime</span>, </span>
+<span>                            stac_info <span class="op">=</span> <span class="va">stac_info</span>, </span>
+<span>                            output_dir <span class="op">=</span> <span class="va">input_dir_rast</span>, </span>
+<span>                            site_name <span class="op">=</span> <span class="va">site_name</span>, </span>
+<span>                            options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">rast_path</span> <span class="op">&lt;-</span> <span class="va">list_files</span><span class="op">$</span><span class="va">Refl_L2A</span>                <span class="co"># S2 L2A reflectance</span></span>
+<span><span class="va">mask_path</span> <span class="op">&lt;-</span> <span class="va">list_files</span><span class="op">$</span><span class="va">vegetation_mask</span>         <span class="co"># S2 binary mask identifying vegetation, discarding clouds &amp; shadows</span></span></code></pre></div>
+<p>The information resulting from the spatiotemporal query are saved in
+<code>input_dir_rast</code>.</p>
+<pre><code>├── collections
+    ├── plot_001.rds
+├── raster_samples
+    ├── amazon_001_2024-08-23.tiff
+    ├── amazon_001_2024-08-23_BIN.tiff
+    ├── amazon_001_2024-08-23_BIN_v2.tiff
+    └── amazon_001_2024-08-23_SCL.tiff
+├── s2_tiles_amazon.rds
+└── s2_footprint_amazon.gpkg</code></pre>
+<ul>
+<li>
+<code>collections/plot_001.rds</code> corresponds to the item
+collection resulting from the spatiotemporal query. Use the R function
+<code>readRDS</code> to access the content of the file.</li>
+</ul>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/serialize.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="st">'./01_DATA/amazon/raster_data/sentinel-2/collections/plot_001.rds'</span><span class="op">)</span></span>
+<span></span>
+<span><span class="st">"###Items</span></span>
+<span><span class="st">- features (1 item(s)):</span></span>
+<span><span class="st">  - S2A_MSIL2A_20240823T144731_R139_T19MHT_20240823T215907</span></span>
+<span><span class="st">- assets: </span></span>
+<span><span class="st">AOT, B01, B02, B03, B04, B05, B06, B07, B08, B09, B11, B12, B8A, datastrip-metadata, granule-metadata, inspire-metadata, product-metadata, rendered_preview, safe-manifest, SCL, tilejson, visual, WVP</span></span>
+<span><span class="st">- item's fields: </span></span>
+<span><span class="st">assets, bbox, collection, geometry, id, links, properties, stac_extensions, stac_version, type</span></span>
+<span><span class="st">"</span></span></code></pre></div>
+<ul>
+<li>
+<code>raster_samples</code> includes ─
+<code>amazon_001_2024-08-23.tiff</code>: L2A (surface reflectance)
+Sentinel-2 data ─ <code>amazon_001_2024-08-23_BIN.tiff</code>: binary
+mask derived from <code>amazon_001_2024-08-23_SCL.tiff</code> and
+focusing on vegetation class.<br>
+─ <code>amazon_001_2024-08-23_BIN_v2.tiff</code>: binary mask produced
+from alternative radiometric criteria, including NDVI mask to remove non
+vegetated pixels, Blue mask to remove hazy/cloudy pixels, and NIR mask
+to remove shaded pixels. You can adjust threshold for cloudMask (B02),
+shadeMask (B08), and NDVIMask. ─
+<code>amazon_001_2024-08-23_SCL.tiff</code>: scene classification
+provided by sen2cor atmospheric correction</li>
+</ul>
+<p>─ <code>s2_tiles_amazon.rds</code> contains the Sentinel-2 tile ID
+for the scene</p>
+<p>─ <code>s2_footprint_amazon.gpkg</code> contains the footprint of the
+Sentinel-2 tile ID</p>
+<p>The animated gif shows the Sentinel-2 acquisition. The pixels masked
+by the binary mask <code>amazon_001_2024-08-23_BIN_v2.tiff</code> are
+greyed. The surface reflectance is rescaled from 0-1 to 0-10000 and the
+data is stored in INT16 to save space (50% space saved compared to
+FLOAT32).</p>
+<ul>
+<li>Red band: Band 04 (0 - 1000).</li>
+<li>Green band: Band 03 (0 - 1000).</li>
+<li>Blue band: Band 02 (0 - 1000).</li>
+</ul>
 <p>
+<img src="../reference/figures/01_amazon.gif" width="100%" height="100%" class="center"></p>
+<center>
+Fig. 1. sentinel-2 acquisition of Brazilian Amazon forest downloaded
+with <code>preprocS2</code>
+</center>
+<p>
+ 
 </p>
-<p><img src="../reference/figures/SiteRGB.png" width="100%" height="100%" class="center"></p>
-
-<p>Once the image is downloaded, it can be processed with
-<code>biodivMapR</code>.</p>
-<div class="section level3">
-<h3 id="download-vector-files-used-for-validation">Download vector files used for ‘validation’<a class="anchor" aria-label="anchor" href="#download-vector-files-used-for-validation"></a>
-</h3>
-<p>A set of vector files is downloaded here, corresponding to circular
-plots identified in the raster. It will be used in the final step of the
-tutorial (<a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_04.html" target="_blank" class="external-link"><strong>Validation with ground
-information</strong></a>.).</p>
-<p>The following code allows downloading the zip file containing the
-vector data, and unzipping it in the same directory as the one including
-the raster data.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-lib/zip" class="external-link">zip</a></span><span class="op">)</span></span>
-<span><span class="co"># name zip file including plots located on the tile</span></span>
-<span><span class="va">output_dir_val</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">output_dir_s2</span>, <span class="st">'GroundData'</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">output_dir_val</span>, showWarnings <span class="op">=</span> <span class="cn">F</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
-<span><span class="va">destzip</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">output_dir_val</span>,<span class="st">'S2A_T33NUD_Plots.zip'</span><span class="op">)</span></span>
-<span><span class="co"># url for the zip file</span></span>
-<span><span class="va">url</span> <span class="op">&lt;-</span> <span class="st">'https://gitlab.com/jbferet/myshareddata/-/raw/master/biodivMapR_S2_Sample/VECTOR/S2A_T33NUD_Plots.zip'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">url</span>, destfile <span class="op">=</span> <span class="va">destzip</span><span class="op">)</span></span>
-<span><span class="va">destunz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">output_dir_s2</span>,<span class="st">'S2A_T33NUD_Plots'</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://r-lib.github.io/zip/reference/unzip.html" class="external-link">unzip</a></span><span class="op">(</span>zipfile <span class="op">=</span> <span class="va">destzip</span>, exdir <span class="op">=</span> <span class="va">destunz</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">destzip</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
-<p><br><br></p>
-<p>Now that the necessary data is downloaded, we can start the <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_02.html" target="_blank" class="external-link">tutorial</a>.</p>
+<p><a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_02.html" target="_blank" class="external-link">Next step here</a>.</p>
 </div>
 </div>
   </div>
