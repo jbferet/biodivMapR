@@ -158,12 +158,20 @@ are usually computationally demanding.
 Here, we selected components 1, 4, 5 and 6 to produce the diversity maps. 
 A color composition of components 1, 4 and 5 is displayed below. 
 
-<p>
-<img src="../man/figures/02_pca_anim.gif" width="100%" height="100%" class="center">
-</p>
+<!-- <p> -->
+<!-- <img src="../man/figures/02_pca_composition.png" width="100%" height="100%" class="center"> -->
+<!-- </p> -->
+
+```{r, eval=TRUE, echo = FALSE, out.width="100%"}
+url <- "https://gitlab.com/jbferet/myshareddata/-/raw/master/biodivMapR_vignette_illustrations/02_pca_anim.gif"
+knitr::include_graphics(url)
+```
+
 <center>
   Fig. 1. color composition of principal components computed from sentinel-2
-  acquisition. R = PC#1, G = PC#4, B = PC#5. 
+  acquisition. 
+  
+  R = PC#1, G = PC#4, B = PC#5. 
 </center> 
 <p>&nbsp;</p>
 
@@ -233,9 +241,13 @@ The grid is stored as a geopackage file (.gpkg) named `aoi_grid_4000.gpkg` in
 `output_dir` and can be opened with QGIS.
 A total of 84 tiles are defined over the aoi.
 
-<p>
-<img src="../man/figures/02_grid_si.png" width="100%" height="100%" class="center">
-</p>
+<!-- <p> -->
+<!-- <img src="../man/figures/02_grid_si.png" width="100%" height="100%" class="center"> -->
+<!-- </p> -->
+```{r, eval=TRUE, echo = FALSE, out.width="100%"}
+url <- "https://gitlab.com/jbferet/myshareddata/-/raw/master/biodivMapR_vignette_illustrations/02_grid_si.png"
+knitr::include_graphics(url)
+```
 <center>
   Fig. 2. grid defined to compute spectral indices over sentinel-2 acquisition
 </center> 
@@ -285,12 +297,19 @@ The spectral indices corresponding to individual tiles are then saved in the
 A virtual raster (.vrt) is automatically produced for each spectral index and 
 saved in the directory `./03_RESULTS/amazon/sentinel-2/spectral_indices_vrt`.
 
-<p>
-<img src="../man/figures/02_si_anim.gif" width="100%" height="100%" class="center">
-</p>
+<!-- <p> -->
+<!-- <img src="../man/figures/02_si_composition.png" width="100%" height="100%" class="center"> -->
+<!-- </p> -->
+
+```{r, eval=TRUE, echo = FALSE, out.width="100%"}
+url <- "https://gitlab.com/jbferet/myshareddata/-/raw/master/biodivMapR_vignette_illustrations/02_si_anim.gif"
+knitr::include_graphics(url)
+```
 <center>
   Fig. 3. color composition of spectral indices computed from sentinel-2 
-  acquistion. R = `LAI_SAVI`, G = `NDVI`, B = `CR_SWIR`
+  acquistion. 
+  
+  R = `LAI_SAVI`, G = `NDVI`, B = `CR_SWIR`
 </center> 
 <p>&nbsp;</p>
 

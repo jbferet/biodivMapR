@@ -180,11 +180,16 @@ metrics produced with `biodivMapR` over the same site with two different inputs
 (components selected from SPCA and spectral indices). 
 
 
-<p float="left">
-  <img src="../man/figures/04_shannon_pca_vs_si.png" width="30%" />
-  <img src="../man/figures/04_hill_pca_vs_si.png" width="30%" />
-  <img src="../man/figures/04_bc_pca_vs_si.png" width="30%" />
-</p>
+```{r, eval=TRUE, echo = FALSE, out.width="100%"}
+url <- "https://gitlab.com/jbferet/myshareddata/-/raw/master/biodivMapR_vignette_illustrations/04_intercomparison_pca_si.png"
+knitr::include_graphics(url)
+```
+
+<!-- <p float="left"> -->
+<!--   <img src="../man/figures/04_shannon_pca_vs_si.png" width="30%" /> -->
+<!--   <img src="../man/figures/04_hill_pca_vs_si.png" width="30%" /> -->
+<!--   <img src="../man/figures/04_bc_pca_vs_si.png" width="30%" /> -->
+<!-- </p> -->
 <center>
   Fig. 1. comparison of `shannon`, `hill` and `bray curtis` obtained from the 
   two diversity maps obtained from SPCA and spectral indices.
