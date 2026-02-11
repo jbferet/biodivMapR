@@ -61,7 +61,10 @@
       <a href="../articles/biodivMapR_03.html">produce diversity maps from a set of features</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_04.html">Validation</a>
+      <a href="../articles/biodivMapR_04.html">validation / comparison with ground observation / intercomparison</a>
+    </li>
+    <li>
+      <a href="../articles/biodivMapR_05.html">`biodivMapR` applied with biophysical trait estimation with `prosail`</a>
     </li>
   </ul>
 </li>
@@ -93,7 +96,7 @@
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2026-02-10</h4>
+            <h4 data-toc-skip class="date">2026-02-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR_01.Rmd" class="external-link"><code>vignettes/biodivMapR_01.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_01.Rmd</code></div>
@@ -260,8 +263,8 @@ collection resulting from the spatiotemporal query. Use the R function
 <span><span class="co"># assets, bbox, collection, geometry, id, links, properties, stac_extensions, stac_version, type</span></span></code></pre></div>
 <ul>
 <li>
-<code>raster_samples</code> includes ─
-<code>amazon_001_2024-08-23.tiff</code>: L2A (surface reflectance)
+<p><code>raster_samples</code> includes:</p>
+<p>─ <code>amazon_001_2024-08-23.tiff</code>: L2A (surface reflectance)
 Sentinel-2 data ─ <code>amazon_001_2024-08-23_BIN.tiff</code>: binary
 mask derived from <code>amazon_001_2024-08-23_SCL.tiff</code> and
 focusing on vegetation class.<br>
@@ -269,14 +272,16 @@ focusing on vegetation class.<br>
 from alternative radiometric criteria, including NDVI mask to remove non
 vegetated pixels, Blue mask to remove hazy/cloudy pixels, and NIR mask
 to remove shaded pixels. You can adjust threshold for cloudMask (B02),
-shadeMask (B08), and NDVIMask. ─
+shadeMask (B08), and NDVIMask. See <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR_02.html#spectral-transformation" class="external-link">here</a>
+for additional information on how these masks work. ─
 <code>amazon_001_2024-08-23_SCL.tiff</code>: scene classification
-provided by sen2cor atmospheric correction</li>
+provided by sen2cor atmospheric correction.</p>
+</li>
+<li><p><code>s2_tiles_amazon.rds</code> contains the Sentinel-2 tile ID
+for the scene</p></li>
+<li><p><code>s2_footprint_amazon.gpkg</code> contains the footprint of
+the Sentinel-2 tile ID</p></li>
 </ul>
-<p>─ <code>s2_tiles_amazon.rds</code> contains the Sentinel-2 tile ID
-for the scene</p>
-<p>─ <code>s2_footprint_amazon.gpkg</code> contains the footprint of the
-Sentinel-2 tile ID</p>
 <p>The animated gif shows the Sentinel-2 acquisition. The pixels masked
 by the binary mask <code>amazon_001_2024-08-23_BIN_v2.tiff</code> are
 greyed. The surface reflectance in sentinel-2 L2A products is rescaled

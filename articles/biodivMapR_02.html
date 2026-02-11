@@ -61,7 +61,10 @@
       <a href="../articles/biodivMapR_03.html">produce diversity maps from a set of features</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_04.html">Validation</a>
+      <a href="../articles/biodivMapR_04.html">validation / comparison with ground observation / intercomparison</a>
+    </li>
+    <li>
+      <a href="../articles/biodivMapR_05.html">`biodivMapR` applied with biophysical trait estimation with `prosail`</a>
     </li>
   </ul>
 </li>
@@ -93,7 +96,7 @@
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2026-02-10</h4>
+            <h4 data-toc-skip class="date">2026-02-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR_02.Rmd" class="external-link"><code>vignettes/biodivMapR_02.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_02.Rmd</code></div>
@@ -329,10 +332,13 @@ acquisition
 </h4>
 <p>Spectral indices can then be computed for each of the 84 cells of the
 grid with the function <code>compute_si_from_grid</code>.</p>
-<p>Here, we define three spectral indices: - <code>NDVI</code>:
-normalized difference vegetation index, sensitive to vegetation density
-and health. NDVI is influenced by vegetation chlorophyll content and
-leaf area index (LAI).</p>
+<p>Here, we define three spectral indices:</p>
+<ul>
+<li>
+<code>NDVI</code>: normalized difference vegetation index, sensitive
+to vegetation density and health. NDVI is influenced by vegetation
+chlorophyll content and leaf area index (LAI).</li>
+</ul>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mi>D</mi><mi>V</mi><mi>I</mi><mo>=</mo><mfrac><mrow><msub><mi>R</mi><mtext mathvariant="normal">B08</mtext></msub><mo>−</mo><msub><mi>R</mi><mtext mathvariant="normal">B04</mtext></msub></mrow><mrow><msub><mi>R</mi><mtext mathvariant="normal">B08</mtext></msub><mo>+</mo><msub><mi>R</mi><mtext mathvariant="normal">B04</mtext></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">NDVI = \frac{R_\text{B08} - R_\text{B04}}{R_\text{B08} + R_\text{B04}}</annotation></semantics></math></p>
 <ul>
 <li>

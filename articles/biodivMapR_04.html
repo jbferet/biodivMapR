@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Validation • biodivMapR</title>
+<title>validation / comparison with ground observation / intercomparison • biodivMapR</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Validation">
+<script src="../pkgdown.js"></script><meta property="og:title" content="validation / comparison with ground observation / intercomparison">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -61,7 +61,10 @@
       <a href="../articles/biodivMapR_03.html">produce diversity maps from a set of features</a>
     </li>
     <li>
-      <a href="../articles/biodivMapR_04.html">Validation</a>
+      <a href="../articles/biodivMapR_04.html">validation / comparison with ground observation / intercomparison</a>
+    </li>
+    <li>
+      <a href="../articles/biodivMapR_05.html">`biodivMapR` applied with biophysical trait estimation with `prosail`</a>
     </li>
   </ul>
 </li>
@@ -89,11 +92,12 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Validation</h1>
+      <h1 data-toc-skip>validation / comparison with ground observation
+/ intercomparison</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2026-02-10</h4>
+            <h4 data-toc-skip class="date">2026-02-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR_04.Rmd" class="external-link"><code>vignettes/biodivMapR_04.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_04.Rmd</code></div>
@@ -141,7 +145,7 @@ and
 spectral diversity metrics over the footprint defined by polygons of a
 vector layer.</p>
 <div class="section level3">
-<h3 id="validation-of-biodivmapr-using-spectral-features-obtained-from-spca">Validation of <code>biodivMapR</code> using spectral features
+<h3 id="validation-of-biodivmapr-using-spectral-features-obtained-from-spca">validation of <code>biodivMapR</code> using spectral features
 obtained from SPCA<a class="anchor" aria-label="anchor" href="#validation-of-biodivmapr-using-spectral-features-obtained-from-spca"></a>
 </h3>
 <p>The function <code>get_diversity_from_plots</code> can be performed
@@ -198,7 +202,7 @@ diversity mapped from spectral indices.</p>
 <span>                                          Hill_order <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="validation-biodivmapr-using-spectral-indices">Validation <code>biodivMapR</code> using spectral indices<a class="anchor" aria-label="anchor" href="#validation-biodivmapr-using-spectral-indices"></a>
+<h3 id="validation-biodivmapr-using-spectral-indices">validation <code>biodivMapR</code> using spectral indices<a class="anchor" aria-label="anchor" href="#validation-biodivmapr-using-spectral-indices"></a>
 </h3>
 <p>The validation can also be performed using the
 <code>biodivMapR</code> spectral diversity models adjusted on spectral
@@ -252,6 +256,13 @@ and
 diversity metrics produced with <code>biodivMapR</code> over the same
 site with two different inputs (components selected from SPCA and
 spectral indices).</p>
+<p>This intercomparison shows consistent estimation for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
+diversity metrics, with string correlation between shannon and hill
+indices obtained from the two types of data. However, the type of
+features used to compute spectral diversity influences Bray Curtis
+dissimilarity. The correlation of the Bray Curtis dissimilarity matrix
+remains moderate to strong.</p>
 <p><img src="https://gitlab.com/jbferet/myshareddata/-/raw/master/biodivMapR_vignette_illustrations/04_intercomparison_pca_si.png" class="r-plt" alt="" width="100%"></p>
 <!-- <p float="left"> -->
 <!--   <img src="../man/figures/04_shannon_pca_vs_si.png" width="30%" /> -->
