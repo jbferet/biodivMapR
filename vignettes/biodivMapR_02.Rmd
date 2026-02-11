@@ -259,6 +259,7 @@ Spectral indices can then be computed for each of the 84 cells of the grid with
 the function `compute_si_from_grid`.
 
 Here, we define three spectral indices: 
+
 - `NDVI`: normalized difference vegetation index, sensitive to vegetation 
 density and health. 
 NDVI is influenced by vegetation chlorophyll content and leaf area index (LAI). 

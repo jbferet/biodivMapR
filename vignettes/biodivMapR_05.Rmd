@@ -1,0 +1,677 @@
+---
+title: "`biodivMapR` applied with biophysical trait estimation with `prosail`"
+author: "Jean-Baptiste Féret, Florian de Boissieu"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+    toc_depth: 2
+  html_vignette:
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{biodivMapR and prosail}
+  \usepackage[utf8]{inputenc}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval=FALSE
+)
+options(rmarkdown.html_vignette.check_title = FALSE)
+```
+
+This tutorial will guide you through the application of `prosail` in order to 
+produce biophysical properties from hybrid inversion, then used to estimate 
+spectral diversity with `biodivMapR`.
+
+This is the tutorial associated to the book chapter 
+[`A Plant Trait-Based Approach to Map Forest Biodiversity Using Imaging Spectroscopy and Physical Modeling`](https://doi.org/10.1007/978-3-031-99665-8_7), which is part of the 
+book [`R Coding for Ecology`](https://link.springer.com/book/10.1007/978-3-031-99665-8), 
+in the **Use R!** book series (Springer).
+
+
+**Warning**: this tutorial is appropriate with prosail v3.0.0 and later.
+please install the 'dev_joss' branch if the master branch is <3.0.0
+
+```{r, install prosail}
+devtools::install_gitlab('jbferet/prosail@dev_joss')
+```
+
+
+
+## download imaging spectroscopy data required for the tutorial
+
+The image can be downloaded from [this webpage](https://doi.org/10.57745/SDPRYY).
+Three files are available on the webpage:
+
+- `Readme_FAbas_HS_mosaic-2.pdf`
+
+- `Fabas_HS_mosaic.hdr`: header file for the image data, contains all metadata 
+such as central wavelengths of the different bands, image size, projection...
+
+- `Fabas_HS_mosaic.tif`: the binary image. This is a surface reflectance image, 
+which is geometrically and atmospherically corrected. 
+Image spatial resolution is 4m. a multiplying factor of 10000 was applied on 
+reflectance (10000 = 100% reflectance).
+
+The data should be placed in a directory defined as `data_dir` in the next code 
+chunk.
+
+Figure 1 shows an RGB representation of the imaging spectroscopy data acquired 
+over the Fabas forest.
+
+```{r, eval=TRUE, echo = FALSE, out.width="100%"}
+url <- "https://gitlab.com/jbferet/myshareddata/-/raw/master/biodivMapR_vignette_illustrations/05_rgb_hyspex.png"
+knitr::include_graphics(url)
+```
+
+<center>
+  Fig. 1. color composition of Hyspex imaging spectroscopy acquisition. 
+  
+  R = 661 nm, G = 559 nm, B = 458 nm. 
+</center> 
+<p>&nbsp;</p>
+
+
+## define input / output directories
+
+The input data directory is defined, as well as the directory where vegetation
+biophysical parameters obtained from `prosail` hybrid inversion. 
+This tutorial uses functions performing raster tiling when processing `prosail` 
+hybrid inversion, hence the definition of a subdirectory named `tiles`.
+
+```{r, eval=FALSE}
+# clean workspace
+rm(list = ls(all=TRUE)); gc()
+if (rstudioapi::isAvailable()) 
+  setwd(dirname(rstudioapi::getSourceEditorContext()$path))
+library(prosail)
+
+# 1.1- define input & output directories
+data_dir <- './01_DATA/fabas'
+prosail_dir <- './03_RESULTS/fabas/prosail_inversion'
+prosail_tiles <- file.path(prosail_dir, 'tiles')
+dir.create(prosail_tiles, showWarnings = F, recursive = T)
+```
+
+## prepare imaging spectroscopy data for processing: spectral/spatial masking
+
+### get metadata and additional information
+
+Identify the imaging spectroscopy raster, and get metadata from the header file. 
+The central wavelength and full width at half maximum (FHWM) are needed to 
+produce a spectral response function which will then be needed to simulate
+surface reflectance with sensor response. 
+
+```{r, eval=FALSE}
+# 1.2- define input & output directories
+input_raster_path <- file.path(data_dir,'Fabas_HS_mosaic.tif')
+
+# get information on wavelength and fwhm from header
+hdr <- read_envi_header(hdr_path = get_hdr_name(image_path = input_raster_path))
+sensor_bands <- hdr$wavelength
+sensor_fwhm <- hdr$fwhm
+```
+
+
+
+### filter out shaded, non vegetated, and hazy pixels. 
+
+A basic filtering process can be applied in order to mask irrelevant pixels 
+(no vegetation) and pixels with poor quality (hazy/cloudy or shaded areas).
+The function `radiometric_filtering` implemented in the package 
+[`biodivMapR`](https://jbferet.github.io/biodivMapR/index.html) performs a 
+filtering combining multiple criteria. 
+
+- non vegetated pixels are filtered out with a NDVI thresholding: all pixels with 
+`NDVI < NDVI_Thresh` are masked.
+
+- hazy / cloudy pixels are filtered out with a Blue band thresholding: all pixels
+with `R\text{blue} > Blue_Thresh` are masked.
+
+- shaded pixels are filtered out with a near infrared band thresholding: all 
+pixels with `R\text{nir} < NIR_Thresh` are masked.
+
+
+```{r, eval=FALSE}
+##  1.3- spatial filtering: discard with hazy/cloudy, shaded & no vegetation
+library(biodivMapR)
+NDVI_Thresh <- 0.5
+Blue_Thresh <- 600
+NIR_Thresh <- 1500
+mask_path <- radiometric_filtering(input_raster_path = input_raster_path, 
+                                   input_rast_wl = sensor_bands,
+                                   output_dir = prosail_dir, 
+                                   NDVI_Thresh = NDVI_Thresh, 
+                                   Blue_Thresh = Blue_Thresh, 
+                                   NIR_Thresh = NIR_Thresh)
+```
+
+If no mask available, then `mask_path` should not be specified as input for
+`apply_prosail_inversion`.
+
+### filter out spectral bands with low signal to noise ratio (SNR)
+
+Additional information corresponding to atmospheric transmittance are also 
+downloaded in order to perform spectral filtering for low transmittance. 
+Low SNR is **arbitrarily** defined as a threshold of 0.85. 
+Please investigate how to filter out spectral domains with low SNR on your own 
+imaging spectroscopy data as it may depend on sensor, conditions of acquisitions, 
+and other factors. 
+An additional band showing strong noise after careful analysis is also discarded. 
+
+
+```{r, eval=FALSE}
+# 1.4- spectral filtering
+# atmospheric transmittance file available on a repository
+git_repository <- 
+  'https://gitlab.com/jbferet/myshareddata/-/raw/master/Fabas_HS_AtmoT'
+git_file <- 'AtmoT_Fabas_Hyspex.csv'
+url <- file.path(git_repository, git_file)
+path_atmo <- file.path(data_dir,git_file)
+download.file(url = url, destfile = path_atmo)
+
+# spectral filtering #1: discard bands with transmission factor<0.85
+transmittance <- read.delim(path_atmo, header = TRUE)
+low_trans <- which(transmittance$Transmittance<0.85)
+# spectral filtering #2: discard noisy band remaining
+noise <- which((sensor_bands > 2200 & sensor_bands < 2205))
+# combine bands to discard
+wl_elim <- c(low_trans, noise)
+```
+
+
+## perform hybrid inversion of `prosail` on imaging spectroscopy data
+
+The hybrid inversion implemented in the `prosail` package is a bagging 
+prediction of biophysical properties: a LUT is simulated with prosail and 
+resampled in order to produce multiple datasets including a limited number of 
+samples. 
+Then a set of individual support vector regression (SVR) models is trained from 
+each reduced dataset.
+
+The hybrid inversion consists in two main stages for users: 
+
+- training of a machine learning regression model (SVR) for each biophysical 
+property of interest based on surface reflectance factor LUT simulated with 
+PROSAIL
+
+- application of the SVR models to a dataset provided as a matrix or as a raster
+
+
+
+### preparation for a training dataset
+
+The hybrid inversion can be easily parameterized to adapt to any type of sensor, 
+input parameter distribution, type of noise. 
+
+alternative machine learning (ML) methods will be implemented in the future, and 
+suggestions are welcome for the implementation of alternative algorithms.
+Let's go. 
+
+#### biophysical variables of interest
+
+`prosail` takes into account the influence of multiple biophysical properties. 
+Each input parameter can be theoretically estimated through hybrid inversion. 
+However, the relevance and uncertainty associated with these estimates 
+strongly depends on i) the type of sensor (spectral information provided), 
+ii) the signal to noise ratio of the data, and iii) the type of vegetation 
+(keeping in mind that `prosail` is based on a turbid hypothesis, hence, not 
+appropriate for heterogeneous forests).
+
+
+Here, we will estimate four biophysical properties which will then be used to 
+compute spectral diversity. 
+These are: 
+- leaf area index (`lai`)
+- leaf chlorophyll content (`chl`)
+- equivalent water thickness (`ewt`)
+- leaf mass per area  (`lma`)
+
+```{r, eval=FALSE}
+# biophysical variables to estimate
+parms_to_estimate <- c('lai', 'chl', 'ewt', 'lma')
+```
+
+#### spectral domain of inversion
+
+The accuracy of the estimation of vegetation biophysical properties from 
+remotely sensed data varies with the spectral information provided to the ML
+algorithm. 
+Here, we arbitrarily define spectral domains for each biophysical property of 
+interest. 
+Spectral feature selection may be used in order to refine the optimal spectral 
+domain for each property.
+Noise level to be applied on simulated data is also defined for each property. 
+
+
+```{r, eval=FALSE}
+# spectral domain used for estimation of each variable, discard wl_elim
+selected_bands <- noise_level <- list()
+wl_train <- data.frame(min = c('lai'=700, 'chl'=700, 'ewt'=1200, 'lma'=1200),
+                       max = c('lai'=900, 'chl'=900, 'ewt'=2400, 'lma'=2400))
+for (parm in parms_to_estimate) {
+  bandsel <- which(sensor_bands > wl_train[parm, 'min'] & 
+                     sensor_bands < wl_train[parm, 'max'])
+  selected_bands[[parm]] <- sensor_bands[bandsel[-na.exclude(match(wl_elim, bandsel))]]
+  # 2% relative gaussian noise applied to reflectance data
+  noise_level[[parm]] <- 0.02        
+}
+```
+
+
+#### geometry of acquisition
+
+A rough estimate of the valid range for the geometry of acquisition 
+should be provided, ideally. 
+
+- observer zenith angle `tto`
+
+- sun zenith angle `tts`
+
+- relative azimuth angle `psi`
+
+```{r, eval=FALSE}
+# define geometry of acquisition based on location and time of acquisition
+geom_acq <- data.frame(min = c('tto' = 0, 'tts' = 50, 'psi' = 0), 
+                       max = c('tto' = 15, 'tts' = 70, 'psi' = 360))
+```
+
+#### input parameter distribution
+
+Users can define distribution and range for each input parameter of `prospect`. 
+However, for the sake of straightforwardness, the parameterization defined in 
+the [Algorithm Theoretical Based Document](https://step.esa.int/docs/extra/ATBD_S2ToolBox_V2.1.pdf) 
+(ATBD) of the Sentinel-2 toolbox will be used here.
+
+
+```{r, eval=FALSE}
+# use same distribution as used in ATBD for Sentinel-2 data
+input_prosail <- get_input_prosail(atbd = TRUE, geom_acq = geom_acq)
+# waiting for updated soil database, deactivate soil v3 
+input_prosail$soil_brightness <- input_prosail$soil_ID  <- NULL
+```
+
+
+#### spectral response function
+
+The spectral response function (SRF) needs to be defined in order to simulate sensor 
+reflectance. 
+
+The SRF of several sensors is already implemented in `prosail`: Sentinel-2, 
+Landsat-7, Landsat-8, Landsat-9, SPOT 6/7, MODIS, Pleiades, and Venus. 
+
+Here, the SRF of the hyperspectral sensor is produced from central wavelengths 
+and FWHM based on a gaussian response model. 
+
+
+```{r, eval=FALSE}
+# get sensor response function corresponding to the sensor
+sensor_name <- 'Hyspex'
+srf <- get_srf_sensor(sensor_name = sensor_name, 
+                      wl = sensor_bands, 
+                      fwhm = sensor_fwhm)
+```
+
+
+### train ML regression algorithms with simulated data
+
+The function `train_prosail_inversion` performs the training of the ML algorithm 
+based on the information generated in the previous steps. 
+It provides a set of regression models for each biophysical property to estimate. 
+
+```{r, eval=FALSE}
+message('training ML regression with prosail simulations')
+options <- set_options_prosail(fun = 'train_prosail_inversion')
+options$noise_level <- noise_level
+hybrid_model <- train_prosail_inversion(input_prosail = input_prosail, 
+                                        parms_to_estimate = parms_to_estimate,
+                                        geom_acq = geom_acq, 
+                                        srf = srf,
+                                        selected_bands = selected_bands,
+                                        output_dir = prosail_dir, 
+                                        options = options)
+```
+
+### apply ML regression algorithms on images
+
+The function `apply_prosail_inversion` applies ML regression trained at the 
+previous step on raster data. 
+As for [spectral indices](https://jbferet.gitlab.io/tutorial_puertorico2025/compute-spectral-indices-from-sentinel-2-image.html#computing-spectral-indices-from-sentinel-2-raster), a grid is first defined 
+on the aoi. 
+Model inversion is then applied individually for each tile. 
+The current version of prosail does not support multiprocessing for the 
+application of ML algorithm, but suggestions are welcome for its implementation. 
+
+
+```{r, eval=FALSE}
+# apply models on image
+message('applying ML regression on image')
+options <- set_options_prosail(fun = 'apply_prosail_inversion_per_tile')
+options$tiling <- TRUE      # process image per square tile
+options$tile_size <- 1000   # dimensions of individual square tile (in meters)
+BPvars <- apply_prosail_inversion(raster_path = input_raster_path, 
+                                  mask_path = mask_path, 
+                                  output_dir = prosail_tiles,
+                                  hybrid_model = hybrid_model, 
+                                  band_names = sensor_bands,
+                                  selected_bands = selected_bands, 
+                                  options = options)
+```
+
+### resulting biophysical properties
+
+The maps corresponding to the biophysical variables estimated from imaging 
+spectroscopy data are displayed below. 
+
+```{r, eval=TRUE, echo = FALSE, out.width="100%"}
+url <- "https://gitlab.com/jbferet/myshareddata/-/raw/master/biodivMapR_vignette_illustrations/05_bp_prosail.png"
+knitr::include_graphics(url)
+```
+
+<center>
+  Fig. 2. maps of vegetation biophysical variables  `chl`, `lai`, `ewt` and 
+  `lma` obtained over the Fabas forest. 
+  The variables were estimated from physical model hybrid inversion applied to 
+  imaging spectroscopy and performed with the `prosail` package.
+</center> 
+<p>&nbsp;</p>
+
+
+
+## apply `biodivMapR` on biophysical prioperties estimated with `prosail`
+
+### parameterize `biodivMapR`
+
+The directory where tiles corresponding to biophysical properties are stored 
+needs to be provided. 
+`biodivMapR` will then identify files with pattern matching with each 
+biophysical property, and the identifier of the tile. 
+the grid produced during the `prosail` inversion is also used
+
+Multiple options can be defined with the `set_options_biodivMapR` function. 
+Here, we defined `options$moving_window <- TRUE`. 
+This results in a moving window process instead of cell grid process, with map 
+produced with the same spatial resolution as original input data. 
+While this option produces visually more satisfying outputs, it results in 
+signifiantly higher computation time. 
+Hence, **we do not recommend setting this option to TRUE if large image datasets are processed**.
+
+
+```{r parametrize biodivMapR}
+# -----------------------------------------------------------------------------
+# prepare for biodivMapR to run on the set of biophysical properties estimated 
+# in previous step
+# -----------------------------------------------------------------------------
+# define output directories
+prosail_dir <- file.path(output_dir, 'prosail_inversion/tiles/mean')
+
+# directory where mask is stored
+mask_dir <- file.path(output_dir, 'mask_tiles')
+dir.create(path = mask_dir, showWarnings = FALSE, recursive = TRUE)
+
+# directory where diversity maps are stored
+biodivMapR_dir <- file.path(output_dir, 'biodivMapR')
+dir.create(biodivMapR_dir, showWarnings = F, recursive = T)
+
+# define grid to perform diversity mapping
+aoi_path <- file.path(input_raster_dir, 'aoi_tiles_1000m.gpkg')
+aoi <- sf::st_read(dsn = aoi_path, quiet = TRUE)
+nb_plots <- length(aoi$geom)
+plots <- get_plot_list(dsn = aoi_path, nbdigits = nchar(nb_plots))
+
+# -----------------------------------------------------------------------------
+# run biodivMapR 
+# -----------------------------------------------------------------------------
+# define biodivMapR parameters and options
+window_size <- 10
+nbCPU <- 6
+
+# set optional parameters
+options <- set_options_biodivMapR(fun = 'biodivMapR_full_tiles', options = NULL)
+options$alpha_metrics <- c('hill', 'shannon') 
+options$beta_metrics <- TRUE
+options$moving_window <- TRUE
+options$nb_clusters <- 25
+site_name <- 'Fabas_HS_mosaic'
+
+```
+
+
+### run `biodivMapR`
+
+`biodivMapR` can run directly using a unique function `biodivMapR_full_tiles`, 
+as illustrated in the code hereafter. 
+
+```{r run biodivMapR}
+# run biodivmapR on tiles defined when processing prosail inversion
+ResDiv <- biodivMapR_full_tiles(feature_dir = prosail_dir, 
+                                list_features = parms_to_estimate, 
+                                site_name = site_name, 
+                                mask_dir = mask_dir, 
+                                plots = plots, 
+                                output_dir = biodivMapR_dir, 
+                                window_size = window_size, 
+                                nbCPU = nbCPU, 
+                                options = options)
+
+
+```
+
+
+Figure 3 displays the Hill index obtained from `biodivMapR`, and allows 
+comparison with the forest stand composition corresponding to pure (blue) and 
+mixed (red) forest stands, as described in the [BD Foret](https://geoservices.ign.fr/bdforet).
+
+```{r, eval=TRUE, echo = FALSE, out.width="100%"}
+url <- "https://gitlab.com/jbferet/myshareddata/-/raw/master/biodivMapR_vignette_illustrations/05_alpha_ground.gif"
+knitr::include_graphics(url)
+```
+
+<center>
+  Fig. 3. map of of $\alpha$-diversity (hill index) obtained from `biodivMapR` 
+  analysis on biophysical variables from imaging spectroscopy acquisition.
+  The variables were estimated from physical model hybrid inversion applied to 
+  imaging spectroscopy and performed with the `prosail` package.
+  The map is compared with forest stand composition corresponding to pure (blue)
+  and mixed (red) forest stands.
+</center> 
+<p>&nbsp;</p>
+
+
+
+
+Figure 4 displays the $\beta$-diversity obtained from `biodivMapR`, and allows 
+comparison with the forest stand composition, as described in the 
+[BD Foret](https://geoservices.ign.fr/bdforet).
+
+```{r, eval=TRUE, echo = FALSE, out.width="100%"}
+url <- "https://gitlab.com/jbferet/myshareddata/-/raw/master/biodivMapR_vignette_illustrations/05_beta_ground.gif"
+knitr::include_graphics(url)
+```
+
+<center>
+  Fig. 4. map of of $\beta$-diversity obtained from `biodivMapR` analysis on 
+  biophysical variables from imaging spectroscopy acquisition.
+  The variables were estimated from physical model hybrid inversion applied to 
+  imaging spectroscopy and performed with the `prosail` package.
+  The map is compared with forest stand composition corresponding to pure (blue)
+  and mixed (red) forest stands.
+</center> 
+<p>&nbsp;</p>
+
+
+### validate `biodivMapR` with ground data
+
+The diversity metrics computed with `biodivMapR` can then be compared with 
+ground information obtained from forest inventories.
+
+The validation plots & inventories can be downloaded from a `gpkg` file 
+available at [this webpage](https://doi.org/10.57745/NHRNOR).
+
+The code below allows arranging the ground information. 
+
+```{r validate biodivMapR}
+
+# -----------------------------------------------------------------------------
+# prepare inventory data for analysis and comparison with biodivMapR estimates
+# -----------------------------------------------------------------------------
+# define input & output directories
+input_vect_dir <- '../01_data/vector_data'
+prosail_bp_vrt_dir <- file.path(output_dir, 'prosail_inversion/tiles/vrt')
+mask_dir <- file.path(output_dir, 'mask_tiles')
+biodivMapR_dir <- file.path(output_dir, 'biodivMapR')
+validation_dir <- file.path(output_dir, 'validation')
+dir.create(path = validation_dir, showWarnings = FALSE, recursive = TRUE)
+
+# produce virtual rasters for spectral features to be used
+# create a vrt
+bp_path <- list()
+for (bp in parms_to_estimate)
+  bp_path[[bp]] <- list.files(path = prosail_bp_vrt_dir, pattern = bp, full.names = T)
+
+# mask create a vrt
+listfiles <- list.files(path = mask_dir, full.names = T)
+listfiles <- listfiles[grep(pattern = '.tiff', x = listfiles)]
+mask_path <- file.path(validation_dir, paste0(site_name, '_mask_mosaic.vrt'))
+v <- terra::vrt(x = listfiles, filename = mask_path, overwrite = TRUE)
+
+# arrange inventory data to get diversity metrics
+# The inventory data needs a bit of process to get the abundance table which 
+# will then be used to produce diversity metrics.
+# The function get_inventory_from_species_list will to the job.
+get_inventory_from_species_list <- function(validation_plots){
+  SpList <- unique(unlist(validation_plots[[c('Species1', 'Species2', 
+                                              'Species3', 'Species4', 
+                                              'Species5')]]))
+  SpList <- sort(na.omit(SpList))
+  # create species abundance table from inventory data
+  inventory <- data.frame(matrix(data = 0,  
+                                 nrow = length(validation_plots$ID), 
+                                 ncol = length(SpList)))
+  colnames(inventory) <- SpList
+  rownames(inventory) <- validation_plots$ID
+  for (PlotID in validation_plots$ID){
+    whichPlot <- which(validation_plots$ID == PlotID)
+    for (sp in seq_len(5)){
+      wsp <- which(SpList == validation_plots[[paste0('Species',sp)]][[1]][whichPlot])
+      if (length(wsp)>0){
+        Abundspi <- paste0('%Cover_Species',sp)
+        inventory[whichPlot,SpList[wsp]] <- validation_plots[[Abundspi]][[1]][whichPlot]
+      }
+    }
+  }
+  return(inventory)
+}
+
+# We can then get the diversity metrics we are interested in.
+vect_path <- file.path(input_vect_dir, 'forestPLOT_Fabas_2019.gpkg')
+validation_plots <- terra::vect(vect_path)
+inventory <- get_inventory_from_species_list(validation_plots)
+# compute diversity metrics from abundance table
+plotID <- validation_plots$ID
+shannon_obs <- vegan::diversity(inventory, index = "shannon")
+richness_obs <- vegan::specnumber(inventory)
+bc_obs <- vegan::vegdist(inventory, method = "bray")
+
+
+# extract spectral diversity metrics from plots footprint
+# We can then use information produced at the previous step in order to get 
+# diversity metrics from plot footprint. 
+# plots are expected to be polygons, not points. Apply buffer if needed
+load(file.path(biodivMapR_dir, 'Kmeans_info.RData'))
+load(file.path(biodivMapR_dir, 'Beta_info.RData'))
+input_rast <- lapply(X = bp_path, FUN = terra::rast)
+input_mask <- terra::rast(mask_path)
+alpha_metrics <- c('richness', 'shannon', 'simpson', 'hill') 
+fd_metrics <- c('FRic', 'FEve', 'FDiv', 'FDis', 'FRaoq') 
+validation <- get_diversity_from_plots(input_rast = input_rast, 
+                                       input_mask = input_mask, 
+                                       validation_vect = validation_plots, 
+                                       Kmeans_info = Kmeans_info, 
+                                       Beta_info = Beta_info, 
+                                       alpha_metrics = alpha_metrics,
+                                       fd_metrics = fd_metrics)
+
+```
+
+
+### compare `biodivMapR` with ground data
+
+The following code allows production of a figure comparing measured and 
+estimated diversity metrics.
+
+```{r produce plots}
+
+# produce scatterplots comparing inventory data with spectral diversity
+# The code below produces a scatterplot comparing diversity metrics derived from
+# forest inventories with diversity metrics produced with biodivMapR.
+
+# richness
+predicted <- validation$specdiv$richness_mean
+df_richness <- data.frame('measured' = richness_obs,
+                          'predicted' = predicted)
+# shannon
+predicted <- validation$specdiv$shannon_mean
+df_shannon <- data.frame('measured' = shannon_obs,
+                         'predicted' = predicted)
+# Bray-Curtis dissimilarity
+BCdissmat <- c(as.dist(validation$BC_dissimilarity, diag = FALSE))
+Field_Beta <- c(as.dist(bc_obs, diag = FALSE))
+df_beta_estimated <- data.frame('measured' = Field_Beta,
+                                'predicted' = BCdissmat)
+
+plot_data <- data.table::rbindlist(list(
+  `Spectral species richness` = df_richness,
+  `Shannon's H` = df_shannon,
+  `BC dissimilarity` = df_beta_estimated), idcol = 'Metric')
+plot_data <- dplyr::mutate(plot_data, 
+                           Metric = factor(Metric, 
+                                           levels = unique(Metric), 
+                                           labels = unique(Metric)))
+
+plotval <- ggplot(plot_data, aes(measured, predicted, color=Metric))+
+  geom_point()+
+  geom_smooth(method="lm", color="black")+
+  ggplot2::facet_wrap(~Metric, scales="free", ncol=3)+
+  ggpmisc::stat_correlation(method = "spearman", 
+                            label.x = "right", 
+                            label.y = "bottom", 
+                            color="black")+
+  guides(color="none") +
+  annotate("label", colour = "black", size = 10)
+
+filename <- file.path(validation_dir, 'Validation_AlphaBeta.png')
+ggsave(filename, plot = plotval, device = 'png', path = NULL, scale = 0.75, 
+       width = 12, height = 4, units = "in", dpi = 600, limitsize = TRUE)
+```
+
+
+
+
+Figure 5 displays the comparison between diversity metrics obtained from 
+forest inventories and those obtained from `biodivMapR` applied to biophysical 
+properties obtained from imaging spectroscopy.
+
+```{r, eval=TRUE, echo = FALSE, out.width="100%"}
+url <- "https://gitlab.com/jbferet/myshareddata/-/raw/master/biodivMapR_vignette_illustrations/05_Validation_AlphaBeta.png"
+knitr::include_graphics(url)
+```
+
+<center>
+  Fig. 5. comparison between diversity metrics obtained from forest inventories 
+  and those obtained from `biodivMapR` applied to biophysical 
+  properties obtained from imaging spectroscopy.
+  from left to right: species vs. spectral richness; species vs. spectral 
+  Shannon, species vs. spectral bray curtis dissimilarity.
+</center> 
+<p>&nbsp;</p>

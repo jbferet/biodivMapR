@@ -191,7 +191,8 @@ readRDS('./01_DATA/amazon/raster_data/sentinel-2/collections/plot_001.rds')
 # assets, bbox, collection, geometry, id, links, properties, stac_extensions, stac_version, type
 ```
 
-- `raster_samples` includes 
+- `raster_samples` includes:
+
   ─ `amazon_001_2024-08-23.tiff`: L2A (surface reflectance) Sentinel-2 data
   ─ `amazon_001_2024-08-23_BIN.tiff`: binary mask derived from 
   `amazon_001_2024-08-23_SCL.tiff` and focusing on vegetation class.  
@@ -199,12 +200,14 @@ readRDS('./01_DATA/amazon/raster_data/sentinel-2/collections/plot_001.rds')
   radiometric criteria, including NDVI mask to remove non vegetated pixels, 
   Blue mask to remove hazy/cloudy pixels, and NIR mask to remove shaded pixels.
   You can adjust threshold for cloudMask (B02), shadeMask (B08), and NDVIMask.
+  See [here](https://jbferet.github.io/biodivMapR/articles/biodivMapR_02.html#spectral-transformation)
+  for additional information on how these masks work.
   ─ `amazon_001_2024-08-23_SCL.tiff`: scene classification provided by sen2cor 
-  atmospheric correction
+  atmospheric correction.
   
-─ `s2_tiles_amazon.rds` contains the Sentinel-2 tile ID for the scene
+- `s2_tiles_amazon.rds` contains the Sentinel-2 tile ID for the scene
 
-─ `s2_footprint_amazon.gpkg` contains the footprint of the Sentinel-2 tile ID
+- `s2_footprint_amazon.gpkg` contains the footprint of the Sentinel-2 tile ID
 
 The animated gif shows the Sentinel-2 acquisition. 
 The pixels masked by the binary mask `amazon_001_2024-08-23_BIN_v2.tiff` are 

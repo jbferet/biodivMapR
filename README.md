@@ -32,8 +32,6 @@ remotes::install_github('jbferet/biodivMapR')
 
 A tutorial vignette is available [here](https://jbferet.github.io/biodivMapR/articles/biodivMapR.html).
 
-The corresponding script is available in file `examples/tutorial.R`.
-
 # 3 Citation
 
 If you use **biodivMapR**, please cite the following references:
