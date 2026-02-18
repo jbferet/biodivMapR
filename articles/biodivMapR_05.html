@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.5.1</span>
       </span>
     </div>
 
@@ -99,7 +99,7 @@ trait estimation with <code>prosail</code>
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2026-02-11</h4>
+            <h4 data-toc-skip class="date">2026-02-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR_05.Rmd" class="external-link"><code>vignettes/biodivMapR_05.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_05.Rmd</code></div>
@@ -186,7 +186,7 @@ then be needed to simulate surface reflectance with sensor response.</p>
 <span><span class="va">input_raster_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">data_dir</span>,<span class="st">'Fabas_HS_mosaic.tif'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># get information on wavelength and fwhm from header</span></span>
-<span><span class="va">hdr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/preprocS2/man/read_envi_header.html" class="external-link">read_envi_header</a></span><span class="op">(</span>hdr_path <span class="op">=</span> <span class="fu">get_hdr_name</span><span class="op">(</span>image_path <span class="op">=</span> <span class="va">input_raster_path</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">hdr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/preprocS2/man/read_envi_header.html" class="external-link">read_envi_header</a></span><span class="op">(</span>hdr_path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/preprocS2/man/get_HDR_name.html" class="external-link">get_hdr_name</a></span><span class="op">(</span>image_path <span class="op">=</span> <span class="va">input_raster_path</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">sensor_bands</span> <span class="op">&lt;-</span> <span class="va">hdr</span><span class="op">$</span><span class="va">wavelength</span></span>
 <span><span class="va">sensor_fwhm</span> <span class="op">&lt;-</span> <span class="va">hdr</span><span class="op">$</span><span class="va">fwhm</span></span></code></pre></div>
 </div>
