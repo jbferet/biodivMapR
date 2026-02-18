@@ -1,3 +1,7 @@
+# biodivMapR2 v2.5.1
+## fix
+- fixed biodivMapR_opt_clusters bypassing parallel computing
+
 # biodivMapR2 v2.5.0
 ## change
 - fully update documentation

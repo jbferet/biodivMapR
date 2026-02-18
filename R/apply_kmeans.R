@@ -10,7 +10,8 @@
 #' @export
 
 apply_kmeans <- function(inputdata_window, Kmeans_info, select_bands = NULL){
-  if (is.null(select_bands)) select_bands <- seq_len(dim(inputdata_window)[2])
+  if (is.null(select_bands))
+    select_bands <- seq_len(dim(inputdata_window)[2])
   # get nb of partitions and nb of clusters based on Kmeans_info
   nb_iter <- length(Kmeans_info$Centroids)
   nb_clusters <- dim(Kmeans_info$Centroids[[1]])[1]

@@ -67,7 +67,7 @@ biodivMapR_opt_clusters <- function(input_raster, obs_vect, obs2optimize,
   progressr::handlers(global = TRUE)
   progressr::handlers('cli')
   progressr::with_progress({
-    p <- progressr::progressor(steps = nb_repetitions)
+    p1 <- progressr::progressor(steps = nb_repetitions)
     # pb <- progress_bar$new(
     #   format = "Repeat clustering [:bar] :percent in :elapsedfull",
     #   total = nb_repetitions, clear = FALSE, width= 100)
@@ -102,33 +102,61 @@ biodivMapR_opt_clusters <- function(input_raster, obs_vect, obs2optimize,
                                     algorithm = algorithm,
                                     nbCPU = nbCPU)
       gc()
-      registerDoFuture()
-      cl <- parallel::makeCluster(nbCPU)
-      with(plan("cluster", workers = cl), local = TRUE)	
-      kmit <- NULL
-      get_diversity_from_plots_list <- function() {
-        foreach(kmit = Kmeans_info) %dopar% {
-          divplots <- get_diversity_from_plots(input_rast = input_raster,
-                                               validation_vect = obs_vect,
-                                               Hill_order = Hill_order,
-                                               Kmeans_info = kmit,
-                                               Beta_info = NULL,
-                                               input_mask  = input_mask,
-                                               alpha_metrics = alpha_metrics,
-                                               fd_metrics = fd_metrics,
-                                               getBeta = getBeta,
-                                               rast_sample = rast_val,
-                                               AttributeTable = Attributes,
-                                               selected_bands = selected_bands,
-                                               min_sun = min_sun,
-                                               pcelim = pcelim,
-                                               nbCPU = 1)
-          return(divplots)
+
+      nbCPU <- 1
+      if (nbCPU>1){
+        registerDoFuture()
+        cl <- parallel::makeCluster(nbCPU)
+        with(plan("cluster", workers = cl), local = TRUE)
+        kmit <- NULL
+        get_diversity_from_plots_list <- function() {
+          foreach(kmit = Kmeans_info) %dopar% {
+            divplots <- get_diversity_from_plots(input_rast = input_raster,
+                                                 validation_vect = obs_vect,
+                                                 Hill_order = Hill_order,
+                                                 Kmeans_info = kmit,
+                                                 Beta_info = NULL,
+                                                 input_mask  = input_mask,
+                                                 alpha_metrics = alpha_metrics,
+                                                 fd_metrics = fd_metrics,
+                                                 getBeta = getBeta,
+                                                 rast_sample = rast_val,
+                                                 AttributeTable = Attributes,
+                                                 selected_bands = selected_bands,
+                                                 min_sun = min_sun,
+                                                 pcelim = pcelim,
+                                                 nbCPU = 1)
+            return(divplots)
+          }
         }
+        divPlots_kmeans <- get_diversity_from_plots_list()
+        parallel::stopCluster(cl)
+        plan(sequential)
+      } else if (nbCPU ==1){
+        # handlers("cli")
+        # with_progress({
+        #   p <- progressr::progressor(steps = length(Kmeans_info))
+          divPlots_kmeans <- mapply(FUN = get_diversity_from_plots_cluster,
+                                    Kmeans_info = Kmeans_info,
+                                    MoreArgs = list(input_rast = input_raster,
+                                                    validation_vect = obs_vect,
+                                                    Hill_order = Hill_order,
+                                                    Beta_info = NULL,
+                                                    input_mask  = input_mask,
+                                                    alpha_metrics = alpha_metrics,
+                                                    fd_metrics = fd_metrics,
+                                                    getBeta = getBeta,
+                                                    rast_sample = rast_val,
+                                                    AttributeTable = Attributes,
+                                                    selected_bands = selected_bands,
+                                                    min_sun = min_sun,
+                                                    pcelim = pcelim,
+                                                    nbCPU = 1, p = NULL),
+                                    SIMPLIFY = FALSE)
+        # })
       }
-      divPlots_kmeans <- get_diversity_from_plots_list()
-      plan(sequential)
-      p(message = sprintf("Repeat clustering %g", repet))
+
+      p1(message = sprintf("Repeat clustering %g", repet))
       # pb$tick()
       gc()
 
