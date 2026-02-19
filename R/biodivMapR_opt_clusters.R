@@ -185,9 +185,10 @@ biodivMapR_opt_clusters <- function(input_raster, obs_vect, obs2optimize,
     }
   })
 
+  PearsonStats <- SpearmanStats <- list()
   for (crit0 in obs_criterion){
     Est_Val_indiv <- lapply(X = divIndex_est, FUN = '[[', crit0)
-    PearsonStats <- SpearmanStats <- data.frame('mean' = NULL, 'sd' = NULL)
+    PearsonStats[[crit0]] <- SpearmanStats[[crit0]] <- data.frame('mean' = NULL, 'sd' = NULL)
     PearsonAll <- SpearmanAll <- list()
     for (nbc in unlist(nbClust_list)){
       # for each number of clusters, get all estimated values
@@ -197,25 +198,25 @@ biodivMapR_opt_clusters <- function(input_raster, obs_vect, obs2optimize,
                        y = obs2optimize[[crit0]])
       Pearson <- unlist(lapply(X = corall, '[[', 'estimate'))
       PearsonAll[[as.character(nbc)]] <- Pearson
-      PearsonStats <- rbind(PearsonStats,
+      PearsonStats[[crit0]] <- rbind(PearsonStats[[crit0]],
                             data.frame('mean' = mean(Pearson),
                                        'sd' = sd(Pearson)))
       corall <- lapply(X = Est_Val_indiv2, FUN = cor.test,
                        y = obs2optimize[[crit0]],
                        method = 'spearman')
       Spearman <- unlist(lapply(X = corall, '[[', 'estimate'))
-      SpearmanStats <- rbind(SpearmanStats, data.frame('mean' = mean(Spearman),
+      SpearmanStats[[crit0]] <- rbind(SpearmanStats[[crit0]], data.frame('mean' = mean(Spearman),
                                                        'sd' = sd(Spearman)))
       SpearmanAll[[as.character(nbc)]] <- Spearman
     }
-    PearsonStats$nb_clusters <- unlist(nbClust_list)
+    PearsonStats[[crit0]]$nb_clusters <- unlist(nbClust_list)
     fileName <- file.path(outputdir, paste0(crit0, '_Pearson_mean.csv'))
-    readr::write_delim(x = round(PearsonStats, digits = 5),
+    readr::write_delim(x = round(PearsonStats[[crit0]], digits = 5),
                        file = fileName, delim = '\t', progress = FALSE)
 
-    SpearmanStats$nb_clusters <- unlist(nbClust_list)
+    SpearmanStats[[crit0]]$nb_clusters <- unlist(nbClust_list)
     fileName <- file.path(outputdir, paste0(crit0, '_Spearman_Mean.csv'))
-    readr::write_delim(x = round(SpearmanStats, digits = 5),
+    readr::write_delim(x = round(SpearmanStats[[crit0]], digits = 5),
                        file = fileName, delim = '\t', progress = FALSE)
 
     SpearmanAll <- data.frame(do.call('rbind',SpearmanAll))
