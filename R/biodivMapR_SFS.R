@@ -132,8 +132,9 @@ biodivMapR_sfs <- function(input_raster, obs_vect, obs2optimize,
   # multi-thread feature selection (SFS)
   registerDoFuture()
   # plan(multisession, workers = nbWorkers)
-  cl <- parallel::makeCluster(nbWorkers)
-  with(plan('cluster', workers = cl), local = TRUE)
+  # cl <- parallel::makeCluster(nbWorkers)
+  # with(plan('cluster', workers = cl), local = TRUE)
+  with(plan('multisession', workers = nbWorkers), local = TRUE)
 
   Corr_criterion <- EvolCorr <-   CorrSFS <- AssessSFS <- list()
   SelectedVars <- EvolCorr$richness <- EvolCorr$shannon <- EvolCorr$simpson <-
@@ -296,10 +297,7 @@ biodivMapR_sfs <- function(input_raster, obs_vect, obs2optimize,
     }
   })
 
-
-
-
-  parallel::stopCluster(cl)
+  # parallel::stopCluster(cl)
   plan(sequential)
   EvolCorr <- data.frame(EvolCorr)
   rownames(EvolCorr) <- SelectedVars

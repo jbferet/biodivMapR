@@ -103,8 +103,8 @@ biodivMapR_opt_clusters <- function(input_raster, obs_vect, obs2optimize,
                                     nbCPU = nbCPU)
       gc()
       if (nbCPU>1){
-        cl <- parallel::makeCluster(nbCPU)
-        with(plan("cluster", workers = cl), local = TRUE)
+        # cl <- parallel::makeCluster(nbCPU)
+        with(plan('multisession', workers = nbCPU), local = TRUE)
         divPlots_kmeans <- future.apply::future_lapply(X = Kmeans_info,
                                                        FUN = get_diversity_from_plots_cluster,
                                                        input_rast = input_raster,
@@ -121,7 +121,7 @@ biodivMapR_opt_clusters <- function(input_raster, obs_vect, obs2optimize,
                                                        pcelim = pcelim,
                                                        nbCPU = 1,
                                                        future.seed = TRUE)
-        parallel::stopCluster(cl)
+        # parallel::stopCluster(cl)
         plan(sequential)
 
         # registerDoFuture()
