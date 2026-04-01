@@ -24,11 +24,15 @@ get_diversity_from_plots_cluster(
 )
 }
 \arguments{
+\item{input_raster_path}{character}
+
 \item{Hill_order}{numeric. Hill order}
 
 \item{Kmeans_info}{list. kmeans description obtained from function get_kmeans}
 
 \item{Beta_info}{list. BC dissimilarity & associated beta metrics from training set}
+
+\item{input_mask_path}{character.}
 
 \item{fd_metrics}{character.}
 
@@ -51,10 +55,6 @@ get_diversity_from_plots_cluster(
 \item{verbose}{boolean. set true for messages}
 
 \item{p}{object}
-
-\item{input_rast}{SpatRaster}
-
-\item{input_mask}{SpatRaster}
 }
 \value{
 SpatVector including diversity metrics and BC dissimilarity for the plots

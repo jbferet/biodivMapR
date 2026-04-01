@@ -1,10 +1,10 @@
 #' computes diversity metrics from validation plots
 #'
-#' @param input_rast SpatRaster
+#' @param input_raster_path character
 #' @param Hill_order numeric. Hill order
 #' @param Kmeans_info list. kmeans description obtained from function get_kmeans
 #' @param Beta_info list. BC dissimilarity & associated beta metrics from training set
-#' @param input_mask SpatRaster
+#' @param input_mask_path  character.
 #' @param fd_metrics character.
 #' @param selected_bands numeric. bands selected from input_rast
 #' @param rast_sample dataframe.
