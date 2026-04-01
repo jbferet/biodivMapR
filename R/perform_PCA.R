@@ -25,6 +25,10 @@ perform_PCA  <- function(input_raster_path, output_dir, input_rast_wl = NULL,
                          TypePCA = 'SPCA', nb_pcs_to_keep = 30,
                          Excluded_WL = NULL, nb_pix_pca = 1e6,
                          nb_iter = 10, maxRows = 100, filetype = 'GTiff') {
+
+  # create output_dir if does not exist
+  dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
+
   # check if format of raster data is as expected
   input_rast <- terra::rast(input_raster_path)
   if (!is.null(input_rast_wl)){

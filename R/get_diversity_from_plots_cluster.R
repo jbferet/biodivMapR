@@ -1,7 +1,6 @@
 #' computes diversity metrics from validation plots
 #'
 #' @param input_rast SpatRaster
-#' @param validation_vect SpatVector
 #' @param Hill_order numeric. Hill order
 #' @param Kmeans_info list. kmeans description obtained from function get_kmeans
 #' @param Beta_info list. BC dissimilarity & associated beta metrics from training set
@@ -23,7 +22,7 @@
 #' @importFrom stats as.dist
 #' @export
 
-get_diversity_from_plots_cluster <- function(input_rast, validation_vect,
+get_diversity_from_plots_cluster <- function(input_rast,
                                              Hill_order = 1,
                                              Kmeans_info, Beta_info = NULL,
                                              input_mask  = NULL, fd_metrics = NULL,
@@ -38,56 +37,25 @@ get_diversity_from_plots_cluster <- function(input_rast, validation_vect,
   nb_iter <- length(Kmeans_info$Centroids)
   nb_clusters <- dim(Kmeans_info$Centroids[[1]])[1]
   # read vector data
-  if (inherits(validation_vect,
-               what = 'SpatVectorCollection') & is.null(rast_sample)){
-    SSValid <- Attributes <- list()
-    nbPlots_init <- 0
-    for (ind_vect in seq_len(length(validation_vect))){
-      ssvect <- spectralspecies_per_polygon(SpatVector = validation_vect[[ind_vect]],
-                                            input_rast = input_rast,
-                                            fd_metrics = fd_metrics,
-                                            selected_bands = selected_bands,
+
+  ssvect <- spectralspecies_per_rast_sample(input_rast = input_rast,
                                             input_mask = input_mask,
+                                            fd_metrics = fd_metrics,
                                             Kmeans_info = Kmeans_info,
+                                            selected_bands = selected_bands,
                                             rast_sample = rast_sample,
                                             AttributeTable = AttributeTable,
                                             min_sun = min_sun)
-      if (!is.null(ssvect$SSValid)){
-        SSValid[[ind_vect]] <- ssvect$SSValid
-        Attributes[[ind_vect]] <- ssvect$AttributeTable
-        SSValid[[ind_vect]]$win_ID <- SSValid[[ind_vect]]$win_ID + nbPlots_init
-        Attributes[[ind_vect]]$ID_biodivMapR <- Attributes[[ind_vect]]$ID_biodivMapR + nbPlots_init
-        nbPlots_init <- nbPlots_init + length(validation_vect[[ind_vect]])
-      }
-    }
-    SSValid <- do.call(rbind,SSValid)
-    Attributes <- do.call(rbind,Attributes)
-  } else if (inherits(validation_vect, what = 'SpatVector') | (!is.null(rast_sample))){
-    ssvect <- spectralspecies_per_polygon(SpatVector = validation_vect,
-                                          input_rast = input_rast,
-                                          input_mask = input_mask,
-                                          fd_metrics = fd_metrics,
-                                          Kmeans_info = Kmeans_info,
-                                          selected_bands = selected_bands,
-                                          rast_sample = rast_sample,
-                                          AttributeTable = AttributeTable,
-                                          min_sun = min_sun)
-    SSValid <- ssvect$SSValid
-    if (inherits(validation_vect, what = 'SpatVector')) {
-      nbPlots_init <- length(validation_vect)
-      nbPlots <- nrow(ssvect$AttributeTable)
-      selPlots <- ssvect$AttributeTable$ID_biodivMapR
-    } else if (!is.null(rast_sample)) {
-      nbPlots_init <- nbPlots <- length(unique(rast_sample$ID))
-      selPlots <- seq_len(nbPlots_init)
-    }
-    Attributes0 <- ssvect$AttributeTable
-    Attributes <- data.frame(matrix(NA, ncol = ncol(ssvect$AttributeTable),
-                                    # nrow = nrow(ssvect$AttributeTable)))
-                                    nrow = nbPlots_init))
-    names(Attributes) <- names(Attributes0)
-    Attributes[selPlots,] <- Attributes0
-  }
+  SSValid <- ssvect$SSValid
+  nbPlots_init <- nbPlots <- length(unique(rast_sample$ID))
+  selPlots <- seq_len(nbPlots_init)
+  Attributes0 <- ssvect$AttributeTable
+  Attributes <- data.frame(matrix(NA, ncol = ncol(ssvect$AttributeTable),
+                                  # nrow = nrow(ssvect$AttributeTable)))
+                                  nrow = nbPlots_init))
+  names(Attributes) <- names(Attributes0)
+  Attributes[selPlots,] <- Attributes0
+
 
   windows_per_plot <- split_chunk(SSchunk = SSValid, nbCPU = 1)
   windows_per_plot$win_ID <- list(SSValid$win_ID)

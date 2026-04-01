@@ -21,6 +21,19 @@
 
 set_options_biodivMapR <- function(fun, options = NULL){
 
+  if (fun == 'spectral_species_full'){
+    if (is.null(options$nb_samples_alpha))
+      options$nb_samples_alpha <- 1e5
+    if (is.null(options$nb_clusters))
+      options$nb_clusters <- 50
+    if (is.null(options$maxRows))
+      options$maxRows <- 1200
+    if (is.null(options$weightIQR))
+      options$weightIQR <- 4
+    if (is.null(options$Kmeans_path))
+      options$Kmeans_path <- NULL
+  }
+
   if (fun == 'spectral_species_full_tiles'){
     if (is.null(options$nb_samples_alpha))
       options$nb_samples_alpha <- 1e5
@@ -32,7 +45,6 @@ set_options_biodivMapR <- function(fun, options = NULL){
       options$weightIQR <- 4
     if (is.null(options$Kmeans_path))
       options$Kmeans_path <- NULL
-
   }
 
   if (fun == 'biodivMapR_full'){

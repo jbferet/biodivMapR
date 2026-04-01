@@ -28,10 +28,11 @@ get_spectralSpecies <- function(inputdata, Kmeans_info,
                          FUN = kmeans_iter,
                          inputvals = inputdata_cr)
   SSchunk <- rlist::list.cbind(cluster_dist)
-  names(SSchunk) <- paste0('iter#',seq(1,ncol(SSchunk)))
+  names(SSchunk) <- paste0('iter#',seq_along(Kmeans_info$Centroids))
   # # reshape distance into a matrix: all pixels from iteration 1, then all pixels from it2...
   # cluster_dist <- matrix(aperm(array(cluster_dist, c(nb_pixels, nb_clusters, nb_iter)), c(1, 3, 2)), nrow = nb_pixels * nb_iter)
   # # select closest cluster
-  if (!is.null(inputdata$win_ID)) SSchunk$win_ID <- inputdata$win_ID
+  if (!is.null(inputdata$win_ID))
+    SSchunk$win_ID <- inputdata$win_ID
   return(SSchunk)
 }

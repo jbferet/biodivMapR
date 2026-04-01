@@ -69,7 +69,8 @@ sample_raster <- function(input_rast, pix2extract, xy = FALSE, prog = FALSE){
       }
     }
 
-    if (!is.null(rast_sample_list[[1]]$ID)) rast_sample$ID <- rast_sample_list[[1]]$ID
+    if (!is.null(rast_sample_list[[1]]$ID))
+      rast_sample$ID <- rast_sample_list[[1]]$ID
     #   # if list of individual layers
     #   names_before <- names(rast_sample)
     #   if (dim(input_rast[[lr]])[3]==1) {

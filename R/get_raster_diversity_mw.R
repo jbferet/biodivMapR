@@ -126,6 +126,20 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
                                    Hill_order = Hill_order,
                                    pcelim = pcelim)
         alphabetaIdx <- unlist(alphabetaIdx_CPU, recursive = FALSE)
+
+        # 6bis- compute functional metrics
+        if (!is.null(fd_metrics)){
+          inputdata <- cbind(center_reduce(x = inputdata[selected_bands],
+                                           m = Kmeans_info$MinVal,
+                                           sig = Kmeans_info$Range),
+                             'win_ID' = inputdata$win_ID)
+          windows_per_CPU <- split_chunk(inputdata, nbCPU)
+          funct_idx_cpu <- lapply(X = windows_per_CPU$SSwindow_perCPU,
+                                  FUN = functional_window_list,
+                                  fd_metrics = fd_metrics)
+          FunctionalIdx <- unlist(funct_idx_cpu, recursive = FALSE)
+          rm(funct_idx_cpu)
+        }
         # 7- reshape alpha diversity metrics
         IDwindow <- unlist(SSwindows_per_CPU$IDwindow_perCPU)
         for (idx in alpha_metrics){
@@ -138,6 +152,12 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
             res_shapeChunk[[idx]][[crit]][j,] <- res_shapeChunk_tmp
           }
         }
+
+        # reshape functional
+
+
+
+        # resahape beta
         PCoA_BC <- matrix(data = NA, nrow = nbWindows, ncol = dimPCO)
         if (!is.null(Beta_info) & !is.null(IDwindow) & length(IDwindow)>0) {
           PCoA_BC0 <- do.call(rbind,lapply(alphabetaIdx,'[[','PCoA_BC'))

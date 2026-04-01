@@ -19,6 +19,9 @@ biodivMapR_full_classif <- function(input_raster_path, output_dir, window_size,
                                     pcelim = 0.02, compute_beta = TRUE,
                                     nb_samples_beta = 1000){
 
+  # create output_dir if does not exist
+  dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
+
   # define all alpha metrics
   alpha_metrics <- c('richness', 'shannon', 'simpson', 'hill')
   input_rast <- terra::rast(input_raster_path)

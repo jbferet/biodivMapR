@@ -6,7 +6,6 @@
 \usage{
 get_diversity_from_plots_cluster(
   input_rast,
-  validation_vect,
   Hill_order = 1,
   Kmeans_info,
   Beta_info = NULL,
@@ -26,8 +25,6 @@ get_diversity_from_plots_cluster(
 }
 \arguments{
 \item{input_rast}{SpatRaster}
-
-\item{validation_vect}{SpatVector}
 
 \item{Hill_order}{numeric. Hill order}
 

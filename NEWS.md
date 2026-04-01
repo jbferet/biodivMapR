@@ -1,3 +1,11 @@
+# biodivMapR2 v2.6.0
+## addition
+- added function spectral_species_full to produce spectral species map from individual raster
+- create output_dir when running perform_PCA
+
+## fix
+- fixed biodivMapR_opt_clusters to run in parallel
+
 # biodivMapR2 v2.5.2
 ## fix
 - fixed computation of functional diversity metrics when nbCPU = 1
@@ -33,7 +41,7 @@
 - add nested 'try' in mosaic_from_vrt
 
 ## addition
-- add spectral_species_full_tiles to produce spectral species
+- add spectral_species_full_tiles to produce spectral species from tiles
 
 # biodivMapR2 v2.4.2
 ## addition
