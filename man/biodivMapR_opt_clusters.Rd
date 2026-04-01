@@ -5,12 +5,12 @@
 \title{apply biodivMapR on a test set for different numbers of clusters}
 \usage{
 biodivMapR_opt_clusters(
-  input_raster,
+  input_raster_path,
   obs_vect,
   obs2optimize,
   selected_bands,
   obs_criterion = "shannon",
-  input_mask = NULL,
+  input_mask_path = NULL,
   outputdir = "./",
   nb_clusters = 50,
   min_sun = 0.25,
@@ -25,7 +25,7 @@ biodivMapR_opt_clusters(
 )
 }
 \arguments{
-\item{input_raster}{SpatRaster or list of SpatRaster}
+\item{input_raster_path}{SpatRaster or list of SpatRaster}
 
 \item{obs_vect}{SpatVector or SpatVectorCollection}
 
@@ -37,7 +37,7 @@ Expected values: richness, shannon, simpson, BC}
 
 \item{obs_criterion}{character. richness, shannon, simpson or BC}
 
-\item{input_mask}{SpatRaster corresponding to mask}
+\item{input_mask_path}{SpatRaster corresponding to mask}
 
 \item{outputdir}{character. output directory}
 

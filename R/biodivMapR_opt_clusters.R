@@ -1,13 +1,13 @@
 #' apply biodivMapR on a test set for different numbers of clusters
 #'
-#' @param input_raster SpatRaster or list of SpatRaster
+#' @param input_raster_path SpatRaster or list of SpatRaster
 #' @param obs_vect SpatVector or SpatVectorCollection
 #' @param obs2optimize numeric .list of ground obs diversity metrics
 #' corresponding to obs_vect.
 #' Expected values: richness, shannon, simpson, BC
 #' @param selected_bands numeric. bnds to select from input_raster
 #' @param obs_criterion character. richness, shannon, simpson or BC
-#' @param input_mask SpatRaster corresponding to mask
+#' @param input_mask_path SpatRaster corresponding to mask
 #' @param outputdir character. output directory
 #' @param nb_clusters numeric.
 #' @param min_sun numeric.
@@ -31,14 +31,19 @@
 #'
 #' @export
 
-biodivMapR_opt_clusters <- function(input_raster, obs_vect, obs2optimize,
+biodivMapR_opt_clusters <- function(input_raster_path, obs_vect, obs2optimize,
                                     selected_bands, obs_criterion = 'shannon',
-                                    input_mask = NULL, outputdir = './',
+                                    input_mask_path = NULL, outputdir = './',
                                     nb_clusters = 50, min_sun = 0.25,
                                     nb_iter = 10, pcelim = 0.02, verbose = TRUE,
                                     nb_repetitions = 50, nb_samples_alpha = 1e5,
                                     Hill_order = 1, algorithm = 'Hartigan-Wong',
                                     nbCPU = 1){
+
+  input_raster <- terra::rast(x = input_raster_path)
+  input_mask <- NULL
+  if (!is.null(input_mask_path))
+    input_mask <- terra::rast(x = input_mask_path)
 
   #### Which diversity metrics should be computed?
   alphamet <- c('richness', 'shannon', 'simpson', 'hill')
@@ -107,10 +112,10 @@ biodivMapR_opt_clusters <- function(input_raster, obs_vect, obs2optimize,
         with(plan('multisession', workers = nbCPU), local = TRUE)
         divPlots_kmeans <- future.apply::future_lapply(X = Kmeans_info,
                                                        FUN = get_diversity_from_plots_cluster,
-                                                       input_rast = input_raster,
+                                                       input_raster_path = input_raster_path,
                                                        Hill_order = Hill_order,
                                                        Beta_info = NULL,
-                                                       input_mask  = input_mask,
+                                                       input_mask_path  = input_mask_path,
                                                        alpha_metrics = alpha_metrics,
                                                        fd_metrics = fd_metrics,
                                                        getBeta = getBeta,
@@ -121,46 +126,14 @@ biodivMapR_opt_clusters <- function(input_raster, obs_vect, obs2optimize,
                                                        pcelim = pcelim,
                                                        nbCPU = 1,
                                                        future.seed = TRUE)
-        # parallel::stopCluster(cl)
         plan(sequential)
-
-        # registerDoFuture()
-        # cl <- parallel::makeCluster(nbCPU)
-        # with(plan("cluster", workers = cl), local = TRUE)
-        # kmit <- NULL
-        # get_diversity_from_plots_list <- function() {
-        #   foreach(kmit = Kmeans_info) %dopar% {
-        #     divplots <- get_diversity_from_plots_cluster(input_rast = input_raster,
-        #                                                  validation_vect = obs_vect,
-        #                                                  Hill_order = Hill_order,
-        #                                                  Kmeans_info = kmit,
-        #                                                  Beta_info = NULL,
-        #                                                  input_mask  = input_mask,
-        #                                                  alpha_metrics = alpha_metrics,
-        #                                                  fd_metrics = fd_metrics,
-        #                                                  getBeta = getBeta,
-        #                                                  rast_sample = rast_val,
-        #                                                  AttributeTable = Attributes,
-        #                                                  selected_bands = selected_bands,
-        #                                                  min_sun = min_sun,
-        #                                                  pcelim = pcelim,
-        #                                                  nbCPU = 1)
-        #     return(divplots)
-        #   }
-        # }
-        # divPlots_kmeans <- get_diversity_from_plots_list()
-        # parallel::stopCluster(cl)
-        # plan(sequential)
       } else if (nbCPU ==1){
-        # handlers("cli")
-        # with_progress({
-        #   p <- progressr::progressor(steps = length(Kmeans_info))
           divPlots_kmeans <- mapply(FUN = get_diversity_from_plots_cluster,
                                     Kmeans_info = Kmeans_info,
-                                    MoreArgs = list(input_rast = input_raster,
+                                    MoreArgs = list(input_raster_path = input_raster_path,
                                                     Hill_order = Hill_order,
                                                     Beta_info = NULL,
-                                                    input_mask  = input_mask,
+                                                    input_mask_path  = input_mask_path,
                                                     alpha_metrics = alpha_metrics,
                                                     fd_metrics = fd_metrics,
                                                     getBeta = getBeta,
@@ -171,7 +144,6 @@ biodivMapR_opt_clusters <- function(input_raster, obs_vect, obs2optimize,
                                                     pcelim = pcelim,
                                                     nbCPU = 1, p = NULL),
                                     SIMPLIFY = FALSE)
-        # })
       }
 
       p1(message = sprintf("Repeat clustering %g", repet))

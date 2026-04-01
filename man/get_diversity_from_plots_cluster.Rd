@@ -5,11 +5,11 @@
 \title{computes diversity metrics from validation plots}
 \usage{
 get_diversity_from_plots_cluster(
-  input_rast,
+  input_raster_path,
   Hill_order = 1,
   Kmeans_info,
   Beta_info = NULL,
-  input_mask = NULL,
+  input_mask_path = NULL,
   fd_metrics = NULL,
   selected_bands = NULL,
   rast_sample = NULL,
@@ -24,15 +24,11 @@ get_diversity_from_plots_cluster(
 )
 }
 \arguments{
-\item{input_rast}{SpatRaster}
-
 \item{Hill_order}{numeric. Hill order}
 
 \item{Kmeans_info}{list. kmeans description obtained from function get_kmeans}
 
 \item{Beta_info}{list. BC dissimilarity & associated beta metrics from training set}
-
-\item{input_mask}{SpatRaster}
 
 \item{fd_metrics}{character.}
 
@@ -55,6 +51,10 @@ get_diversity_from_plots_cluster(
 \item{verbose}{boolean. set true for messages}
 
 \item{p}{object}
+
+\item{input_rast}{SpatRaster}
+
+\item{input_mask}{SpatRaster}
 }
 \value{
 SpatVector including diversity metrics and BC dissimilarity for the plots

@@ -22,16 +22,21 @@
 #' @importFrom stats as.dist
 #' @export
 
-get_diversity_from_plots_cluster <- function(input_rast,
+get_diversity_from_plots_cluster <- function(input_raster_path,
                                              Hill_order = 1,
                                              Kmeans_info, Beta_info = NULL,
-                                             input_mask  = NULL, fd_metrics = NULL,
+                                             input_mask_path  = NULL, fd_metrics = NULL,
                                              selected_bands = NULL,
                                              rast_sample = NULL, AttributeTable = NULL,
                                              alpha_metrics = c('richness', 'shannon', 'simpson', 'hill'),
                                              min_sun = 0.25, pcelim = 0.02, nbCPU = 1,
                                              getBeta = TRUE, verbose = FALSE,
                                              p = NULL){
+  input_rast <- terra::rast(x = input_raster_path)
+  input_mask <- NULL
+  if (!is.null(input_mask_path))
+    input_mask <- terra::rast(x = input_mask_path)
+
   win_ID <- NULL
   # get nb_iter and nb_clusters
   nb_iter <- length(Kmeans_info$Centroids)
