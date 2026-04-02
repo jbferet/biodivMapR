@@ -6,14 +6,13 @@
 \usage{
 get_diversity_from_plots_cluster(
   input_raster_path,
+  input_vector_path,
   Hill_order = 1,
   Kmeans_info,
   Beta_info = NULL,
   input_mask_path = NULL,
   fd_metrics = NULL,
   selected_bands = NULL,
-  rast_sample = NULL,
-  AttributeTable = NULL,
   alpha_metrics = c("richness", "shannon", "simpson", "hill"),
   min_sun = 0.25,
   pcelim = 0.02,
@@ -26,6 +25,8 @@ get_diversity_from_plots_cluster(
 \arguments{
 \item{input_raster_path}{character}
 
+\item{input_vector_path}{character}
+
 \item{Hill_order}{numeric. Hill order}
 
 \item{Kmeans_info}{list. kmeans description obtained from function get_kmeans}
@@ -37,10 +38,6 @@ get_diversity_from_plots_cluster(
 \item{fd_metrics}{character.}
 
 \item{selected_bands}{numeric. bands selected from input_rast}
-
-\item{rast_sample}{dataframe.}
-
-\item{AttributeTable}{dataframe.}
 
 \item{alpha_metrics}{character.}
 

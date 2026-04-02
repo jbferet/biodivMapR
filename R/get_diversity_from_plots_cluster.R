@@ -1,14 +1,13 @@
 #' computes diversity metrics from validation plots
 #'
 #' @param input_raster_path character
+#' @param input_vector_path character
 #' @param Hill_order numeric. Hill order
 #' @param Kmeans_info list. kmeans description obtained from function get_kmeans
 #' @param Beta_info list. BC dissimilarity & associated beta metrics from training set
 #' @param input_mask_path  character.
 #' @param fd_metrics character.
 #' @param selected_bands numeric. bands selected from input_rast
-#' @param rast_sample dataframe.
-#' @param AttributeTable dataframe.
 #' @param alpha_metrics character.
 #' @param min_sun numeric. minimum amount of sunlit pixels in the plots
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
@@ -23,26 +22,39 @@
 #' @export
 
 get_diversity_from_plots_cluster <- function(input_raster_path,
-                                             Hill_order = 1,
+                                             input_vector_path, Hill_order = 1,
                                              Kmeans_info, Beta_info = NULL,
                                              input_mask_path  = NULL, fd_metrics = NULL,
                                              selected_bands = NULL,
-                                             rast_sample = NULL, AttributeTable = NULL,
                                              alpha_metrics = c('richness', 'shannon', 'simpson', 'hill'),
                                              min_sun = 0.25, pcelim = 0.02, nbCPU = 1,
                                              getBeta = TRUE, verbose = FALSE,
                                              p = NULL){
+
+  input_vector <- terra::vect(input_vector_path)
   input_rast <- terra::rast(x = input_raster_path)
   input_mask <- NULL
   if (!is.null(input_mask_path))
     input_mask <- terra::rast(x = input_mask_path)
-
-  win_ID <- NULL
-  # get nb_iter and nb_clusters
-  nb_iter <- length(Kmeans_info$Centroids)
   nb_clusters <- dim(Kmeans_info$Centroids[[1]])[1]
-  # read vector data
 
+  # extract information from SpatVectorCollection or SpatVector
+  if (inherits(input_vector, what = 'SpatVectorCollection')){
+    rastext <- extract_svc_from_rast(SpatVector = input_vector,
+                                     input_rast = input_rast,
+                                     input_mask = input_mask,
+                                     min_sun = min_sun, prog = FALSE)
+  } else if (inherits(input_vector, what = 'SpatVector')){
+    rastext <- extract_vect_from_rast(SpatVector = input_vector,
+                                      input_rast = input_rast,
+                                      input_mask = input_mask,
+                                      min_sun = min_sun, prog = FALSE)
+  }
+  rast_sample <- rastext$rast_sample_vect
+  AttributeTable <- rastext$AttributeTable
+  win_ID <- NULL
+
+  # get spectral species
   ssvect <- spectralspecies_per_rast_sample(input_rast = input_rast,
                                             input_mask = input_mask,
                                             fd_metrics = fd_metrics,
@@ -52,7 +64,7 @@ get_diversity_from_plots_cluster <- function(input_raster_path,
                                             AttributeTable = AttributeTable,
                                             min_sun = min_sun)
   SSValid <- ssvect$SSValid
-  nbPlots_init <- nbPlots <- length(unique(rast_sample$ID))
+  nbPlots_init <- length(unique(rast_sample$ID))
   selPlots <- seq_len(nbPlots_init)
   Attributes0 <- ssvect$AttributeTable
   Attributes <- data.frame(matrix(NA, ncol = ncol(ssvect$AttributeTable),

@@ -1,9 +1,9 @@
 #' apply biodivMapR on a test set for different numbers of clusters
 #'
 #' @param input_raster_path SpatRaster or list of SpatRaster
-#' @param obs_vect SpatVector or SpatVectorCollection
+#' @param input_vector_path SpatVector or SpatVectorCollection
 #' @param obs2optimize numeric .list of ground obs diversity metrics
-#' corresponding to obs_vect.
+#' corresponding to input_vector.
 #' Expected values: richness, shannon, simpson, BC
 #' @param selected_bands numeric. bnds to select from input_raster
 #' @param obs_criterion character. richness, shannon, simpson or BC
@@ -31,7 +31,7 @@
 #'
 #' @export
 
-biodivMapR_opt_clusters <- function(input_raster_path, obs_vect, obs2optimize,
+biodivMapR_opt_clusters <- function(input_raster_path, input_vector_path, obs2optimize,
                                     selected_bands, obs_criterion = 'shannon',
                                     input_mask_path = NULL, outputdir = './',
                                     nb_clusters = 50, min_sun = 0.25,
@@ -40,6 +40,7 @@ biodivMapR_opt_clusters <- function(input_raster_path, obs_vect, obs2optimize,
                                     Hill_order = 1, algorithm = 'Hartigan-Wong',
                                     nbCPU = 1){
 
+  input_vector <- terra::vect(input_vector_path)
   input_raster <- terra::rast(x = input_raster_path)
   input_mask <- NULL
   if (!is.null(input_mask_path))
@@ -78,24 +79,24 @@ biodivMapR_opt_clusters <- function(input_raster_path, obs_vect, obs2optimize,
     #   total = nb_repetitions, clear = FALSE, width= 100)
 
     for (repet in seq_len(nb_repetitions)){
-      # extract information from SpatVectorCollection or SpatVector
-      if (inherits(obs_vect, what = 'SpatVectorCollection')){
-        rastext <- extract_svc_from_rast(SpatVector = obs_vect,
-                                         input_rast = input_raster,
-                                         input_mask = input_mask,
-                                         min_sun = min_sun, prog = FALSE)
-        rast_val <- rastext$rast_sample_vect
-        Attributes <- rastext$AttributeTable
-        nbPlots_total <- nrow(Attributes)
-      } else if (inherits(obs_vect, what = 'SpatVector')){
-        rastext <- extract_vect_from_rast(SpatVector = obs_vect,
-                                          input_rast = input_raster,
-                                          input_mask = input_mask,
-                                          min_sun = min_sun, prog = FALSE)
-        rast_val <- rastext$rast_sample_vect
-        Attributes <- rastext$AttributeTable
-        nbPlots_total <- nrow(Attributes)
-      }
+      # # extract information from SpatVectorCollection or SpatVector
+      # if (inherits(input_vector, what = 'SpatVectorCollection')){
+      #   rastext <- extract_svc_from_rast(SpatVector = input_vector,
+      #                                    input_rast = input_raster,
+      #                                    input_mask = input_mask,
+      #                                    min_sun = min_sun, prog = FALSE)
+      #   rast_val <- rastext$rast_sample_vect
+      #   Attributes <- rastext$AttributeTable
+      #   nbPlots_total <- nrow(Attributes)
+      # } else if (inherits(input_vector, what = 'SpatVector')){
+      #   rastext <- extract_vect_from_rast(SpatVector = input_vector,
+      #                                     input_rast = input_raster,
+      #                                     input_mask = input_mask,
+      #                                     min_sun = min_sun, prog = FALSE)
+      #   rast_val <- rastext$rast_sample_vect
+      #   Attributes <- rastext$AttributeTable
+      #   nbPlots_total <- nrow(Attributes)
+      # }
 
       # perform kmeans for the full list of nbClust_list
       Kmeans_info <- explore_kmeans(input_rast = input_raster,
@@ -113,21 +114,20 @@ biodivMapR_opt_clusters <- function(input_raster_path, obs_vect, obs2optimize,
         with(plan("cluster", workers = cl), local = TRUE)
         kmit <- NULL
         get_diversity_from_plots_list <- function() {
-          foreach(kmit = Kmeans_info) %dofuture% {
+          foreach(kmit = Kmeans_info) %dopar% {
             divplots <- get_diversity_from_plots_cluster(input_raster_path = input_raster_path,
-                                                 Hill_order = Hill_order,
-                                                 Kmeans_info = kmit,
-                                                 Beta_info = NULL,
-                                                 input_mask_path  = input_mask_path,
-                                                 alpha_metrics = alpha_metrics,
-                                                 fd_metrics = fd_metrics,
-                                                 getBeta = getBeta,
-                                                 rast_sample = rast_val,
-                                                 AttributeTable = Attributes,
-                                                 selected_bands = selected_bands,
-                                                 min_sun = min_sun,
-                                                 pcelim = pcelim,
-                                                 nbCPU = 1)
+                                                         input_vector_path = input_vector_path,
+                                                         Hill_order = Hill_order,
+                                                         Kmeans_info = kmit,
+                                                         Beta_info = NULL,
+                                                         input_mask_path  = input_mask_path,
+                                                         alpha_metrics = alpha_metrics,
+                                                         fd_metrics = fd_metrics,
+                                                         getBeta = getBeta,
+                                                         selected_bands = selected_bands,
+                                                         min_sun = min_sun,
+                                                         pcelim = pcelim,
+                                                         nbCPU = 1)
             return(divplots)
           }
         }
@@ -159,22 +159,21 @@ biodivMapR_opt_clusters <- function(input_raster_path, obs_vect, obs2optimize,
         # parallel::stopCluster(cl)
         # plan(sequential)
       } else if (nbCPU ==1){
-          divPlots_kmeans <- mapply(FUN = get_diversity_from_plots_cluster,
-                                    Kmeans_info = Kmeans_info,
-                                    MoreArgs = list(input_raster_path = input_raster_path,
-                                                    Hill_order = Hill_order,
-                                                    Beta_info = NULL,
-                                                    input_mask_path  = input_mask_path,
-                                                    alpha_metrics = alpha_metrics,
-                                                    fd_metrics = fd_metrics,
-                                                    getBeta = getBeta,
-                                                    rast_sample = rast_val,
-                                                    AttributeTable = Attributes,
-                                                    selected_bands = selected_bands,
-                                                    min_sun = min_sun,
-                                                    pcelim = pcelim,
-                                                    nbCPU = 1, p = NULL),
-                                    SIMPLIFY = FALSE)
+        divPlots_kmeans <- mapply(FUN = get_diversity_from_plots_cluster,
+                                  Kmeans_info = Kmeans_info,
+                                  MoreArgs = list(input_raster_path = input_raster_path,
+                                                  input_vector_path = input_vector_path,
+                                                  Hill_order = Hill_order,
+                                                  Beta_info = NULL,
+                                                  input_mask_path  = input_mask_path,
+                                                  alpha_metrics = alpha_metrics,
+                                                  fd_metrics = fd_metrics,
+                                                  getBeta = getBeta,
+                                                  selected_bands = selected_bands,
+                                                  min_sun = min_sun,
+                                                  pcelim = pcelim,
+                                                  nbCPU = 1, p = NULL),
+                                  SIMPLIFY = FALSE)
       }
 
       p1(message = sprintf("Repeat clustering %g", repet))
@@ -220,14 +219,14 @@ biodivMapR_opt_clusters <- function(input_raster_path, obs_vect, obs2optimize,
       Pearson <- unlist(lapply(X = corall, '[[', 'estimate'))
       PearsonAll[[as.character(nbc)]] <- Pearson
       PearsonStats[[crit0]] <- rbind(PearsonStats[[crit0]],
-                            data.frame('mean' = mean(Pearson),
-                                       'sd' = sd(Pearson)))
+                                     data.frame('mean' = mean(Pearson),
+                                                'sd' = sd(Pearson)))
       corall <- lapply(X = Est_Val_indiv2, FUN = cor.test,
                        y = obs2optimize[[crit0]],
                        method = 'spearman')
       Spearman <- unlist(lapply(X = corall, '[[', 'estimate'))
       SpearmanStats[[crit0]] <- rbind(SpearmanStats[[crit0]], data.frame('mean' = mean(Spearman),
-                                                       'sd' = sd(Spearman)))
+                                                                         'sd' = sd(Spearman)))
       SpearmanAll[[as.character(nbc)]] <- Spearman
     }
     PearsonStats[[crit0]]$nb_clusters <- unlist(nbClust_list)

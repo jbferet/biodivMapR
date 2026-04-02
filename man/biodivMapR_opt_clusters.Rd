@@ -6,7 +6,7 @@
 \usage{
 biodivMapR_opt_clusters(
   input_raster_path,
-  obs_vect,
+  input_vector_path,
   obs2optimize,
   selected_bands,
   obs_criterion = "shannon",
@@ -27,10 +27,10 @@ biodivMapR_opt_clusters(
 \arguments{
 \item{input_raster_path}{SpatRaster or list of SpatRaster}
 
-\item{obs_vect}{SpatVector or SpatVectorCollection}
+\item{input_vector_path}{SpatVector or SpatVectorCollection}
 
 \item{obs2optimize}{numeric .list of ground obs diversity metrics
-corresponding to obs_vect.
+corresponding to input_vector.
 Expected values: richness, shannon, simpson, BC}
 
 \item{selected_bands}{numeric. bnds to select from input_raster}
