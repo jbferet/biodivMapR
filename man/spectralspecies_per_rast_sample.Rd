@@ -5,32 +5,17 @@
 \title{get spectral species corresponding to raster sample extracted with extract}
 \usage{
 spectralspecies_per_rast_sample(
-  input_rast,
   Kmeans_info,
-  selected_bands = NULL,
-  fd_metrics = NULL,
-  input_mask = NULL,
-  rast_sample = NULL,
-  AttributeTable = NULL,
-  min_sun = 0.25
+  rast_sample,
+  selected_bands = NULL
 )
 }
 \arguments{
-\item{input_rast}{SpatRaster.}
-
 \item{Kmeans_info}{list. kmeans description obtained from function get_kmeans}
-
-\item{selected_bands}{numeric. bands selected from input data}
-
-\item{fd_metrics}{boolean. should functional diversity be computed as well?}
-
-\item{input_mask}{SpatRaster.}
 
 \item{rast_sample}{dataframe.}
 
-\item{AttributeTable}{dataframe.}
-
-\item{min_sun}{numeric. minimum amount of sunlit pixels in the plots}
+\item{selected_bands}{numeric. bands selected from input data}
 }
 \value{
 list
