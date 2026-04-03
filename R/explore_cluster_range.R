@@ -96,7 +96,7 @@ explore_cluster_range <- function(repet, input_raster_path, input_vector_path,
   }
   if (!is.null(p))
     p()
-  rm(list = ls(all=TRUE)[-which(ls()=='divIndex_est')])
+  rm(list = ls()[-which(ls()%in%(c('p','divIndex_est')))])
   gc()
   return(divIndex_est)
 

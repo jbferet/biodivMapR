@@ -100,6 +100,7 @@ biodivMapR_opt_clusters_v2 <- function(input_raster_path, input_vector_path, obs
     })
   }
 
+  message('summarize cluster range analysis')
   pearson_stats <- spearman_stats <- list()
   for (crit0 in obs_criterion){
     Est_Val_indiv <- lapply(X = diversity_est, FUN = '[[', crit0)
