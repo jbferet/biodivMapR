@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_cluster_list.R
 \name{get_cluster_list}
 \alias{get_cluster_list}
-\title{get cluster list for biodivMapR_opt_clusters_v2}
+\title{get cluster list for biodivMapR_opt_clusters}
 \usage{
 get_cluster_list(nb_clusters)
 }
@@ -13,5 +13,5 @@ get_cluster_list(nb_clusters)
 list including alpha_metrics and beta
 }
 \description{
-get cluster list for biodivMapR_opt_clusters_v2
+get cluster list for biodivMapR_opt_clusters
 }

@@ -14,12 +14,12 @@
 #' @importFrom stats as.dist
 #' @export
 
-get_diversity_from_plots_cluster_v2 <- function(Kmeans_info, rast_sample,
-                                                AttributeTable, Hill_order = 1,
-                                                Beta_info = NULL,
-                                                selected_bands = NULL,
-                                                alpha_metrics = c('richness', 'shannon', 'simpson', 'hill'),
-                                                pcelim = 0.02){
+get_diversity_from_plots_cluster <- function(Kmeans_info, rast_sample,
+                                             AttributeTable, Hill_order = 1,
+                                             Beta_info = NULL,
+                                             selected_bands = NULL,
+                                             alpha_metrics = c('richness', 'shannon', 'simpson', 'hill'),
+                                             pcelim = 0.02){
 
   nb_clusters <- dim(Kmeans_info$Centroids[[1]])[1]
   win_ID <- NULL

@@ -62,7 +62,7 @@ explore_cluster_range <- function(repet, input_raster_path, input_vector_path,
                                 nbCPU = 1)
   Beta_info <- NULL
   divPlots_kmeans <- lapply(X = Kmeans_info,
-                            FUN = get_diversity_from_plots_cluster_v2,
+                            FUN = get_diversity_from_plots_cluster,
                             rast_sample = rast_sample,
                             AttributeTable = AttributeTable,
                             Hill_order = Hill_order,

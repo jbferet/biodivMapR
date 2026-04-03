@@ -1,4 +1,4 @@
-#' get cluster list for biodivMapR_opt_clusters_v2
+#' get cluster list for biodivMapR_opt_clusters
 
 #' @param nb_clusters numeric. number of clusters
 #'
