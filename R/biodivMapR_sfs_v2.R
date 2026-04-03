@@ -17,6 +17,7 @@
 #' @param pcelim numeric.
 #' @param verbose boolean.
 #' @param nbWorkers numeric.
+#' @param algorithm character.
 #' @param nbCPU numeric.
 #'
 #' @return list including performances (correlation) of SFS with additional
@@ -37,7 +38,7 @@ biodivMapR_sfs_v2 <- function(input_raster, obs_vect, obs2optimize,
                            input_mask = NULL, Hill_order = 1, nb_clusters = 50,
                            min_sun = 0.25, nb_pix = 1e5, nb_iter = 10,
                            pcelim = 0.02, verbose = TRUE, nbWorkers = 1,
-                           nbCPU = 1){
+                           algorithm = "Hartigan-Wong", nbCPU = 1){
 
   FullListIndices <- c('richness', 'shannon', 'simpson', 'hill', 'BC',
                        'FRic', 'FEve', 'FDiv') # , 'FDis', 'FRaoq')
@@ -104,7 +105,7 @@ biodivMapR_sfs_v2 <- function(input_raster, obs_vect, obs2optimize,
           SelFeat_tmp <- c(SelectedVars,AllVars[[numvar]])
           # compute kmeans over selected features
           Kmeans_info <- get_kmeans(rast_sample = rast_sample[SelFeat_tmp],
-                                    nb_iter = nb_iter,
+                                    nb_iter = nb_iter, algorithm = agorithm,
                                     nb_clusters = nb_clusters,
                                     nbCPU = 1, progressbar = FALSE)
           SSValid <- get_spectralSpecies(inputdata = rast_val[SelFeat_tmp],
