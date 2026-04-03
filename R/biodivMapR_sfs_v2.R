@@ -113,14 +113,21 @@ biodivMapR_sfs_v2 <- function(input_raster, obs_vect, obs2optimize,
 
           # alpha diversity metrics
           alpha_sfs <- alpha_metrics_sfs(alpha_metrics = alpha_metrics,
-                                   obs2optimize = obs2optimize,
-                                   SSValid = SSValid, corrMethod = corrMethod,
-                                   nb_clusters = nb_clusters)
+                                         obs2optimize = obs2optimize,
+                                         SSValid = SSValid, corrMethod = corrMethod,
+                                         nb_clusters = nb_clusters, Hill_order = Hill_order,
+                                         pcelim = pcelim, nbPlots_total = nbPlots_total)
 
           # beta diversity metrics
-          beta_sfs <- beta_metrics_sfs(obs2optimize, SSValid, nb_clusters, pcelim,
-                                       nb_iter, nbPlots_total, Attributes,
-                                       corrMethod, IDwindow  = alpha_sfs$IDwindow)
+          beta_sfs <- beta_metrics_sfs(obs2optimize = obs2optimize,
+                                       SSValid = SSValid,
+                                       nb_clusters = nb_clusters,
+                                       pcelim = pcelim,
+                                       nb_iter = nb_iter,
+                                       nbPlots_total = nbPlots_total,
+                                       Attributes = Attributes,
+                                       corrMethod = corrMethod,
+                                       IDwindow  = alpha_sfs$IDwindow)
 
           # functional diversity metrics
           fd_sfs <- fd_metrics_sfs(fd_metrics = fd_metrics,

@@ -13,7 +13,7 @@
 #' @export
 
 alpha_metrics_sfs <- function(alpha_metrics, obs2optimize, SSValid, corrMethod,
-                              nb_clusters, Hill_order, pcelim, nbPlots_total){
+                              nb_clusters, Hill_order = 1, pcelim, nbPlots_total){
 
   windows_per_plot <- split_chunk(SSchunk = SSValid, nbCPU = 1)
   windows_per_plot$win_ID <- list(SSValid$win_ID)
