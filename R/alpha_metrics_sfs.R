@@ -29,6 +29,7 @@ alpha_metrics_sfs <- function(alpha_metrics, obs2optimize, SSValid, corrMethod,
   IDwindow <- unlist(windows_per_plot$IDwindow_perCPU)
   selcrit <- list('richness'= 'richness_mean', 'shannon' = 'shannon_mean',
                   'simpson' = 'simpson_mean', 'hill' = 'hill_mean')
+  CorrVal <- Assess <- list()
   for (crit in names(selcrit)){
     if (!is.null(obs2optimize[[crit]])){
       Assess[[crit]] <- rep(x = NA, nbPlots_total)

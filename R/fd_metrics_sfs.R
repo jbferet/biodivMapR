@@ -11,6 +11,7 @@
 #' @export
 
 fd_metrics_sfs <- function(fd_metrics, obs2optimize, rast_val, Kmeans_info, IDplot, corrMethod){
+  Assess <- CorrVal <- list()
   if (!is.null(fd_metrics)){
     # center reduce data
     inputdata_cr <- center_reduce(x = rast_val,
@@ -31,8 +32,6 @@ fd_metrics_sfs <- function(fd_metrics, obs2optimize, rast_val, Kmeans_info, IDpl
       CorrVal[[idx]]  <- cor.test(obs2optimize[[idx]],
                                   Assess[[idx]], method = corrMethod)$estimate
     }
-  } else {
-    Assess <- CorrVal <- list()
   }
   return(list('Assess' = Assess, 'CorrVal' = CorrVal))
 }

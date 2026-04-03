@@ -10,7 +10,7 @@ alpha_metrics_sfs(
   SSValid,
   corrMethod,
   nb_clusters,
-  Hill_order,
+  Hill_order = 1,
   pcelim,
   nbPlots_total
 )
