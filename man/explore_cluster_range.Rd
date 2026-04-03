@@ -20,6 +20,7 @@ explore_cluster_range(
   nb_samples_alpha = 1e+05,
   Hill_order = 1,
   algorithm = "Hartigan-Wong",
+  overwrite = TRUE,
   p = NULL
 )
 }
@@ -53,6 +54,8 @@ explore_cluster_range(
 \item{Hill_order}{numeric.}
 
 \item{algorithm}{character.}
+
+\item{overwrite}{boolean.}
 
 \item{p}{list}
 }

@@ -42,6 +42,7 @@ biodivMapR_opt_clusters <- function(input_raster_path, input_vector_path, obs2op
                                     nbCPU = 1, overwrite = TRUE){
 
   files_exist <- filenames_opt_clusters(outputdir, obs_criterion)
+  pearson_stats <- spearman_stats <- list()
   if (!files_exist | overwrite == TRUE){
     if (nbCPU > nb_repetitions)
       nbCPU <-  nb_repetitions
@@ -77,7 +78,8 @@ biodivMapR_opt_clusters <- function(input_raster_path, input_vector_path, obs2op
                                                      pcelim = pcelim,
                                                      nb_samples_alpha = nb_samples_alpha,
                                                      Hill_order = Hill_order,
-                                                     algorithm = algorithm, p = p,
+                                                     algorithm = algorithm,
+                                                     overwrite = overwrite, p = p,
                                                      future.seed = TRUE)
       })
       parallel::stopCluster(cl)
@@ -98,13 +100,12 @@ biodivMapR_opt_clusters <- function(input_raster_path, input_vector_path, obs2op
                                 nb_iter = nb_iter,
                                 pcelim = pcelim,
                                 nb_samples_alpha = nb_samples_alpha,
-                                Hill_order = Hill_order,
-                                algorithm = algorithm, p = p)
+                                Hill_order = Hill_order, algorithm = algorithm,
+                                overwrite = overwrite, p = p)
       })
     }
 
     message('summarize cluster range analysis')
-    pearson_stats <- spearman_stats <- list()
     for (crit0 in obs_criterion){
       Est_Val_indiv <- lapply(X = diversity_est, FUN = '[[', crit0)
       pearson_stats[[crit0]] <- spearman_stats[[crit0]] <- data.frame('mean' = NULL, 'sd' = NULL)
@@ -155,15 +156,19 @@ biodivMapR_opt_clusters <- function(input_raster_path, input_vector_path, obs2op
                   x = format(spearman_all, digits = 5),
                   quote = F, row.names = F, col.names = T, sep = '\t')
     }
-
   } else {
     for (crit0 in obs_criterion){
       filename_pearson_mean <- file.path(outputdir, paste0(crit0, '_pearson_mean.csv'))
       pearson_stats[[crit0]] <- read.delim(file = filename_pearson_mean,
                                            header = T, sep = '\t')
       filename_spearman_mean <- file.path(outputdir, paste0(crit0, '_spearman_mean.csv'))
-      spearman_stats[[crit0]] <- read.delim(file = filename_pearson_mean,
+      spearman_stats[[crit0]] <- read.delim(file = filename_spearman_mean,
                                             header = T, sep = '\t')
+      # in case NAs
+      pearson_stats[[crit0]]$mean <- as.numeric(pearson_stats[[crit0]]$mean)
+      pearson_stats[[crit0]]$sd <- as.numeric(pearson_stats[[crit0]]$sd)
+      spearman_stats[[crit0]]$mean <- as.numeric(spearman_stats[[crit0]]$mean)
+      spearman_stats[[crit0]]$sd <- as.numeric(spearman_stats[[crit0]]$sd)
     }
   }
   list_out <- list('pearson' = pearson_stats,

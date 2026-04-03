@@ -39,7 +39,7 @@ get_kmeans <- function(rast_sample, nb_iter, nb_clusters = 50,
     if (nbCPU>1){
       # plan(multisession, workers = nbCPU) ## Parallelize using four cores
       cl <- parallel::makeCluster(nbCPU)
-      with(plan("cluster", workers = cl), local = TRUE)	
+      with(plan("cluster", workers = cl), local = TRUE)
       fun_apply <- future_lapply
     } else {
       fun_apply <- lapply
@@ -83,10 +83,10 @@ get_kmeans <- function(rast_sample, nb_iter, nb_clusters = 50,
                          algorithm = algorithm, p = NULL)
       }
     }
-    if (nbCPU>1)
+    if (nbCPU>1){
       parallel::stopCluster(cl)
-    if (nbCPU>1)
       plan(sequential)
+    }
     Centroids <- lapply(res,'[[',2)
     return(list("Centroids" = Centroids,
                 "MinVal" = m0, "MaxVal" = M0, "Range" = d0, "Error" = FALSE))

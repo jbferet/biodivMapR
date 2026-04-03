@@ -15,11 +15,13 @@
 #' @param nb_samples_alpha numeric.
 #' @param Hill_order numeric.
 #' @param algorithm character.
+#' @param overwrite boolean.
 #' @param p list
 #'
 #' @return list divIndex_est
 
 #' @importFrom terra vect rast
+#' @importFrom utils write.table read.delim
 #' @export
 
 explore_cluster_range <- function(repet, input_raster_path, input_vector_path,
@@ -28,71 +30,86 @@ explore_cluster_range <- function(repet, input_raster_path, input_vector_path,
                                   outputdir = './', nbClust_list, min_sun = 0.25,
                                   nb_iter = 10, pcelim = 0.02, nb_samples_alpha = 1e5,
                                   Hill_order = 1, algorithm = 'Hartigan-Wong',
-                                  p = NULL){
+                                  overwrite = TRUE, p = NULL){
 
-  input_vector <- terra::vect(input_vector_path)
-  input_rast <- terra::rast(x = input_raster_path)
-  input_mask <- NULL
-  if (!is.null(input_mask_path))
-    input_mask <- terra::rast(x = input_mask_path)
 
-  # extract information from SpatVectorCollection or SpatVector
-  if (inherits(input_vector, what = 'SpatVectorCollection')){
-    rastext <- extract_svc_from_rast(SpatVector = input_vector,
-                                     input_rast = input_rast,
-                                     input_mask = input_mask,
-                                     min_sun = min_sun, prog = FALSE)
-  } else if (inherits(input_vector, what = 'SpatVector')){
-    rastext <- extract_vect_from_rast(SpatVector = input_vector,
-                                      input_rast = input_rast,
-                                      input_mask = input_mask,
-                                      min_sun = min_sun, prog = FALSE)
-  }
-  rast_sample <- rastext$rast_sample_vect
-  AttributeTable <- rastext$AttributeTable
-
-  # perform kmeans for the full list of nbClust_list
-  Kmeans_info <- explore_kmeans(input_rast = input_rast,
-                                input_mask = input_mask,
-                                selected_bands = selected_bands,
-                                nbClust_list = nbClust_list,
-                                nb_iter = nb_iter,
-                                nb_samples_alpha = nb_samples_alpha,
-                                algorithm = algorithm,
-                                nbCPU = 1)
-  Beta_info <- NULL
-  divPlots_kmeans <- lapply(X = Kmeans_info,
-                            FUN = get_diversity_from_plots_cluster,
-                            rast_sample = rast_sample,
-                            AttributeTable = AttributeTable,
-                            Hill_order = Hill_order,
-                            Beta_info = Beta_info,
-                            selected_bands = selected_bands,
-                            alpha_metrics = alpha_metrics,
-                            pcelim = pcelim)
-  gc()
-
+  files_exist <- filenames_explore_cluster_range(outputdir,
+                                                 obs_criterion,
+                                                 repet)
   divIndex_est <- list()
-  for (crit0 in obs_criterion){
-    Sel1 <- lapply(X = divPlots_kmeans, FUN = '[[', 'specdiv')
-    if (crit0 %in% c('richness', 'shannon', 'simpson', 'hill')){
-      divIndex_est[[crit0]] <- data.frame(lapply(X = Sel1,
-                                                 FUN = '[[',
-                                                 paste0(crit0, '_mean')))
-      colnames(divIndex_est[[crit0]]) <- unlist(nbClust_list)
-      # } else if (crit0 %in% 'BC'){
-      #   divIndex_est[[crit0]] <- lapply(X = divPlots_kmeans,
-      #                                            FUN = '[[', 'BC_dissimilarity')
-      #   divIndex_est[[crit0]] <- lapply(X = divIndex_est[[crit0]],
-      #                                            FUN = 'as.dist')
-      #   divIndex_est[[crit0]] <- data.frame(lapply(X = divIndex_est[[crit0]],
-      #                                                       FUN = 'c'))
-      #   colnames(divIndex_est[[crit0]]) <- unlist(nbClust_list)
+  if (!files_exist | overwrite == TRUE){
+
+
+    input_vector <- terra::vect(input_vector_path)
+    input_rast <- terra::rast(x = input_raster_path)
+    input_mask <- NULL
+    if (!is.null(input_mask_path))
+      input_mask <- terra::rast(x = input_mask_path)
+
+    # extract information from SpatVectorCollection or SpatVector
+    if (inherits(input_vector, what = 'SpatVectorCollection')){
+      rastext <- extract_svc_from_rast(SpatVector = input_vector,
+                                       input_rast = input_rast,
+                                       input_mask = input_mask,
+                                       min_sun = min_sun, prog = FALSE)
+    } else if (inherits(input_vector, what = 'SpatVector')){
+      rastext <- extract_vect_from_rast(SpatVector = input_vector,
+                                        input_rast = input_rast,
+                                        input_mask = input_mask,
+                                        min_sun = min_sun, prog = FALSE)
     }
-    # save results to ease analysis if stopped at some point
-    fileName <- file.path(outputdir, paste0(crit0,'_',repet,'.csv'))
-    readr::write_delim(x = round(divIndex_est[[crit0]], digits = 5),
-                       file = fileName, delim = '\t', progress = FALSE)
+    rast_sample <- rastext$rast_sample_vect
+    AttributeTable <- rastext$AttributeTable
+
+    # perform kmeans for the full list of nbClust_list
+    Kmeans_info <- explore_kmeans(input_rast = input_rast,
+                                  input_mask = input_mask,
+                                  selected_bands = selected_bands,
+                                  nbClust_list = nbClust_list,
+                                  nb_iter = nb_iter,
+                                  nb_samples_alpha = nb_samples_alpha,
+                                  algorithm = algorithm,
+                                  nbCPU = 1)
+    Beta_info <- NULL
+    divPlots_kmeans <- lapply(X = Kmeans_info,
+                              FUN = get_diversity_from_plots_cluster,
+                              rast_sample = rast_sample,
+                              AttributeTable = AttributeTable,
+                              Hill_order = Hill_order,
+                              Beta_info = Beta_info,
+                              selected_bands = selected_bands,
+                              alpha_metrics = alpha_metrics,
+                              pcelim = pcelim)
+    gc()
+
+    for (crit0 in obs_criterion){
+      Sel1 <- lapply(X = divPlots_kmeans, FUN = '[[', 'specdiv')
+      if (crit0 %in% c('richness', 'shannon', 'simpson', 'hill')){
+        divIndex_est[[crit0]] <- data.frame(lapply(X = Sel1,
+                                                   FUN = '[[',
+                                                   paste0(crit0, '_mean')))
+        colnames(divIndex_est[[crit0]]) <- unlist(nbClust_list)
+        # } else if (crit0 %in% 'BC'){
+        #   divIndex_est[[crit0]] <- lapply(X = divPlots_kmeans,
+        #                                            FUN = '[[', 'BC_dissimilarity')
+        #   divIndex_est[[crit0]] <- lapply(X = divIndex_est[[crit0]],
+        #                                            FUN = 'as.dist')
+        #   divIndex_est[[crit0]] <- data.frame(lapply(X = divIndex_est[[crit0]],
+        #                                                       FUN = 'c'))
+        #   colnames(divIndex_est[[crit0]]) <- unlist(nbClust_list)
+      }
+      # save results to ease analysis if stopped at some point
+      filename <- file.path(outputdir, paste0(crit0,'_',repet,'.csv'))
+      write.table(file = filename,
+                  x = format(divIndex_est[[crit0]], digits = 5),
+                  quote = F, row.names = F, col.names = T, sep = '\t')
+    }
+  } else {
+    for (crit0 in obs_criterion){
+      filename <- file.path(outputdir, paste0(crit0,'_',repet,'.csv'))
+      divIndex_est[[crit0]] <- read.delim(file = filename, header = T, sep = '\t')
+      colnames(divIndex_est[[crit0]]) <- as.character(nbClust_list)
+    }
   }
   if (!is.null(p))
     p()

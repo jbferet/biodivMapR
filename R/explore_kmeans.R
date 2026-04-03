@@ -42,21 +42,30 @@ explore_kmeans <- function(input_rast,
     selected_bands <- seq_len(dim(rast_sample)[2])
   rast_sample <- rast_sample %>% select(all_of(selected_bands))
   # multi-thread
-  registerDoFuture()
-  cl <- parallel::makeCluster(nbCPU)
-  with(plan("cluster", workers = cl), local = TRUE)	
-  nbclust <- NULL
-  get_kmeans_list <- function() {
-    foreach(nbclust = nbClust_list) %dopar% {
-      kmeans_info <- get_kmeans(rast_sample = rast_sample,
-                                nb_iter = nb_iter,
-                                nb_clusters = nbclust,
-                                algorithm = algorithm,
-                                progressbar = FALSE)
-      return(kmeans_info)
+  if (nbCPU>1){
+    registerDoFuture()
+    cl <- parallel::makeCluster(nbCPU)
+    with(plan("cluster", workers = cl), local = TRUE)
+    nbclust <- NULL
+    get_kmeans_list <- function() {
+      foreach(nbclust = nbClust_list) %dopar% {
+        kmeans_info <- get_kmeans(rast_sample = rast_sample,
+                                  nb_iter = nb_iter,
+                                  nb_clusters = nbclust,
+                                  algorithm = algorithm,
+                                  progressbar = FALSE)
+        return(kmeans_info)
+      }
     }
+    kmeans_info <- get_kmeans_list()
+    plan(sequential)
+  } else {
+    kmeans_info <- lapply(X = nbClust_list,
+                          function(x) get_kmeans(rast_sample = rast_sample,
+                                                 nb_iter = nb_iter,
+                                                 nb_clusters = x,
+                                                 algorithm = algorithm,
+                                                 progressbar = FALSE))
   }
-  kmeans_info <- get_kmeans_list()
-  plan(sequential)
   return(kmeans_info)
 }
