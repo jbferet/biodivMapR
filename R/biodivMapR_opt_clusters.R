@@ -41,7 +41,7 @@ biodivMapR_opt_clusters <- function(input_raster_path, input_vector_path, obs2op
                                     Hill_order = 1, algorithm = 'Hartigan-Wong',
                                     nbCPU = 1, overwrite = TRUE){
 
-  files_exist <- filenames_opt_clusters(outputdir, crit0)
+  files_exist <- filenames_opt_clusters(outputdir, obs_criterion)
   if (!files_exist | overwrite == TRUE){
     if (nbCPU > nb_repetitions)
       nbCPU <-  nb_repetitions
