@@ -20,6 +20,7 @@ biodivMapR_sfs_v2(
   pcelim = 0.02,
   verbose = TRUE,
   nbWorkers = 1,
+  algorithm = "Hartigan-Wong",
   nbCPU = 1
 )
 }
@@ -53,6 +54,8 @@ Expected values: richness, shannon, simpson, hill, BC}
 \item{verbose}{boolean.}
 
 \item{nbWorkers}{numeric.}
+
+\item{algorithm}{character.}
 
 \item{nbCPU}{numeric.}
 }

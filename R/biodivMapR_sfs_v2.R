@@ -105,7 +105,7 @@ biodivMapR_sfs_v2 <- function(input_raster, obs_vect, obs2optimize,
           SelFeat_tmp <- c(SelectedVars,AllVars[[numvar]])
           # compute kmeans over selected features
           Kmeans_info <- get_kmeans(rast_sample = rast_sample[SelFeat_tmp],
-                                    nb_iter = nb_iter, algorithm = agorithm,
+                                    nb_iter = nb_iter, algorithm = algorithm,
                                     nb_clusters = nb_clusters,
                                     nbCPU = 1, progressbar = FALSE)
           SSValid <- get_spectralSpecies(inputdata = rast_val[SelFeat_tmp],
