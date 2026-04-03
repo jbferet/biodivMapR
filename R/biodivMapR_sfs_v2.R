@@ -34,11 +34,11 @@
 #' @export
 
 biodivMapR_sfs_v2 <- function(input_raster, obs_vect, obs2optimize,
-                           obs_criterion = 'shannon', corrMethod = 'spearman',
-                           input_mask = NULL, Hill_order = 1, nb_clusters = 50,
-                           min_sun = 0.25, nb_pix = 1e5, nb_iter = 10,
-                           pcelim = 0.02, verbose = TRUE, nbWorkers = 1,
-                           algorithm = "Hartigan-Wong", nbCPU = 1){
+                              obs_criterion = 'shannon', corrMethod = 'spearman',
+                              input_mask = NULL, Hill_order = 1, nb_clusters = 50,
+                              min_sun = 0.25, nb_pix = 1e5, nb_iter = 10,
+                              pcelim = 0.02, verbose = TRUE, nbWorkers = 1,
+                              algorithm = "Hartigan-Wong", nbCPU = 1){
 
   FullListIndices <- c('richness', 'shannon', 'simpson', 'hill', 'BC',
                        'FRic', 'FEve', 'FDiv') # , 'FDis', 'FRaoq')
@@ -159,8 +159,9 @@ biodivMapR_sfs_v2 <- function(input_raster, obs_vect, obs2optimize,
                                                          '[[',ind))
       CorrSFS[[nbvars2select]] <- data.frame(CorrSFS[[nbvars2select]])
       rownames(CorrSFS[[nbvars2select]]) <- AllVars
-      criterion <- CorrSFS[[nbvars2select]][[obs_criterion]]
-      SelVar <- which(criterion == max(criterion,na.rm = T))
+
+      # define variable maximizing a criterion
+      SelVar <- maximize_sfs_criterion(CorrSFS, obs_criterion, nbvars2select)
       AssessSFS[[nbvars2select]] <- list()
       for (ind in FullListIndices)
         AssessSFS[[nbvars2select]][[ind]] <- unlist((lapply(lapply(subSFS,'[[',
