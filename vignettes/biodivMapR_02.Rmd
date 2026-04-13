@@ -109,7 +109,7 @@ dir.create(path = output_dir, showWarnings = F, recursive = T)
 # central wavelength of S2 spectral bands can be loaded from biodivMapR data
 hdr_path <- system.file('extdata', 'HDR', 'SENTINEL_2.hdr', 
                         package = 'biodivMapR')
-sensor_bands <- read_envi_header(HDRpath = hdr_path)$wavelength
+sensor_bands <- read_ENVI_header(HDRpath = hdr_path)$wavelength
 
 # 2- define spectral transformation: select between 'PCA' and 'SPCA'
 spectral_transformation <- 'SPCA'
