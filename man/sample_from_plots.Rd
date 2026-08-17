@@ -12,7 +12,7 @@ sample_from_plots(
   window_size,
   nbCPU = 1,
   Kmeans_info = NULL,
-  beta_metrics = TRUE,
+  compute_beta = TRUE,
   nb_samples_alpha = 1e+05,
   nb_samples_beta = 2000
 )
@@ -32,7 +32,7 @@ sample_from_plots(
 
 \item{Kmeans_info}{list.}
 
-\item{beta_metrics}{boolean. set TRUE to compute beta diversity}
+\item{compute_beta}{boolean. set TRUE to compute beta diversity}
 
 \item{nb_samples_alpha}{numeric.}
 

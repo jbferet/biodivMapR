@@ -17,7 +17,7 @@ run_biodivMapR_plot(
   window_size,
   alpha_metrics = "shannon",
   Hill_order = 1,
-  beta_metrics = "hill",
+  beta_metrics = "bray",
   fd_metrics = NULL,
   pcelim = 0.02,
   maxRows = NULL,

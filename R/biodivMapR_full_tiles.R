@@ -42,6 +42,7 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
   alpha_metrics <- options$alpha_metrics
   Hill_order <- options$Hill_order
   beta_metrics <- options$beta_metrics
+  compute_beta <- options$compute_beta
   fd_metrics <- options$fd_metrics
   nb_iter <- options$nb_iter
   pcelim <- options$pcelim
@@ -69,6 +70,7 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
                                nb_clusters = nb_clusters,
                                nb_samples_alpha = nb_samples_alpha,
                                beta_metrics = beta_metrics,
+                               compute_beta = compute_beta,
                                nb_samples_beta = nb_samples_beta,
                                pcelim = pcelim, nbCPU = nbCPU,
                                nb_iter = nb_iter,
@@ -83,7 +85,7 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
   if (nbCPU > maxCPU)
     nbCPU <-  maxCPU
 
-  if (!is.null(alpha_metrics) | beta_metrics){
+  if (!is.null(alpha_metrics) | !is.null(beta_metrics)){
     if (nbCPU>1){
       cl <- parallel::makeCluster(nbCPU)
       parallel::clusterEvalQ(cl, {library(biodivMapR)})
@@ -209,7 +211,7 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
       diridx <- file.path(output_dir,biodiv_index)
       dir.create(diridx, showWarnings = FALSE, recursive = TRUE)
       # identify files
-      selfiles <- list.files(path = output_dir, pattern = biodiv_index,
+      selfiles <- list.files(path = output_dir, pattern = paste0(biodiv_index, '_'),
                              include.dirs = FALSE, recursive = FALSE)
       seldirs <- list.dirs(path = output_dir, full.names = FALSE,
                            recursive = FALSE)

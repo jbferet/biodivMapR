@@ -104,8 +104,8 @@ set_options_biodivMapR <- function(fun, options = NULL){
       options$alpha_metrics <- NULL
     if (is.null(options$Hill_order))
       options$Hill_order <- 1
-    if (is.null(options$beta_metrics))
-      options$beta_metrics <- TRUE
+    if (is.null(options$compute_beta))
+      options$compute_beta <- TRUE
     if (is.null(options$fd_metrics))
       options$fd_metrics <- NULL
     if (is.null(options$nb_iter))

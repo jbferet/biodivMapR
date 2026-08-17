@@ -8,7 +8,7 @@
 #' @param nbCPU numeric.
 #' @param Kmeans_info list.
 #' @param nb_samples_alpha numeric.
-#' @param beta_metrics boolean. set TRUE to compute beta diversity
+#' @param compute_beta boolean. set TRUE to compute beta diversity
 #' @param nb_samples_beta numeric.
 #'
 #' @return samples_alpha_beta
@@ -16,7 +16,7 @@
 
 sample_from_plots <- function(feature_dir, list_features, plots, mask_dir = NULL,
                               window_size, nbCPU = 1, Kmeans_info = NULL,
-                              beta_metrics = TRUE, nb_samples_alpha = 1e5,
+                              compute_beta = TRUE, nb_samples_alpha = 1e5,
                               nb_samples_beta = 2e3){
 
   nb_pix_valid <- get_valid_pixels_from_tiles(feature_dir, plots, nbCPU = 1,
@@ -33,7 +33,7 @@ sample_from_plots <- function(feature_dir, list_features, plots, mask_dir = NULL
                                                    nbCPU = nbCPU)
 
   # sample the plot network for beta diversity
-  if (beta_metrics){
+  if (compute_beta){
     samples_beta_terra <- sample_from_plots_beta(feature_dir = feature_dir,
                                                  list_features = list_features,
                                                  plots = plots,

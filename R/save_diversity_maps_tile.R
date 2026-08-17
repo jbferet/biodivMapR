@@ -4,7 +4,7 @@
 #' @param ab_div_metrics list produced from get_raster_diversity
 #' @param alpha_metrics list. alpha diversity metrics
 #' @param Hill_order numeric. Hill order
-#' @param beta_metrics boolean. set TRUE to compute beta diversity
+#' @param beta_metrics list. beta diversity metrics
 #' @param fd_metrics character. list of functional metrics
 #' @param input_rast list. path for input rasters
 #' @param output_dir character.
@@ -19,8 +19,8 @@
 save_diversity_maps_tile <- function(input_raster_path,
                                      ab_div_metrics,
                                      alpha_metrics = 'shannon',
+                                     beta_metrics = 'bray',
                                      Hill_order = 1,
-                                     beta_metrics = TRUE,
                                      fd_metrics = NULL,
                                      input_rast,
                                      output_dir,
@@ -100,9 +100,9 @@ save_diversity_maps_tile <- function(input_raster_path,
   }
 
   # save beta diversity indices
-  if (beta_metrics){
+  for (beta in beta_metrics) {
     # get PCoA and corresponding dimensions
-    PCoA <- ab_div_metrics$PCoA_BC
+    PCoA <- ab_div_metrics[[paste0('pcoa_', beta)]]
     dimPCoA <- length(PCoA)
     # produce a template with N dimensions
     template_rast <- terra::rast(input_raster_path[[1]])
@@ -112,10 +112,10 @@ save_diversity_maps_tile <- function(input_raster_path,
       terra::values(template_newres[[nbPC]]) <- c(PCoA[[nbPC]])
     names(template_newres) <- paste0('PCoA#',seq(1,dimPCoA))
 
-    if (is.null(output_raster_name[['beta']]))
-      output_raster <- file.path(output_dir, 'beta')
-    if (!is.null(output_raster_name[['beta']]))
-      output_raster <- file.path(output_dir, output_raster_name[['beta']])
+    if (is.null(output_raster_name[[beta]]))
+      output_raster <- file.path(output_dir, beta)
+    if (!is.null(output_raster_name[[beta]]))
+      output_raster <- file.path(output_dir, output_raster_name[[beta]])
     if (filetype%in%c('GTiff', 'COG'))
       output_raster <- paste0(output_raster, '.tiff')
     terra::writeRaster(x = template_newres, filename = output_raster,

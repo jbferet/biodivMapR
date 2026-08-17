@@ -9,7 +9,8 @@
 #' @param plots list. list of sf plots
 #' @param nb_clusters numeric. number of clusters
 #' @param nb_samples_alpha numeric. number of samples to compute alpha diversity
-#' @param beta_metrics boolean. set TRUE to compute beta diversity
+#' @param beta_metrics vector. list of beta diversity metrics
+#' @param compute_beta boolean. set TRUE to compute beta diversity
 #' @param nb_samples_beta numeric. number of samples to compute beta diversity
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
 #' @param nbCPU numeric. Number of CPUs available
@@ -23,10 +24,10 @@
 
 biodivMapR_sample <- function(feature_dir, list_features, mask_dir = NULL,
                               output_dir, window_size, plots, nb_clusters = 50,
-                              nb_samples_alpha = 1e5, beta_metrics = TRUE,
-                              nb_samples_beta = 2e3, pcelim = 0.02, nbCPU = 1,
-                              nb_iter = 10, weightIQR = 4, Kmeans_path = NULL,
-                              Beta_path = NULL){
+                              nb_samples_alpha = 1e5, beta_metrics = 'bray',
+                              compute_beta = TRUE, nb_samples_beta = 2e3,
+                              pcelim = 0.02, nbCPU = 1, nb_iter = 10,
+                              weightIQR = 4, Kmeans_path = NULL, Beta_path = NULL){
 
   message('biodivMapR sampling')
   # update mask based on IQR filtering for each feature
@@ -50,10 +51,10 @@ biodivMapR_sample <- function(feature_dir, list_features, mask_dir = NULL,
   # load kmeans and beta info if exist
   if (file.exists(Kmeans_path))
     load(Kmeans_path)
-  if (file.exists(Beta_path) & beta_metrics)
+  if (file.exists(Beta_path) & compute_beta)
     load(Beta_path)
   # compute kmeans and beta info if exist
-  if (!file.exists(Kmeans_path) | (! file.exists(Beta_path) & beta_metrics)){
+  if (!file.exists(Kmeans_path) | (! file.exists(Beta_path) & compute_beta)){
     # define sampling points for alpha and beta diversity mapping
     samples_alpha_beta <- sample_from_plots(feature_dir = feature_dir,
                                             list_features = list_features,
@@ -62,7 +63,7 @@ biodivMapR_sample <- function(feature_dir, list_features, mask_dir = NULL,
                                             window_size = window_size,
                                             nb_samples_alpha = nb_samples_alpha,
                                             Kmeans_info = Kmeans_info,
-                                            beta_metrics = beta_metrics,
+                                            compute_beta = compute_beta,
                                             nb_samples_beta = nb_samples_beta,
                                             nbCPU = nbCPU)
 
@@ -77,10 +78,11 @@ biodivMapR_sample <- function(feature_dir, list_features, mask_dir = NULL,
                                          nb_iter = nb_iter,
                                          nbCPU = nbCPU2)
     }
-    if (is.null(Beta_info) & beta_metrics){
+    if (is.null(Beta_info) & compute_beta){
       beta_samples <- samples_alpha_beta$samples_beta[c(list_features,'ID')]
       Beta_info <- init_PCoA_samples(rast_sample = beta_samples,
                                      output_dir = output_dir,
+                                     beta_metrics = beta_metrics,
                                      Kmeans_info = Kmeans_info,
                                      pcelim = pcelim,
                                      dimPCoA = 3, nbCPU = 1)
