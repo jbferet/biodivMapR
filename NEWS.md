@@ -1,3 +1,29 @@
+# biodivMapR2 v3.0.0
+## addition
+- added internal c++ codes to compute dissimilarity metrics, instead of dissUtils
+- included computation of bray-curtis dissimilarity, 
+  - bray-curtis dissimilarity
+  - bray-curtis turnover
+  - sorensen dissimilarity
+  - simpson dissimilarity
+  - jaccard dissimilarity
+  - jaccard turnover
+- prepared for possibility to select clustering
+- added tests for production of diversity maps, spectral species maps and diversity from classification
+
+## changes
+- changed names of function: 
+  - biodivMapR_full to biodivMapR
+  - biodivMapR_full_classif to biodivMapR_classif
+- removed dependency to preprocS2
+  
+
+## fix
+- fixed biodivMapR_sfs
+- fixed biodivMapR_classif
+- fixed biodivMapR_opt_clusters
+
+
 # biodivMapR2 v2.6.0
 ## addition
 - added function spectral_species_full to produce spectral species map from individual raster

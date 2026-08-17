@@ -21,6 +21,11 @@
 
 set_options_biodivMapR <- function(fun, options = NULL){
 
+  if (fun == 'init_kmeans'){
+    if (is.null(options$clustering))
+      options$clustering <- 'skm'
+  }
+
   if (fun == 'spectral_species_full'){
     if (is.null(options$nb_samples_alpha))
       options$nb_samples_alpha <- 1e5
@@ -30,6 +35,8 @@ set_options_biodivMapR <- function(fun, options = NULL){
       options$maxRows <- 1200
     if (is.null(options$weightIQR))
       options$weightIQR <- 4
+    if (is.null(options$clustering))
+      options$clustering <- 'skm'
     if (is.null(options$Kmeans_path))
       options$Kmeans_path <- NULL
   }
@@ -47,13 +54,15 @@ set_options_biodivMapR <- function(fun, options = NULL){
       options$Kmeans_path <- NULL
   }
 
-  if (fun == 'biodivMapR_full'){
+  if (fun == 'biodivMapR'){
     if (is.null(options$alpha_metrics))
       options$alpha_metrics <- 'shannon'
     if (is.null(options$Hill_order))
       options$Hill_order <- 1
+    if (is.null(options$compute_beta))
+      options$compute_beta <- TRUE
     if (is.null(options$beta_metrics))
-      options$beta_metrics <- TRUE
+      options$beta_metrics <- 'bc'
     if (is.null(options$fd_metrics))
       options$fd_metrics <- NULL
     if (is.null(options$nb_samples_alpha))

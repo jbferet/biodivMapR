@@ -7,6 +7,7 @@
 #' @param selected_bands numeric. bands selected from input_rast
 #' @param alpha_metrics list. alpha diversity metrics: richness, shannon, simpson
 #' @param Hill_order numeric. Hill order
+#' @param beta_metrics list. beta diversity metrics: bray, brayturn,
 #' @param fd_metrics character. list of functional metrics
 #' @param window_size numeric. window size for square plots
 #' @param maxRows numeric. max number of rows in each block
@@ -20,11 +21,12 @@
 #' @importFrom progressr progressor handlers with_progress
 #' @export
 
-get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
-                                    input_mask_path = NULL, selected_bands = NULL,
-                                    alpha_metrics = 'shannon', Hill_order = 1,
-                                    fd_metrics = NULL, window_size, maxRows = NULL,
-                                    pcelim = 0.02, nbCPU = 1, min_sun = 0.25){
+get_raster_diversity_mw <- function(
+    input_raster_path, Kmeans_info, Beta_info, input_mask_path = NULL,
+    selected_bands = NULL, alpha_metrics = 'shannon', Hill_order = 1,
+    beta_metrics = 'bray', fd_metrics = NULL, window_size, maxRows = NULL,
+    pcelim = 0.02, nbCPU = 1, min_sun = 0.25){
+
   # prepare to read input raster data
   r_in <- list()
   if (is.null(names(input_raster_path)))
@@ -55,13 +57,15 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
   }
   dimPCO <- 3
   if (!is.null(Beta_info))
-    dimPCO <- ncol(Beta_info$BetaPCO$points)
-  PCoA_raster <- list('PCoA1' = matrix(NA, nrow = nrow(rast_in),
-                                       ncol = ncol(rast_in)),
-                      'PCoA2' = matrix(NA, nrow = nrow(rast_in),
-                                       ncol = ncol(rast_in)),
-                      'PCoA3' = matrix(NA, nrow = nrow(rast_in),
-                                       ncol = ncol(rast_in)))
+    dimPCO <- ncol(Beta_info$beta_pco[[1]]$points)
+  pcoa_raster <- list()
+  for (beta in beta_metrics)
+    pcoa_raster[[beta]] <- list('PCoA1' = matrix(NA, nrow = nrow(rast_in),
+                                                 ncol = ncol(rast_in)),
+                                'PCoA2' = matrix(NA, nrow = nrow(rast_in),
+                                                 ncol = ncol(rast_in)),
+                                'PCoA3' = matrix(NA, nrow = nrow(rast_in),
+                                                 ncol = ncol(rast_in)))
 
   # v1: line per line
   nbWindows <- ncol(rast_in)
@@ -122,8 +126,9 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
                                    FUN = alphabeta_window_list,
                                    nb_clusters = nb_clusters,
                                    alpha_metrics = alpha_metrics,
-                                   Beta_info = Beta_info,
                                    Hill_order = Hill_order,
+                                   Beta_info = Beta_info,
+                                   beta_metrics = beta_metrics,
                                    pcelim = pcelim)
         alphabetaIdx <- unlist(alphabetaIdx_CPU, recursive = FALSE)
 
@@ -158,13 +163,16 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
 
 
         # resahape beta
-        PCoA_BC <- matrix(data = NA, nrow = nbWindows, ncol = dimPCO)
-        if (!is.null(Beta_info) & !is.null(IDwindow) & length(IDwindow)>0) {
-          PCoA_BC0 <- do.call(rbind,lapply(alphabetaIdx,'[[','PCoA_BC'))
-          PCoA_BC[IDwindow,] <- PCoA_BC0
+        for (beta in beta_metrics){
+          pcoa_diss <- matrix(data = NA, nrow = nbWindows, ncol = dimPCO)
+          if (!is.null(Beta_info) & !is.null(IDwindow) & length(IDwindow)>0) {
+            pcoa_diss0 <- do.call(rbind,lapply(alphabetaIdx,'[[',
+                                               paste0('pcoa_', beta)))
+            pcoa_diss[IDwindow,] <- pcoa_diss0
+            for (i in 1:dimPCO)
+              pcoa_raster[[beta]][[i]][j,] <- pcoa_diss[,i]
+          }
         }
-        for (i in 1:dimPCO)
-          PCoA_raster[[i]][j,] <- PCoA_BC[,i]
       }
     }
   }
@@ -266,6 +274,11 @@ get_raster_diversity_mw <- function(input_raster_path, Kmeans_info, Beta_info,
                          'FDiv' = res_shapeChunk$FDiv,
                          'FDis' = res_shapeChunk$FDis,
                          'FRaoq' = res_shapeChunk$FRaoq,
-                         'PCoA_BC' = PCoA_raster)
+                         'pcoa_bray' = pcoa_raster[['bray']],
+                         'pcoa_brayturn' = pcoa_raster[['brayturn']],
+                         'pcoa_simpson_diss' = pcoa_raster[['simpson_diss']],
+                         'pcoa_jaccard' = pcoa_raster[['jaccard']],
+                         'pcoa_jaccardturn' = pcoa_raster[['jaccardturn']],
+                         'pcoa_sorensen' = pcoa_raster[['sorensen']])
   return(ab_div_metrics)
 }

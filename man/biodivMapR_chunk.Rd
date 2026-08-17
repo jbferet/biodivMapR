@@ -12,6 +12,7 @@ biodivMapR_chunk(
   Beta_info = NULL,
   alpha_metrics = "shannon",
   Hill_order = 1,
+  beta_metrics = "bray",
   fd_metrics = NULL,
   selected_bands = NULL,
   pcelim = 0.02,
@@ -34,6 +35,8 @@ biodivMapR_chunk(
 \item{alpha_metrics}{list. alpha diversity metrics}
 
 \item{Hill_order}{numeric. Hill order}
+
+\item{beta_metrics}{list. beta diversity metrics}
 
 \item{fd_metrics}{character. list of functional metrics}
 

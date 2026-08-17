@@ -19,6 +19,8 @@ extract_vect_from_rast <- function(SpatVector, input_rast,
   SpatVector$ID_biodivMapR <- seq_len(length(SpatVector))
   AttributeTable <- values(SpatVector)
   AttributeTable$source <- basename(terra::sources(SpatVector))
+  if ((basename(terra::sources(SpatVector)))=='')
+    AttributeTable$source <- SpatVector$ID_biodivMapR
   rast_sample <- sample_raster(input_rast = input_rast,
                                pix2extract = SpatVector,
                                prog = prog)

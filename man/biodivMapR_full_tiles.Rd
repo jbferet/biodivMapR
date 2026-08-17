@@ -2,7 +2,8 @@
 % Please edit documentation in R/biodivMapR_full_tiles.R
 \name{biodivMapR_full_tiles}
 \alias{biodivMapR_full_tiles}
-\title{computes diversity metrics from raster}
+\title{computes diversity metrics from a set of raster corresponding to
+tiles as produced with preprocS2}
 \usage{
 biodivMapR_full_tiles(
   feature_dir,
@@ -53,5 +54,6 @@ biodivMapR_full_tiles(
 mosaic_path
 }
 \description{
-computes diversity metrics from raster
+computes diversity metrics from a set of raster corresponding to
+tiles as produced with preprocS2
 }

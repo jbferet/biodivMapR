@@ -7,6 +7,7 @@
 #' @param Beta_info list. BC dissimilarity & associated beta metrics
 #' @param alpha_metrics list. alpha diversity metrics
 #' @param Hill_order numeric. Hill order
+#' @param beta_metrics list. beta diversity metrics
 #' @param fd_metrics character. list of functional metrics
 #' @param selected_bands numeric. bands selected from input data
 #' @param pcelim numeric. min proportion of pixels to consider spectral species
@@ -23,14 +24,16 @@
 #' @importFrom dplyr filter %>%
 #' @export
 
-biodivMapR_chunk <- function(blk, r_in, window_size, Kmeans_info,
-                             Beta_info = NULL, alpha_metrics = 'shannon',
-                             Hill_order = 1, fd_metrics = NULL,
-                             selected_bands = NULL, pcelim = 0.02, nbCPU = 1,
-                             min_sun = 0.25, p = NULL){
-  list_allidx <- c('richness', 'shannon', 'simpson', 'fisher', 'hill')
+biodivMapR_chunk <- function(
+    blk, r_in, window_size, Kmeans_info, Beta_info = NULL, 
+    alpha_metrics = 'shannon', Hill_order = 1, beta_metrics = 'bray', 
+    fd_metrics = NULL, selected_bands = NULL, pcelim = 0.02, nbCPU = 1,
+    min_sun = 0.25, p = NULL){
+  
+  list_alpha_idx <- c('richness', 'shannon', 'simpson', 'fisher', 'hill')
   # list_funct_idx <- fd_metrics <- c('FRic', 'FEve', 'FDiv', 'FDis', 'FRaoq')
   list_funct_idx <- c('FRic', 'FEve', 'FDiv', 'FDis', 'FRaoq')
+  list_beta_idx <- c('bray', 'brayturn', 'simpson_diss', 'jaccard', 'jaccardturn', 'sorensen')
   funct_idx_cpu <- NULL
   richness <- shannon <- simpson <- fisher <- hill <- list('mean' = NA,
                                                            'sd' = NA)
@@ -81,11 +84,13 @@ biodivMapR_chunk <- function(blk, r_in, window_size, Kmeans_info,
       nb_clusters <- dim(Kmeans_info$Centroids[[1]])[1]
       if (nbCPU>1) {
         cl <- parallel::makeCluster(nbCPU)
+        parallel::clusterEvalQ(cl, {library(biodivMapR)})
         with(plan("cluster", workers = cl), local = TRUE)
         alphabetaIdx_CPU <- future.apply::future_lapply(X = SSwindows_per_CPU$SSwindow_perCPU,
                                                         FUN = alphabeta_window_list,
                                                         nb_clusters = nb_clusters,
                                                         alpha_metrics = alpha_metrics,
+                                                        beta_metrics = beta_metrics,
                                                         Beta_info = Beta_info,
                                                         Hill_order = Hill_order,
                                                         pcelim = pcelim,
@@ -108,6 +113,7 @@ biodivMapR_chunk <- function(blk, r_in, window_size, Kmeans_info,
                                    FUN = alphabeta_window_list,
                                    nb_clusters = nb_clusters,
                                    alpha_metrics = alpha_metrics,
+                                   beta_metrics = beta_metrics,
                                    Beta_info = Beta_info,
                                    Hill_order = Hill_order,
                                    pcelim = pcelim)
@@ -130,7 +136,7 @@ biodivMapR_chunk <- function(blk, r_in, window_size, Kmeans_info,
       gc()
       # 7- reshape alpha diversity metrics
       IDwindow <- unlist(SSwindows_per_CPU$IDwindow_perCPU)
-      for (idx in list_allidx){
+      for (idx in list_alpha_idx){
         res_shape_chunk[[idx]] <- list()
         for (crit in c('mean', 'sd')){
           elem <- paste0(idx,'_',crit)
@@ -160,7 +166,7 @@ biodivMapR_chunk <- function(blk, r_in, window_size, Kmeans_info,
       }
     } else {
       IDwindow <- NULL
-      for (idx in list_allidx){
+      for (idx in list_alpha_idx){
         res_shape_chunk[[idx]] <- list()
         for (crit in c('mean', 'sd')){
           elem <- paste0(idx,'_',crit)
@@ -180,7 +186,7 @@ biodivMapR_chunk <- function(blk, r_in, window_size, Kmeans_info,
     }
   } else {
     IDwindow <- NULL
-    for (idx in list_allidx){
+    for (idx in list_alpha_idx){
       res_shape_chunk[[idx]] <- list()
       for (crit in c('mean', 'sd')){
         elem <- paste0(idx,'_',crit)
@@ -201,15 +207,19 @@ biodivMapR_chunk <- function(blk, r_in, window_size, Kmeans_info,
   # 8- reshape beta diversity metrics
   dimPCO <- 3
   if (!is.null(Beta_info))
-    dimPCO <- ncol(Beta_info$BetaPCO$points)
-  pcoa_bc <- matrix(data = NA, nrow = nbWindows, ncol = dimPCO)
+    dimPCO <- ncol(Beta_info$beta_pco[[1]]$points)
+  pcoa_diss <- list()
+  for (beta in list_beta_idx)
+    pcoa_diss[[beta]] <- matrix(data = NA, nrow = nbWindows, ncol = dimPCO)
   if (!is.null(Beta_info) & !is.null(IDwindow)) {
-    pcoa_bc0 <- do.call(rbind,lapply(alphabetaIdx,'[[','PCoA_BC'))
-    pcoa_bc[IDwindow,] <- pcoa_bc0
+    for (beta in beta_metrics){
+      pcoa_diss0 <- do.call(rbind,lapply(alphabetaIdx,'[[',paste0('pcoa_', beta)))
+      pcoa_diss[[beta]][IDwindow,] <- pcoa_diss0
+      nb_rows <- ceiling(blk$nrows/window_size)
+      nb_cols <- ceiling(nrow(pcoa_diss[[beta]])/nb_rows)
+      pcoa_diss[[beta]] <- aperm(array(data = c(pcoa_diss[[beta]]),dim = c(nb_cols,nb_rows,3)),c(2,1,3))
+    }
   }
-  nb_rows <- ceiling(blk$nrows/window_size)
-  nb_cols <- ceiling(nrow(pcoa_bc)/nb_rows)
-  pcoa_bc <- aperm(array(data = c(pcoa_bc),dim = c(nb_cols,nb_rows,3)),c(2,1,3))
   if (!is.null(p))
     p()
   return(list('richness' = res_shape_chunk$richness,
@@ -222,5 +232,10 @@ biodivMapR_chunk <- function(blk, r_in, window_size, Kmeans_info,
               'FDiv' = res_shape_chunk$FDiv,
               'FDis' = res_shape_chunk$FDis,
               'FRaoq' = res_shape_chunk$FRaoq,
-              'PCoA_BC' = pcoa_bc))
+              'pcoa_bray' = pcoa_diss[['bray']],
+              'pcoa_brayturn' = pcoa_diss[['brayturn']],
+              'pcoa_simpson_diss' = pcoa_diss[['simpson_diss']],
+              'pcoa_jaccard' = pcoa_diss[['jaccard']],
+              'pcoa_jaccardturn' = pcoa_diss[['jaccardturn']],
+              'pcoa_sorensen' = pcoa_diss[['sorensen']]))
 }

@@ -7,19 +7,21 @@
 get_diversity_from_plots(
   input_rast,
   validation_vect,
-  Hill_order = 1,
   Kmeans_info,
   Beta_info = NULL,
   input_mask = NULL,
-  fd_metrics = NULL,
   selected_bands = NULL,
   rast_sample = NULL,
-  AttributeTable = NULL,
   alpha_metrics = c("richness", "shannon", "simpson", "hill"),
+  Hill_order = 1,
+  getBeta = TRUE,
+  beta_metrics = c("bray", "brayturn", "jaccard", "jaccardturn", "sorensen",
+    "simpson_diss"),
+  fd_metrics = NULL,
+  AttributeTable = NULL,
   min_sun = 0.25,
   pcelim = 0.02,
   nbCPU = 1,
-  getBeta = TRUE,
   verbose = FALSE
 )
 }
@@ -28,31 +30,33 @@ get_diversity_from_plots(
 
 \item{validation_vect}{SpatVector}
 
-\item{Hill_order}{numeric. Hill order}
-
 \item{Kmeans_info}{list. kmeans description obtained from function get_kmeans}
 
 \item{Beta_info}{list. BC dissimilarity & associated beta metrics from training set}
 
 \item{input_mask}{SpatRaster}
 
-\item{fd_metrics}{character.}
-
 \item{selected_bands}{numeric. bands selected from input_rast}
 
 \item{rast_sample}{dataframe.}
 
-\item{AttributeTable}{dataframe.}
-
 \item{alpha_metrics}{character.}
+
+\item{Hill_order}{numeric. Hill order}
+
+\item{getBeta}{boolean. set true if computation of beta required}
+
+\item{beta_metrics}{character.}
+
+\item{fd_metrics}{character.}
+
+\item{AttributeTable}{dataframe.}
 
 \item{min_sun}{numeric. minimum amount of sunlit pixels in the plots}
 
 \item{pcelim}{numeric. minimum proportion of pixels to consider spectral species}
 
 \item{nbCPU}{numeric. Number of CPUs available}
-
-\item{getBeta}{boolean. set true if computation of beta required}
 
 \item{verbose}{boolean. set true for messages}
 }

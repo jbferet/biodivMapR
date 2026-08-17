@@ -11,7 +11,6 @@
 #' @param min_sun numeric. minimum amount of sunlit pixels in the plots
 #
 #' @return list
-#' @importFrom tidyr nest
 #' @importFrom terra sources values
 #' @export
 #'

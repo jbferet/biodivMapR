@@ -7,17 +7,15 @@
 
 which_alpha_beta <- function(obs_criterion){
   alphamet <- c('richness', 'shannon', 'simpson', 'hill')
-  betamet <- 'BC'
+  betamet <- c('bray', 'brayturn', 'simpson_diss', 'sorensen', 'jaccard', 'jaccardturn')
   # if computation of functional metrics required
   alpha_metrics <- alphamet[which(alphamet %in% obs_criterion)]
   if (length(alpha_metrics)==0)
     alpha_metrics <- NULL
   # computation of beta diversity required?
-  betametrics <- betamet[which(betamet %in% obs_criterion)]
-  if (length(betametrics)==0)
-    getBeta <- FALSE
-  if (length(betametrics)>0)
-    getBeta <- TRUE
+  beta_metrics <- betamet[which(betamet %in% obs_criterion)]
+  if (length(beta_metrics)==0)
+    beta_metrics <- NULL
 
-  return(list('alpha_metrics' = alpha_metrics, 'getBeta' = getBeta))
+  return(list('alpha_metrics' = alpha_metrics, 'beta_metrics' = beta_metrics))
 }

@@ -5,7 +5,13 @@
 \title{compute alpha and beta diversity metrics from pixel data corresponding to
 spectral species extracted from a window}
 \usage{
-alphabeta_window_sdm(ssd, Beta_info, alpha_metrics, Hill_order = 1)
+alphabeta_window_sdm(
+  ssd,
+  Beta_info,
+  alpha_metrics,
+  beta_metrics,
+  Hill_order = 1
+)
 }
 \arguments{
 \item{ssd}{list.}
@@ -13,6 +19,8 @@ alphabeta_window_sdm(ssd, Beta_info, alpha_metrics, Hill_order = 1)
 \item{Beta_info}{list. BC dissimilarity & associated beta metrics}
 
 \item{alpha_metrics}{list. alpha diversity metrics}
+
+\item{beta_metrics}{list. beta diversity metrics}
 
 \item{Hill_order}{numeric. Hill order}
 }

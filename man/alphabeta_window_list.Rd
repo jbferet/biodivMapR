@@ -10,6 +10,8 @@ alphabeta_window_list(
   Beta_info = NULL,
   alpha_metrics = "shannon",
   Hill_order = 1,
+  beta_metrics = "bray",
+  diss_output = FALSE,
   pcelim = 0.02
 )
 }
@@ -24,6 +26,10 @@ alphabeta_window_list(
 \item{alpha_metrics}{list. alpha diversity metrics}
 
 \item{Hill_order}{numeric. Hill order}
+
+\item{beta_metrics}{list. beta diversity metrics}
+
+\item{diss_output}{boolean set TRUE to get dissimilarity matrices as outputs}
 
 \item{pcelim}{numeric. min proportion of pixels to consider spectral species}
 }

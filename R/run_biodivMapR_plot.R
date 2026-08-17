@@ -12,6 +12,7 @@
 #' @param window_size numeric. window size for square plots
 #' @param alpha_metrics list. alpha diversity metrics
 #' @param Hill_order numeric. Hill order
+#' @param beta_metrics list. beta diversity metrics
 #' @param fd_metrics character. list of functional metrics
 #' @param pcelim numeric. min proportion of pix to consider spectral species
 #' @param nbCPU numeric. Number of CPUs available
@@ -28,19 +29,22 @@ run_biodivMapR_plot <- function(id, feature_dir, mask_dir = NULL,
                                 list_features, Kmeans_info, Beta_info,
                                 output_dir, selected_bands = NULL, window_size,
                                 alpha_metrics = 'shannon', Hill_order = 1,
+                                beta_metrics = 'hill',
                                 fd_metrics = NULL, pcelim = 0.02,
                                 maxRows = NULL, nbCPU = 1, min_sun = 0.25,
                                 filetype = 'GTiff', moving_window = FALSE,
                                 p = NULL){
 
-  betanames <- paste0('beta_',id)
-  alphanames <- alphanames_mean <- functionalname <- NULL
+  # betanames <- paste0('beta_',id)
+  alphanames <- alphanames_mean <- betanames <- functionalname <- NULL
   if (!is.null(alpha_metrics)){
     alphanames <- paste0(alpha_metrics,'_',id)
     alphanames_mean <- paste0(alphanames,'_mean')
     if ('hill' %in% alpha_metrics)
       alphanames[alpha_metrics=='hill'] <- paste0('hill_', Hill_order,'_',id)
   }
+  if (!is.null(beta_metrics))
+    betanames <- paste0(beta_metrics,'_',id)
   if (!is.null(fd_metrics))
     functionalname <- paste0(fd_metrics,'_',id)
   if (!is.null(Beta_info)){
@@ -53,7 +57,7 @@ run_biodivMapR_plot <- function(id, feature_dir, mask_dir = NULL,
                                          functionalname))
   }
   if (!is.null(Beta_info)){
-    names(output_raster_name) <- c('beta', alpha_metrics, fd_metrics)
+    names(output_raster_name) <- c(beta_metrics, alpha_metrics, fd_metrics)
   } else {
     names(output_raster_name) <- c(alpha_metrics, fd_metrics)
   }

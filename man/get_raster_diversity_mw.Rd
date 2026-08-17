@@ -12,6 +12,7 @@ get_raster_diversity_mw(
   selected_bands = NULL,
   alpha_metrics = "shannon",
   Hill_order = 1,
+  beta_metrics = "bray",
   fd_metrics = NULL,
   window_size,
   maxRows = NULL,
@@ -34,6 +35,8 @@ get_raster_diversity_mw(
 \item{alpha_metrics}{list. alpha diversity metrics: richness, shannon, simpson}
 
 \item{Hill_order}{numeric. Hill order}
+
+\item{beta_metrics}{list. beta diversity metrics: bray, brayturn,}
 
 \item{fd_metrics}{character. list of functional metrics}
 

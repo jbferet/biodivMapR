@@ -27,7 +27,7 @@ define_grid <- function(raster_path, cellsize){
   sf::st_write(obj = aoi_grid, dsn = filename, overwrite = T,
                append = F, driver = "GPKG", quiet = T)
   nb_tiles <- length(aoi_grid)
-  plots <- preprocS2::get_plot_list(dsn = filename, nbdigits = nchar(nb_tiles))
+  plots <- get_plot_list(dsn = filename, nbdigits = nchar(nb_tiles))
   return(list('plots' = plots,
               'aoi_grid_path' = filename))
 }

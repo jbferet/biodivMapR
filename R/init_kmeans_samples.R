@@ -6,6 +6,7 @@
 #' @param nb_clusters numeric. number of clusters used in kmeans
 #' @param nb_iter numeric. nb of iterations averaged to compute diversity indices
 #' @param Kmeans_info_save character. path where to save Kmeans_info
+#' @param clustering character. clustering method. default = skm (standard kmeans)
 #' @param algorithm character. algorithm used in the kmeans clustering
 #' @param nbCPU numeric. Number of CPUs available
 #' @param verbose boolean. set true for messages
@@ -21,6 +22,7 @@ init_kmeans_samples <- function(rast_sample,
                                 nb_clusters = 50,
                                 nb_iter = 10,
                                 Kmeans_info_save = NULL,
+                                clustering = 'skm',
                                 algorithm = 'Hartigan-Wong',
                                 nbCPU = 1, verbose = TRUE, progressbar = TRUE){
 

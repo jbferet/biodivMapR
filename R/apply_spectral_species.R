@@ -17,6 +17,8 @@ apply_spectral_species <- function(input_rast, input_mask = NULL,
                                    overwrite = TRUE){
 
   output_raster_full_name <- file.path(output_dir, 'spectral_species.tiff')
+  if (is.null(selected_bands))
+      selected_bands <- names(input_rast)
   if (FALSE %in% file.exists(output_raster_full_name) | overwrite){
     input_rast <- input_rast[[selected_bands]]
     # prepare to read input raster data
@@ -42,7 +44,7 @@ apply_spectral_species <- function(input_rast, input_mask = NULL,
     }
     terra::writeRaster(x = ss_rast, filename = output_raster_full_name,
                        filetype = filetype, overwrite = TRUE,
-                       gdal = c("COMPRESS=LZW"))
+                       gdal=c("COMPRESS=DEFLATE", "TFW=YES"))
   }
   return(output_raster_full_name)
 }

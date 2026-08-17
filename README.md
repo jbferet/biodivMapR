@@ -15,13 +15,7 @@ The package `remotes` first needs to be installed from the CRAN
 install.packages("remotes")
 ```
 
-Then some packages which were removed from the CRAN may need to be installed directly from authors' repository. This is the case for `dissUtils`: 
-
-```
-remotes::install_github('cran/dissUtils')
-```
-
-After installing `remotes`and `dissUtils`, `biodivMapR` should be ready for installation with the following command line in your R session:
+`biodivMapR` should then be ready for installation with the following command line in your R session:
 
 ```
 remotes::install_github('jbferet/biodivMapR')

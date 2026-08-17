@@ -11,6 +11,7 @@ init_kmeans_samples(
   nb_clusters = 50,
   nb_iter = 10,
   Kmeans_info_save = NULL,
+  clustering = "skm",
   algorithm = "Hartigan-Wong",
   nbCPU = 1,
   verbose = TRUE,
@@ -29,6 +30,8 @@ init_kmeans_samples(
 \item{nb_iter}{numeric. nb of iterations averaged to compute diversity indices}
 
 \item{Kmeans_info_save}{character. path where to save Kmeans_info}
+
+\item{clustering}{character. clustering method. default = skm (standard kmeans)}
 
 \item{algorithm}{character. algorithm used in the kmeans clustering}
 

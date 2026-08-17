@@ -12,12 +12,14 @@ explore_cluster_range(
   selected_bands,
   obs_criterion = "shannon",
   alpha_metrics,
-  outputdir = "./",
+  beta_metrics,
+  output_dir = "./",
   nbClust_list,
   min_sun = 0.25,
   nb_iter = 10,
   pcelim = 0.02,
   nb_samples_alpha = 1e+05,
+  nb_samples_beta = 1000,
   Hill_order = 1,
   algorithm = "Hartigan-Wong",
   overwrite = TRUE,
@@ -37,9 +39,11 @@ explore_cluster_range(
 
 \item{obs_criterion}{character. richness, shannon, simpson or BC}
 
-\item{alpha_metrics}{character. richness, shannon, simpson or BC}
+\item{alpha_metrics}{character. richness, shannon, simpson}
 
-\item{outputdir}{character. output directory}
+\item{beta_metrics}{character.}
+
+\item{output_dir}{character. output directory}
 
 \item{nbClust_list}{numeric.}
 
@@ -50,6 +54,8 @@ explore_cluster_range(
 \item{pcelim}{numeric.}
 
 \item{nb_samples_alpha}{numeric.}
+
+\item{nb_samples_beta}{numeric.}
 
 \item{Hill_order}{numeric.}
 

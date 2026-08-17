@@ -4,7 +4,13 @@
 \alias{sample_raster}
 \title{sample pixels from raster data}
 \usage{
-sample_raster(input_rast, pix2extract, xy = FALSE, prog = FALSE)
+sample_raster(
+  input_rast,
+  pix2extract,
+  xy = FALSE,
+  prog = FALSE,
+  keep_ID = TRUE
+)
 }
 \arguments{
 \item{input_rast}{SpatRaster or list of SpatRaster}
@@ -14,6 +20,8 @@ sample_raster(input_rast, pix2extract, xy = FALSE, prog = FALSE)
 \item{xy}{boolean. set TRUE to get coordinates for each pixel sampled}
 
 \item{prog}{boolean. set TRUE to display progression bar}
+
+\item{keep_ID}{boolean. set TRUE to keep ID field}
 }
 \value{
 rast_sample dataframe. pixel/plot info extracted from input_rast

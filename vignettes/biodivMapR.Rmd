@@ -46,9 +46,8 @@ from the Planetary computer catalog.
 
 `biodivMapR v2` now allows user to run the preprocessing step of their
 choice. This can consist in computing spectral indices, vegetation
-biophysical variables, or spectral transformation. This also means that
-any type of input data can be used, as long as the input rasters share
-the same footprint, spatial resolution and projection.
+biophysical variables, or spectral transformation. 
+__Input raster data fom any type of sensor can be used, as long as the input rasters share the same footprint, spatial resolution and projection.__
 
 We provide a few examples here. Users can experiment with the method of
 their choice
@@ -67,9 +66,22 @@ their choice
         (2014)](https://doi.org/10.1890/13-1824.1 "Feret&Asner2014") and
         [Feret & de Boissieu
         (2019)](https://doi.org/10.1111/2041-210X.13310 "Feret&deBoissieu2019")
-    -   Functional diversity maps, including Richness, Evenness and
+    -   Functional diversity maps, including Richness, Evenness, and
         Divergence as defined in [Villeger et al.
-        (2008)](https://doi.org/10.1890/07-1206.1 "Villeger2008")
+        (2008)](https://doi.org/10.1890/07-1206.1 "Villeger2008"), as well as 
+        Dispersion and Rao entropy. These functional diversity metrics are 
+        computed with the package [`fundiversity`](https://funecology.github.io/fundiversity/)
+    -   Since biodivMapR v2 and v3, additional $\alpha$ and $\beta$ diversity metrics 
+        have been implemented. $\alpha$ diversity metrics include Hill index
+        (with a Hill number to be defined by the parameter `Hill_order`).
+        In addition to Bray-Curtis dissimilarity (`bray`), $\beta$ diversity 
+        metrics include Bray-Curtis turnover (`brayturn`), Jaccard dissimilarity 
+        (`jaccard`), Jaccard turnover (`jaccardturn`), Simpson dissimilarity 
+        (`simpson_diss`) and Sorensen dissimilarity (`sorensen`). Please refer 
+        to the R package [`bioregion`](https://biorgeo.github.io/bioregion/articles/a3_pairwise_metrics.html#compute-pairwise-dissimilarity-metrics)
+        for the definition of these $\beta$ diversity metrics
+
+      
 
 ### biodivMapR v1
 Please refer to the branch [`dev_v1`](https://github.com/jbferet/biodivMapR/tree/dev_v1) of the package for the previous versions and tutorials. 

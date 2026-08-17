@@ -2,19 +2,20 @@
 #'
 #' @param input_rast SpatRaster
 #' @param validation_vect SpatVector
-#' @param Hill_order numeric. Hill order
 #' @param Kmeans_info list. kmeans description obtained from function get_kmeans
 #' @param Beta_info list. BC dissimilarity & associated beta metrics from training set
 #' @param input_mask SpatRaster
-#' @param fd_metrics character.
 #' @param selected_bands numeric. bands selected from input_rast
 #' @param rast_sample dataframe.
-#' @param AttributeTable dataframe.
 #' @param alpha_metrics character.
+#' @param Hill_order numeric. Hill order
+#' @param getBeta boolean. set true if computation of beta required
+#' @param beta_metrics character.
+#' @param fd_metrics character.
+#' @param AttributeTable dataframe.
 #' @param min_sun numeric. minimum amount of sunlit pixels in the plots
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
 #' @param nbCPU numeric. Number of CPUs available
-#' @param getBeta boolean. set true if computation of beta required
 #' @param verbose boolean. set true for messages
 #'
 #' @return SpatVector including diversity metrics and BC dissimilarity for the plots
@@ -22,15 +23,15 @@
 #' @importFrom stats as.dist
 #' @export
 
-get_diversity_from_plots <- function(input_rast, validation_vect,
-                                     Hill_order = 1,
-                                     Kmeans_info, Beta_info = NULL,
-                                     input_mask  = NULL, fd_metrics = NULL,
-                                     selected_bands = NULL,
-                                     rast_sample = NULL, AttributeTable = NULL,
-                                     alpha_metrics = c('richness', 'shannon', 'simpson', 'hill'),
-                                     min_sun = 0.25, pcelim = 0.02, nbCPU = 1,
-                                     getBeta = TRUE, verbose = FALSE){
+get_diversity_from_plots <- function(
+    input_rast, validation_vect, Kmeans_info, Beta_info = NULL,
+    input_mask  = NULL, selected_bands = NULL, rast_sample = NULL,
+    alpha_metrics = c('richness', 'shannon', 'simpson', 'hill'),
+    Hill_order = 1, getBeta = TRUE,
+    beta_metrics = c('bray', 'brayturn', 'jaccard', 'jaccardturn', 'sorensen', 'simpson_diss'),
+    fd_metrics = NULL, AttributeTable = NULL, min_sun = 0.25, pcelim = 0.02,
+    nbCPU = 1, verbose = FALSE){
+
   if (verbose)
     message('Compute diversity from vector plot network')
   FunctDiv <- MatBC_Full <- win_ID <- NULL
@@ -41,7 +42,7 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
   if (is.null(Beta_info)){
     dimPCO <- 3
   } else {
-    dimPCO <- ncol(Beta_info$BetaPCO$points)
+    dimPCO <- ncol(Beta_info$beta_pco[[1]]$points)
   }
   # read vector data
   if (inherits(validation_vect,
@@ -110,6 +111,7 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
                            'FDis' = ssvect$FunctDiv$FDis,
                            'FRaoq' = ssvect$FunctDiv$FRaoq)
   }
+  # Attributes <- as.list(Attributes)
 
   windows_per_plot <- split_chunk(SSchunk = SSValid, nbCPU = 1)
   windows_per_plot$win_ID <- list(SSValid$win_ID)
@@ -118,39 +120,50 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
                              FUN = alphabeta_window_list,
                              nb_clusters = nb_clusters,
                              alpha_metrics = alpha_metrics,
+                             beta_metrics = beta_metrics,
                              Hill_order = Hill_order,
-                             Beta_info = Beta_info, pcelim = pcelim)
+                             Beta_info = Beta_info, pcelim = pcelim, 
+                             diss_output = TRUE)
 
   alphabetaIdx <- unlist(alphabetaIdx_CPU,recursive = FALSE)
   rm(alphabetaIdx_CPU)
   gc()
   # 7- reshape alpha diversity metrics
   IDwindow <- unlist(windows_per_plot$IDwindow_perCPU)
+  
+  names_alpha <- c('richness_mean', 'richness_sd', 'shannon_mean', 'shannon_sd', 
+                   'simpson_mean', 'simpson_sd', 'hill_mean', 'hill_sd')
   res_shapeChunk <- list()
-  for (i in seq_len(10)) {
-    restmp <- unlist(lapply(alphabetaIdx,'[[',i))
-    res_shapeChunk[[i]] <- rep(x = NA,nbPlots_init)
-    res_shapeChunk[[i]][IDwindow] <- restmp
+  for (aind in names_alpha) {
+    restmp <- unlist(lapply(alphabetaIdx,'[[',aind))
+    res_shapeChunk[[aind]] <- rep(x = NA,nbPlots_init)
+    res_shapeChunk[[aind]][IDwindow] <- restmp
+    Attributes[[aind]] <- res_shapeChunk[[aind]]
   }
-
-  Attributes$richness_mean <- res_shapeChunk[[1]]
-  Attributes$richness_sd <- res_shapeChunk[[2]]
-  Attributes$shannon_mean <- res_shapeChunk[[3]]
-  Attributes$shannon_sd <- res_shapeChunk[[4]]
-  Attributes$simpson_mean <- res_shapeChunk[[5]]
-  Attributes$simpson_sd <- res_shapeChunk[[6]]
-  # Attributes$fisher_mean <- res_shapeChunk[[7]]
-  # Attributes$fisher_sd <- res_shapeChunk[[8]]
-  Attributes$hill_mean <- res_shapeChunk[[9]]
-  Attributes$hill_sd <- res_shapeChunk[[10]]
+  # Attributes$richness_mean <- res_shapeChunk[[1]]
+  # Attributes$richness_sd <- res_shapeChunk[[2]]
+  # Attributes$shannon_mean <- res_shapeChunk[[3]]
+  # Attributes$shannon_sd <- res_shapeChunk[[4]]
+  # Attributes$simpson_mean <- res_shapeChunk[[5]]
+  # Attributes$simpson_sd <- res_shapeChunk[[6]]
+  # # Attributes$fisher_mean <- res_shapeChunk[[7]]
+  # # Attributes$fisher_sd <- res_shapeChunk[[8]]
+  # Attributes$hill_mean <- res_shapeChunk[[9]]
+  # Attributes$hill_sd <- res_shapeChunk[[10]]
   # 8- reshape beta diversity metrics
+  names_beta <- c('pcoa_bray', 'pcoa_brayturn', 'pcoa_simpson_diss', 'pcoa_jaccard', 
+                  'pcoa_jaccardturn', 'pcoa_sorensen')   
   if (!is.null(Beta_info)){
-    PCoA_BC0 <- do.call(rbind,lapply(alphabetaIdx,'[[',11))
-    PCoA_BC <- matrix(data = NA,nrow = nbPlots_init, ncol = dimPCO)
-    PCoA_BC[IDwindow,] <- PCoA_BC0
-    Attributes$BetaFull_PCoA_1 <- PCoA_BC[,1]
-    Attributes$BetaFull_PCoA_2 <- PCoA_BC[,2]
-    Attributes$BetaFull_PCoA_3 <- PCoA_BC[,3]
+    for (bind in names_beta) {
+      PCoA_BC0 <- do.call(rbind,lapply(alphabetaIdx,'[[',bind))
+      if (!is.null(PCoA_BC0)){
+        PCoA_BC <- matrix(data = NA,nrow = nbPlots_init, ncol = dimPCO)
+        PCoA_BC[IDwindow,] <- PCoA_BC0
+        Attributes[[paste0(bind, '_full_pcoa_1')]] <- PCoA_BC[,1]
+        Attributes[[paste0(bind, '_full_pcoa_2')]] <- PCoA_BC[,2]
+        Attributes[[paste0(bind, '_full_pcoa_3')]] <- PCoA_BC[,3]
+      }
+    }
   }
 
   if (getBeta){
@@ -162,22 +175,28 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
       SSdist[[iter]] <- lapply(SSValid_win, '[[',iter)
     # compute spectral species distribution for each cluster & BC dissimilarity
     SSD_BCval <- lapply(SSdist,
-                        FUN = get_bc_diss_from_ssd,
+                        FUN = get_beta_from_ssd,
+                        beta_metrics = beta_metrics, 
                         nb_clusters = nb_clusters,
                         pcelim = pcelim)
 
-    MatBC_iter <- lapply(SSD_BCval, '[[','MatBC')
-    MatBC <- Reduce('+', MatBC_iter)/nb_iter
-    MatBC_Full <- matrix(data = NA, nrow = nbPlots_init, ncol = nbPlots_init)
-    MatBC_Full[IDwindow,IDwindow] <- MatBC
-    MatBCdist <- stats::as.dist(MatBC, diag = FALSE, upper = FALSE)
-    colnames(MatBC_Full) <- rownames(MatBC_Full) <- Attributes$ID_biodivMapR
-    BetaPCO <- pco(MatBCdist, k = dimPCO)
-    PCoA_BC <- matrix(data = NA,nrow = nbPlots_init, ncol = dimPCO)
-    PCoA_BC[IDwindow,] <- BetaPCO$points
-    Attributes$BetaPlots_PCoA_1 <- PCoA_BC[,1]
-    Attributes$BetaPlots_PCoA_2 <- PCoA_BC[,2]
-    Attributes$BetaPlots_PCoA_3 <- PCoA_BC[,3]
+    dissimilarity_matrices <- list()
+    for (beta in beta_metrics){
+      MatBC_iter <- lapply(lapply(SSD_BCval, '[[','mat_diss'), '[[',beta)
+      MatBC <- Reduce('+', MatBC_iter)/nb_iter
+      dissimilarity_matrices[[beta]] <- matrix(data = NA, nrow = nbPlots_init, ncol = nbPlots_init)
+      dissimilarity_matrices[[beta]][IDwindow,IDwindow] <- MatBC
+      MatBCdist <- stats::as.dist(MatBC, diag = FALSE, upper = FALSE)
+      colnames(dissimilarity_matrices[[beta]]) <- 
+        rownames(dissimilarity_matrices[[beta]]) <- Attributes$ID_biodivMapR
+      BetaPCO <- pco(MatBCdist, k = dimPCO)
+      PCoA_BC <- matrix(data = NA,nrow = nbPlots_init, ncol = dimPCO)
+      PCoA_BC[IDwindow,] <- BetaPCO$points
+      Attributes[[paste0(beta, '_plot_pcoa_1')]] <- PCoA_BC[,1]
+      Attributes[[paste0(beta, '_plot_pcoa_2')]] <- PCoA_BC[,2]
+      Attributes[[paste0(beta, '_plot_pcoa_3')]] <- PCoA_BC[,3]
+      
+    }
   }
   if (!is.null(fd_metrics)) {
     # FunctDiv$ID_biodivMapR <- Attributes$ID_biodivMapR
@@ -194,5 +213,5 @@ get_diversity_from_plots <- function(input_rast, validation_vect,
   if (verbose)
     message('diversity computed from vector plot network')
   return(list('specdiv' = Attributes,
-              'BC_dissimilarity' = MatBC_Full))
+              'dissimilarity_matrices' = dissimilarity_matrices))
 }

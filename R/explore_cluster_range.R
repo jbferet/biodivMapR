@@ -6,13 +6,15 @@
 #' @param input_mask_path SpatRaster corresponding to mask
 #' @param selected_bands numeric. bnds to select from input_raster
 #' @param obs_criterion character. richness, shannon, simpson or BC
-#' @param alpha_metrics character. richness, shannon, simpson or BC
-#' @param outputdir character. output directory
+#' @param alpha_metrics character. richness, shannon, simpson
+#' @param beta_metrics character.
+#' @param output_dir character. output directory
 #' @param nbClust_list numeric.
 #' @param min_sun numeric.
 #' @param nb_iter numeric.
 #' @param pcelim numeric.
 #' @param nb_samples_alpha numeric.
+#' @param nb_samples_beta numeric.
 #' @param Hill_order numeric.
 #' @param algorithm character.
 #' @param overwrite boolean.
@@ -26,22 +28,23 @@
 
 explore_cluster_range <- function(repet, input_raster_path, input_vector_path,
                                   input_mask_path, selected_bands,
-                                  obs_criterion = 'shannon', alpha_metrics,
-                                  outputdir = './', nbClust_list, min_sun = 0.25,
-                                  nb_iter = 10, pcelim = 0.02, nb_samples_alpha = 1e5,
+                                  obs_criterion = 'shannon', alpha_metrics, beta_metrics,
+                                  output_dir = './', nbClust_list, min_sun = 0.25,
+                                  nb_iter = 10, pcelim = 0.02, 
+                                  nb_samples_alpha = 1e5, nb_samples_beta = 1e3,
                                   Hill_order = 1, algorithm = 'Hartigan-Wong',
                                   overwrite = TRUE, p = NULL){
 
 
-  files_exist <- filenames_explore_cluster_range(outputdir,
+  files_exist <- filenames_explore_cluster_range(output_dir,
                                                  obs_criterion,
                                                  repet)
   divIndex_est <- list()
   if (!files_exist | overwrite == TRUE){
 
-
     input_vector <- terra::vect(input_vector_path)
     input_rast <- terra::rast(x = input_raster_path)
+    names(input_rast) <- names(input_raster_path)
     input_mask <- NULL
     if (!is.null(input_mask_path))
       input_mask <- terra::rast(x = input_mask_path)
@@ -70,25 +73,50 @@ explore_cluster_range <- function(repet, input_raster_path, input_vector_path,
                                   nb_samples_alpha = nb_samples_alpha,
                                   algorithm = algorithm,
                                   nbCPU = 1)
+
+    # Beta_info <- explore_dissimilarity(input_rast = input_rast,
+    #                                    input_mask = input_mask, 
+    #                                    output_dir = output_dir,
+    #                                    window_size = window_size,
+    #                                    Kmeans_info = Kmeans_info, 
+    #                                    selected_bands = selected_bands,
+    #                                    nb_samples = nb_samples_beta,
+    #                                    nbClust_list = nbClust_list,
+    #                                    min_sun = min_sun, 
+    #                                    pcelim = pcelim, dimPCoA = 3, 
+    #                                    nbCPU = 1, beta_metrics = beta_metrics, 
+    #                                    verbose = FALSE)
+      
     Beta_info <- NULL
-    divPlots_kmeans <- lapply(X = Kmeans_info,
+    divPlots_kmeans <- lapply(X = Kmeans_info, 
                               FUN = get_diversity_from_plots_cluster,
+                              Beta_info = Beta_info,
                               rast_sample = rast_sample,
                               AttributeTable = AttributeTable,
                               Hill_order = Hill_order,
-                              Beta_info = Beta_info,
                               selected_bands = selected_bands,
                               alpha_metrics = alpha_metrics,
+                              beta_metrics = beta_metrics,
                               pcelim = pcelim)
     gc()
 
+    Sel1 <- lapply(X = divPlots_kmeans, FUN = '[[', 'specdiv')
     for (crit0 in obs_criterion){
-      Sel1 <- lapply(X = divPlots_kmeans, FUN = '[[', 'specdiv')
       if (crit0 %in% c('richness', 'shannon', 'simpson', 'hill')){
         divIndex_est[[crit0]] <- data.frame(lapply(X = Sel1,
                                                    FUN = '[[',
                                                    paste0(crit0, '_mean')))
         colnames(divIndex_est[[crit0]]) <- unlist(nbClust_list)
+      } else if (crit0 %in% c('bray', 'brayturn', 'simpson_diss', 'jaccard', 'jaccardturn', 'sorensen')){
+        divIndex_est[[crit0]] <- lapply(X = Sel1,
+                                        FUN = '[[', crit0)
+        # divIndex_est[[crit0]] <- lapply(X = divIndex_est[[crit0]],
+                                        # FUN = 'as.dist')
+        divIndex_est[[crit0]] <- data.frame(lapply(X = divIndex_est[[crit0]],
+                                                   FUN = 'c'))
+        names(divIndex_est[[crit0]]) <- unlist(nbClust_list)
+
+
         # } else if (crit0 %in% 'BC'){
         #   divIndex_est[[crit0]] <- lapply(X = divPlots_kmeans,
         #                                            FUN = '[[', 'BC_dissimilarity')
@@ -99,14 +127,14 @@ explore_cluster_range <- function(repet, input_raster_path, input_vector_path,
         #   colnames(divIndex_est[[crit0]]) <- unlist(nbClust_list)
       }
       # save results to ease analysis if stopped at some point
-      filename <- file.path(outputdir, paste0(crit0,'_',repet,'.csv'))
+      filename <- file.path(output_dir, paste0(crit0,'_',repet,'.csv'))
       write.table(file = filename,
                   x = format(divIndex_est[[crit0]], digits = 5),
                   quote = F, row.names = F, col.names = T, sep = '\t')
     }
   } else {
     for (crit0 in obs_criterion){
-      filename <- file.path(outputdir, paste0(crit0,'_',repet,'.csv'))
+      filename <- file.path(output_dir, paste0(crit0,'_',repet,'.csv'))
       divIndex_est[[crit0]] <- read.delim(file = filename, header = T, sep = '\t')
       colnames(divIndex_est[[crit0]]) <- as.character(nbClust_list)
     }

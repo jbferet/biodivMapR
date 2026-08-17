@@ -10,9 +10,9 @@
 #' @return rast_sample dataframe. pixel/plot info extracted from input_rast
 #' @export
 
-sample_plots_from_raster <- function(extent_area,
-                                     nb_samples, input_rast, min_sun = 0.25,
-                                     input_mask = NULL, window_size = NULL){
+sample_plots_from_raster <- function(extent_area, nb_samples, input_rast, 
+                                     min_sun = 0.25, input_mask = NULL, 
+                                     window_size = NULL){
   # sample pixels / plots
   rast_sample <- sample_from_raster(extent_area = extent_area,
                                     nb_samples = nb_samples,

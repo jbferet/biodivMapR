@@ -11,13 +11,14 @@ biodivMapR_opt_clusters(
   selected_bands,
   obs_criterion = "shannon",
   input_mask_path = NULL,
-  outputdir = "./",
+  output_dir = "./",
   nb_clusters = 50,
   min_sun = 0.25,
   nb_iter = 10,
   pcelim = 0.02,
   nb_repetitions = 50,
   nb_samples_alpha = 1e+05,
+  nb_samples_beta = 1000,
   Hill_order = 1,
   algorithm = "Hartigan-Wong",
   nbCPU = 1,
@@ -31,15 +32,15 @@ biodivMapR_opt_clusters(
 
 \item{obs2optimize}{numeric .list of ground obs diversity metrics
 corresponding to input_vector.
-Expected values: richness, shannon, simpson, BC}
+Expected values: richness, shannon, simpson, bray}
 
 \item{selected_bands}{numeric. bnds to select from input_raster}
 
-\item{obs_criterion}{character. richness, shannon, simpson or BC}
+\item{obs_criterion}{character. richness, shannon, simpson or bray}
 
 \item{input_mask_path}{SpatRaster corresponding to mask}
 
-\item{outputdir}{character. output directory}
+\item{output_dir}{character. output directory}
 
 \item{nb_clusters}{numeric.}
 
@@ -52,6 +53,8 @@ Expected values: richness, shannon, simpson, BC}
 \item{nb_repetitions}{numeric.}
 
 \item{nb_samples_alpha}{numeric.}
+
+\item{nb_samples_beta}{numeric.}
 
 \item{Hill_order}{numeric.}
 

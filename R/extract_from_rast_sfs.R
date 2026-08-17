@@ -48,7 +48,7 @@ extract_from_rast_sfs <- function(input_raster, input_mask, min_sun, obs_vect){
     # AttributeTable <- rastext$AttributeTable
     rast_val <- rastext$rast_sample_vect
     Attributes <- rastext$AttributeTable
-    nbPlots_total <- length(Attributes$id)
+    nbPlots_total <- length(Attributes$ID_biodivMapR)
   }
   IDplot <- rast_val$ID
   rast_val$ID <- NULL

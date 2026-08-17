@@ -7,6 +7,7 @@
 #' @param selected_bands numeric. bands selected from input_rast
 #' @param alpha_metrics list. alpha diversity metrics: richness, shannon, simpson
 #' @param Hill_order numeric. Hill order
+#' @param beta_metrics list. beta diversity metrics
 #' @param fd_metrics character. list of functional metrics
 #' @param window_size numeric. window size for square plots
 #' @param maxRows numeric. max number of rows processed once by each CPU
@@ -23,7 +24,7 @@
 get_raster_diversity <- function(input_raster_path, Kmeans_info, Beta_info,
                                  input_mask_path = NULL, selected_bands = NULL,
                                  alpha_metrics = 'shannon', Hill_order = 1,
-                                 fd_metrics = NULL, window_size, maxRows = NULL,
+                                 beta_metrics = 'bray', fd_metrics = NULL, window_size, maxRows = NULL,
                                  pcelim = 0.02, nbCPU = 1, min_sun = 0.25){
 
   if (is.null(maxRows))
@@ -61,6 +62,7 @@ get_raster_diversity <- function(input_raster_path, Kmeans_info, Beta_info,
                              Beta_info = Beta_info,
                              alpha_metrics = alpha_metrics,
                              Hill_order = Hill_order,
+                             beta_metrics = beta_metrics,
                              fd_metrics = fd_metrics,
                              r_in = r_in,
                              window_size = window_size,
@@ -81,6 +83,7 @@ get_raster_diversity <- function(input_raster_path, Kmeans_info, Beta_info,
                                  Beta_info = Beta_info,
                                  alpha_metrics = alpha_metrics,
                                  Hill_order = Hill_order,
+                                 beta_metrics = beta_metrics,
                                  fd_metrics = fd_metrics,
                                  r_in = r_in,
                                  window_size = window_size,

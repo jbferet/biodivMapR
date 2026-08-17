@@ -8,7 +8,8 @@ save_diversity_maps(
   ab_div_metrics,
   alpha_metrics = "shannon",
   Hill_order = 1,
-  beta_metrics = TRUE,
+  Beta_info = NULL,
+  beta_metrics = "bray",
   fd_metrics = NULL,
   input_rast,
   output_dir,
@@ -24,7 +25,9 @@ save_diversity_maps(
 
 \item{Hill_order}{numeric. Hill order}
 
-\item{beta_metrics}{boolean. set TRUE to compute beta diversity}
+\item{Beta_info}{list. information on beta diversity}
+
+\item{beta_metrics}{list. beta diversity metrics}
 
 \item{fd_metrics}{character. list of functional metrics}
 

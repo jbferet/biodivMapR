@@ -8,6 +8,7 @@
 #' @param corrMethod character
 #'
 #' @return assesssed value and correlation
+#' @importFrom dplyr %>%
 #' @export
 
 fd_metrics_sfs <- function(fd_metrics, obs2optimize, rast_val, Kmeans_info, IDplot, corrMethod){

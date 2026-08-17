@@ -17,6 +17,7 @@ run_biodivMapR_plot(
   window_size,
   alpha_metrics = "shannon",
   Hill_order = 1,
+  beta_metrics = "hill",
   fd_metrics = NULL,
   pcelim = 0.02,
   maxRows = NULL,
@@ -49,6 +50,8 @@ run_biodivMapR_plot(
 \item{alpha_metrics}{list. alpha diversity metrics}
 
 \item{Hill_order}{numeric. Hill order}
+
+\item{beta_metrics}{list. beta diversity metrics}
 
 \item{fd_metrics}{character. list of functional metrics}
 

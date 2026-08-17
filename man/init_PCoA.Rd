@@ -16,6 +16,7 @@ init_PCoA(
   pcelim = 0.02,
   dimPCoA = 3,
   nbCPU = 1,
+  beta_metrics = "bray",
   Beta_info_save = NULL,
   Beta_info_read = NULL,
   verbose = TRUE
@@ -43,6 +44,10 @@ init_PCoA(
 \item{dimPCoA}{numeric.}
 
 \item{nbCPU}{numeric. Number of CPUs available}
+
+\item{beta_metrics}{character. name of beta dissimilarity metrics
+Available options are "bray", "brayturn", "jaccard", "jaccardturn",
+"sorensen", "simpson_diss"}
 
 \item{Beta_info_save}{character. path where to save Beta_info}
 

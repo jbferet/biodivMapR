@@ -4,6 +4,7 @@
 #' @param pix2extract dataframe. lat and lon for pixels to extract
 #' @param xy boolean. set TRUE to get coordinates for each pixel sampled
 #' @param prog boolean. set TRUE to display progression bar
+#' @param keep_ID boolean. set TRUE to keep ID field
 #'
 #'
 #' @return rast_sample dataframe. pixel/plot info extracted from input_rast
@@ -13,13 +14,16 @@
 #' @importFrom stats na.omit
 #' @export
 
-sample_raster <- function(input_rast, pix2extract, xy = FALSE, prog = FALSE){
+sample_raster <- function(input_rast, pix2extract, xy = FALSE, prog = FALSE,
+                          keep_ID = TRUE){
   # if multilayer spatial raster provided as input
   if (inherits(x = input_rast,what = 'SpatRaster')){
     if (inherits(pix2extract,what = 'matrix')){
       rast_sample <- terra::extract(x = input_rast, y = pix2extract)
     } else {
       rast_sample <- terra::extract(x = input_rast, y = pix2extract, xy = xy)
+      if (!keep_ID)
+        rast_sample$ID <- NULL
     }
     # if list of rasters
   } else if (inherits(x = input_rast, what = 'list')){
@@ -54,11 +58,11 @@ sample_raster <- function(input_rast, pix2extract, xy = FALSE, prog = FALSE){
         if (dim(rast_sample)[1]>0){
           if (inherits(rast_sample_list[sel],what = 'list')){
             rast_sample <- cbind(rast_sample,rast_sample_list[sel][[1]])
-            rast_sample$ID <- NULL
           } else if (inherits(rast_sample_list[sel],what = 'data.frame')){
             rast_sample <- cbind(rast_sample,rast_sample_list[sel])
-            rast_sample$ID <- NULL
           }
+          if (!keep_ID)
+            rast_sample$ID <- NULL
         } else {
           if (inherits(rast_sample_list[sel],what = 'list')){
             rast_sample <- rast_sample_list[sel][[1]]

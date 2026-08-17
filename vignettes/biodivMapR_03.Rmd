@@ -23,10 +23,37 @@ options(rmarkdown.html_vignette.check_title = FALSE)
 Once spectral features are computed from optical data, they can be used as 
 input variables in `biodivMapR`.
 
-Starting from `biodivMapR v2`, a simplified procedure is followed compared to 
-`biodivMapR v1`. 
-A unique function named `biodivMapR_full` runs the full workflow and produces a 
+Starting from `biodivMapR`  v2, a simplified procedure is followed compared to 
+`biodivMapR` v1. 
+A unique function named `biodivMapR` runs the full workflow and produces a 
 limited set of outputs.
+
+## available spectral diversity metrics
+
+`biodivMapR` allows computing and mapping various diversity metrics. 
+
+- $\alpha$ diversity metrics include spectral `richness`, `shannon`, `simpson`, 
+and `hill` index. The default Hill order is set to 1, corresponding to exp(shannon). 
+Users can define a Hill number with the parameter `Hill_order`.
+        
+        
+- $\beta$ diversity metrics include Bray-Curtis dissimilarity (`bray`), 
+Bray-Curtis turnover (`brayturn`), Jaccard dissimilarity (`jaccard`), Jaccard 
+turnover (`jaccardturn`), Simpson dissimilarity (`simpson_diss`), and Sorensen 
+dissimilarity (`sorensen`). Please refer to the R package 
+[`bioregion`](https://biorgeo.github.io/bioregion/articles/a3_pairwise_metrics.html#compute-pairwise-dissimilarity-metrics) 
+for a definition of these metrics.
+
+- Functional diversity metrics include Richness (`FRic`), Evenness (`FEve`), 
+Divergence (`FDiv`), Dispersion (`FDis`) and Rao entropy  (`FRaoq`). 
+These functional diversity metrics are computed with the package 
+[`fundiversity`](https://funecology.github.io/fundiversity/)
+
+The default parameterization includes computation of `shannon` and `bray`. 
+Functional diversity metrics require significantly larger computational time 
+than $\alpha$ and $\beta$ diversity metrics. 
+
+__We recommend computing functional metrics for validation, or to map them over a limited spatial extent when exploring the package.__
 
 ## produce diversity maps from SPCA file
 
@@ -34,7 +61,7 @@ SPCA was previously computed and the relevant spectral features were identified
 based on visual interpretation. 
 These selected components are used to produce diversity maps with `biodivMapR`. 
 The SPCA file is a unique raster file stacking all components. 
-`biodivMapR` requires 
+The function `biodivMapR` requires 
 - the path for the input raster: it can be a unique stacked raster, or a set of 
 individual features.
 The current version does not accept combination of stacked raster and individual 
@@ -65,20 +92,20 @@ Beta_info_save <- file.path(output_dir_biodivMapR,'Beta_info.RData')
 nbCPU <- 4            # nb of threads for parallel processing
 # 5- apply biodivMapR 
 selected_bands <- c(1, 4, 5, 6)
-options <- set_options_biodivMapR(fun = 'biodivMapR_full')
+options <- set_options_biodivMapR(fun = 'biodivMapR')
 options$nb_clusters <- nb_clusters
 options$maxRows <- 1000
-ab_info_SPCA <- biodivMapR_full(input_raster_path = PCA_Output$PCA_Files$PCA, 
-                                input_mask_path = mask_path_PCA,
-                                output_dir = output_dir_biodivMapR, 
-                                selected_bands = selected_bands, 
-                                window_size = window_size, 
-                                Kmeans_info_save = Kmeans_info_save,
-                                Beta_info_save = Beta_info_save, 
-                                nbCPU = nbCPU, options = options)
+ab_info_SPCA <- biodivMapR(input_raster_path = PCA_Output$PCA_Files$PCA, 
+                           input_mask_path = mask_path_PCA,
+                           output_dir = output_dir_biodivMapR, 
+                           selected_bands = selected_bands, 
+                           window_size = window_size, 
+                           Kmeans_info_save = Kmeans_info_save,
+                           Beta_info_save = Beta_info_save, 
+                           nbCPU = nbCPU, options = options)
 ```
 
-`ab_info_SPCA` produced from the `biodivMapR_full` function includes two lists:
+`ab_info_SPCA` produced from the `biodivMapR` function includes two lists:
 
 -   `Kmeans_info`, which gathers all information related to the k-means 
 clustering: centroid, min and max values for each feature
@@ -88,7 +115,7 @@ beta diversity
 
 These lists are saved as `Rdata` files corresponding to the files defined by 
 `Kmeans_info_save` and `Beta_info_save`. 
-These files can then be used for an independent process with `biodivMapR_full`. 
+These files can then be used for an independent process with `biodivMapR`. 
 The path for these files can then be provided for input variables 
 `Kmeans_info_read` and `Beta_info_read`.
 
@@ -126,8 +153,7 @@ knitr::include_graphics(url)
 Spectral indices computed previously will be used here to produce diversity maps 
 with `biodivMapR`. 
 Each spectral index was saved following a tiling system, and a vrt was produced. 
-`biodivMapR` can use the path for the vrt as `input_raster_path` for 
-`biodivMapR_full`. 
+`biodivMapR` can use the path for the vrt as `input_raster_path`. 
 Alternatively, it can take advantage of the tiling system in order to process 
 the image tile per tile in parallel. 
 

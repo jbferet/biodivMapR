@@ -1,4 +1,5 @@
-#' computes diversity metrics from raster
+#' computes diversity metrics from a set of raster corresponding to
+#' tiles as produced with preprocS2
 #'
 #' @param feature_dir character. path where to get features
 #' @param list_features character. list of features
@@ -85,6 +86,7 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
   if (!is.null(alpha_metrics) | beta_metrics){
     if (nbCPU>1){
       cl <- parallel::makeCluster(nbCPU)
+      parallel::clusterEvalQ(cl, {library(biodivMapR)})
       with(plan("cluster", workers = cl), local = TRUE)
       handlers("cli")
       with_progress({
@@ -98,6 +100,7 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
                                     Beta_info = Beta_info,
                                     alpha_metrics = alpha_metrics,
                                     Hill_order = Hill_order,
+                                    beta_metrics = beta_metrics,
                                     fd_metrics = NULL,
                                     output_dir = output_dir,
                                     window_size = window_size,
@@ -124,6 +127,7 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
                Beta_info = Beta_info,
                alpha_metrics = alpha_metrics,
                Hill_order = Hill_order,
+               beta_metrics = beta_metrics,
                fd_metrics = NULL,
                output_dir = output_dir,
                window_size = window_size,
@@ -138,6 +142,7 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
       message(paste('computing functional metric: ', fd_metric))
       if (nbCPU>1){
         cl <- parallel::makeCluster(nbCPU)
+        parallel::clusterEvalQ(cl, {library(biodivMapR)})
         with(plan("cluster", workers = cl), local = TRUE)
         handlers("cli")
         with_progress({
@@ -151,6 +156,7 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
                                       Beta_info = NULL,
                                       alpha_metrics = NULL,
                                       Hill_order = Hill_order,
+                                      beta_metrics = NULL,
                                       fd_metrics = fd_metric,
                                       output_dir = output_dir,
                                       window_size = window_size,
@@ -176,6 +182,7 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
                  Kmeans_info = Kmeans_info,
                  Beta_info = NULL,
                  alpha_metrics = NULL,
+                 beta_metrics = NULL,
                  Hill_order = Hill_order,
                  fd_metrics = fd_metric,
                  output_dir = output_dir,
@@ -193,9 +200,9 @@ biodivMapR_full_tiles <- function(feature_dir, list_features, mask_dir = NULL,
     site_name <- 'spectral_diversity'
   if (mosaic_output){
     # produce mosaic for outputs
-    indices <- c(alpha_metrics, fd_metrics)
-    if (beta_metrics)
-      indices <- c('beta', indices)
+    indices <- c(alpha_metrics, beta_metrics, fd_metrics)
+    # if (beta_metrics)
+    #   indices <- c('beta', indices)
     mosaic_path <- list()
     for (biodiv_index in indices){
       # create directory

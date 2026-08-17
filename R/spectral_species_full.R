@@ -39,18 +39,33 @@ spectral_species_full <- function(input_raster_path, input_mask_path = NULL,
   maxRows <- options$maxRows
 
   dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
-  # read input rasters
-  if (inherits(x = input_raster_path, what = 'character')){
+  
+  # read and/or arrange input rasters with terra 
+  if (inherits(x = input_raster_path, what = 'list')){
+    if (inherits(x = input_raster_path[[1]], what = 'character')){
+      input_rast <- lapply(input_raster_path,terra::rast)
+      input_rast <- terra::rast(input_rast)
+    } else if (inherits(x = input_raster_path[[1]], what = 'SpatRaster')){
+      input_rast <- terra::rast(input_raster_path)
+    }
+  } else if (inherits(x = input_raster_path, what = 'character')){
     input_rast <- terra::rast(input_raster_path)
-  } else if (inherits(x = input_raster_path, what = 'list')){
-    input_rast <- lapply(input_raster_path,terra::rast)
+  } else if (inherits(x = input_raster_path, what = 'SpatRaster')){
+    input_rast <- input_raster_path
   }
+  # # read input rasters
+  # if (inherits(x = input_raster_path, what = 'character')){
+  #   input_rast <- terra::rast(input_raster_path)
+  # } else if (inherits(x = input_raster_path, what = 'list')){
+  #   input_rast <- lapply(input_raster_path,terra::rast)
+  # }
   input_mask <- NULL
   if (!is.null(input_mask_path))
     input_mask <- terra::rast(input_mask_path)
   if (is.null(Kmeans_info_save))
     Kmeans_info_save <- file.path(output_dir,'Kmeans_info.RData')
   # compute kmeans from random subset of image
+  options <- set_options_biodivMapR(fun = 'init_kmeans', options = options)
   Kmeans_info <- init_kmeans(input_rast = input_rast,
                              output_dir = output_dir,
                              input_mask = input_mask,
@@ -59,7 +74,7 @@ spectral_species_full <- function(input_raster_path, input_mask_path = NULL,
                              Kmeans_info_save = Kmeans_info_save,
                              Kmeans_info_read = Kmeans_info_read,
                              nb_samples_alpha = nb_samples_alpha,
-                             nb_iter = nb_iter)
+                             nb_iter = nb_iter, options = options)
 
   # apply clustering on raster
   rast_spectral_species <- apply_spectral_species(input_rast = input_rast,

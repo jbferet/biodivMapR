@@ -8,6 +8,7 @@
 #' @param plots list. list of sf plots
 #' @param alpha_metrics character.
 #' @param Hill_order numeric.
+#' @param beta_metrics character.
 #' @param fd_metrics character.
 #' @param nbCPU numeric. Number of CPUs available
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
@@ -26,7 +27,7 @@
 biodivMapR_tiles <- function(feature_dir, list_features, mask_dir = NULL,
                              output_dir, window_size, plots,
                              alpha_metrics = 'shannon', Hill_order = 1,
-                             fd_metrics = NULL, nbCPU = 1, pcelim = 0.02,
+							 beta_metrics = 'bray', fd_metrics = NULL, nbCPU = 1, pcelim = 0.02,
                              maxRows = 1200, moving_window = FALSE,
                              site_name = NULL, mosaic_output = TRUE){
 
@@ -61,6 +62,7 @@ biodivMapR_tiles <- function(feature_dir, list_features, mask_dir = NULL,
 
   if (nbCPU>1){
     cl <- parallel::makeCluster(nbCPU)
+    parallel::clusterEvalQ(cl, {library(biodivMapR)})
     with(plan("cluster", workers = cl), local = TRUE)	
     handlers("cli")
     with_progress({
@@ -73,6 +75,7 @@ biodivMapR_tiles <- function(feature_dir, list_features, mask_dir = NULL,
                                   Beta_info = Beta_info,
                                   alpha_metrics = alpha_metrics,
                                   Hill_order = Hill_order,
+								  beta_metrics = beta_metrics,
                                   fd_metrics = fd_metrics, output_dir = output_dir,
                                   window_size = window_size,
                                   maxRows = maxRows, pcelim = pcelim,
@@ -91,7 +94,7 @@ biodivMapR_tiles <- function(feature_dir, list_features, mask_dir = NULL,
              feature_dir = feature_dir, mask_dir = mask_dir,
              list_features = list_features, Kmeans_info = Kmeans_info,
              Beta_info = Beta_info, alpha_metrics = alpha_metrics,
-             Hill_order = Hill_order, fd_metrics = fd_metrics,
+             Hill_order = Hill_order, beta_metrics = beta_metrics, fd_metrics = fd_metrics,
              output_dir = output_dir, window_size = window_size,
              maxRows = maxRows, moving_window = moving_window, p = p)
     })
@@ -99,7 +102,7 @@ biodivMapR_tiles <- function(feature_dir, list_features, mask_dir = NULL,
 
   if (mosaic_output){
     # produce mosaic for outputs
-    indices <- c(alpha_metrics, 'beta', fd_metrics)
+    indices <- c(alpha_metrics, beta_metrics, fd_metrics)
     mosaic_path <- list()
     for (biodividx in indices){
       # identify files

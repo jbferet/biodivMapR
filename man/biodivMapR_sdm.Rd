@@ -10,6 +10,7 @@ biodivMapR_sdm(
   input_mask_path = NULL,
   site_name = NULL,
   alpha_metrics = "shannon",
+  beta_metrics = "bray",
   nb_samples_beta = 1000
 )
 }
@@ -20,9 +21,11 @@ biodivMapR_sdm(
 
 \item{input_mask_path}{character. path for mask file}
 
-\item{site_name}{character. nname of site}
+\item{site_name}{character. name of site}
 
-\item{alpha_metrics}{character.}
+\item{alpha_metrics}{character. list of alpha metrics}
+
+\item{beta_metrics}{character. list of beta metrics}
 
 \item{nb_samples_beta}{numeric. number of samples to compute beta diversity}
 }

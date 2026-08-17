@@ -11,6 +11,9 @@
 #' @param dimPCoA numeric.
 #' @param input_mask SpatRaster. mask corresponding to raster to extract data from
 #' @param nbCPU numeric. Number of CPUs available
+#' @param beta_metrics character. name of beta dissimilarity metrics
+#' Available options are "bray", "brayturn", "jaccard", "jaccardturn",
+#' "sorensen", "simpson_diss"
 #' @param Beta_info_save character. path where to save Beta_info
 #' @param Beta_info_read character. path where to read Beta_info
 #' @param verbose boolean. set true for messages
@@ -21,8 +24,8 @@
 init_PCoA <- function(input_rast, output_dir, window_size, Kmeans_info,
                       selected_bands = NULL, input_mask = NULL, nb_samples = 1000,
                       min_sun = 0.25, pcelim = 0.02, dimPCoA = 3, nbCPU = 1,
-                      Beta_info_save = NULL, Beta_info_read = NULL,
-                      verbose = TRUE){
+                      beta_metrics = 'bray', Beta_info_save = NULL,
+                      Beta_info_read = NULL, verbose = TRUE){
 
   # if path for data required to map beta diversity provided
   if (!is.null(Beta_info_read)) {
@@ -75,6 +78,7 @@ init_PCoA <- function(input_rast, output_dir, window_size, Kmeans_info,
                                    selected_bands = selected_bands,
                                    pcelim = pcelim, dimPCoA = dimPCoA,
                                    nbCPU = nbCPU,
+                                   beta_metrics = beta_metrics,
                                    Beta_info_save = Beta_info_save,
                                    verbose = verbose)
 

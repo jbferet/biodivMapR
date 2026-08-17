@@ -7,6 +7,9 @@
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
 #' @param dimPCoA numeric.
 #' @param nbCPU numeric. Number of CPUs available
+#' @param beta_metrics character. name of beta dissimilarity metrics
+#' Available options are "bray", "brayturn", "jaccard", "jaccardturn",
+#' "sorensen", "simpson_diss"
 #' @param Beta_info_save character. path where to save Beta_info
 #' @param verbose boolean. set true for messages
 #'
@@ -22,7 +25,8 @@
 
 init_PCoA_samples <- function(rast_sample, output_dir, Kmeans_info,
                               selected_bands = NULL, pcelim = 0.02, dimPCoA = 3,
-                              nbCPU = 1, Beta_info_save = NULL, verbose = TRUE){
+                              nbCPU = 1, beta_metrics = 'bray',
+                              Beta_info_save = NULL, verbose = TRUE){
 
   rast_sample <- clean_NAsInf(rast_sample)
   ID <- NULL
@@ -48,14 +52,21 @@ init_PCoA_samples <- function(rast_sample, output_dir, Kmeans_info,
   # plan(multisession, workers = nbCPU)
   if (nbCPU>1){
     cl <- parallel::makeCluster(nbCPU)
+    parallel::clusterEvalQ(cl, {library(biodivMapR)})
     with(future::plan("cluster", workers = cl), local = TRUE)
     # progressr::handlers(global = TRUE)
     suppressWarnings(progressr::handlers("cli"))
     # progressr::handlers("debug")
     suppressWarnings(with_progress({
       p <- progressr::progressor(steps = nb_iter)
+      # Beta_info <- future.apply::future_lapply(SSdist,
+      #                                          FUN = get_bc_diss_from_ssd,
+      #                                          nb_clusters = nb_clusters,
+      #                                          pcelim = pcelim, p = p,
+      #                                          future.seed = TRUE)
       Beta_info <- future.apply::future_lapply(SSdist,
-                                               FUN = get_bc_diss_from_ssd,
+                                               FUN = get_beta_from_ssd,
+                                               beta_metrics =  beta_metrics,
                                                nb_clusters = nb_clusters,
                                                pcelim = pcelim, p = p,
                                                future.seed = TRUE)
@@ -64,19 +75,34 @@ init_PCoA_samples <- function(rast_sample, output_dir, Kmeans_info,
     plan(sequential)
   } else {
     Beta_info <- lapply(X = SSdist,
-                        FUN = get_bc_diss_from_ssd,
+                        FUN = get_beta_from_ssd,
+                        beta_metrics =  beta_metrics,
                         nb_clusters = nb_clusters,
                         pcelim = pcelim)
   }
-  MatBC_iter <- lapply(Beta_info, '[[','MatBC')
-  SSD <- lapply(Beta_info, '[[','SSD')
-  MatBC <- Reduce('+', MatBC_iter)/nb_iter
-  MatBCdist <- stats::as.dist(MatBC, diag = FALSE, upper = FALSE)
-  if (verbose ==TRUE)
-    message('perform PCoA')
-  BetaPCO <- pco(MatBCdist, k = dimPCoA)
-  # Beta_Ordination_sel <- BetaPCO$points
-  Beta_info <- list('SSD' = SSD, 'MatBC' = MatBC, 'BetaPCO' = BetaPCO)
+
+  ssd <- lapply(Beta_info, '[[','ssd')
+  mat_diss <- beta_pco <- list()
+  for (beta in beta_metrics){
+    mat_diss_iter <- lapply(lapply(Beta_info, '[[','mat_diss'), '[[',beta)
+    mat_diss[[beta]] <- Reduce('+', mat_diss_iter)/nb_iter
+    mean_mat_diss <- stats::as.dist(mat_diss[[beta]], diag = FALSE, upper = FALSE)
+    if (verbose ==TRUE)
+      message(paste('perform PCoA for', beta))
+    beta_pco[[beta]] <- pco(mean_mat_diss, k = dimPCoA)
+    # Beta_Ordination_sel <- beta_pco$points
+  }
+  Beta_info <- list('ssd' = ssd, 'mat_diss' = mat_diss, 'beta_pco' = beta_pco)
+
+  # MatBC_iter <- lapply(Beta_info, '[[','MatBC')
+  # SSD <- lapply(Beta_info, '[[','SSD')
+  # MatBC <- Reduce('+', MatBC_iter)/nb_iter
+  # MatBCdist <- stats::as.dist(MatBC, diag = FALSE, upper = FALSE)
+  # if (verbose ==TRUE)
+  #   message('perform PCoA')
+  # BetaPCO <- pco(MatBCdist, k = dimPCoA)
+  # # Beta_Ordination_sel <- BetaPCO$points
+  # Beta_info <- list('SSD' = SSD, 'MatBC' = MatBC, 'BetaPCO' = BetaPCO)
   if (is.null(Beta_info_save))
     Beta_info_save <- file.path(output_dir, 'Beta_info.RData')
   save(Beta_info, file = Beta_info_save)

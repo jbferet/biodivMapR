@@ -12,8 +12,8 @@ crop_border_tile <- function(rast_obj, window_size){
   # get extent
   ext_rast <- terra::ext(x = rast_obj)
   # define bbox
-  bbox <- preprocS2::bbox_to_poly(x = sf::st_bbox(ext_rast),
-                                  crs = terra::crs(rast_obj))
+  bbox <- bbox_to_poly(x = sf::st_bbox(ext_rast),
+                       crs = terra::crs(rast_obj))
   # create buffer
   bbox_buff <- sf::st_buffer(x = bbox,
                              dist = -(1+(window_size/2))*terra::res(rast_obj)[1])

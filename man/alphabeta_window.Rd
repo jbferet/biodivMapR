@@ -10,8 +10,10 @@ alphabeta_window(
   nb_clusters,
   Beta_info,
   alpha_metrics,
+  beta_metrics,
   pcelim = 0.02,
   Hill_order = 1,
+  diss_output = FALSE,
   p = NULL
 )
 }
@@ -25,9 +27,13 @@ alphabeta_window(
 
 \item{alpha_metrics}{list. alpha diversity metrics}
 
+\item{beta_metrics}{list. beta diversity metrics}
+
 \item{pcelim}{numeric. min proportion of pixels to consider spectral species}
 
 \item{Hill_order}{numeric. Hill order}
+
+\item{diss_output}{boolean set TRUE to get dissimilarity matrices as outputs}
 
 \item{p}{list. progressor object for progress bar}
 }

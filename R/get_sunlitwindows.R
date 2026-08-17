@@ -7,7 +7,7 @@
 #' @return NMDS position based on nearest neighbors from NMDS
 #' @importFrom dplyr group_by relocate %>% last_col
 #' @importFrom purrr map
-#' @importFrom tidyr unnest
+#' @importFrom tidyr nest unnest
 #' @export
 #'
 get_sunlitwindows <- function(inputdata, pixperplot, min_sun = 0.25){

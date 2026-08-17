@@ -12,8 +12,6 @@
 #' @importFrom terra vect buffer extract res linearUnits project centroids ext crs
 #' @importFrom methods as
 #' @importFrom stats runif
-#' @importFrom preprocS2 meters_to_decdeg
-#' @importFrom crsuggest suggest_crs
 #' @export
 
 sample_from_raster <- function(extent_area,
@@ -22,6 +20,12 @@ sample_from_raster <- function(extent_area,
                                input_mask = NULL,
                                window_size = NULL,
                                capstyle  = 'square'){
+
+  # need to keep ID when sampling beta diversity, not alpha diversity
+  keep_ID <- FALSE
+  if (!is.null(window_size))
+    keep_ID <- TRUE
+
 
   if (nb_samples < 100000 | !is.null(window_size)){
     if (nb_samples > 100000 & !is.null(window_size)){
@@ -72,10 +76,10 @@ sample_from_raster <- function(extent_area,
                               'longitude' = terra::ext(centroid_aoi)[1],
                               'distance' = 1)
         # how many degrees for one meter?
-        distlatlon <- preprocS2::meters_to_decdeg(occs_df = occs_df,
-                                                  lat_col = 'latitude',
-                                                  lon_col = 'longitude',
-                                                  distance = 'distance')
+        distlatlon <- meters_to_decdeg(occs_df = occs_df,
+                                       lat_col = 'latitude',
+                                       lon_col = 'longitude',
+                                       distance = 'distance')
         deg_to_meters <- mean(unlist(distlatlon))
         raster_res_init <- terra::res(input_rast[[1]])[1]
         # raster resolution in meters
@@ -88,7 +92,8 @@ sample_from_raster <- function(extent_area,
       samples <- terra::buffer(x = terra::vect(samples), width = bufferSize,
                                quadsegs = 8, capstyle  = capstyle)
     }
-    rast_sample <- sample_raster(input_rast = input_rast, pix2extract = samples)
+    rast_sample <- sample_raster(input_rast = input_rast, pix2extract = samples,
+                                 keep_ID = keep_ID)
     # account for mask if provided
     if (!is.null(input_mask)){
       mask_sample <- terra::extract(x = input_mask, y = samples)
@@ -100,7 +105,7 @@ sample_from_raster <- function(extent_area,
     xysamples <- get_xy_samples(input_rast, nb_samples, input_mask = input_mask)
     rast_sample <- sample_raster(input_rast = input_rast,
                                  pix2extract = xysamples,
-                                 xy = TRUE)
+                                 xy = TRUE, keep_ID = keep_ID)
     rast_sample <- clean_NAsInf(rast_sample)
   }
   return(rast_sample)

@@ -13,6 +13,7 @@ biodivMapR_tiles(
   plots,
   alpha_metrics = "shannon",
   Hill_order = 1,
+  beta_metrics = "bray",
   fd_metrics = NULL,
   nbCPU = 1,
   pcelim = 0.02,
@@ -38,6 +39,8 @@ biodivMapR_tiles(
 \item{alpha_metrics}{character.}
 
 \item{Hill_order}{numeric.}
+
+\item{beta_metrics}{character.}
 
 \item{fd_metrics}{character.}
 

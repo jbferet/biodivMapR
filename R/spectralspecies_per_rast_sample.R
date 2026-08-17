@@ -5,7 +5,6 @@
 #' @param selected_bands numeric. bands selected from input data
 #
 #' @return list
-#' @importFrom tidyr nest
 #' @export
 #'
 spectralspecies_per_rast_sample <- function(Kmeans_info, rast_sample,

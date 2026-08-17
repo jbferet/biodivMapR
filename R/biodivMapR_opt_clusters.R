@@ -4,17 +4,18 @@
 #' @param input_vector_path SpatVector or SpatVectorCollection
 #' @param obs2optimize numeric .list of ground obs diversity metrics
 #' corresponding to input_vector.
-#' Expected values: richness, shannon, simpson, BC
+#' Expected values: richness, shannon, simpson, bray
 #' @param selected_bands numeric. bnds to select from input_raster
-#' @param obs_criterion character. richness, shannon, simpson or BC
+#' @param obs_criterion character. richness, shannon, simpson or bray
 #' @param input_mask_path SpatRaster corresponding to mask
-#' @param outputdir character. output directory
+#' @param output_dir character. output directory
 #' @param nb_clusters numeric.
 #' @param min_sun numeric.
 #' @param nb_iter numeric.
 #' @param pcelim numeric.
 #' @param nb_repetitions numeric.
 #' @param nb_samples_alpha numeric.
+#' @param nb_samples_beta numeric.
 #' @param Hill_order numeric.
 #' @param algorithm character.
 #' @param nbCPU numeric.
@@ -34,14 +35,16 @@
 
 biodivMapR_opt_clusters <- function(input_raster_path, input_vector_path, obs2optimize,
                                     selected_bands, obs_criterion = 'shannon',
-                                    input_mask_path = NULL, outputdir = './',
+                                    input_mask_path = NULL, output_dir = './',
                                     nb_clusters = 50, min_sun = 0.25,
                                     nb_iter = 10, pcelim = 0.02,
                                     nb_repetitions = 50, nb_samples_alpha = 1e5,
+                                    nb_samples_beta = 1e3,
                                     Hill_order = 1, algorithm = 'Hartigan-Wong',
                                     nbCPU = 1, overwrite = TRUE){
 
-  files_exist <- filenames_opt_clusters(outputdir, obs_criterion)
+  dir.create(path = output_dir, showWarnings = F, recursive = T)
+  files_exist <- filenames_opt_clusters(output_dir, obs_criterion)
   pearson_stats <- spearman_stats <- list()
   if (!files_exist | overwrite == TRUE){
     if (nbCPU > nb_repetitions)
@@ -50,6 +53,8 @@ biodivMapR_opt_clusters <- function(input_raster_path, input_vector_path, obs2op
     #### Which diversity metrics should be computed?
     albet <- which_alpha_beta(obs_criterion)
     alpha_metrics <- albet$alpha_metrics
+    alpha_metrics_mean <- paste0(alpha_metrics, '_mean')
+    beta_metrics <- albet$beta_metrics
     # getBeta <- albet$getBeta
 
     # prepare sequence of clusters to test over multiple repetitions
@@ -60,6 +65,7 @@ biodivMapR_opt_clusters <- function(input_raster_path, input_vector_path, obs2op
     # estimate diversity metrics over range of clusters number for each repetition
     if (nbCPU>1) {
       cl <- parallel::makeCluster(nbCPU)
+      parallel::clusterEvalQ(cl, {library(biodivMapR)})
       with(plan("cluster", workers = cl), local = TRUE)
       handlers("cli")
       with_progress({
@@ -71,12 +77,14 @@ biodivMapR_opt_clusters <- function(input_raster_path, input_vector_path, obs2op
                                                      input_mask_path, selected_bands,
                                                      obs_criterion = obs_criterion,
                                                      alpha_metrics = alpha_metrics,
-                                                     outputdir = outputdir,
+                                                     beta_metrics = beta_metrics,
+                                                     output_dir = output_dir,
                                                      nbClust_list = nbClust_list,
                                                      min_sun = min_sun,
                                                      nb_iter = nb_iter,
                                                      pcelim = pcelim,
                                                      nb_samples_alpha = nb_samples_alpha,
+                                                     nb_samples_beta = nb_samples_beta,
                                                      Hill_order = Hill_order,
                                                      algorithm = algorithm,
                                                      overwrite = overwrite, p = p,
@@ -94,19 +102,26 @@ biodivMapR_opt_clusters <- function(input_raster_path, input_vector_path, obs2op
                                 input_vector_path = input_vector_path,
                                 input_mask_path, selected_bands,
                                 obs_criterion = obs_criterion,
-                                outputdir = outputdir,
+                                alpha_metrics = alpha_metrics,
+                                beta_metrics = beta_metrics,
+                                output_dir = output_dir,
                                 nbClust_list = nbClust_list,
                                 min_sun = min_sun,
                                 nb_iter = nb_iter,
                                 pcelim = pcelim,
                                 nb_samples_alpha = nb_samples_alpha,
+                                nb_samples_beta = nb_samples_beta,
                                 Hill_order = Hill_order, algorithm = algorithm,
                                 overwrite = overwrite, p = p)
       })
     }
 
     message('summarize cluster range analysis')
+    abmet <- c(alpha_metrics_mean, beta_metrics)
     for (crit0 in obs_criterion){
+      crit1 <- crit0
+      if (crit0 %in% alpha_metrics)
+        crit1 <- paste0(crit0, '_mean')
       Est_Val_indiv <- lapply(X = diversity_est, FUN = '[[', crit0)
       pearson_stats[[crit0]] <- spearman_stats[[crit0]] <- data.frame('mean' = NULL, 'sd' = NULL)
       pearson_all <- spearman_all <- list()
@@ -115,14 +130,14 @@ biodivMapR_opt_clusters <- function(input_raster_path, input_vector_path, obs2op
         Est_Val_indiv2 <- lapply(X = Est_Val_indiv, FUN = '[[', as.character(nbc))
         # compute correlation with target
         corall <- lapply(X = Est_Val_indiv2, FUN = cor.test,
-                         y = obs2optimize[[crit0]])
+                         y = obs2optimize[[crit1]])
         Pearson <- unlist(lapply(X = corall, '[[', 'estimate'))
         pearson_all[[as.character(nbc)]] <- Pearson
         pearson_stats[[crit0]] <- rbind(pearson_stats[[crit0]],
                                         data.frame('mean' = mean(Pearson),
                                                    'sd' = sd(Pearson)))
         corall <- lapply(X = Est_Val_indiv2, FUN = cor.test,
-                         y = obs2optimize[[crit0]],
+                         y = obs2optimize[[crit1]],
                          method = 'spearman')
         Spearman <- unlist(lapply(X = corall, '[[', 'estimate'))
         spearman_stats[[crit0]] <- rbind(spearman_stats[[crit0]],
@@ -131,10 +146,10 @@ biodivMapR_opt_clusters <- function(input_raster_path, input_vector_path, obs2op
         spearman_all[[as.character(nbc)]] <- Spearman
       }
 
-      filename_pearson_mean <- file.path(outputdir, paste0(crit0, '_pearson_mean.csv'))
-      filename_spearman_mean <- file.path(outputdir, paste0(crit0, '_spearman_mean.csv'))
-      filename_pearson_all <- file.path(outputdir, paste0(crit0, '_pearson_all.csv'))
-      filename_spearman_all <- file.path(outputdir, paste0(crit0, '_spearman_all.csv'))
+      filename_pearson_mean <- file.path(output_dir, paste0(crit0, '_pearson_mean.csv'))
+      filename_spearman_mean <- file.path(output_dir, paste0(crit0, '_spearman_mean.csv'))
+      filename_pearson_all <- file.path(output_dir, paste0(crit0, '_pearson_all.csv'))
+      filename_spearman_all <- file.path(output_dir, paste0(crit0, '_spearman_all.csv'))
 
       pearson_stats[[crit0]]$nb_clusters <- spearman_stats[[crit0]]$nb_clusters <- unlist(nbClust_list)
       pearson_stats[[crit0]]$metric <- spearman_stats[[crit0]]$metric <- crit0
@@ -158,10 +173,10 @@ biodivMapR_opt_clusters <- function(input_raster_path, input_vector_path, obs2op
     }
   } else {
     for (crit0 in obs_criterion){
-      filename_pearson_mean <- file.path(outputdir, paste0(crit0, '_pearson_mean.csv'))
+      filename_pearson_mean <- file.path(output_dir, paste0(crit0, '_pearson_mean.csv'))
       pearson_stats[[crit0]] <- read.delim(file = filename_pearson_mean,
                                            header = T, sep = '\t')
-      filename_spearman_mean <- file.path(outputdir, paste0(crit0, '_spearman_mean.csv'))
+      filename_spearman_mean <- file.path(output_dir, paste0(crit0, '_spearman_mean.csv'))
       spearman_stats[[crit0]] <- read.delim(file = filename_spearman_mean,
                                             header = T, sep = '\t')
       # in case NAs

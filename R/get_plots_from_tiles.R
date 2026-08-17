@@ -53,10 +53,10 @@ get_plots_from_tiles <- function(plotID, plots2sel, listfiles, feat_list,
                                 'longitude' = terra::ext(centroid_aoi)[1],
                                 'distance' = 1)
           # how many degrees for one meter?
-          distlatlon <- preprocS2::meters_to_decdeg(occs_df = occs_df,
-                                                    lat_col = 'latitude',
-                                                    lon_col = 'longitude',
-                                                    distance = 'distance')
+          distlatlon <- meters_to_decdeg(occs_df = occs_df,
+                                         lat_col = 'latitude',
+                                         lon_col = 'longitude',
+                                         distance = 'distance')
           deg_to_meters <- mean(unlist(distlatlon))
           raster_res_init <- terra::res(rastID[[1]])[1]
           # raster resolution in meters
@@ -71,8 +71,8 @@ get_plots_from_tiles <- function(plotID, plots2sel, listfiles, feat_list,
         for (i in seq_len(length(selplot))){
           plots_bbox[[i]] <- sf::st_as_sf(circ_plot[i,]) |>
             sf::st_bbox()
-          plots_square[[i]] <- sf::st_sf(preprocS2::bbox_to_poly(x = plots_bbox[[i]],
-                                                                 crs = sf::st_crs(rastID)))
+          plots_square[[i]] <- sf::st_sf(bbox_to_poly(x = plots_bbox[[i]],
+                                                      crs = sf::st_crs(rastID)))
         }
         df <- do.call(rbind, plots_square)
         vsp <- methods::as(df, "Spatial")

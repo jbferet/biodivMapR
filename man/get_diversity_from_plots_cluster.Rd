@@ -12,6 +12,7 @@ get_diversity_from_plots_cluster(
   Beta_info = NULL,
   selected_bands = NULL,
   alpha_metrics = c("richness", "shannon", "simpson", "hill"),
+  beta_metrics = c("bray"),
   pcelim = 0.02
 )
 }
@@ -29,6 +30,8 @@ get_diversity_from_plots_cluster(
 \item{selected_bands}{numeric. bands selected from input_rast}
 
 \item{alpha_metrics}{character.}
+
+\item{beta_metrics}{character.}
 
 \item{pcelim}{numeric. minimum proportion of pixels to consider spectral species}
 }

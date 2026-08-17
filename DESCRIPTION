@@ -1,6 +1,6 @@
 Package: biodivMapR
 Title: biodivMapR: an R package for a- and ß-diversity mapping using remotely-sensed images
-Version: 2.6.0
+Version: 3.0.0
 Authors@R: c(person(given = "Jean-Baptiste", 
 					family = "Feret", 
 					email = "jb.feret@teledetection.fr", 
@@ -17,22 +17,19 @@ Description: this packages allows processing image data based on the method desc
     It can process any type of raster data, as long as the driver is compatible with drivers accepted by the terra package. 
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 8.0.0
 License: GPL-3 + file LICENSE
 LazyData: true
 Imports: 
     bigRaster,
     cli,
-    dissUtils,
     doFuture,
-    dplyr,
     fields,
     foreach,
     fundiversity,
     future,
     future.apply,
     methods,
-    preprocS2,
     progressr,
     purrr,
     rlist,
@@ -42,19 +39,24 @@ Imports:
     terra,
     tidyr,
     vegan,
-    crsuggest,
     spinR,
-    pbapply
+    Rcpp
 Suggests: 
     ggplot2, 
     gridExtra, 
     knitr,
+    pbapply,
     RColorBrewer, 
     readr,
     rmarkdown,
     testthat (>= 2.0.0)
+LinkingTo:
+    Rcpp
+Depends:
+    R (>= 4.4.0),
+    dplyr (>= 1.0.0),
 Remotes: gitlab::jbferet/bigRaster, 
-         github::jbferet/preprocS2
+         gitlab::jbferet/spinR,
 VignetteBuilder: knitr
 URL: https://github.com/jbferet/biodivMapR
 BugReports: https://github.com/jbferet/biodivMapR/issues

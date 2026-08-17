@@ -2,7 +2,6 @@
 % Please edit documentation in R/biodivMapR-package.R
 \docType{package}
 \name{biodivMapR-package}
-\alias{biodivMapR}
 \alias{biodivMapR-package}
 \title{biodivMapR: biodivMapR: an R package for a- and ß-diversity mapping using remotely-sensed images}
 \description{
@@ -23,6 +22,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Jean-Baptiste Feret \email{jb.feret@teledetection.fr} (\href{https://orcid.org/0000-0002-0151-1334}{ORCID}) [copyright holder]
   \item Florian de Boissieu \email{florian.deboissieu@inrae.fr} (\href{https://orcid.org/0000-0002-2185-9952}{ORCID}) (clean code, format as package, build website)
 }
 

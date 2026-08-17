@@ -3,7 +3,8 @@
 #' @param ab_div_metrics list produced from get_raster_diversity
 #' @param alpha_metrics list. alpha diversity metrics
 #' @param Hill_order numeric. Hill order
-#' @param beta_metrics boolean. set TRUE to compute beta diversity
+#' @param Beta_info list. information on beta diversity
+#' @param beta_metrics list. beta diversity metrics
 #' @param fd_metrics character. list of functional metrics
 #' @param input_rast list. path for input rasters
 #' @param output_dir character.
@@ -18,7 +19,8 @@
 save_diversity_maps <- function(ab_div_metrics,
                                 alpha_metrics = 'shannon',
                                 Hill_order = 1,
-                                beta_metrics = TRUE,
+                                Beta_info = NULL,
+                                beta_metrics = 'bray',
                                 fd_metrics = NULL,
                                 input_rast,
                                 output_dir,
@@ -100,32 +102,33 @@ save_diversity_maps <- function(ab_div_metrics,
   }
 
   # save beta diversity indices
-  if (beta_metrics){
-    # get PCoA and corresponding dimensions
-    PCoA <- lapply(ab_div_metrics, '[[', 'PCoA_BC')
-    dimPCoA <- dim(PCoA[[1]])[3]
-    # produce a template with N dimensions
-    template_rast <- terra::aggregate(input_rast[[1]], fact = window_size)
-    dim(template_rast)[3] <- dimPCoA
-    for (nbPC in seq_len(dimPCoA)){
-      pctmp <- list()
-      for (nbPieces in seq_len(length(PCoA)))
-        pctmp[[nbPieces]] <- PCoA[[nbPieces]][,,nbPC]
-      terra::values(template_rast[[nbPC]]) <- do.call(rbind,pctmp)
+  if (!is.null(Beta_info)){
+    for (beta in beta_metrics){
+      # get PCoA and corresponding dimensions
+      PCoA <- lapply(ab_div_metrics, '[[', paste0('pcoa_', beta))
+      dimPCoA <- dim(PCoA[[1]])[3]
+      # produce a template with N dimensions
+      template_rast <- terra::aggregate(input_rast[[1]], fact = window_size)
+      dim(template_rast)[3] <- dimPCoA
+      for (nbPC in seq_len(dimPCoA)){
+        pctmp <- list()
+        for (nbPieces in seq_len(length(PCoA)))
+          pctmp[[nbPieces]] <- PCoA[[nbPieces]][,,nbPC]
+        terra::values(template_rast[[nbPC]]) <- do.call(rbind,pctmp)
+      }
+      names(template_rast) <- paste0('PCoA#',seq(1,dimPCoA))
+      
+      if (is.null(output_raster_name[[beta]]))
+        output_raster <- file.path(output_dir, beta)
+      if (!is.null(output_raster_name[[beta]]))
+        output_raster <- file.path(output_dir, output_raster_name[[beta]])
+      if (filetype%in%c('GTiff', 'COG'))
+        output_raster <- paste0(output_raster, '.tiff')
+      terra::writeRaster(x = template_rast, filename = output_raster,
+                         filetype = filetype, overwrite = TRUE,
+                         gdal = c("COMPRESS=LZW"))
+      diversity_maps[[beta]] <- output_raster
     }
-    names(template_rast) <- paste0('PCoA#',seq(1,dimPCoA))
-
-    if (is.null(output_raster_name[['beta']]))
-      output_raster <- file.path(output_dir, 'beta')
-    if (!is.null(output_raster_name[['beta']]))
-      output_raster <- file.path(output_dir, output_raster_name[['beta']])
-    if (filetype%in%c('GTiff', 'COG'))
-      output_raster <- paste0(output_raster, '.tiff')
-    terra::writeRaster(x = template_rast, filename = output_raster,
-                       filetype = filetype, overwrite = TRUE,
-                       gdal = c("COMPRESS=LZW"))
-    diversity_maps[['beta']] <- output_raster
   }
-
   return(diversity_maps)
 }

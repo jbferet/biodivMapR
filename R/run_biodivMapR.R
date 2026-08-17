@@ -10,6 +10,7 @@
 #' @param window_size numeric. window size for square plots
 #' @param alpha_metrics list. alpha diversity metrics: richness, shannon, simpson
 #' @param Hill_order numeric. Hill order
+#' @param beta_metrics list. beta diversity metrics
 #' @param fd_metrics character. list of functional metrics
 #' @param pcelim numeric. min proportion of pixels to consider spectral species
 #' @param maxRows numeric. maximum number or rows to process
@@ -25,8 +26,8 @@ run_biodivMapR <- function(input_raster_path, input_mask_path = NULL,
                            Kmeans_info, Beta_info,
                            output_dir, output_raster_name,
                            selected_bands = NULL, window_size,
-                           alpha_metrics = 'shannon',
-                           Hill_order = 1, fd_metrics = NULL, pcelim = 0.02,
+                           alpha_metrics = 'shannon', Hill_order = 1,
+                           beta_metrics = 'bray', fd_metrics = NULL, pcelim = 0.02,
                            maxRows = NULL, nbCPU = 1, min_sun = 0.25,
                            filetype = 'GTiff',
                            moving_window = FALSE){
@@ -36,9 +37,8 @@ run_biodivMapR <- function(input_raster_path, input_mask_path = NULL,
     input_rast <- terra::rast(input_raster_path)
   if (inherits(x = input_raster_path, what = 'list'))
     input_rast <- lapply(input_raster_path,terra::rast)
-  beta_metrics <- TRUE
   if (is.null(Beta_info))
-    beta_metrics <- FALSE
+    beta_metrics <- NULL
 
   if (!moving_window){
     ab_div_metrics <- get_raster_diversity_tile(input_raster_path = input_raster_path,
@@ -49,6 +49,7 @@ run_biodivMapR <- function(input_raster_path, input_mask_path = NULL,
                                                 window_size = window_size,
                                                 alpha_metrics = alpha_metrics,
                                                 Hill_order = Hill_order,
+                                                beta_metrics = beta_metrics,
                                                 fd_metrics = fd_metrics,
                                                 pcelim = pcelim,
                                                 maxRows = maxRows,
@@ -76,6 +77,7 @@ run_biodivMapR <- function(input_raster_path, input_mask_path = NULL,
                                               window_size = window_size,
                                               alpha_metrics = alpha_metrics,
                                               Hill_order = Hill_order,
+                                              beta_metrics = beta_metrics,
                                               fd_metrics = fd_metrics,
                                               pcelim = pcelim,
                                               maxRows = maxRows, nbCPU = nbCPU,

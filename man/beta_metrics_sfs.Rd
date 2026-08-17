@@ -7,6 +7,7 @@
 beta_metrics_sfs(
   obs2optimize,
   SSValid,
+  beta_metrics,
   nb_clusters,
   pcelim,
   nb_iter,
@@ -20,6 +21,8 @@ beta_metrics_sfs(
 \item{obs2optimize}{numeric. number of clusters used in kmeans}
 
 \item{SSValid}{numeric}
+
+\item{beta_metrics}{character. list of beta metrics to compute}
 
 \item{nb_clusters}{numeric}
 

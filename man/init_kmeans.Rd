@@ -17,7 +17,8 @@ init_kmeans(
   algorithm = "Hartigan-Wong",
   nbCPU = 1,
   verbose = TRUE,
-  progressbar = TRUE
+  progressbar = TRUE,
+  options = NULL
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ init_kmeans(
 \item{verbose}{boolean. set true for messages}
 
 \item{progressbar}{boolean. set true for progress bar during clustering}
+
+\item{options}{list list of additional options}
 }
 \value{
 Kmeans_info

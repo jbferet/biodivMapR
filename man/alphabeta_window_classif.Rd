@@ -10,6 +10,7 @@ alphabeta_window_classif(
   nb_clusters,
   Beta_info = NULL,
   alpha_metrics,
+  beta_metrics,
   pcelim = 0.02,
   Hill_order = 1
 )
@@ -23,6 +24,8 @@ alphabeta_window_classif(
 \item{Beta_info}{list. BC dissimilarity & associated beta metrics}
 
 \item{alpha_metrics}{list. alpha diversity metrics}
+
+\item{beta_metrics}{list. alpha diversity metrics}
 
 \item{pcelim}{numeric. min proportion of pixels to consider spectral species}
 
