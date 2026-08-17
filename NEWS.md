@@ -15,7 +15,7 @@
 - changed names of function: 
   - biodivMapR_full to biodivMapR
   - biodivMapR_full_classif to biodivMapR_classif
-- removed dependency to preprocS2
+- removed dependency to preprocS2 and bigRaster
   
 
 ## fix

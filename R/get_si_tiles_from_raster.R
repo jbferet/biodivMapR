@@ -58,7 +58,7 @@ get_si_tiles_from_raster <- function(aoi, aoi_ID, rastobj, si_list, output_dir,
     if ('S2' %in% toupper(sensor_name) | 'SENTINEL2' %in% toupper(sensor_name) |
         'SENTINEL_2' %in% toupper(sensor_name) |
         'SENTINEL-2' %in% toupper(sensor_name)){
-      HDRpath <- system.file('extdata', 'HDR', 'Sentinel_2.hdr',
+      hdr_path <- system.file('extdata', 'HDR', 'Sentinel_2.hdr',
                              package = 'biodivMapR')
       sensor <- 'S2'
     } else if ('LANDSAT' %in% toupper(sensor_name) |
@@ -71,10 +71,10 @@ get_si_tiles_from_raster <- function(aoi, aoi_ID, rastobj, si_list, output_dir,
                'LANDSAT9' %in% toupper(sensor_name) |
                'LANDSAT_9' %in% toupper(sensor_name) |
                'LANDSAT-9' %in% toupper(sensor_name)){
-      HDRpath <- system.file('extdata', 'HDR', 'Landsat_7.hdr', package = 'biodivMapR')
+      hdr_path <- system.file('extdata', 'HDR', 'Landsat_7.hdr', package = 'biodivMapR')
       sensor <- 'landsat'
     }
-    hdr <- biodivMapR::read_ENVI_header(HDRpath = HDRpath)
+    hdr <- read_envi_header(hdr_path = hdr_path)
     SensorBands <- hdr$wavelength
     if (sensor == 'landsat'){
       bandnames <- strsplit(x = hdr$`band names`, split = ', ')[[1]]

@@ -21,7 +21,6 @@ RoxygenNote: 8.0.0
 License: GPL-3 + file LICENSE
 LazyData: true
 Imports: 
-    bigRaster,
     cli,
     doFuture,
     fields,
@@ -42,6 +41,8 @@ Imports:
     spinR,
     Rcpp
 Suggests: 
+    progress,
+    raster,
     ggplot2, 
     gridExtra, 
     knitr,
@@ -49,14 +50,14 @@ Suggests:
     RColorBrewer, 
     readr,
     rmarkdown,
+    stringr,
     testthat (>= 2.0.0)
 LinkingTo:
     Rcpp
 Depends:
     R (>= 4.4.0),
     dplyr (>= 1.0.0),
-Remotes: gitlab::jbferet/bigRaster, 
-         gitlab::jbferet/spinR,
+Remotes: gitlab::jbferet/spinR,
 VignetteBuilder: knitr
 URL: https://github.com/jbferet/biodivMapR
 BugReports: https://github.com/jbferet/biodivMapR/issues

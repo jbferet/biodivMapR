@@ -62,7 +62,7 @@ set_options_biodivMapR <- function(fun, options = NULL){
     if (is.null(options$compute_beta))
       options$compute_beta <- TRUE
     if (is.null(options$beta_metrics))
-      options$beta_metrics <- 'bc'
+      options$beta_metrics <- 'bray'
     if (is.null(options$fd_metrics))
       options$fd_metrics <- NULL
     if (is.null(options$nb_samples_alpha))
@@ -98,6 +98,8 @@ set_options_biodivMapR <- function(fun, options = NULL){
       options$nb_samples_beta <- 2e3
     if (is.null(options$alpha_metrics))
       options$alpha_metrics <- 'shannon'
+    if (is.null(options$beta_metrics))
+      options$beta_metrics <- 'bray'
     if (length(options$alpha_metrics)==1 & options$alpha_metrics[1]==FALSE)
       options$alpha_metrics <- NULL
     if (is.null(options$Hill_order))

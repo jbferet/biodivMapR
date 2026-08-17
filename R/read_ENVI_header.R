@@ -1,16 +1,16 @@
 #' Reads ENVI hdr file
 #'
-#' @param HDRpath Path of the hdr file
+#' @param hdr_path Path of the hdr file
 #'
 #' @return list of the content of the hdr file
 #' @export
 
-read_ENVI_header <- function(HDRpath) {
+read_envi_header <- function(hdr_path) {
   # header <- paste(header, collapse = "\n")
-  if (!grepl("\\.hdr$", HDRpath) & !grepl("\\.HDR$", HDRpath))
+  if (!grepl("\\.hdr$", hdr_path) & !grepl("\\.HDR$", hdr_path))
     stop("File extension should be .hdr or .HDR")
 
-  HDR <- readLines(HDRpath)
+  hdr <- readLines(hdr_path)
   ## check ENVI at beginning of file
   if (!grepl("ENVI", HDR[1])) {
     stop("Not an ENVI header (ENVI keyword missing)")

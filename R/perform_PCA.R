@@ -16,7 +16,6 @@
 #' @param filetype character. gdal driver
 #'
 #' @return list of paths corresponding to resulting PCA files
-#' @importFrom bigRaster apply_bigRaster
 #' @importFrom terra rast
 #' @export
 
@@ -121,14 +120,13 @@ perform_PCA  <- function(input_raster_path, output_dir, input_rast_wl = NULL,
                     'mask' = input_mask_path)
   input_args <- list('CR' = Continuum_Removal, 'Spectral' = CleanData$Spectral,
                      'PCA_model' = PCA_model, 'Nb_PCs' = Nb_PCs)
-  bigRaster::apply_bigRaster(funct = funct, filetype = filetype,
-                             input_rasters = input_PCA,
-                             input_args = input_args,
-                             output_lyrs = Nb_PCs,
-                             bandNames = list('PCA' = paste0('PC#',
-                                                             seq_len(Nb_PCs))),
-                             output_rasters = PCA_Files,
-                             maxRows = maxRows)
+  apply_bigRaster(funct = funct, filetype = filetype,
+                  input_rasters = input_PCA,
+                  input_args = input_args,
+                  output_lyrs = Nb_PCs,
+                  bandNames = list('PCA' = paste0('PC#', seq_len(Nb_PCs))),
+                  output_rasters = PCA_Files,
+                  maxRows = maxRows)
   # save workspace for this stage
   WS_Save <- file.path(output_dir, "PCA_info.RData")
   my_list <- list("PCA_Files" = PCA_Files,
