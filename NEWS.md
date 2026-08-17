@@ -1,4 +1,4 @@
-# biodivMapR2 v3.0.0
+# biodivMapR v3.0.0
 ## addition
 - added internal c++ codes to compute dissimilarity metrics, instead of dissUtils
 - included computation of bray-curtis dissimilarity, 
@@ -24,7 +24,7 @@
 - fixed biodivMapR_opt_clusters
 
 
-# biodivMapR2 v2.6.0
+# biodivMapR v2.6.0
 ## addition
 - added function spectral_species_full to produce spectral species map from individual raster
 - create output_dir when running perform_PCA
@@ -32,26 +32,26 @@
 ## fix
 - fixed biodivMapR_opt_clusters to run in parallel
 
-# biodivMapR2 v2.5.2
+# biodivMapR v2.5.2
 ## fix
 - fixed computation of functional diversity metrics when nbCPU = 1
 
-# biodivMapR2 v2.5.1
+# biodivMapR v2.5.1
 ## fix
 - fixed biodivMapR_opt_clusters bypassing parallel computing
 
-# biodivMapR2 v2.5.0
+# biodivMapR v2.5.0
 ## change
 - fully update documentation
 
-# biodivMapR2 v2.4.5
+# biodivMapR v2.4.5
 ## change
 - biodivMapR_full_classif: add possibility to set compute_beta = TRUE or FALSE 
 - remove TODO.md
 - use regular expression '\\.' when searching for strings including '.': 
 - define 'get_samples_from_tiles' in independent file
 
-# biodivMapR2 v2.4.4
+# biodivMapR v2.4.4
 ## fix
 - use lapply instead of future_lapply when calling 'functional_window_list' in 'get_raster_diversity_tile'
 - compute taxonomic and functional diversity metrics in two steps
@@ -62,14 +62,14 @@
 ## change
 - use with(..., local = TRUE) when using future::plan
 
-# biodivMapR2 v2.4.3
+# biodivMapR v2.4.3
 ## fix
 - add nested 'try' in mosaic_from_vrt
 
 ## addition
 - add spectral_species_full_tiles to produce spectral species from tiles
 
-# biodivMapR2 v2.4.2
+# biodivMapR v2.4.2
 ## addition
 - add biodivMapR_full_sdm and alphabeta_window_sdm to produce diversity metrics from sdm
 
@@ -82,12 +82,12 @@
 - added function 'file_path_sans_ext' (copied from zonator) to avoid importing 'tools'
 - use 'progressr' instead of 'progress'
 
-# biodivMapR2 v2.4.1
+# biodivMapR v2.4.1
 ## addition
 - add biodivMapR_full_classif to produce diversity metrics from classification map
 
 
-# biodivMapR2 v2.4.0
+# biodivMapR v2.4.0
 ## addition
 - add option beta_metrics: set to FALSE to skip beta computation
 - add option moving_window for 'biodivMapR_full'
@@ -108,35 +108,35 @@
 - change name for site_name
 - updated vignettes
 
-# biodivMapR2 v2.3.14
+# biodivMapR v2.3.14
 ## fix
 - fix bug when feature names overlap (e.g. NDVI vs mNDVI705)
 - update biodivMapR_full_tiles
 - update biodivMapR_full_classif
 - add pcelim as input for biodivMapR_sample and biodivMapR_full_tiles
 
-# biodivMapR2 v2.3.13
+# biodivMapR v2.3.13
 ## addition
 - added function biodivMapR_sample and biodivMapR_full_classif
 
-# biodivMapR2 v2.3.12
+# biodivMapR v2.3.12
 ## change
 - added mosaic_output as input variable for biodivMapR_full_tiles
 - fixed "BIGTIFF=IF_SAFER" when calling sf::gdal_utils to produce mosaics
 
-# biodivMapR2 v2.3.11
+# biodivMapR v2.3.11
 ## change
 - use continuumRemoval from package prospectr instead of internal function
 
-# biodivMapR2 v2.3.10
+# biodivMapR v2.3.10
 ## change
 - add option "BIGTIFF=IF_SAFER" when calling sf::gdal_utils to produce mosaics
 
-# biodivMapR2 v2.3.9
+# biodivMapR v2.3.9
 ## fix
 - create output_dir if does not exist when calling biodivMapR_full
 
-# biodivMapR2 v2.3.8
+# biodivMapR v2.3.8
 ## fix
 - implement fix to adjust global extent when using CRS 4326 (e.g. modis) 
 - modify sample_from_raster to account for global footprint
@@ -145,7 +145,7 @@
 - modify 'sample_from_plots_beta' to account for no data available
 - adjusted min_sun from 0.75 to 0.6 in 'get_plots_from_tiles' when sampling to produce beta model
 
-# biodivMapR2 v2.3.7
+# biodivMapR v2.3.7
 ## addition
 - added 'get_si_tiles_from_raster' to compute spectral index from raster tile
 - implemented functional diversity metrics into tile processing 
@@ -156,11 +156,11 @@
 ## fix
 - use basename when calling grep to avoid conflict with directory name
 
-# biodivMapR2 v2.3.6
+# biodivMapR v2.3.6
 ## fix
 - fixed bug when SI values < 0 
 
-# biodivMapR2 v2.3.5
+# biodivMapR v2.3.5
 ## addition
 - add possibility to change nb_iter and set it to 10 iterations as default
 
@@ -172,44 +172,44 @@
 - fix documentation
 
 
-# biodivMapR2 v2.3.4
+# biodivMapR v2.3.4
 ## fix
 - sample_from_raster adapted to handle distances when crs of input_rast in deg
 
-# biodivMapR2 v2.3.3
+# biodivMapR v2.3.3
 ## addition
 - modified perform_PCA to allow PCA over any type of data
 
 ## change
 - updated documentation
 
-# biodivMapR2 v2.3.2
+# biodivMapR v2.3.2
 ## change
 - optimize tile processing with function get_raster_diversity_tile 
 
-# biodivMapR2 v2.3.1
+# biodivMapR v2.3.1
 ## fix
 - fix tile mask management when tiles are empty
 
 ## change
 - change management of parallel processing for steps where it is not optimal
 
-# biodivMapR2 v2.3.0
+# biodivMapR v2.3.0
 ## change
 - added functions to process large rasters divided into tiles using get_s2_tiling function from preprocS2 package
 - added functions to apply biodivMapR using moving window
 
-# biodivMapR2 v2.2.1
+# biodivMapR v2.2.1
 ## change
 - clean code
 - add suppressWarnings when calling progressr
 
-# biodivMapR2 v2.2.0
+# biodivMapR v2.2.0
 ## change
 - merge v2 from gitlab repository
 - update vignettes for use of v2 
 
-# biodivMapR2 v2.1.4
+# biodivMapR v2.1.4
 ## fix
 - in 'get_diversity_from_plots' : 
 - initialize Attributes with nrow = nbPlots_init
@@ -225,14 +225,14 @@ previously extracted independently from an input raster
 ## change
 - possibility to define updated mask file name as input for radiometric_filtering
 
-# biodivMapR2 v2.1.3
+# biodivMapR v2.1.3
 ## fix
 - correct get_diversity_from_plots: output for FDis corrected to FDis instead of FDiv
 - correct spectralspecies_per_polygon : AttributeTable not set to NULL
 ## addition
 - computes all functional diversity when running get_diversity_from_plots 
 
-# biodivMapR2 v2.1.2
+# biodivMapR v2.1.2
 ## change
 - use package fundiversity to compute diversity metrics
 
