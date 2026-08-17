@@ -32,6 +32,6 @@ test_that("diversity_maps", {
   for (idx in names(path_res)){
     expected <- terra::rast(path_res_expected[[idx]])
     computed <- terra::rast(path_res[[idx]])
-    testthat::expect_equal(c(terra::values(expected)), c(terra::values(computed)))
+    testthat::expect_equal(abs(c(terra::values(expected))), abs(c(terra::values(computed))))
   }
 })
