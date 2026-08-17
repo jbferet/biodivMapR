@@ -84,18 +84,15 @@ jobs:
 
       - name: "[Stage] [Linux] Install curl and libgit2"
         if: runner.os == 'Linux'
-        run: sudo apt install libcurl4-openssl-dev libgit2-dev libudunits2-dev libnetcdf-dev libproj-dev libgeos-dev libgdal-dev netcdf-bin
+        run: sudo apt install libcurl4-openssl-dev libgit2-dev libudunits2-dev libnetcdf-dev libproj-dev libgeos-dev libgdal-dev netcdf-bin libuv1-dev
 
       - name: "[Stage] [macOS] Install libgit2"
         if: runner.os == 'macOS'
-        run: brew install libgit2
+        run: brew install libgit2 libuv 
 
       - name: "[Stage] [macOS] Install gdal"
         if: runner.os == 'macOS'
         run: brew install gdal
-
-      - name: Install dissUtils
-        run: Rscript -e "remotes::install_git('https://github.com/cran/dissUtils')"
 
       - name: "[Stage] [macOS] Install binary dependencies"
         if: runner.os == 'macOS'
