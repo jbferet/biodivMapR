@@ -45,7 +45,7 @@ save_diversity_maps_mw(
 \item{filetype}{character. GDAL driver}
 }
 \value{
-blk
+diversity_maps character. path for diversity maps
 }
 \description{
 save diversity maps as raster data once moving window process done

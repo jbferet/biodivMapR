@@ -146,8 +146,6 @@ get_diversity_from_plots <- function(
   # Attributes$shannon_sd <- res_shapeChunk[[4]]
   # Attributes$simpson_mean <- res_shapeChunk[[5]]
   # Attributes$simpson_sd <- res_shapeChunk[[6]]
-  # # Attributes$fisher_mean <- res_shapeChunk[[7]]
-  # # Attributes$fisher_sd <- res_shapeChunk[[8]]
   # Attributes$hill_mean <- res_shapeChunk[[9]]
   # Attributes$hill_sd <- res_shapeChunk[[10]]
   # 8- reshape beta diversity metrics

@@ -38,7 +38,7 @@ alphabeta_window(
 \item{p}{list. progressor object for progress bar}
 }
 \value{
-list of alpha and beta diversity metrics
+list of alpha and beta diversity metrics corresponding to SSwindow
 }
 \description{
 compute alpha and beta diversity metrics from pixel data corresponding to

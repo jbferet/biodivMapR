@@ -51,7 +51,7 @@ biodivMapR_chunk(
 \item{p}{list. progressor object for progress bar}
 }
 \value{
-Shannon index correspnding to the distribution
+alpha, beta and functional spectral diversity metrics corresponding to the chunk
 }
 \description{
 apply biodivMapR (computes clusters + diversity metrics) to an image chunk

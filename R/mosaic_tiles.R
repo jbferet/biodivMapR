@@ -1,4 +1,4 @@
-#' compute spectral indices and composite for a given period of time
+#' produce a mosaic from a series of tiles
 #'
 #' @param pattern character. identify which files to mosaic
 #' @param dir_path character. firectory where rasters to mosaic are stored
@@ -7,7 +7,7 @@
 #' @param idx character. index if not provided as pattern
 #' @param overwrite boolean
 #'
-#' @return mosaic_path
+#' @return mosaic_path path for the mosaic
 #' @importFrom terra vrt
 #' @importFrom sf gdal_utils
 #' @export

@@ -30,7 +30,7 @@ apply_spectral_species(
 \item{overwrite}{boolean.}
 }
 \value{
-none
+output_raster_full_name character. path for output raster file
 }
 \description{
 compute spectral species from a raster

@@ -7,6 +7,7 @@
 #' @param nb_clusters numeric. number of clusters used in kmeans
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
 #' @param p list. progressor object for progress bar
+#' 
 #' @return list of spectral species distribution and corresponding  BC
 #' dissimilarity matrix corresponding to Mat1 and Mat2
 #' @export

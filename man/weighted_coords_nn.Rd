@@ -15,7 +15,8 @@ weighted_coords_nn(nn, knn, pcoa_train)
 \item{pcoa_train}{PCoA coordinates of reference samples}
 }
 \value{
-estimated NMDS position based on nearest neighbors from NMDS
+ordin_est estimated PCoA position based on nearest neighbors from
+PCoA space defined by training set
 }
 \description{
 Compute weighted coordinates of a spatial unit based on nearest neighbors

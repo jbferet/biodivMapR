@@ -13,7 +13,7 @@ IQR_SpatRaster(input_rast, weightIQR = 3)
 lower and upper boundaries for outliers}
 }
 \value{
-outlier_IQR numeric. band numbers of original sensor corresponding to S2
+outlier_range_iqr numeric. range beyond which samples identified as outliers
 }
 \description{
 This function computes interquartile range (IQR) for a SpatRaster

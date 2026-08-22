@@ -1,4 +1,4 @@
-#' computes diversity metrics from raster
+#' computes diversity metrics from raster corresponding to SDM
 #'
 #' @param input_raster_path character. path for the input rasters
 #' @param output_dir character. path for the output files

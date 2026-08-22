@@ -16,7 +16,7 @@ functional_window(SSwindow, fd_metrics = c("FRic", "FEve", "FDiv"), p = NULL)
 \item{p}{list. progressor object for progress bar}
 }
 \value{
-list of alpha and beta diversity metrics
+list of functional diversity metrics
 }
 \description{
 compute functional diversity metrics from pixel data corresponding to

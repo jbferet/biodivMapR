@@ -17,7 +17,7 @@
 #' @param filetype character. GDAL driver
 #' @param maskfilename character. name of the updated mask file
 #'
-#' @return MaskPath = updated mask file
+#' @return mask_update = updated mask file
 #' @importFrom terra rast blocks readStart writeStart writeValues readStop
 #' @export
 

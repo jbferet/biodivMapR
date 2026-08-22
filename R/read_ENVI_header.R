@@ -1,6 +1,6 @@
 #' Reads ENVI hdr file
 #'
-#' @param hdr_path Path of the hdr file
+#' @param hdr_path character. Path of the hdr file
 #'
 #' @return list of the content of the hdr file
 #' @export
@@ -12,40 +12,40 @@ read_envi_header <- function(hdr_path) {
 
   hdr <- readLines(hdr_path)
   ## check ENVI at beginning of file
-  if (!grepl("ENVI", HDR[1])) {
+  if (!grepl("ENVI", hdr[1])) {
     stop("Not an ENVI header (ENVI keyword missing)")
   } else {
-    HDR <- HDR [-1]
+    hdr <- hdr [-1]
   }
   ## remove curly braces and put multi-line key-value-pairs into one line
-  HDR <- gsub("\\{([^}]*)\\}", "\\1", HDR)
-  l <- grep("\\{", HDR)
-  r <- grep("\\}", HDR)
+  hdr <- gsub("\\{([^}]*)\\}", "\\1", hdr)
+  l <- grep("\\{", hdr)
+  r <- grep("\\}", hdr)
   if (length(l) != length(r))
     stop("Error matching curly braces in header (differing numbers).")
   if (any(r <= l))
     stop("Mismatch of curly braces in header.")
-  HDR[l] <- sub("\\{", "", HDR[l])
-  HDR[r] <- sub("\\}", "", HDR[r])
+  hdr[l] <- sub("\\{", "", hdr[l])
+  hdr[r] <- sub("\\}", "", hdr[r])
   for (i in rev(seq_along(l)))
-    HDR <- c(HDR [seq_len(l [i] - 1)],
-             paste(HDR [l [i]:r [i]], collapse = "\n"),
-             HDR [-seq_len(r [i])])
+    hdr <- c(hdr [seq_len(l [i] - 1)],
+             paste(hdr [l [i]:r [i]], collapse = "\n"),
+             hdr [-seq_len(r [i])])
 
   ## split key = value constructs into list with keys as names
-  HDR <- sapply(HDR, split_line, "=", USE.NAMES = FALSE)
-  names(HDR) <- tolower(names(HDR))
+  hdr <- sapply(hdr, split_line, "=", USE.NAMES = FALSE)
+  names(hdr) <- tolower(names(hdr))
   ## process numeric values
-  tmp <- names(HDR) %in% c(
+  tmp <- names(hdr) %in% c(
     "samples", "lines", "bands", "header offset", "data type",
     "byte order", "default bands", "data ignore value",
     "wavelength", "fwhm", "data gain values", "band names"
   )
-  HDR[tmp] <- lapply(HDR[tmp], function(x) {
+  hdr[tmp] <- lapply(hdr[tmp], function(x) {
     tryCatch({as.numeric(unlist(strsplit(x, ","))) },
              warning = function(w){ x })
   })
-  return(HDR)
+  return(hdr)
 }
 
 

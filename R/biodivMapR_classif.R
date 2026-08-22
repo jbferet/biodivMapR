@@ -17,8 +17,8 @@
 #' @export
 
 biodivMapR_classif <- function(
-    input_raster_path, output_dir, window_size, input_mask_path = NULL, 
-    site_name = NULL, alpha_metrics = c('richness', 'shannon', 'simpson', 'hill'), 
+    input_raster_path, output_dir, window_size, input_mask_path = NULL,
+    site_name = NULL, alpha_metrics = c('richness', 'shannon', 'simpson', 'hill'),
     beta_metrics = c('bray', 'brayturn', 'simpson_diss', 'sorensen', 'jaccard', 'jaccardturn'),
     pcelim = 0.02, compute_beta = TRUE, nb_samples_beta = 1000){
 
@@ -49,23 +49,23 @@ biodivMapR_classif <- function(
                                replace = FALSE)]
     samples <- lapply(X = plots_beta, FUN = get_samples_from_plots,
                       y = terra::rast(input_raster_path))
-    
+
     ll <- unlist(lapply(samples, length))
     sel <- which(ll>0.5*window_size*window_size)
     samples <- samples[sel]
 
     # compute spectral dissimilarity
     ssd <- lapply(X = samples,FUN = table)
-    ssd <- lapply(X = ssd,FUN = get_normalized_ssd,
-                  nb_clusters = nb_clusters, pcelim = pcelim)
-    ssd <- do.call(rbind,ssd)
-    mat_diss <- compute_dissimilarity(A = ssd, B = ssd, beta_metrics = beta_metrics)
+    # full spectral species distribution = missing clusters set to 0
+    ssd_mat <- do.call('rbind', lapply(X = ssd, FUN = get_normalized_ssd_mat,
+                                       nb_clusters = nb_clusters, pcelim = pcelim))
+    mat_diss <- compute_dissimilarity(A = ssd_mat, B = ssd_mat, beta_metrics = beta_metrics)
     beta_pco <- list()
     for (beta in beta_metrics){
       mat_diss_dist <- stats::as.dist(mat_diss[[beta]], diag = FALSE, upper = FALSE)
       beta_pco[[beta]] <- pco(mat_diss_dist, k = 3)
     }
-    Beta_info <- list('ssd' = ssd, 'mat_diss' = mat_diss, 'beta_pco' = beta_pco)
+    Beta_info <- list('ssd' = ssd_mat, 'mat_diss' = mat_diss, 'beta_pco' = beta_pco)
     # # save spectral dissimilarity
     # if (is.null(Beta_info_save))
     #   Beta_info_save <- file.path(output_dir, 'Beta_info_classif.RData')

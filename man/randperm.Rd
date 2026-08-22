@@ -2,8 +2,7 @@
 % Please edit documentation in R/randperm.R
 \name{randperm}
 \alias{randperm}
-\title{performs random permutation for k samples among the vector defined by a
-original source: package labdsv https://rdrr.io/cran/labdsv/src/R/pco.R}
+\title{performs random permutation for k samples among the vector defined by a}
 \usage{
 randperm(a, k)
 }
@@ -17,5 +16,4 @@ list
 }
 \description{
 performs random permutation for k samples among the vector defined by a
-original source: package labdsv https://rdrr.io/cran/labdsv/src/R/pco.R
 }

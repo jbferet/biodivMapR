@@ -14,7 +14,7 @@ harmonize_envi_hdr(output_raster, filetype, bandNames)
 \item{bandNames}{character. name for bands in raster}
 }
 \value{
-list of the content of the hdr file
+none
 }
 \description{
 Harmonize ENVI header file

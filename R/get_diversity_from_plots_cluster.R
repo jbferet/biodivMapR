@@ -10,9 +10,7 @@
 #' @param beta_metrics character.
 #' @param pcelim numeric. minimum proportion of pixels to consider spectral species
 #'
-#' @return SpatVector including diversity metrics and BC dissimilarity for the plots
-#' @importFrom dplyr group_split
-#' @importFrom stats as.dist
+#' @return list of spectral alpha and beta diversity metrics
 #' @export
 
 get_diversity_from_plots_cluster <- function(Kmeans_info, rast_sample,

@@ -1,4 +1,4 @@
-#' computes diversity metrics from raster
+#' computes spectral species from raster
 #'
 #' @param feature_dir character. path where to get features
 #' @param list_features character. list of features
@@ -14,7 +14,7 @@
 #' - mosaic_output boolean. set TRUE if outputs need to be mosaiced
 #' - weightIQR numeric. IQR applied to filter out features to be used
 #'
-#' @return mosaic_path
+#' @return ss_path character. path for the spectral species file
 #' @importFrom parallel makeCluster stopCluster detectCores
 #' @importFrom future plan sequential
 #' @importFrom future.apply future_mapply

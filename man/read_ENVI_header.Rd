@@ -7,7 +7,7 @@
 read_envi_header(hdr_path)
 }
 \arguments{
-\item{hdr_path}{Path of the hdr file}
+\item{hdr_path}{character. Path of the hdr file}
 }
 \value{
 list of the content of the hdr file

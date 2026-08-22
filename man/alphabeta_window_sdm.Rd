@@ -25,7 +25,7 @@ alphabeta_window_sdm(
 \item{Hill_order}{numeric. Hill order}
 }
 \value{
-list of alpha and beta diversity metrics
+list of alpha and beta diversity metrics corresponding to ssd
 }
 \description{
 compute alpha and beta diversity metrics from pixel data corresponding to

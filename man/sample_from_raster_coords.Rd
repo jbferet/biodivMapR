@@ -14,7 +14,7 @@ sample_from_raster_coords(input_rast, xy, input_mask = NULL)
 \item{input_mask}{SpatRaster. mask corresponding to raster to extract data from}
 }
 \value{
-rast_sample dataframe. pixel/plot info extracted from input_rast
+rast_sample dataframe. pixel/plot info and coordinates extracted from input_rast
 }
 \description{
 sample set of pixels defined by row and col from raster data

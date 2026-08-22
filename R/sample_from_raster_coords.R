@@ -4,7 +4,7 @@
 #' @param xy data.frame coordinates.
 #' @param input_mask SpatRaster. mask corresponding to raster to extract data from
 #'
-#' @return rast_sample dataframe. pixel/plot info extracted from input_rast
+#' @return rast_sample dataframe. pixel/plot info and coordinates extracted from input_rast
 #' @importFrom sf st_sample st_as_sf
 #' @importFrom terra vect buffer extract res
 #' @importFrom stats runif

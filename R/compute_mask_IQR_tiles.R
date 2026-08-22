@@ -1,4 +1,9 @@
-#' get samples for alpha and beta diversity mapping
+#' computes a mask for a collection of tiles based on interquartile range filtering
+#' interquartile is computed for all data included in teh collection
+#' samples out of a range defined by
+#' quartile_1-weightIQR x (quartile_3 - quartile_1) and
+#' quartile_3+weightIQR x (quartile_3-quartile_1)
+#' are then considered as outliers
 #'
 #' @param feature_dir character.
 #' @param feature_list character.
@@ -103,7 +108,7 @@ compute_mask_iqr_tiles <- function(feature_dir, feature_list, mask_dir, plots,
     } else {
       message('compute stats')
       cl <- parallel::makeCluster(nbCPU)
-      with(plan("cluster", workers = cl), local = TRUE)	
+      with(plan("cluster", workers = cl), local = TRUE)
       selpix <- future.apply::future_mapply(FUN = get_samples_from_tiles,
                                             plotID = names(plots),
                                             pix2sel = pix2sel,
@@ -117,7 +122,7 @@ compute_mask_iqr_tiles <- function(feature_dir, feature_list, mask_dir, plots,
     # compute IQR
     selpixAll <- do.call(what = 'rbind', selpix)
     iqr_si <- lapply(X = selpixAll,
-                     FUN = biodivMapR::IQR_outliers,
+                     FUN = IQR_outliers,
                      weightIQR = weightIQR)
 
     ##############################################################################

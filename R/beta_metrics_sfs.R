@@ -11,7 +11,7 @@
 #' @param corrMethod character
 #' @param IDwindow numeric
 #'
-#' @return assessed value and correlation
+#' @return list. assessed value and correlation
 #' @export
 
 beta_metrics_sfs <- function(obs2optimize, SSValid, beta_metrics, nb_clusters, pcelim, nb_iter,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/kmeans_progressr.R
 \name{kmeans_progressr}
 \alias{kmeans_progressr}
-\title{applies results of ordination to full image based on nearest neighbors}
+\title{applies progression bar flr kmeans clustering}
 \usage{
 kmeans_progressr(
   x,
@@ -30,5 +30,5 @@ kmeans_progressr(
 results of kmeans
 }
 \description{
-applies results of ordination to full image based on nearest neighbors
+applies progression bar flr kmeans clustering
 }

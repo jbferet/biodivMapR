@@ -2,7 +2,12 @@
 % Please edit documentation in R/compute_mask_iqr_tiles.R
 \name{compute_mask_iqr_tiles}
 \alias{compute_mask_iqr_tiles}
-\title{get samples for alpha and beta diversity mapping}
+\title{computes a mask for a collection of tiles based on interquartile range filtering
+interquartile is computed for all data included in teh collection
+samples out of a range defined by
+quartile_1-weightIQR x (quartile_3 - quartile_1) and
+quartile_3+weightIQR x (quartile_3-quartile_1)
+are then considered as outliers}
 \usage{
 compute_mask_iqr_tiles(
   feature_dir,
@@ -36,5 +41,10 @@ compute_mask_iqr_tiles(
 mask_path_list
 }
 \description{
-get samples for alpha and beta diversity mapping
+computes a mask for a collection of tiles based on interquartile range filtering
+interquartile is computed for all data included in teh collection
+samples out of a range defined by
+quartile_1-weightIQR x (quartile_3 - quartile_1) and
+quartile_3+weightIQR x (quartile_3-quartile_1)
+are then considered as outliers
 }

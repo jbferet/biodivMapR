@@ -1,4 +1,4 @@
-#' applies results of ordination to full image based on nearest neighbors
+#' applies progression bar flr kmeans clustering
 #
 #' @param x numeric.
 #' @param centers numeric.

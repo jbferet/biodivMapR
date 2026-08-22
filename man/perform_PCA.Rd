@@ -47,7 +47,7 @@ dims = N x 2 (N = number of domains to be eliminated)}
 \item{filetype}{character. gdal driver}
 }
 \value{
-list of paths corresponding to resulting PCA files
+list all information corresponding to resulting PCA
 }
 \description{
 Performs PCA for all images and create PCA file with either all or a selection of PCs

@@ -5,6 +5,7 @@
 #'
 #' @return None
 #' @export
+
 write_envi_header <- function(hdr, hdr_path) {
   h <- lapply(hdr, function(x) {
     if (length(x)>1 || (is.character(x) && stringr::str_count(x, "\\w+") > 1)){

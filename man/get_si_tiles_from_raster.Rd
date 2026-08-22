@@ -42,7 +42,7 @@ get_si_tiles_from_raster(
 \item{site_name}{character.}
 }
 \value{
-xxx
+output_dir_si character. path for output spectral indices directory
 }
 \description{
 computes spectral indices over a spatial extent from a raster

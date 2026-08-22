@@ -10,7 +10,7 @@ get_cluster_list(nb_clusters)
 \item{nb_clusters}{numeric. number of clusters}
 }
 \value{
-list including alpha_metrics and beta
+list list of number of clusters
 }
 \description{
 get cluster list for biodivMapR_opt_clusters

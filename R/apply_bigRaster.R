@@ -13,10 +13,8 @@
 #' @param unit_nrows numeric. define to read a number of lines multiple of unit_nrows
 #' @param maxRows numeric. maximumnumber of rows to process at once
 #'
-#' @return list.
+#' @return output_rasters list. path for output files
 #' @importFrom terra rast blocks readStart writeStart readValues writeValues writeStop
-#' @importFrom methods is
-#' @importFrom utils read.table
 #' @import tools
 #' @export
 

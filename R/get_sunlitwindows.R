@@ -4,7 +4,7 @@
 #' @param pixperplot numeric. minimum number of pixels per window
 #' @param min_sun numeric. minimum percentage of sunlit pixels
 #
-#' @return NMDS position based on nearest neighbors from NMDS
+#' @return inputwindow list of windows with proportion of sunlit pixels > min_sun
 #' @importFrom dplyr group_by relocate %>% last_col
 #' @importFrom purrr map
 #' @importFrom tidyr nest unnest

@@ -14,7 +14,8 @@ compute_nn_from_ordination(mat_bc, knn, pcoa_train)
 \item{pcoa_train}{numeric. PCoA coordinates computed from dissimilarity matrix}
 }
 \value{
-ordin_est estimated NMDS position based on nearest neighbors from NMDS
+ordin_est estimated PCoA position based on nearest neighbors from
+PCoA space defined by training set
 }
 \description{
 compute the nearest neighbors among kernels

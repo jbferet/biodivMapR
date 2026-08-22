@@ -24,7 +24,7 @@ compute_mask_iqr(
 \item{filetype}{character. GDAL driver}
 }
 \value{
-estimated NMDS position based on nearest neighbors from NMDS
+none
 }
 \description{
 compute mask based on interquartile range criterion applied on input rasters

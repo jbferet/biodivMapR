@@ -16,7 +16,7 @@ get_spectralSpecies(inputdata, Kmeans_info, selected_bands = NULL, nbCPU = 1)
 \item{nbCPU}{numeric. Number of CPUs available}
 }
 \value{
-SSwindow results of kmeans per window
+SSchunk spectralspecies derived from kmeans for inputdata
 }
 \description{
 compute spectral species from inputdata

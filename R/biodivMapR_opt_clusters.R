@@ -21,8 +21,7 @@
 #' @param nbCPU numeric.
 #' @param overwrite boolean
 #'
-#' @return list including performances (correlation) of SFS with additional
-#' features and assessed diversity metrics corresponding to each step
+#' @return list including performances (pearson and spearman correlation) with nb_clusters
 #' @importFrom doFuture registerDoFuture
 #' @importFrom future plan multisession sequential
 #' @importFrom foreach foreach %dopar%

@@ -6,7 +6,7 @@
 #' @param weightIQR numeric. weight to define SD range for IQR
 #' @param filetype character. GDAL driver
 #'
-#' @return estimated NMDS position based on nearest neighbors from NMDS
+#' @return none
 #' @importFrom terra rast values names varnames writeRaster
 #' @export
 

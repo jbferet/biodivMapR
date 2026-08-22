@@ -2,7 +2,7 @@
 % Please edit documentation in R/biodivMapR_sdm.R
 \name{biodivMapR_sdm}
 \alias{biodivMapR_sdm}
-\title{computes diversity metrics from raster}
+\title{computes diversity metrics from raster corresponding to SDM}
 \usage{
 biodivMapR_sdm(
   input_raster_path,
@@ -33,5 +33,5 @@ biodivMapR_sdm(
 diversity_maps_ground
 }
 \description{
-computes diversity metrics from raster
+computes diversity metrics from raster corresponding to SDM
 }

@@ -7,7 +7,7 @@
 #' @param beta_metrics list. beta diversity metrics
 #' @param Hill_order numeric. Hill order
 #'
-#' @return list of alpha and beta diversity metrics
+#' @return list of alpha and beta diversity metrics corresponding to ssd
 #' @export
 
 alphabeta_window_sdm <- function(ssd, Beta_info, alpha_metrics, beta_metrics, Hill_order = 1){

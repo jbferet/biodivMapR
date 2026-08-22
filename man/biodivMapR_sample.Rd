@@ -61,7 +61,7 @@ biodivMapR_sample(
 \item{Beta_path}{character. path for Beta_info}
 }
 \value{
-mosaic_path
+Kmeans_info, Beta_info and ID_aoi
 }
 \description{
 sample pixels and plots to produce alpha and beta models, including

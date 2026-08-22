@@ -36,7 +36,7 @@ get_samples_from_tiles(
 \item{p}{list.}
 }
 \value{
-selpix
+selpix value for a selection of pixels selected over a collection of tiles
 }
 \description{
 get samples for alpha diversity mapping

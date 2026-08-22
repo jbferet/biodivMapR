@@ -40,7 +40,7 @@ apply_spectral_species_plot(
 \item{p}{list. progressbar}
 }
 \value{
-none
+output_raster_full_name character. path for output raster file
 }
 \description{
 apply biodivMapR to a set of plots identified by a field '\emph{id}'

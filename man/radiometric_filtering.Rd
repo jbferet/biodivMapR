@@ -51,7 +51,7 @@ radiometric_filtering(
 \item{maskfilename}{character. name of the updated mask file}
 }
 \value{
-MaskPath = updated mask file
+mask_update = updated mask file
 }
 \description{
 Performs radiometric filtering based on three criteria: NDVI, NIR reflectance, Blue reflectance

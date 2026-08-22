@@ -12,7 +12,7 @@
 #' @param overwrite boolean.
 #' @param p list. progressbar
 #'
-#' @return none
+#' @return output_raster_full_name character. path for output raster file
 #' @export
 
 apply_spectral_species_plot <- function(id, feature_dir, mask_dir = NULL,

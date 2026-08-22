@@ -10,7 +10,7 @@
 #' @param method character. method for terra::spatSample ('random' or 'regular')
 #' @param p list.
 #'
-#' @return selpix
+#' @return selpix value for a selection of pixels selected over a collection of tiles
 #' @importFrom dplyr group_split %>%
 #' @importFrom terra spatSample extract
 #' @importFrom sf st_as_sf st_sf st_crs

@@ -5,7 +5,7 @@
 #' @param selected_bands numeric. bands selected from inputdata
 #' @param nbCPU numeric. Number of CPUs available
 #
-#' @return SSwindow results of kmeans per window
+#' @return SSchunk spectralspecies derived from kmeans for inputdata
 #' @importFrom rlist list.cbind
 #' @export
 

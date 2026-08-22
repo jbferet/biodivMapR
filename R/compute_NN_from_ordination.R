@@ -4,7 +4,8 @@
 #' @param knn numeric. number of neighbors
 #' @param pcoa_train numeric. PCoA coordinates computed from dissimilarity matrix
 #
-#' @return ordin_est estimated NMDS position based on nearest neighbors from NMDS
+#' @return ordin_est estimated PCoA position based on nearest neighbors from
+#' PCoA space defined by training set
 #' @export
 
 compute_nn_from_ordination <- function(mat_bc, knn, pcoa_train) {

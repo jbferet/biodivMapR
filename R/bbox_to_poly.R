@@ -3,7 +3,7 @@
 #' @param x bbox
 #' @param crs crs of the polygon
 #'
-#' @return polyg polygon
+#' @return polyg sf polygon 
 #' @importFrom sf st_polygon st_sfc
 #' @export
 

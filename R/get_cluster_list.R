@@ -2,7 +2,7 @@
 
 #' @param nb_clusters numeric. number of clusters
 #'
-#' @return list including alpha_metrics and beta
+#' @return list list of number of clusters
 #' @export
 
 get_cluster_list <- function(nb_clusters){

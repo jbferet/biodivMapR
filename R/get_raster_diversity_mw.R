@@ -16,9 +16,7 @@
 #' @param min_sun numeric. minimum amount of sunlit pixels in the plots
 #'
 #' @return ab_div_metrics list. contains all metrics
-#' @import cli
-#' @importFrom terra rast blocks readStart readStop
-#' @importFrom progressr progressor handlers with_progress
+#' @importFrom terra rast
 #' @export
 
 get_raster_diversity_mw <- function(
@@ -267,7 +265,6 @@ get_raster_diversity_mw <- function(
   ab_div_metrics <- list('richness' = res_shapeChunk$richness,
                          'shannon' = res_shapeChunk$shannon,
                          'simpson' = res_shapeChunk$simpson,
-                         'fisher' = res_shapeChunk$fisher,
                          'hill' = res_shapeChunk$hill,
                          'FRic' = res_shapeChunk$FRic,
                          'FEve' = res_shapeChunk$FEve,

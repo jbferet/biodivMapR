@@ -4,7 +4,7 @@
 #' @param weightIQR numeric. weighting factor applied to IQR to define
 #' lower and upper boundaries for outliers
 #'
-#' @return outlier_IQR numeric. band numbers of original sensor corresponding to S2
+#' @return outlier_range_iqr numeric. range beyond which samples identified as outliers
 #' @importFrom terra global
 #' @export
 
@@ -13,7 +13,7 @@ IQR_SpatRaster <- function(input_rast,weightIQR = 3){
   range_IQR <- data.frame('quartile1' = IQ[['X25.']],
                           'quartile3' = IQ[['X75.']])
   iqr <- range_IQR$quartile3 - range_IQR$quartile1
-  outlier_IQR <- data.frame('lowBound' = range_IQR$quartile1 - weightIQR*iqr,
+  outlier_range_iqr <- data.frame('lowBound' = range_IQR$quartile1 - weightIQR*iqr,
                             'upBound' = range_IQR$quartile3 + weightIQR*iqr)
-  return(outlier_IQR)
+  return(outlier_range_iqr)
 }

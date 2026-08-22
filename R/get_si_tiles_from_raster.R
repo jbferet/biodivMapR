@@ -12,8 +12,8 @@
 #' @param overwrite boolean.
 #' @param site_name character.
 #'
-#' @return xxx
-#' @importFrom terra vect crop res writeRaster values
+#' @return output_dir_si character. path for output spectral indices directory 
+#' @importFrom terra vect crop res writeRaster values resample
 #' @importFrom methods as
 #' @importFrom sf st_sf
 #' @importFrom spinR compute_S2SI_Raster

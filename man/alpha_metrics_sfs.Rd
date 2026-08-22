@@ -2,7 +2,8 @@
 % Please edit documentation in R/alpha_metrics_sfs.R
 \name{alpha_metrics_sfs}
 \alias{alpha_metrics_sfs}
-\title{compute alpha metrics during sfs}
+\title{compute alpha metrics from list of spectral species distributions
+in the context of sequential feature selection}
 \usage{
 alpha_metrics_sfs(
   alpha_metrics,
@@ -16,25 +17,26 @@ alpha_metrics_sfs(
 )
 }
 \arguments{
-\item{alpha_metrics}{character}
+\item{alpha_metrics}{character. names of alpha diversity metrics to compute}
 
-\item{obs2optimize}{numeric}
+\item{obs2optimize}{list. reference value for alpha diversity metrics}
 
-\item{SSValid}{numeric}
+\item{SSValid}{numeric.}
 
-\item{corrMethod}{character}
+\item{corrMethod}{character. 'pearson' or 'spearman'}
 
-\item{nb_clusters}{numeric}
+\item{nb_clusters}{numeric. number of clusters}
 
-\item{Hill_order}{numeric}
+\item{Hill_order}{numeric. hill order if hill index to be computed}
 
-\item{pcelim}{numeric}
+\item{pcelim}{numeric. threshold value of relative abundance to keep}
 
-\item{nbPlots_total}{numeric}
+\item{nbPlots_total}{numeric. total number of plots in corresponding to SSValid}
 }
 \value{
-assessed value and correlation
+list. assessed value and correlation with obs2optimize values
 }
 \description{
-compute alpha metrics during sfs
+compute alpha metrics from list of spectral species distributions
+in the context of sequential feature selection
 }

@@ -6,7 +6,7 @@
 #' @param fd_metrics list. alpha diversity metrics: richness, shannon, simpson
 #' @param p list. progressor object for progress bar
 #'
-#' @return list of alpha and beta diversity metrics
+#' @return list of functional diversity metrics
 #' @importFrom stats sd
 #' @export
 

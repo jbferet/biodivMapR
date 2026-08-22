@@ -4,7 +4,7 @@
 #' @param filetype character. raster driver
 #' @param bandNames character. name for bands in raster
 #'
-#' @return list of the content of the hdr file
+#' @return none
 #' @export
 
 harmonize_envi_hdr <- function(output_raster, filetype, bandNames){

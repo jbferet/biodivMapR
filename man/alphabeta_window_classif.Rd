@@ -25,7 +25,7 @@ alphabeta_window_classif(
 
 \item{alpha_metrics}{list. alpha diversity metrics}
 
-\item{beta_metrics}{list. alpha diversity metrics}
+\item{beta_metrics}{list. beta diversity metrics}
 
 \item{pcelim}{numeric. min proportion of pixels to consider spectral species}
 

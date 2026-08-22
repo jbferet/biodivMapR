@@ -8,14 +8,18 @@
 #' @param p progressor object
 #'
 #' @return Shannon index correspnding to the distribution
-#' @importFrom vegan fisher.alpha
 #' @export
 
 get_alpha_from_ssd <- function(ssd, nb_pix_sunlit, alpha_metrics = 'shannon',
                                pcelim = 0.02, hill_order = 1, p = NULL){
   ClusterID <- as.numeric(names(ssd))
+  if (length(ClusterID)==0)
+    ClusterID <- as.numeric(colnames(ssd))
+
   if (pcelim > 0) {
-    KeepSS <- which(ssd >= pcelim * nb_pix_sunlit)
+    KeepSS <- which(ssd >= pcelim)
+    if (max(ssd)>1)
+      KeepSS <- which(ssd >= pcelim * nb_pix_sunlit)
     ClusterID <- ClusterID[KeepSS]
     ssd <- ssd[KeepSS]
   }
@@ -28,10 +32,8 @@ get_alpha_from_ssd <- function(ssd, nb_pix_sunlit, alpha_metrics = 'shannon',
     shannon <- get_Shannon(ssd)
   if ('simpson' %in% alpha_metrics)
     simpson <- get_Simpson(ssd)
-  if ('fisher' %in% alpha_metrics & length(ssd)>1)
-    fisher <- vegan::fisher.alpha(ssd)
   if (!is.null(p))
     p()
   return(list('richness' = richness, 'shannon' = shannon,
-              'simpson' = simpson, 'fisher' = fisher, 'hill' = hill))
+              'simpson' = simpson, 'hill' = hill))
 }

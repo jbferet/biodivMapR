@@ -12,7 +12,7 @@ mosaic_from_vrt(vrt_path, mosaic_path)
 \item{mosaic_path}{character. path for mosaic file}
 }
 \value{
-mosaic_path
+none
 }
 \description{
 mosaic tiles defined in vrt and compress if possible

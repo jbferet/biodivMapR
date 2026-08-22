@@ -1,15 +1,16 @@
-#' compute alpha metrics during sfs
+#' compute alpha metrics from list of spectral species distributions 
+#' in the context of sequential feature selection
+#' 
+#' @param alpha_metrics character. names of alpha diversity metrics to compute
+#' @param obs2optimize list. reference value for alpha diversity metrics 
+#' @param SSValid numeric. 
+#' @param corrMethod character. 'pearson' or 'spearman'
+#' @param nb_clusters numeric. number of clusters 
+#' @param Hill_order numeric. hill order if hill index to be computed
+#' @param pcelim numeric. threshold value of relative abundance to keep
+#' @param nbPlots_total numeric. total number of plots in corresponding to SSValid
 #'
-#' @param alpha_metrics character
-#' @param obs2optimize numeric
-#' @param SSValid numeric
-#' @param corrMethod character
-#' @param nb_clusters numeric
-#' @param Hill_order numeric
-#' @param pcelim numeric
-#' @param nbPlots_total numeric
-#'
-#' @return assessed value and correlation
+#' @return list. assessed value and correlation with obs2optimize values
 #' @export
 
 alpha_metrics_sfs <- function(alpha_metrics, obs2optimize, SSValid, corrMethod,

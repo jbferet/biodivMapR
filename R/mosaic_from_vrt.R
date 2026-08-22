@@ -3,7 +3,7 @@
 #' @param vrt_path character. path for vrt file
 #' @param mosaic_path character. path for mosaic file
 #'
-#' @return mosaic_path
+#' @return none
 #' @importFrom sf gdal_utils
 #' @export
 #'

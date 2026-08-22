@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_raster_diversity_tile.R
 \name{get_raster_diversity_tile}
 \alias{get_raster_diversity_tile}
-\title{Computes diversity metrics from raster data based on moving window}
+\title{Computes diversity metrics from raster data}
 \usage{
 get_raster_diversity_tile(
   input_raster_path,
@@ -54,5 +54,5 @@ get_raster_diversity_tile(
 ab_div_metrics list. contains all metrics
 }
 \description{
-Computes diversity metrics from raster data based on moving window
+Computes diversity metrics from raster data
 }

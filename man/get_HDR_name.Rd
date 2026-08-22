@@ -12,7 +12,7 @@ get_hdr_name(image_path, showWarnings = TRUE)
 \item{showWarnings}{boolean. set TRUE if warning because HDR does not exist}
 }
 \value{
-corresponding hdr
+path for corresponding hdr
 }
 \description{
 get hdr name from image file name

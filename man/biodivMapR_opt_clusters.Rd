@@ -65,8 +65,7 @@ Expected values: richness, shannon, simpson, bray}
 \item{overwrite}{boolean}
 }
 \value{
-list including performances (correlation) of SFS with additional
-features and assessed diversity metrics corresponding to each step
+list including performances (pearson and spearman correlation) with nb_clusters
 }
 \description{
 apply biodivMapR on a test set for different numbers of clusters

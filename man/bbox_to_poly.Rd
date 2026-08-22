@@ -12,7 +12,7 @@ bbox_to_poly(x, crs = 4326)
 \item{crs}{crs of the polygon}
 }
 \value{
-polyg polygon
+polyg sf polygon
 }
 \description{
 converts a bbox to a polygon

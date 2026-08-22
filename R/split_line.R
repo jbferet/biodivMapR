@@ -1,8 +1,4 @@
-#' ENVI functions
-#'
-#' based on https://github.com/cran/hyperSpec/blob/master/R/read.ENVI.R
-#' added wavelength, fwhm, ... to header reading
-#' Title
+#' split information from a line
 #'
 #' @param x character.
 #' @param separator character

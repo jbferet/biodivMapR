@@ -6,14 +6,14 @@
 #' @param nb_clusters numeric. number of clusters used in kmeans
 #' @param Beta_info list. BC dissimilarity & associated beta metrics
 #' @param alpha_metrics list. alpha diversity metrics
-#' @param beta_metrics list. alpha diversity metrics
+#' @param beta_metrics list. beta diversity metrics
 #' @param pcelim numeric. min proportion of pixels to consider spectral species
 #' @param Hill_order numeric. Hill order
 #'
 #' @return list of alpha and beta diversity metrics
 #' @export
 
-alphabeta_window_classif <- function(SSwindow, nb_clusters, Beta_info = NULL, 
+alphabeta_window_classif <- function(SSwindow, nb_clusters, Beta_info = NULL,
                                      alpha_metrics, beta_metrics, pcelim = 0.02,
                                      Hill_order = 1){
   # get spectral species distribution from individual pixels within a window
@@ -67,5 +67,5 @@ alphabeta_window_classif <- function(SSwindow, nb_clusters, Beta_info = NULL,
               'pcoa_jaccard' = pcoa_diss[['jaccard']],
               'pcoa_jaccardturn' = pcoa_diss[['jaccardturn']],
               'pcoa_sorensen' = pcoa_diss[['sorensen']]))
-              # 'PCoA_BC' = pcoa_bc))
+  # 'PCoA_BC' = pcoa_bc))
 }

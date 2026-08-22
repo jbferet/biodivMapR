@@ -39,7 +39,7 @@ beta_metrics_sfs(
 \item{IDwindow}{numeric}
 }
 \value{
-assessed value and correlation
+list. assessed value and correlation
 }
 \description{
 compute beta metrics during sfs

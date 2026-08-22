@@ -3,7 +3,7 @@
 #' @param image_path character. ath of the image
 #' @param showWarnings boolean. set TRUE if warning because HDR does not exist
 #'
-#' @return corresponding hdr
+#' @return path for corresponding hdr
 #' @export
 
 get_hdr_name <- function(image_path,showWarnings=TRUE) {

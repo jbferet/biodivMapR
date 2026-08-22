@@ -5,7 +5,8 @@
 #' @param knn number of neighbors
 #' @param pcoa_train PCoA coordinates of reference samples
 #
-#' @return estimated NMDS position based on nearest neighbors from NMDS
+#' @return ordin_est estimated PCoA position based on nearest neighbors from
+#' PCoA space defined by training set
 #' @export
 
 weighted_coords_nn <- function(nn, knn, pcoa_train) {

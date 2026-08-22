@@ -36,7 +36,7 @@ init_kmeans <- function(
   }
   # if Kmeans_info_read == NULL: compute kmeans
   if (is.null(Kmeans_info_read)){
-    # 2- sample data from PCA image
+    # 2- sample data from image
     pixels_per_iteration <- define_pixels_per_iter(input_rast = input_rast,
                                                    input_mask = input_mask,
                                                    nb_pix = nb_samples_alpha,

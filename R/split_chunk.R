@@ -3,7 +3,7 @@
 #' @param SSchunk  list. obtained from get_spectralSpecies
 #' @param nbCPU numeric. Number of CPUs available
 #
-#' @return estimated NMDS position based on nearest neighbors from NMDS
+#' @return window scale spectral species distribution and corresponding window ID
 #' @importFrom dplyr group_by
 #' @importFrom tidyr nest
 #' @export

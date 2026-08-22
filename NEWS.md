@@ -1,3 +1,11 @@
+# biodivMapR v3.1.0
+## addition
+- added internal c++ codes to compute alpha metrics
+
+# biodivMapR v3.0.1
+## changes
+- update functions metadata and description
+
 # biodivMapR v3.0.0
 ## addition
 - added internal c++ codes to compute dissimilarity metrics, instead of dissUtils

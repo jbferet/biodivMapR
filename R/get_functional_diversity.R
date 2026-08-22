@@ -4,9 +4,9 @@
 #' @param fd_metrics character. Functional diversity metric
 #' @param p list. progressor object for progress bar
 #
-#' @return fd_metricss
+#' @return functional diversity metricss
 #' @importFrom fundiversity fd_fric fd_fdiv fd_feve fd_fdis fd_raoq
-#' @importFrom future plan
+#' @importFrom future plan sequential
 #' @export
 
 get_functional_diversity <- function(spectraits,

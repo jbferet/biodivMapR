@@ -39,7 +39,7 @@ apply_bigRaster(
 \item{maxRows}{numeric. maximumnumber of rows to process at once}
 }
 \value{
-list.
+output_rasters list. path for output files
 }
 \description{
 This function performs big raster processing

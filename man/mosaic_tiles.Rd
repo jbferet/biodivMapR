@@ -2,7 +2,7 @@
 % Please edit documentation in R/mosaic_tiles.R
 \name{mosaic_tiles}
 \alias{mosaic_tiles}
-\title{compute spectral indices and composite for a given period of time}
+\title{produce a mosaic from a series of tiles}
 \usage{
 mosaic_tiles(
   pattern,
@@ -27,8 +27,8 @@ mosaic_tiles(
 \item{overwrite}{boolean}
 }
 \value{
-mosaic_path
+mosaic_path path for the mosaic
 }
 \description{
-compute spectral indices and composite for a given period of time
+produce a mosaic from a series of tiles
 }

@@ -15,7 +15,7 @@
 #' @param maxRows numeric. max number of rows in each block
 #' @param filetype character. gdal driver
 #'
-#' @return list of paths corresponding to resulting PCA files
+#' @return list all information corresponding to resulting PCA
 #' @importFrom terra rast
 #' @export
 

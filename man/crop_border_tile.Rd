@@ -2,7 +2,7 @@
 % Please edit documentation in R/crop_border_tile.R
 \name{crop_border_tile}
 \alias{crop_border_tile}
-\title{save diversity maps as raster data once moving window process done}
+\title{crop border of a spatRaster}
 \usage{
 crop_border_tile(rast_obj, window_size)
 }
@@ -15,5 +15,5 @@ crop_border_tile(rast_obj, window_size)
 rast_crop
 }
 \description{
-save diversity maps as raster data once moving window process done
+crop border of a spatRaster
 }

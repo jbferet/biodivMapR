@@ -5,7 +5,7 @@
 #' @param Kmeans_info list. kmeans description obtained from function get_kmeans
 #' @param select_bands numeric. bands selected from input data
 #'
-#' @return Kmeans_info
+#' @return res_dist distance between each pixel of inputdata_window and each centroid of Kmeans_info
 #' @importFrom fields rdist
 #' @export
 

@@ -4,7 +4,8 @@
 #' For q=0, the Hill number is the richness, for q=1, it is the exponential
 #' Shannon entropy and for q=2, it is the inverse Simpson index.
 #' Note that the Hill order can also be a fraction, e.g. 0.5.
-#' @param Distrib Distribution
+#' 
+#' @param Distrib numeric. Distribution
 #' @param q numeric. Hill order
 #'
 #' @return hill number corresponding to the distribution

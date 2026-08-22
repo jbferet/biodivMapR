@@ -2,7 +2,7 @@
 % Please edit documentation in R/split_line.R
 \name{split_line}
 \alias{split_line}
-\title{ENVI functions}
+\title{split information from a line}
 \usage{
 split_line(x, separator, trim.blank = TRUE)
 }
@@ -17,7 +17,5 @@ split_line(x, separator, trim.blank = TRUE)
 list.
 }
 \description{
-based on https://github.com/cran/hyperSpec/blob/master/R/read.ENVI.R
-added wavelength, fwhm, ... to header reading
-Title
+split information from a line
 }

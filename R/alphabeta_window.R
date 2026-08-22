@@ -12,7 +12,7 @@
 #' @param diss_output boolean set TRUE to get dissimilarity matrices as outputs
 #' @param p list. progressor object for progress bar
 #'
-#' @return list of alpha and beta diversity metrics
+#' @return list of alpha and beta diversity metrics corresponding to SSwindow
 #' @importFrom stats sd
 #' @export
 
@@ -21,41 +21,27 @@ alphabeta_window <- function(SSwindow, nb_clusters, Beta_info, alpha_metrics,
                              diss_output = FALSE, p = NULL){
   # get spectral species distribution from individual pixels within a window
   ssd <- lapply(X = SSwindow,FUN = table)
-  # get ALPHA diversity
   nb_pix_sunlit <- dim(SSwindow)[1]
-  alpha <- lapply(X = ssd,
-                  FUN = get_alpha_from_ssd,
-                  alpha_metrics = alpha_metrics,
-                  nb_pix_sunlit = nb_pix_sunlit,
-                  pcelim = pcelim,
-                  hill_order = Hill_order)
-  # get BETA diversity
   # full spectral species distribution = missing clusters set to 0
-  ssd_full <- lapply(X = ssd, FUN = get_normalized_ssd,
-                     nb_clusters = nb_clusters, pcelim = pcelim)
-  nb_iter <- length(ssd_full)
-  pcoa_diss <- mat_diss <- list()
+  ssd_mat <- do.call('rbind', lapply(X = ssd, FUN = get_normalized_ssd_mat,
+                                     nb_clusters = nb_clusters, pcelim = pcelim))
 
+  # get ALPHA diversity
+  alpha <- get_alpha(ssd_mat = ssd_mat, alpha_metrics = alpha_metrics,
+                     Hill_order = Hill_order)
+  alpha <- data.frame(alpha)
+
+  # get BETA diversity
+  nb_iter <- nrow(ssd_mat)
+  ssd_list <- snow::splitRows(x = ssd_mat, ncl = nb_iter)
+  pcoa_diss <- mat_diss <- list()
   if (!is.null(Beta_info) | diss_output){
-    # for (beta in beta_metrics){
-    # for (i in seq_len(nb_iter))
-    #   mat_bc[[i]] <- list('mat1' = ssd_full[[i]],
-    #                       'mat2' = Beta_info$SSD[[i]])
-    # compute dissimilarity with random set 
-    if (!is.null(Beta_info)){
-      mat_diss_all <- mapply(FUN = compute_dissimilarity, A = ssd_full,
+    # compute dissimilarity with random set
+    if (!is.null(Beta_info))
+      mat_diss_all <- mapply(FUN = compute_dissimilarity, A = ssd_list,
                              B = Beta_info$ssd,
                              MoreArgs = list(beta_metrics = beta_metrics),
                              SIMPLIFY = FALSE)
-    }
-    # # compute dissimilarity with self when testing optimal nb of clusters 
-    # if (diss_output){
-    #   mat_diss_all <- mapply(FUN = compute_dissimilarity, A = ssd_full,
-    #                          B = ssd_full,
-    #                          MoreArgs = list(beta_metrics = beta_metrics),
-    #                          SIMPLIFY = FALSE)
-    # }
-    
     for (beta in beta_metrics){
       mat_diss_ind <- lapply(X = mat_diss_all, FUN = '[[', beta)
       mean_mat_diss <- Reduce('+', mat_diss_ind)/nb_iter
@@ -73,16 +59,14 @@ alphabeta_window <- function(SSwindow, nb_clusters, Beta_info, alpha_metrics,
   if (!is.null(p))
     p()
 
-  list_output <- list('richness_mean' = mean(unlist(lapply(alpha, '[[', 'richness'))),
-                      'richness_sd' = stats::sd(unlist(lapply(alpha,'[[','richness'))),
-                      'shannon_mean' = mean(unlist(lapply(alpha, '[[', 'shannon'))),
-                      'shannon_sd' = stats::sd(unlist(lapply(alpha, '[[', 'shannon'))),
-                      'simpson_mean' = mean(unlist(lapply(alpha, '[[', 'simpson'))),
-                      'simpson_sd' = stats::sd(unlist(lapply(alpha, '[[', 'simpson'))),
-                      'fisher_mean' = mean(unlist(lapply(alpha, '[[', 'fisher'))),
-                      'fisher_sd' = stats::sd(unlist(lapply(alpha, '[[', 'fisher'))),
-                      'hill_mean' = mean(unlist(lapply(alpha, '[[', 'hill'))),
-                      'hill_sd' = stats::sd(unlist(lapply(alpha, '[[', 'hill'))),
+  list_output <- list('richness_mean' = mean(alpha$Richness),
+                      'richness_sd' = stats::sd(alpha$Richness),
+                      'shannon_mean' = mean(alpha$Shannon),
+                      'shannon_sd' = stats::sd(alpha$Shannon),
+                      'simpson_mean' = mean(alpha$Simpson),
+                      'simpson_sd' = stats::sd(alpha$Simpson),
+                      'hill_mean' = mean(alpha$Hill),
+                      'hill_sd' = stats::sd(alpha$Hill),
                       'pcoa_bray' = pcoa_diss[['bray']],
                       'pcoa_brayturn' = pcoa_diss[['brayturn']],
                       'pcoa_simpson_diss' = pcoa_diss[['simpson_diss']],

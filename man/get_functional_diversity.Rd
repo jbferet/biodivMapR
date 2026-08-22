@@ -19,7 +19,7 @@ get_functional_diversity(
 \item{p}{list. progressor object for progress bar}
 }
 \value{
-fd_metricss
+functional diversity metricss
 }
 \description{
 get functional diversity metrics from dataframe

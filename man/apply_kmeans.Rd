@@ -15,7 +15,7 @@ apply_kmeans(inputdata_window, Kmeans_info, select_bands = NULL)
 \item{select_bands}{numeric. bands selected from input data}
 }
 \value{
-Kmeans_info
+res_dist distance between each pixel of inputdata_window and each centroid of Kmeans_info
 }
 \description{
 apply kmeans to information extracted from an image and corresponding to a

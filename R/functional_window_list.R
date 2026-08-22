@@ -4,7 +4,7 @@
 #' (window = elementary spatial unit of process)
 #' @param fd_metrics list. functional diversity metrics: FRic, FEve, FDiv
 #'
-#' @return list of alpha and beta diversity metrics
+#' @return list of functional diversity metrics
 #' @export
 
 functional_window_list <- function(SSwindow,

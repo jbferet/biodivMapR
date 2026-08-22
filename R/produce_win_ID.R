@@ -4,7 +4,7 @@
 #' @param blk list.
 #' @param window_size numeric. window size for square plots
 #'
-#' @return blk
+#' @return win_ID
 #' @export
 
 produce_win_ID <- function(inputdata, blk, window_size){

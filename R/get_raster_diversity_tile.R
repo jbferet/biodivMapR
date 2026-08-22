@@ -1,4 +1,4 @@
-#' Computes diversity metrics from raster data based on moving window
+#' Computes diversity metrics from raster data
 #'
 #' @param input_raster_path list. list of paths corresponding to input rasters
 #' @param Kmeans_info list. kmeans description obtained from function get_kmeans
@@ -16,9 +16,7 @@
 #' @param min_sun numeric. minimum amount of sunlit pixels in the plots
 #'
 #' @return ab_div_metrics list. contains all metrics
-#' @import cli
-#' @importFrom terra rast blocks readStart readStop
-#' @importFrom progressr progressor handlers with_progress
+#' @importFrom terra rast aggregate resample value
 #' @export
 
 get_raster_diversity_tile <- function(input_raster_path, Kmeans_info, Beta_info,
@@ -169,7 +167,6 @@ get_raster_diversity_tile <- function(input_raster_path, Kmeans_info, Beta_info,
   ab_div_metrics <- list('richness' = res_shape_chunk$richness,
                          'shannon' = res_shape_chunk$shannon,
                          'simpson' = res_shape_chunk$simpson,
-                         'fisher' = res_shape_chunk$fisher,
                          'hill' = res_shape_chunk$hill,
                          'FRic' = res_shape_chunk$FRic,
                          'FEve' = res_shape_chunk$FEve,

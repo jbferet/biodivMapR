@@ -36,7 +36,7 @@ get_diversity_from_plots_cluster(
 \item{pcelim}{numeric. minimum proportion of pixels to consider spectral species}
 }
 \value{
-SpatVector including diversity metrics and BC dissimilarity for the plots
+list of spectral alpha and beta diversity metrics
 }
 \description{
 computes diversity metrics from validation plots

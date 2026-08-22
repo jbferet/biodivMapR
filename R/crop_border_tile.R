@@ -1,4 +1,4 @@
-#'save diversity maps as raster data once moving window process done
+#' crop border of a spatRaster
 #'
 #' @param rast_obj spatRaster.
 #' @param window_size numeric. window size for square plots

@@ -2,7 +2,7 @@
 % Please edit documentation in R/clean_tiff_list.R
 \name{clean_tiff_list}
 \alias{clean_tiff_list}
-\title{computes diversity metrics from raster}
+\title{exclude .aux.xml and .tfw files from a list of files including .tif extension}
 \usage{
 clean_tiff_list(list_files)
 }
@@ -13,5 +13,5 @@ clean_tiff_list(list_files)
 list_files vector. list of file names withoout aux.xml and tfw files
 }
 \description{
-computes diversity metrics from raster
+exclude .aux.xml and .tfw files from a list of files including .tif extension
 }

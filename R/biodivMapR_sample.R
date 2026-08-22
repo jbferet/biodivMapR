@@ -19,7 +19,7 @@
 #' @param Kmeans_path character. path for Kmeans_info
 #' @param Beta_path character. path for Beta_info
 #'
-#' @return mosaic_path
+#' @return Kmeans_info, Beta_info and ID_aoi
 #' @export
 
 biodivMapR_sample <- function(feature_dir, list_features, mask_dir = NULL,

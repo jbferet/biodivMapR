@@ -10,6 +10,22 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// compute_alpha_diversity_metrics
+Rcpp::NumericMatrix compute_alpha_diversity_metrics(Rcpp::NumericMatrix abundances, bool compute_richness, bool compute_shannon, bool compute_simpson, bool compute_hill, double q);
+RcppExport SEXP _biodivMapR_compute_alpha_diversity_metrics(SEXP abundancesSEXP, SEXP compute_richnessSEXP, SEXP compute_shannonSEXP, SEXP compute_simpsonSEXP, SEXP compute_hillSEXP, SEXP qSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type abundances(abundancesSEXP);
+    Rcpp::traits::input_parameter< bool >::type compute_richness(compute_richnessSEXP);
+    Rcpp::traits::input_parameter< bool >::type compute_shannon(compute_shannonSEXP);
+    Rcpp::traits::input_parameter< bool >::type compute_simpson(compute_simpsonSEXP);
+    Rcpp::traits::input_parameter< bool >::type compute_hill(compute_hillSEXP);
+    Rcpp::traits::input_parameter< double >::type q(qSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_alpha_diversity_metrics(abundances, compute_richness, compute_shannon, compute_simpson, compute_hill, q));
+    return rcpp_result_gen;
+END_RCPP
+}
 // compute_jaccard_dissimilarity
 NumericMatrix compute_jaccard_dissimilarity(NumericMatrix A, NumericMatrix B);
 RcppExport SEXP _biodivMapR_compute_jaccard_dissimilarity(SEXP ASEXP, SEXP BSEXP) {
@@ -84,6 +100,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_biodivMapR_compute_alpha_diversity_metrics", (DL_FUNC) &_biodivMapR_compute_alpha_diversity_metrics, 6},
     {"_biodivMapR_compute_jaccard_dissimilarity", (DL_FUNC) &_biodivMapR_compute_jaccard_dissimilarity, 2},
     {"_biodivMapR_compute_jaccard_turnover", (DL_FUNC) &_biodivMapR_compute_jaccard_turnover, 2},
     {"_biodivMapR_compute_sorensen_dissimilarity", (DL_FUNC) &_biodivMapR_compute_sorensen_dissimilarity, 2},

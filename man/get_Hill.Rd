@@ -12,7 +12,7 @@ Note that the Hill order can also be a fraction, e.g. 0.5.}
 get_Hill(Distrib, q = 1)
 }
 \arguments{
-\item{Distrib}{Distribution}
+\item{Distrib}{numeric. Distribution}
 
 \item{q}{numeric. Hill order}
 }

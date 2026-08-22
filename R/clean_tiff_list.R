@@ -1,4 +1,4 @@
-#' computes diversity metrics from raster
+#' exclude .aux.xml and .tfw files from a list of files including .tif extension
 #'
 #' @param list_files vector. list of file names corresponding to tiff
 #'

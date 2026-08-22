@@ -13,7 +13,7 @@ functional_window_list(SSwindow, fd_metrics = c("FRic", "FEve", "FDiv"))
 \item{fd_metrics}{list. functional diversity metrics: FRic, FEve, FDiv}
 }
 \value{
-list of alpha and beta diversity metrics
+list of functional diversity metrics
 }
 \description{
 apply functional_window to a list of lists

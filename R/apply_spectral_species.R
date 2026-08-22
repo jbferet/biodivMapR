@@ -8,7 +8,7 @@
 #' @param filetype character. gdal driver for output raster
 #' @param overwrite boolean.
 #'
-#' @return none
+#' @return output_raster_full_name character. path for output raster file
 #' @export
 
 apply_spectral_species <- function(input_rast, input_mask = NULL,

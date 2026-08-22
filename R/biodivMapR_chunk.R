@@ -15,7 +15,7 @@
 #' @param min_sun numeric. minimum amount of sunlit pixels in the plots
 #' @param p list. progressor object for progress bar
 #'
-#' @return Shannon index correspnding to the distribution
+#' @return alpha, beta and functional spectral diversity metrics corresponding to the chunk
 #' @import cli
 #' @importFrom terra rast blocks readValues
 #' @importFrom future plan multisession sequential
@@ -30,12 +30,12 @@ biodivMapR_chunk <- function(
     fd_metrics = NULL, selected_bands = NULL, pcelim = 0.02, nbCPU = 1,
     min_sun = 0.25, p = NULL){
   
-  list_alpha_idx <- c('richness', 'shannon', 'simpson', 'fisher', 'hill')
+  list_alpha_idx <- c('richness', 'shannon', 'simpson', 'hill')
   # list_funct_idx <- fd_metrics <- c('FRic', 'FEve', 'FDiv', 'FDis', 'FRaoq')
   list_funct_idx <- c('FRic', 'FEve', 'FDiv', 'FDis', 'FRaoq')
   list_beta_idx <- c('bray', 'brayturn', 'simpson_diss', 'jaccard', 'jaccardturn', 'sorensen')
   funct_idx_cpu <- NULL
-  richness <- shannon <- simpson <- fisher <- hill <- list('mean' = NA,
+  richness <- shannon <- simpson <- hill <- list('mean' = NA,
                                                            'sd' = NA)
   # 1- read input files
   input_data <- res_shape_chunk <- list()
@@ -225,7 +225,6 @@ biodivMapR_chunk <- function(
   return(list('richness' = res_shape_chunk$richness,
               'shannon' = res_shape_chunk$shannon,
               'simpson' = res_shape_chunk$simpson,
-              'fisher' = res_shape_chunk$fisher,
               'hill' = res_shape_chunk$hill,
               'FRic' = res_shape_chunk$FRic,
               'FEve' = res_shape_chunk$FEve,

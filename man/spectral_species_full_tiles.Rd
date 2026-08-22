@@ -2,7 +2,7 @@
 % Please edit documentation in R/spectral_species_full_tiles.R
 \name{spectral_species_full_tiles}
 \alias{spectral_species_full_tiles}
-\title{computes diversity metrics from raster}
+\title{computes spectral species from raster}
 \usage{
 spectral_species_full_tiles(
   feature_dir,
@@ -42,8 +42,8 @@ spectral_species_full_tiles(
 }}
 }
 \value{
-mosaic_path
+ss_path character. path for the spectral species file
 }
 \description{
-computes diversity metrics from raster
+computes spectral species from raster
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_kmeans.R
 \name{get_kmeans}
 \alias{get_kmeans}
-\title{computes k-means from nb_iter subsets taken from dataPCA}
+\title{computes k-means from nb_iter subsets defined from rast_sample}
 \usage{
 get_kmeans(
   rast_sample,
@@ -30,5 +30,5 @@ get_kmeans(
 list of centroids and parameters needed to center/reduce data
 }
 \description{
-computes k-means from nb_iter subsets taken from dataPCA
+computes k-means from nb_iter subsets defined from rast_sample
 }

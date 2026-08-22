@@ -1,5 +1,4 @@
 #' performs random permutation for k samples among the vector defined by a
-#' original source: package labdsv https://rdrr.io/cran/labdsv/src/R/pco.R
 #
 #' @param a numeric. vctor of values
 #' @param k numeric. number of samples

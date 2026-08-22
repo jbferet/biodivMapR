@@ -12,7 +12,7 @@
 #' @param window_size numeric. window size for square plots
 #' @param filetype character. GDAL driver
 #'
-#' @return blk
+#' @return diversity_maps character. path for diversity maps
 #' @importFrom terra aggregate writeRaster values names
 #' @export
 

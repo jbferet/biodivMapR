@@ -14,7 +14,7 @@ produce_win_ID(inputdata, blk, window_size)
 \item{window_size}{numeric. window size for square plots}
 }
 \value{
-blk
+win_ID
 }
 \description{
 design a matrix with window ID based on an original raster and window size in pixels

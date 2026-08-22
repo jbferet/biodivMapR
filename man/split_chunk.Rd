@@ -12,7 +12,7 @@ split_chunk(SSchunk, nbCPU)
 \item{nbCPU}{numeric. Number of CPUs available}
 }
 \value{
-estimated NMDS position based on nearest neighbors from NMDS
+window scale spectral species distribution and corresponding window ID
 }
 \description{
 split chunk into subsets to prepare for parallel processing
