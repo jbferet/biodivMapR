@@ -437,7 +437,7 @@ window_size <- 10
 nbCPU <- 6
 
 # set optional parameters
-options <- set_options_biodivMapR(fun = 'biodivMapR_full_tiles', options = NULL)
+options <- set_options_biodivMapR(fun = 'biodivMapR_tiling', options = NULL)
 options$alpha_metrics <- c('hill', 'shannon') 
 options$beta_metrics <- TRUE
 options$moving_window <- TRUE
@@ -449,22 +449,20 @@ site_name <- 'Fabas_HS_mosaic'
 
 ### run `biodivMapR`
 
-`biodivMapR` can run directly using a unique function `biodivMapR_full_tiles`, 
+`biodivMapR` can run directly using a unique function `biodivMapR_tiling`, 
 as illustrated in the code hereafter. 
 
 ```{r run biodivMapR}
 # run biodivmapR on tiles defined when processing prosail inversion
-ResDiv <- biodivMapR_full_tiles(feature_dir = prosail_dir, 
-                                list_features = parms_to_estimate, 
-                                site_name = site_name, 
-                                mask_dir = mask_dir, 
-                                plots = plots, 
-                                output_dir = biodivMapR_dir, 
-                                window_size = window_size, 
-                                nbCPU = nbCPU, 
-                                options = options)
-
-
+ResDiv <- biodivMapR_tiling(feature_dir = prosail_dir, 
+                            list_features = parms_to_estimate, 
+                            site_name = site_name, 
+                            mask_dir = mask_dir, 
+                            plots = plots, 
+                            output_dir = biodivMapR_dir, 
+                            window_size = window_size, 
+                            nbCPU = nbCPU, 
+                            options = options)
 ```
 
 

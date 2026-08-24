@@ -21,6 +21,7 @@
 #' @param filetype character. gdal driver for output raster
 #' @param moving_window boolean. should process be moving window (much longer)
 #' @param p list. progressbar
+#' @param ... list. additional parameters
 #'
 #' @return none
 #' @export
@@ -33,7 +34,7 @@ run_biodivMapR_plot <- function(id, feature_dir, mask_dir = NULL,
                                 fd_metrics = NULL, pcelim = 0.02,
                                 maxRows = NULL, nbCPU = 1, min_sun = 0.25,
                                 filetype = 'GTiff', moving_window = FALSE,
-                                p = NULL){
+                                p = NULL, ...){
 
   # betanames <- paste0('beta_',id)
   alphanames <- alphanames_mean <- betanames <- functionalname <- NULL

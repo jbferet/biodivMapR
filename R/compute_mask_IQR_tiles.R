@@ -115,14 +115,16 @@ compute_mask_iqr_tiles <- function(feature_dir, feature_list, mask_dir, plots,
                                             MoreArgs = list(listfiles = listfiles,
                                                             feat_list = feature_list,
                                                             as.df = TRUE),
-                                            future.seed = TRUE, SIMPLIFY = FALSE)
+                                            future.seed = TRUE,
+                                            future.chunk.size = NULL,
+                                            future.scheduling = 1, SIMPLIFY = FALSE)
       parallel::stopCluster(cl)
       plan(sequential)
     }
     # compute IQR
     selpixAll <- do.call(what = 'rbind', selpix)
     iqr_si <- lapply(X = selpixAll,
-                     FUN = IQR_outliers,
+                     FUN = iqr_outliers,
                      weightIQR = weightIQR)
 
     ##############################################################################

@@ -87,7 +87,9 @@ biodivMapR_opt_clusters <- function(input_raster_path, input_vector_path, obs2op
                                                      Hill_order = Hill_order,
                                                      algorithm = algorithm,
                                                      overwrite = overwrite, p = p,
-                                                     future.seed = TRUE)
+                                                     future.seed = TRUE,                                                     
+                                                     future.chunk.size = NULL,
+                                                     future.scheduling = 1)
       })
       parallel::stopCluster(cl)
       plan(sequential)

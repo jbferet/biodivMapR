@@ -8,5 +8,7 @@ doc
 docs
 pkgdown/favicon
 docs/
+src/biodivMapR.dll
+src/*.o
 /doc/
 /Meta/

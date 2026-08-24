@@ -60,8 +60,9 @@ get_diversity_from_plots_cluster <- function(Kmeans_info, rast_sample,
 
   }
   diss_output <- TRUE
-  alphabetaIdx_CPU <- lapply(X = windows_per_plot$SSwindow_perCPU,
-                             FUN = alphabeta_window_list,
+  alphabetaIdx <- lapply(X = windows_per_plot$SSwindow_perCPU,
+                               # FUN = alphabeta_window_list,
+                               FUN = alphabeta_chunk,
                              nb_clusters = nb_clusters,
                              alpha_metrics = alpha_metrics,
                              beta_metrics = beta_metrics,
@@ -70,8 +71,8 @@ get_diversity_from_plots_cluster <- function(Kmeans_info, rast_sample,
                              diss_output = diss_output,
                              pcelim = pcelim)
 
-  alphabetaIdx <- unlist(alphabetaIdx_CPU, recursive = FALSE)
-  rm(alphabetaIdx_CPU)
+  # alphabetaIdx <- unlist(alphabetaIdx_CPU, recursive = FALSE)
+  # rm(alphabetaIdx_CPU)
   gc()
   # 7- reshape alpha diversity metrics
   IDwindow <- unlist(windows_per_plot$IDwindow_perCPU)

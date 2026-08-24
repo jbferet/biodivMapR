@@ -1,3 +1,8 @@
+# biodivMapR v3.2.0
+## addition
+- use c++ codes to compute alpha and beta diversity metrics directly from chunks
+- added deprecated functions
+
 # biodivMapR v3.1.0
 ## addition
 - added internal c++ codes to compute alpha metrics

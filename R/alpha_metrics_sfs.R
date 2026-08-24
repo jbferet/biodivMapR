@@ -18,13 +18,14 @@ alpha_metrics_sfs <- function(alpha_metrics, obs2optimize, SSValid, corrMethod,
 
   windows_per_plot <- split_chunk(SSchunk = SSValid, nbCPU = 1)
   windows_per_plot$win_ID <- list(SSValid$win_ID)
-  alphabetaIdx_CPU <- lapply(X = windows_per_plot$SSwindow_perCPU,
-                             FUN = alphabeta_window_list,
+  alphabetaIdx <- lapply(X = windows_per_plot$SSwindow_perCPU,
+                               # FUN = alphabeta_window_list,
+                               FUN = alphabeta_chunk,
                              nb_clusters = nb_clusters,
                              alpha_metrics = alpha_metrics,
                              Hill_order = Hill_order, pcelim = pcelim)
-  alphabetaIdx <- unlist(alphabetaIdx_CPU,recursive = FALSE)
-  rm(alphabetaIdx_CPU)
+  # alphabetaIdx <- unlist(alphabetaIdx_CPU,recursive = FALSE)
+  # rm(alphabetaIdx_CPU)
   gc()
   # 7- reshape alpha diversity metrics
   IDwindow <- unlist(windows_per_plot$IDwindow_perCPU)

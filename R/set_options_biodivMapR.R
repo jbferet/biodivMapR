@@ -89,7 +89,7 @@ set_options_biodivMapR <- function(fun, options = NULL){
       options$filetype <- 'GTiff'
   }
 
-  if (fun == 'biodivMapR_full_tiles'){
+  if (fun == 'biodivMapR_tiling'){
     if (is.null(options$nb_clusters))
       options$nb_clusters <- 50
     if (is.null(options$nb_samples_alpha))

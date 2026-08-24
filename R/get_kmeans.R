@@ -50,24 +50,26 @@ get_kmeans <- function(rast_sample, nb_iter, nb_clusters = 50,
       # progressr::handlers("debug")
       suppressWarnings(with_progress({
         p <- progressr::progressor(steps = nb_iter)
-        if (nbCPU>1){
+        # if (nbCPU>1){
           res <- fun_apply(X = rast_sample,
                            FUN = kmeans_progressr,
                            centers = nb_clusters,
                            iter.max = 50, nstart = 10,
                            algorithm = algorithm, p = p,
-                           future.seed = TRUE)
+                           future.seed = TRUE,
+                           future.chunk.size = NULL,
+                           future.scheduling = 1)
 
-        } else if (nbCPU==1){
-          res <- fun_apply(X = rast_sample,
-                           FUN = kmeans_progressr,
-                           centers = nb_clusters,
-                           iter.max = 50, nstart = 10,
-                           algorithm = algorithm, p = p)
-        }
+        # } else if (nbCPU==1){
+        #   res <- fun_apply(X = rast_sample,
+        #                    FUN = kmeans_progressr,
+        #                    centers = nb_clusters,
+        #                    iter.max = 50, nstart = 10,
+        #                    algorithm = algorithm, p = p)
+        # }
       }))
     } else {
-      if (nbCPU>1){
+      # if (nbCPU>1){
         res <- fun_apply(X = rast_sample,
                          FUN = kmeans_progressr,
                          centers = nb_clusters,
@@ -75,13 +77,13 @@ get_kmeans <- function(rast_sample, nb_iter, nb_clusters = 50,
                          algorithm = algorithm, p = NULL,
                          future.seed = TRUE)
 
-      } else if (nbCPU==1){
-        res <- fun_apply(X = rast_sample,
-                         FUN = kmeans_progressr,
-                         centers = nb_clusters,
-                         iter.max = 50, nstart = 10,
-                         algorithm = algorithm, p = NULL)
-      }
+      # } else if (nbCPU==1){
+      #   res <- fun_apply(X = rast_sample,
+      #                    FUN = kmeans_progressr,
+      #                    centers = nb_clusters,
+      #                    iter.max = 50, nstart = 10,
+      #                    algorithm = algorithm, p = NULL)
+      # }
     }
     if (nbCPU>1){
       parallel::stopCluster(cl)

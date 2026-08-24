@@ -25,57 +25,36 @@
 #' @export
 
 biodivMapR_chunk <- function(
-    blk, r_in, window_size, Kmeans_info, Beta_info = NULL, 
-    alpha_metrics = 'shannon', Hill_order = 1, beta_metrics = 'bray', 
+    blk, r_in, window_size, Kmeans_info, Beta_info = NULL,
+    alpha_metrics = 'shannon', Hill_order = 1, beta_metrics = 'bray',
     fd_metrics = NULL, selected_bands = NULL, pcelim = 0.02, nbCPU = 1,
     min_sun = 0.25, p = NULL){
-  
+
+  # define list of alpha, beta and functional diversity metrics available
   list_alpha_idx <- c('richness', 'shannon', 'simpson', 'hill')
-  # list_funct_idx <- fd_metrics <- c('FRic', 'FEve', 'FDiv', 'FDis', 'FRaoq')
-  list_funct_idx <- c('FRic', 'FEve', 'FDiv', 'FDis', 'FRaoq')
   list_beta_idx <- c('bray', 'brayturn', 'simpson_diss', 'jaccard', 'jaccardturn', 'sorensen')
+  list_funct_idx <- c('FRic', 'FEve', 'FDiv', 'FDis', 'FRaoq')
+
+  # initialize variables
   funct_idx_cpu <- NULL
-  richness <- shannon <- simpson <- hill <- list('mean' = NA,
-                                                           'sd' = NA)
+  richness <- shannon <- simpson <- hill <- list('mean' = NA, 'sd' = NA)
+  res_shape_chunk <- list()
+
   # 1- read input files
-  input_data <- res_shape_chunk <- list()
-  nameVars <- c()
-  for (fid in names(r_in)){
-    input_data[[fid]] <- terra::readValues(r_in[[fid]], row = blk$row,
-                                           nrows = blk$nrows, dataframe = TRUE)
-    if (fid == 'mask')
-      names(input_data[[fid]]) <- 'mask'
-    if (dim(r_in[[fid]])[3]==1)
-      nameVars <- c(nameVars, fid)
-    if (dim(r_in[[fid]])[3]>1)
-      nameVars <- names(input_data[[fid]])
-  }
-  if (is.null(selected_bands)){
-    if ('mask'%in%nameVars)
-      selected_bands <- seq_len(length(nameVars[-which(nameVars=='mask')]))
-    if (!'mask'%in%nameVars)
-      selected_bands <- seq_len(length(nameVars))
-  }
-  inputdata <- do.call(cbind, input_data)
-  names(inputdata) <- nameVars
-  inputdata$win_ID <- produce_win_ID(inputdata = inputdata, blk = blk,
-                                     window_size = window_size)
-  nbWindows <- max(inputdata$win_ID)
-  # 2a- eliminate masked pixels
-  if ('mask' %in% names(inputdata)){
-    inputdata <- inputdata %>% dplyr::filter(inputdata$mask > 0)
-    inputdata$mask <- NULL
-  }
-  # 2b- eliminate NA and inf
-  inputdata <- clean_NAsInf(inputdata)
-  if (nrow(inputdata)>0){
+  l_in <- get_input_chunk(r_in, blk, selected_bands, window_size)
+  input_data <- l_in$input_data
+  selected_bands <- l_in$selected_bands
+  nb_windows <- l_in$nb_windows
+  l_in <- NULL
+
+  if (nrow(input_data)>0){
     # 3- eliminate windows with less than required number of sunlit/valid pixels
-    inputdata <- get_sunlitwindows(inputdata = inputdata,
+    input_data <- get_sunlitwindows(inputdata = input_data,
                                    pixperplot = window_size**2,
                                    min_sun = min_sun)
     # 4- convert pixel data to spectral species
-    if (nrow(inputdata)>0){
-      SSchunk <- get_spectralSpecies(inputdata = inputdata,
+    if (nrow(input_data)>0){
+      SSchunk <- get_spectralSpecies(inputdata = input_data,
                                      Kmeans_info = Kmeans_info,
                                      selected_bands = selected_bands)
       # 5- split data chunk by window and by nbCPU to ensure parallel computing
@@ -86,52 +65,42 @@ biodivMapR_chunk <- function(
         cl <- parallel::makeCluster(nbCPU)
         parallel::clusterEvalQ(cl, {library(biodivMapR)})
         with(plan("cluster", workers = cl), local = TRUE)
-        alphabetaIdx_CPU <- future.apply::future_lapply(X = SSwindows_per_CPU$SSwindow_perCPU,
-                                                        FUN = alphabeta_window_list,
-                                                        nb_clusters = nb_clusters,
-                                                        alpha_metrics = alpha_metrics,
-                                                        beta_metrics = beta_metrics,
-                                                        Beta_info = Beta_info,
-                                                        Hill_order = Hill_order,
-                                                        pcelim = pcelim,
-                                                        future.seed = TRUE)
-        if (!is.null(fd_metrics)){
-          inputdata <- cbind(center_reduce(x = inputdata[selected_bands],
-                                           m = Kmeans_info$MinVal,
-                                           sig = Kmeans_info$Range),
-                             'win_ID' = inputdata$win_ID)
-          windows_per_CPU <- split_chunk(inputdata, nbCPU)
-          funct_idx_cpu <- future.apply::future_lapply(X = windows_per_CPU$SSwindow_perCPU,
-                                                       FUN = functional_window_list,
-                                                       fd_metrics = fd_metrics,
-                                                       future.seed = TRUE)
-        }
+        funct <- future.apply::future_lapply
+        future.seed = TRUE
+      } else {
+        funct <- lapply
+        future.seed = NULL
+      }
+      alphabetaIdx <- funct(X = SSwindows_per_CPU$SSwindow_perCPU,
+                            FUN = alphabeta_chunk,
+                            nb_clusters = nb_clusters,
+                            alpha_metrics = alpha_metrics,
+                            beta_metrics = beta_metrics,
+                            Beta_info = Beta_info,
+                            Hill_order = Hill_order,
+                            pcelim = pcelim,
+                            future.seed = future.seed,
+                            future.chunk.size = NULL,
+                            future.scheduling = 1)
+
+      if (!is.null(fd_metrics)){
+        input_data <- cbind(center_reduce(x = input_data[selected_bands],
+                                         m = Kmeans_info$MinVal,
+                                         sig = Kmeans_info$Range),
+                           'win_ID' = input_data$win_ID)
+        windows_per_CPU <- split_chunk(input_data, nbCPU)
+        funct_idx_cpu <- funct(X = windows_per_CPU$SSwindow_perCPU,
+                               FUN = functional_window_list,
+                               fd_metrics = fd_metrics,
+                               future.seed = future.seed)
+      }
+      if (nbCPU>1) {
         parallel::stopCluster(cl)
         plan(sequential)
-      } else {
-        alphabetaIdx_CPU <- lapply(X = SSwindows_per_CPU$SSwindow_perCPU,
-                                   FUN = alphabeta_window_list,
-                                   nb_clusters = nb_clusters,
-                                   alpha_metrics = alpha_metrics,
-                                   beta_metrics = beta_metrics,
-                                   Beta_info = Beta_info,
-                                   Hill_order = Hill_order,
-                                   pcelim = pcelim)
-        if (!is.null(fd_metrics)){
-          inputdata <- cbind(center_reduce(x = inputdata[selected_bands],
-                                           m = Kmeans_info$MinVal,
-                                           sig = Kmeans_info$Range),
-                             'win_ID' = inputdata$win_ID)
-          windows_per_CPU <- split_chunk(inputdata, nbCPU)
-          funct_idx_cpu <- lapply(X = windows_per_CPU$SSwindow_perCPU,
-                                  FUN = functional_window_list,
-                                  fd_metrics = fd_metrics)
-        }
       }
-      alphabetaIdx <- unlist(alphabetaIdx_CPU,recursive = FALSE)
+
       if (!is.null(fd_metrics))
         FunctionalIdx <- unlist(funct_idx_cpu, recursive = FALSE)
-      rm(alphabetaIdx_CPU)
       rm(funct_idx_cpu)
       gc()
       # 7- reshape alpha diversity metrics
@@ -141,7 +110,7 @@ biodivMapR_chunk <- function(
         for (crit in c('mean', 'sd')){
           elem <- paste0(idx,'_',crit)
           restmp <- unlist(lapply(alphabetaIdx,'[[',elem))
-          res_shape_chunk_tmp <- rep(x = NA,nbWindows)
+          res_shape_chunk_tmp <- rep(x = NA,nb_windows)
           res_shape_chunk_tmp[IDwindow] <- restmp
           res_shape_chunk[[idx]][[crit]] <- matrix(res_shape_chunk_tmp,
                                                    nrow = ceiling(blk$nrows/window_size),
@@ -152,13 +121,13 @@ biodivMapR_chunk <- function(
         res_shape_chunk[[idx]] <- list()
         if (!is.null(fd_metrics)){
           restmp <- unlist(lapply(FunctionalIdx,'[[',idx))
-          res_shape_chunk_tmp <- rep(x = NA,nbWindows)
+          res_shape_chunk_tmp <- rep(x = NA,nb_windows)
           res_shape_chunk_tmp[IDwindow] <- restmp
           res_shape_chunk[[idx]] <- matrix(res_shape_chunk_tmp,
                                            nrow = ceiling(blk$nrows/window_size),
                                            byrow = TRUE)
         } else {
-          res_shape_chunk_tmp <- rep(x = NA,nbWindows)
+          res_shape_chunk_tmp <- rep(x = NA,nb_windows)
           res_shape_chunk[[idx]] <- matrix(res_shape_chunk_tmp,
                                            nrow = ceiling(blk$nrows/window_size),
                                            byrow = TRUE)
@@ -170,7 +139,7 @@ biodivMapR_chunk <- function(
         res_shape_chunk[[idx]] <- list()
         for (crit in c('mean', 'sd')){
           elem <- paste0(idx,'_',crit)
-          res_shape_chunk_tmp <- rep(x = NA,nbWindows)
+          res_shape_chunk_tmp <- rep(x = NA,nb_windows)
           res_shape_chunk[[idx]][[crit]] <- matrix(res_shape_chunk_tmp,
                                                    nrow = ceiling(blk$nrows/window_size),
                                                    byrow = TRUE)
@@ -178,7 +147,7 @@ biodivMapR_chunk <- function(
       }
       for (idx in list_funct_idx){
         res_shape_chunk[[idx]] <- list()
-        res_shape_chunk_tmp <- rep(x = NA,nbWindows)
+        res_shape_chunk_tmp <- rep(x = NA,nb_windows)
         res_shape_chunk[[idx]] <- matrix(res_shape_chunk_tmp,
                                          nrow = ceiling(blk$nrows/window_size),
                                          byrow = TRUE)
@@ -190,7 +159,7 @@ biodivMapR_chunk <- function(
       res_shape_chunk[[idx]] <- list()
       for (crit in c('mean', 'sd')){
         elem <- paste0(idx,'_',crit)
-        res_shape_chunk_tmp <- rep(x = NA,nbWindows)
+        res_shape_chunk_tmp <- rep(x = NA,nb_windows)
         res_shape_chunk[[idx]][[crit]] <- matrix(res_shape_chunk_tmp,
                                                  nrow = ceiling(blk$nrows/window_size),
                                                  byrow = TRUE)
@@ -198,7 +167,7 @@ biodivMapR_chunk <- function(
     }
     for (idx in list_funct_idx){
       res_shape_chunk[[idx]] <- list()
-      res_shape_chunk_tmp <- rep(x = NA,nbWindows)
+      res_shape_chunk_tmp <- rep(x = NA,nb_windows)
       res_shape_chunk[[idx]] <- matrix(res_shape_chunk_tmp,
                                        nrow = ceiling(blk$nrows/window_size),
                                        byrow = TRUE)
@@ -210,7 +179,7 @@ biodivMapR_chunk <- function(
     dimPCO <- ncol(Beta_info$beta_pco[[1]]$points)
   pcoa_diss <- list()
   for (beta in list_beta_idx)
-    pcoa_diss[[beta]] <- matrix(data = NA, nrow = nbWindows, ncol = dimPCO)
+    pcoa_diss[[beta]] <- matrix(data = NA, nrow = nb_windows, ncol = dimPCO)
   if (!is.null(Beta_info) & !is.null(IDwindow)) {
     for (beta in beta_metrics){
       pcoa_diss0 <- do.call(rbind,lapply(alphabetaIdx,'[[',paste0('pcoa_', beta)))

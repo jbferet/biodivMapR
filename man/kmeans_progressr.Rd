@@ -10,7 +10,8 @@ kmeans_progressr(
   iter.max,
   nstart,
   algorithm = "Hartigan-Wong",
-  p = NULL
+  p = NULL,
+  ...
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ kmeans_progressr(
 \item{algorithm}{character. algorithm used in the kmeans clustering}
 
 \item{p}{function.}
+
+\item{...}{list. additional parameters}
 }
 \value{
 results of kmeans

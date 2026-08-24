@@ -27,8 +27,8 @@
 biodivMapR_tiles <- function(feature_dir, list_features, mask_dir = NULL,
                              output_dir, window_size, plots,
                              alpha_metrics = 'shannon', Hill_order = 1,
-							 beta_metrics = 'bray', fd_metrics = NULL, nbCPU = 1, pcelim = 0.02,
-                             maxRows = 1200, moving_window = FALSE,
+                             beta_metrics = 'bray', fd_metrics = NULL, nbCPU = 1,
+                             pcelim = 0.02, maxRows = 1200, moving_window = FALSE,
                              site_name = NULL, mosaic_output = TRUE){
 
   # update mask based on IQR filtering for each feature
@@ -63,7 +63,7 @@ biodivMapR_tiles <- function(feature_dir, list_features, mask_dir = NULL,
   if (nbCPU>1){
     cl <- parallel::makeCluster(nbCPU)
     parallel::clusterEvalQ(cl, {library(biodivMapR)})
-    with(plan("cluster", workers = cl), local = TRUE)	
+    with(plan("cluster", workers = cl), local = TRUE)
     handlers("cli")
     with_progress({
       p <- progressr::progressor(steps = maxCPU)
@@ -75,14 +75,14 @@ biodivMapR_tiles <- function(feature_dir, list_features, mask_dir = NULL,
                                   Beta_info = Beta_info,
                                   alpha_metrics = alpha_metrics,
                                   Hill_order = Hill_order,
-								  beta_metrics = beta_metrics,
+                                  beta_metrics = beta_metrics,
                                   fd_metrics = fd_metrics, output_dir = output_dir,
                                   window_size = window_size,
                                   maxRows = maxRows, pcelim = pcelim,
                                   moving_window = moving_window, p = p,
-                                  future.seed = TRUE, future.chunk.size = NULL,
-                                  future.scheduling = structure(TRUE,
-                                                                ordering = "random"))
+                                  future.seed = TRUE,
+                                  future.chunk.size = NULL,
+                                  future.scheduling = 1)
     })
     parallel::stopCluster(cl)
     plan(sequential)

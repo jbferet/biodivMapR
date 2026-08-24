@@ -25,7 +25,8 @@ run_biodivMapR_plot(
   min_sun = 0.25,
   filetype = "GTiff",
   moving_window = FALSE,
-  p = NULL
+  p = NULL,
+  ...
 )
 }
 \arguments{
@@ -68,6 +69,8 @@ run_biodivMapR_plot(
 \item{moving_window}{boolean. should process be moving window (much longer)}
 
 \item{p}{list. progressbar}
+
+\item{...}{list. additional parameters}
 }
 \value{
 none

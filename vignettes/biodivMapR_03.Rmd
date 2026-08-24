@@ -172,17 +172,17 @@ Kmeans_info_save <- file.path(output_dir_biodivMapR_si,'Kmeans_info.RData')
 Beta_info_save <- file.path(output_dir_biodivMapR_si,'Beta_info.RData')
 
 # 4- apply biodivMapR 
-options <- set_options_biodivMapR(fun = 'biodivMapR_full_tiles')
+options <- set_options_biodivMapR(fun = 'biodivMapR_tiling')
 options$nb_clusters <- nb_clusters
 options$alpha_metrics <- c('richness', 'shannon', 'hill')
 
-ab_info_SI <- biodivMapR_full_tiles(feature_dir = output_dir_si, 
-                                    list_features = si_list, 
-                                    output_dir = output_dir_biodivMapR_si, 
-                                    mask_dir = output_dir_mask, 
-                                    window_size = window_size, 
-                                    plots = plots, nbCPU = nbCPU, 
-                                    site_name = site_name, options = options)
+ab_info_SI <- biodivMapR_tiling(feature_dir = output_dir_si, 
+                                list_features = si_list, 
+                                output_dir = output_dir_biodivMapR_si, 
+                                mask_dir = output_dir_mask, 
+                                window_size = window_size, 
+                                plots = plots, nbCPU = nbCPU, 
+                                site_name = site_name, options = options)
 ```
 
 

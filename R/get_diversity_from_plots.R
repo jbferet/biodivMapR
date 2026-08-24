@@ -116,8 +116,9 @@ get_diversity_from_plots <- function(
   windows_per_plot <- split_chunk(SSchunk = SSValid, nbCPU = 1)
   windows_per_plot$win_ID <- list(SSValid$win_ID)
 
-  alphabetaIdx_CPU <- lapply(X = windows_per_plot$SSwindow_perCPU,
-                             FUN = alphabeta_window_list,
+  alphabetaIdx <- lapply(X = windows_per_plot$SSwindow_perCPU,
+                               # FUN = alphabeta_window_list,
+                               FUN = alphabeta_chunk,
                              nb_clusters = nb_clusters,
                              alpha_metrics = alpha_metrics,
                              beta_metrics = beta_metrics,
@@ -125,8 +126,8 @@ get_diversity_from_plots <- function(
                              Beta_info = Beta_info, pcelim = pcelim, 
                              diss_output = TRUE)
 
-  alphabetaIdx <- unlist(alphabetaIdx_CPU,recursive = FALSE)
-  rm(alphabetaIdx_CPU)
+  # alphabetaIdx <- unlist(alphabetaIdx_CPU,recursive = FALSE)
+  # rm(alphabetaIdx_CPU)
   gc()
   # 7- reshape alpha diversity metrics
   IDwindow <- unlist(windows_per_plot$IDwindow_perCPU)

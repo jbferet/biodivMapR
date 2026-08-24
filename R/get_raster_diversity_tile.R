@@ -16,7 +16,7 @@
 #' @param min_sun numeric. minimum amount of sunlit pixels in the plots
 #'
 #' @return ab_div_metrics list. contains all metrics
-#' @importFrom terra rast aggregate resample value
+#' @importFrom terra rast aggregate resample values
 #' @export
 
 get_raster_diversity_tile <- function(input_raster_path, Kmeans_info, Beta_info,
@@ -102,15 +102,16 @@ get_raster_diversity_tile <- function(input_raster_path, Kmeans_info, Beta_info,
         if (!is.null(alpha_metrics) | !is.null(Beta_info)){
           # 6- compute diversity metrics
           nb_clusters <- dim(Kmeans_info$Centroids[[1]])[1]
-          alphabetaIdx_CPU <- lapply(X = SSwindows_per_CPU$SSwindow_perCPU,
-                                     FUN = alphabeta_window_list,
+          alphabetaIdx <- lapply(X = SSwindows_per_CPU$SSwindow_perCPU,
+                                     # FUN = alphabeta_window_list,
+                                     FUN = alphabeta_chunk,
                                      nb_clusters = nb_clusters,
                                      alpha_metrics = alpha_metrics,
                                      beta_metrics = beta_metrics,
                                      Beta_info = Beta_info,
                                      Hill_order = Hill_order,
                                      pcelim = pcelim)
-          alphabetaIdx <- unlist(alphabetaIdx_CPU,recursive = FALSE)
+          # alphabetaIdx <- unlist(alphabetaIdx_CPU,recursive = FALSE)
         }
 
         if (!is.null(fd_metrics)){

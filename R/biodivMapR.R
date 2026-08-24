@@ -32,7 +32,7 @@
 #'
 biodivMapR <- function(
     input_raster_path, input_mask_path = NULL, output_dir, window_size,
-    selected_bands = NULL, Kmeans_info_save = NULL, Kmeans_info_read = NULL,  
+    selected_bands = NULL, Kmeans_info_save = NULL, Kmeans_info_read = NULL,
     Beta_info_save = NULL, Beta_info_read = NULL,  nbCPU = 1, options = NULL){
 
   # define options
@@ -58,7 +58,7 @@ biodivMapR <- function(
 
   dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
 
-  # read and/or arrange input rasters with terra 
+  # read and/or arrange input rasters with terra
   if (inherits(x = input_raster_path, what = 'list')){
     if (inherits(x = input_raster_path[[1]], what = 'character')){
       input_rast <- lapply(input_raster_path,terra::rast)
