@@ -90,6 +90,20 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install libgit2 libuv 
 
+      - name: "[Stage] [macOS] Install gettext"
+        if: runner.os == 'macOS'
+        run: brew install gettext 
+        
+      - name: Set gettext environment variables
+        if: runner.os == 'macOS'
+        run: |
+          echo 'CFLAGS=-I/opt/homebrew/include' >> $GITHUB_ENV
+          echo 'LDFLAGS=-L/opt/homebrew/lib' >> $GITHUB_ENV
+          
+      - name: Install dependencies
+        if: runner.os == 'macOS'
+        run: Rscript -e 'install.packages(c("data.table"), repos = "https://cloud.r-project.org/")'
+
       - name: "[Stage] [macOS] Install gdal"
         if: runner.os == 'macOS'
         run: brew install gdal
