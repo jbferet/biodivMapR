@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.2.0</span>
       </span>
     </div>
 
@@ -97,7 +97,7 @@ features</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2026-03-13</h4>
+            <h4 data-toc-skip class="date">2026-08-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR_03.Rmd" class="external-link"><code>vignettes/biodivMapR_03.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_03.Rmd</code></div>
@@ -108,17 +108,53 @@ Féret, Florian de Boissieu</h4>
     
 <p>Once spectral features are computed from optical data, they can be
 used as input variables in <code>biodivMapR</code>.</p>
-<p>Starting from <code>biodivMapR v2</code>, a simplified procedure is
-followed compared to <code>biodivMapR v1</code>. A unique function named
-<code>biodivMapR_full</code> runs the full workflow and produces a
-limited set of outputs.</p>
+<p>Starting from <code>biodivMapR</code> v2, a simplified procedure is
+followed compared to <code>biodivMapR</code> v1. A unique function named
+<code>biodivMapR</code> runs the full workflow and produces a limited
+set of outputs.</p>
+<div class="section level2">
+<h2 id="available-spectral-diversity-metrics">available spectral diversity metrics<a class="anchor" aria-label="anchor" href="#available-spectral-diversity-metrics"></a>
+</h2>
+<p><code>biodivMapR</code> allows computing and mapping various
+diversity metrics.</p>
+<ul>
+<li><p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
+diversity metrics include spectral <code>richness</code>,
+<code>shannon</code>, <code>simpson</code>, and <code>hill</code> index.
+The default Hill order is set to 1, corresponding to exp(shannon). Users
+can define a Hill number with the parameter
+<code>Hill_order</code>.</p></li>
+<li><p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
+diversity metrics include Bray-Curtis dissimilarity (<code>bray</code>),
+Bray-Curtis turnover (<code>brayturn</code>), Jaccard dissimilarity
+(<code>jaccard</code>), Jaccard turnover (<code>jaccardturn</code>),
+Simpson dissimilarity (<code>simpson_diss</code>), and Sorensen
+dissimilarity (<code>sorensen</code>). Please refer to the R package <a href="https://biorgeo.github.io/bioregion/articles/a3_pairwise_metrics.html#compute-pairwise-dissimilarity-metrics" class="external-link"><code>bioregion</code></a>
+for a definition of these metrics.</p></li>
+<li><p>Functional diversity metrics include Richness
+(<code>FRic</code>), Evenness (<code>FEve</code>), Divergence
+(<code>FDiv</code>), Dispersion (<code>FDis</code>) and Rao entropy
+(<code>FRaoq</code>). These functional diversity metrics are computed
+with the package <a href="https://funecology.github.io/fundiversity/" class="external-link"><code>fundiversity</code></a></p></li>
+</ul>
+<p>The default parameterization includes computation of
+<code>shannon</code> and <code>bray</code>. Functional diversity metrics
+require significantly larger computational time than
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
+diversity metrics.</p>
+<p><strong>We recommend computing functional metrics for validation, or
+to map them over a limited spatial extent when exploring the
+package.</strong></p>
+</div>
 <div class="section level2">
 <h2 id="produce-diversity-maps-from-spca-file">produce diversity maps from SPCA file<a class="anchor" aria-label="anchor" href="#produce-diversity-maps-from-spca-file"></a>
 </h2>
 <p>SPCA was previously computed and the relevant spectral features were
 identified based on visual interpretation. These selected components are
 used to produce diversity maps with <code>biodivMapR</code>. The SPCA
-file is a unique raster file stacking all components.
+file is a unique raster file stacking all components. The function
 <code>biodivMapR</code> requires - the path for the input raster: it can
 be a unique stacked raster, or a set of individual features. The current
 version does not accept combination of stacked raster and individual
@@ -150,19 +186,19 @@ computed.</p></li>
 <span><span class="va">nbCPU</span> <span class="op">&lt;-</span> <span class="fl">4</span>            <span class="co"># nb of threads for parallel processing</span></span>
 <span><span class="co"># 5- apply biodivMapR </span></span>
 <span><span class="va">selected_bands</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">6</span><span class="op">)</span></span>
-<span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_options_biodivMapR.html">set_options_biodivMapR</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="st">'biodivMapR_full'</span><span class="op">)</span></span>
+<span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_options_biodivMapR.html">set_options_biodivMapR</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="st">'biodivMapR'</span><span class="op">)</span></span>
 <span><span class="va">options</span><span class="op">$</span><span class="va">nb_clusters</span> <span class="op">&lt;-</span> <span class="va">nb_clusters</span></span>
 <span><span class="va">options</span><span class="op">$</span><span class="va">maxRows</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span>
-<span><span class="va">ab_info_SPCA</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/biodivMapR_full.html">biodivMapR_full</a></span><span class="op">(</span>input_raster_path <span class="op">=</span> <span class="va">PCA_Output</span><span class="op">$</span><span class="va">PCA_Files</span><span class="op">$</span><span class="va">PCA</span>, </span>
-<span>                                input_mask_path <span class="op">=</span> <span class="va">mask_path_PCA</span>,</span>
-<span>                                output_dir <span class="op">=</span> <span class="va">output_dir_biodivMapR</span>, </span>
-<span>                                selected_bands <span class="op">=</span> <span class="va">selected_bands</span>, </span>
-<span>                                window_size <span class="op">=</span> <span class="va">window_size</span>, </span>
-<span>                                Kmeans_info_save <span class="op">=</span> <span class="va">Kmeans_info_save</span>,</span>
-<span>                                Beta_info_save <span class="op">=</span> <span class="va">Beta_info_save</span>, </span>
-<span>                                nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span></code></pre></div>
-<p><code>ab_info_SPCA</code> produced from the
-<code>biodivMapR_full</code> function includes two lists:</p>
+<span><span class="va">ab_info_SPCA</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/biodivMapR.html">biodivMapR</a></span><span class="op">(</span>input_raster_path <span class="op">=</span> <span class="va">PCA_Output</span><span class="op">$</span><span class="va">PCA_Files</span><span class="op">$</span><span class="va">PCA</span>, </span>
+<span>                           input_mask_path <span class="op">=</span> <span class="va">mask_path_PCA</span>,</span>
+<span>                           output_dir <span class="op">=</span> <span class="va">output_dir_biodivMapR</span>, </span>
+<span>                           selected_bands <span class="op">=</span> <span class="va">selected_bands</span>, </span>
+<span>                           window_size <span class="op">=</span> <span class="va">window_size</span>, </span>
+<span>                           Kmeans_info_save <span class="op">=</span> <span class="va">Kmeans_info_save</span>,</span>
+<span>                           Beta_info_save <span class="op">=</span> <span class="va">Beta_info_save</span>, </span>
+<span>                           nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span></code></pre></div>
+<p><code>ab_info_SPCA</code> produced from the <code>biodivMapR</code>
+function includes two lists:</p>
 <ul>
 <li><p><code>Kmeans_info</code>, which gathers all information related
 to the k-means clustering: centroid, min and max values for each
@@ -173,8 +209,8 @@ the computation of the beta diversity</p></li>
 <p>These lists are saved as <code>Rdata</code> files corresponding to
 the files defined by <code>Kmeans_info_save</code> and
 <code>Beta_info_save</code>. These files can then be used for an
-independent process with <code>biodivMapR_full</code>. The path for
-these files can then be provided for input variables
+independent process with <code>biodivMapR</code>. The path for these
+files can then be provided for input variables
 <code>Kmeans_info_read</code> and <code>Beta_info_read</code>.</p>
 <p><code>biodivMapR</code> will not recompute this information, if user
 provides a valid path for <code>Kmeans_info</code> and
@@ -210,9 +246,9 @@ sentinel-2 acquisition.
 diversity maps with <code>biodivMapR</code>. Each spectral index was
 saved following a tiling system, and a vrt was produced.
 <code>biodivMapR</code> can use the path for the vrt as
-<code>input_raster_path</code> for <code>biodivMapR_full</code>.
-Alternatively, it can take advantage of the tiling system in order to
-process the image tile per tile in parallel.</p>
+<code>input_raster_path</code>. Alternatively, it can take advantage of
+the tiling system in order to process the image tile per tile in
+parallel.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># 1- define biodivMapR output directory </span></span>
@@ -228,17 +264,17 @@ process the image tile per tile in parallel.</p>
 <span><span class="va">Beta_info_save</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">output_dir_biodivMapR_si</span>,<span class="st">'Beta_info.RData'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># 4- apply biodivMapR </span></span>
-<span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_options_biodivMapR.html">set_options_biodivMapR</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="st">'biodivMapR_full_tiles'</span><span class="op">)</span></span>
+<span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_options_biodivMapR.html">set_options_biodivMapR</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="st">'biodivMapR_tiling'</span><span class="op">)</span></span>
 <span><span class="va">options</span><span class="op">$</span><span class="va">nb_clusters</span> <span class="op">&lt;-</span> <span class="va">nb_clusters</span></span>
 <span><span class="va">options</span><span class="op">$</span><span class="va">alpha_metrics</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'richness'</span>, <span class="st">'shannon'</span>, <span class="st">'hill'</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">ab_info_SI</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/biodivMapR_full_tiles.html">biodivMapR_full_tiles</a></span><span class="op">(</span>feature_dir <span class="op">=</span> <span class="va">output_dir_si</span>, </span>
-<span>                                    list_features <span class="op">=</span> <span class="va">si_list</span>, </span>
-<span>                                    output_dir <span class="op">=</span> <span class="va">output_dir_biodivMapR_si</span>, </span>
-<span>                                    mask_dir <span class="op">=</span> <span class="va">output_dir_mask</span>, </span>
-<span>                                    window_size <span class="op">=</span> <span class="va">window_size</span>, </span>
-<span>                                    plots <span class="op">=</span> <span class="va">plots</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, </span>
-<span>                                    site_name <span class="op">=</span> <span class="va">site_name</span>, options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">ab_info_SI</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/biodivMapR_tiling.html">biodivMapR_tiling</a></span><span class="op">(</span>feature_dir <span class="op">=</span> <span class="va">output_dir_si</span>, </span>
+<span>                                list_features <span class="op">=</span> <span class="va">si_list</span>, </span>
+<span>                                output_dir <span class="op">=</span> <span class="va">output_dir_biodivMapR_si</span>, </span>
+<span>                                mask_dir <span class="op">=</span> <span class="va">output_dir_mask</span>, </span>
+<span>                                window_size <span class="op">=</span> <span class="va">window_size</span>, </span>
+<span>                                plots <span class="op">=</span> <span class="va">plots</span>, nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, </span>
+<span>                                site_name <span class="op">=</span> <span class="va">site_name</span>, options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span></code></pre></div>
 <img src="https://gitlab.com/jbferet/myshareddata/-/raw/master/biodivMapR_vignette_illustrations/03_shannon_si.gif" class="r-plt" alt="" width="100%"><img src="https://gitlab.com/jbferet/myshareddata/-/raw/master/biodivMapR_vignette_illustrations/03_beta_si.gif" class="r-plt" alt="" width="100%"><!-- <p> --><!-- <img src="../man/figures/03_shannon_si.gif" width="100%" height="100%" class="center"> --><!-- </p> --><!-- <p> --><!-- <img src="../man/figures/03_beta_si.gif" width="100%" height="100%" class="center"> --><!-- </p> --><center>
 Fig. 2. maps of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>-diversity
@@ -271,7 +307,7 @@ available Validation is described in this <a href="https://jbferet.github.io/bio
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer>

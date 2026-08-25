@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.2.0</span>
       </span>
     </div>
 
@@ -97,7 +97,7 @@ biodivMapR</h1>
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2026-03-13</h4>
+            <h4 data-toc-skip class="date">2026-08-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR.Rmd" class="external-link"><code>vignettes/biodivMapR.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR.Rmd</code></div>
@@ -128,9 +128,10 @@ spctral transformation (PCA, SPCA, MNF…).</li>
 </ul>
 <p><code>biodivMapR v2</code> now allows user to run the preprocessing
 step of their choice. This can consist in computing spectral indices,
-vegetation biophysical variables, or spectral transformation. This also
-means that any type of input data can be used, as long as the input
-rasters share the same footprint, spatial resolution and projection.</p>
+vegetation biophysical variables, or spectral transformation.
+<strong>Input raster data fom any type of sensor can be used, as long as
+the input rasters share the same footprint, spatial resolution and
+projection.</strong></p>
 <p>We provide a few examples here. Users can experiment with the method
 of their choice</p>
 <ul>
@@ -153,9 +154,29 @@ and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
 diversity maps as defined in <a href="https://doi.org/10.1890/13-1824.1" title="Feret&amp;Asner2014" class="external-link">Feret &amp; Asner (2014)</a> and <a href="https://doi.org/10.1111/2041-210X.13310" title="Feret&amp;deBoissieu2019" class="external-link">Feret &amp; de Boissieu (2019)</a>
 </li>
-<li>Functional diversity maps, including Richness, Evenness and
-Divergence as defined in <a href="https://doi.org/10.1890/07-1206.1" title="Villeger2008" class="external-link">Villeger et al. (2008)</a>
+<li>Functional diversity maps, including Richness, Evenness, and
+Divergence as defined in <a href="https://doi.org/10.1890/07-1206.1" title="Villeger2008" class="external-link">Villeger et al. (2008)</a>, as well as Dispersion
+and Rao entropy. These functional diversity metrics are computed with
+the package <a href="https://funecology.github.io/fundiversity/" class="external-link"><code>fundiversity</code></a>
 </li>
+<li>Since biodivMapR v2 and v3, additional
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
+diversity metrics have been implemented.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
+diversity metrics include Hill index (with a Hill number to be defined
+by the parameter <code>Hill_order</code>). In addition to Bray-Curtis
+dissimilarity (<code>bray</code>),
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
+diversity metrics include Bray-Curtis turnover (<code>brayturn</code>),
+Jaccard dissimilarity (<code>jaccard</code>), Jaccard turnover
+(<code>jaccardturn</code>), Simpson dissimilarity
+(<code>simpson_diss</code>) and Sorensen dissimilarity
+(<code>sorensen</code>). Please refer to the R package <a href="https://biorgeo.github.io/bioregion/articles/a3_pairwise_metrics.html#compute-pairwise-dissimilarity-metrics" class="external-link"><code>bioregion</code></a>
+for the definition of these
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
+diversity metrics</li>
 </ul>
 </li>
 </ul>
@@ -207,7 +228,7 @@ Below is the typical flow chart of the computation of diversity maps with __biod
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer>

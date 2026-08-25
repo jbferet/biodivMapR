@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.2.0</span>
       </span>
     </div>
 
@@ -72,6 +72,373 @@
       <small>Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="3.2.0" id="biodivmapr-v320">biodivMapR v3.2.0<a class="anchor" aria-label="anchor" href="#biodivmapr-v320"></a></h2>
+<div class="section level3">
+<h3 id="addition-3-2-0">addition<a class="anchor" aria-label="anchor" href="#addition-3-2-0"></a></h3>
+<ul><li>use c++ codes to compute alpha and beta diversity metrics directly from chunks</li>
+<li>added deprecated functions</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="3.1.0" id="biodivmapr-v310">biodivMapR v3.1.0<a class="anchor" aria-label="anchor" href="#biodivmapr-v310"></a></h2>
+<div class="section level3">
+<h3 id="addition-3-1-0">addition<a class="anchor" aria-label="anchor" href="#addition-3-1-0"></a></h3>
+<ul><li>added internal c++ codes to compute alpha metrics</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="3.0.1" id="biodivmapr-v301">biodivMapR v3.0.1<a class="anchor" aria-label="anchor" href="#biodivmapr-v301"></a></h2>
+<div class="section level3">
+<h3 id="changes-3-0-1">changes<a class="anchor" aria-label="anchor" href="#changes-3-0-1"></a></h3>
+<ul><li>update functions metadata and description</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="3.0.0" id="biodivmapr-v300">biodivMapR v3.0.0<a class="anchor" aria-label="anchor" href="#biodivmapr-v300"></a></h2>
+<div class="section level3">
+<h3 id="addition-3-0-0">addition<a class="anchor" aria-label="anchor" href="#addition-3-0-0"></a></h3>
+<ul><li>added internal c++ codes to compute dissimilarity metrics, instead of dissUtils</li>
+<li>included computation of bray-curtis dissimilarity,
+<ul><li>bray-curtis dissimilarity</li>
+<li>bray-curtis turnover</li>
+<li>sorensen dissimilarity</li>
+<li>simpson dissimilarity</li>
+<li>jaccard dissimilarity</li>
+<li>jaccard turnover</li>
+</ul></li>
+<li>prepared for possibility to select clustering</li>
+<li>added tests for production of diversity maps, spectral species maps and diversity from classification</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changes-3-0-0">changes<a class="anchor" aria-label="anchor" href="#changes-3-0-0"></a></h3>
+<ul><li>changed names of function:
+<ul><li>biodivMapR_full to biodivMapR</li>
+<li>biodivMapR_full_classif to biodivMapR_classif</li>
+</ul></li>
+<li>removed dependency to preprocS2 and bigRaster</li>
+</ul></div>
+<div class="section level3">
+<h3 id="fix-3-0-0">fix<a class="anchor" aria-label="anchor" href="#fix-3-0-0"></a></h3>
+<ul><li>fixed biodivMapR_sfs</li>
+<li>fixed biodivMapR_classif</li>
+<li>fixed biodivMapR_opt_clusters</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.6.0" id="biodivmapr-v260">biodivMapR v2.6.0<a class="anchor" aria-label="anchor" href="#biodivmapr-v260"></a></h2>
+<div class="section level3">
+<h3 id="addition-2-6-0">addition<a class="anchor" aria-label="anchor" href="#addition-2-6-0"></a></h3>
+<ul><li>added function spectral_species_full to produce spectral species map from individual raster</li>
+<li>create output_dir when running perform_PCA</li>
+</ul></div>
+<div class="section level3">
+<h3 id="fix-2-6-0">fix<a class="anchor" aria-label="anchor" href="#fix-2-6-0"></a></h3>
+<ul><li>fixed biodivMapR_opt_clusters to run in parallel</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.5.2" id="biodivmapr-v252">biodivMapR v2.5.2<a class="anchor" aria-label="anchor" href="#biodivmapr-v252"></a></h2>
+<div class="section level3">
+<h3 id="fix-2-5-2">fix<a class="anchor" aria-label="anchor" href="#fix-2-5-2"></a></h3>
+<ul><li>fixed computation of functional diversity metrics when nbCPU = 1</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.5.1" id="biodivmapr-v251">biodivMapR v2.5.1<a class="anchor" aria-label="anchor" href="#biodivmapr-v251"></a></h2>
+<div class="section level3">
+<h3 id="fix-2-5-1">fix<a class="anchor" aria-label="anchor" href="#fix-2-5-1"></a></h3>
+<ul><li>fixed biodivMapR_opt_clusters bypassing parallel computing</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.5.0" id="biodivmapr-v250">biodivMapR v2.5.0<a class="anchor" aria-label="anchor" href="#biodivmapr-v250"></a></h2>
+<div class="section level3">
+<h3 id="change-2-5-0">change<a class="anchor" aria-label="anchor" href="#change-2-5-0"></a></h3>
+<ul><li>fully update documentation</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.4.5" id="biodivmapr-v245">biodivMapR v2.4.5<a class="anchor" aria-label="anchor" href="#biodivmapr-v245"></a></h2>
+<div class="section level3">
+<h3 id="change-2-4-5">change<a class="anchor" aria-label="anchor" href="#change-2-4-5"></a></h3>
+<ul><li>biodivMapR_full_classif: add possibility to set compute_beta = TRUE or FALSE</li>
+<li>remove TODO.md</li>
+<li>use regular expression ‘\.’ when searching for strings including ‘.’:</li>
+<li>define ‘get_samples_from_tiles’ in independent file</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.4.4" id="biodivmapr-v244">biodivMapR v2.4.4<a class="anchor" aria-label="anchor" href="#biodivmapr-v244"></a></h2>
+<div class="section level3">
+<h3 id="fix-2-4-4">fix<a class="anchor" aria-label="anchor" href="#fix-2-4-4"></a></h3>
+<ul><li>use lapply instead of future_lapply when calling ‘functional_window_list’ in ‘get_raster_diversity_tile’</li>
+<li>compute taxonomic and functional diversity metrics in two steps</li>
+<li>compute functional diversity metrics one after the other</li>
+<li>fix compression of diversity maps</li>
+<li>fix bug when setting more than 1 metric in options$alpha_metrics</li>
+</ul></div>
+<div class="section level3">
+<h3 id="change-2-4-4">change<a class="anchor" aria-label="anchor" href="#change-2-4-4"></a></h3>
+<ul><li>use with(…, local = TRUE) when using future::plan</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.4.3" id="biodivmapr-v243">biodivMapR v2.4.3<a class="anchor" aria-label="anchor" href="#biodivmapr-v243"></a></h2>
+<div class="section level3">
+<h3 id="fix-2-4-3">fix<a class="anchor" aria-label="anchor" href="#fix-2-4-3"></a></h3>
+<ul><li>add nested ‘try’ in mosaic_from_vrt</li>
+</ul></div>
+<div class="section level3">
+<h3 id="addition-2-4-3">addition<a class="anchor" aria-label="anchor" href="#addition-2-4-3"></a></h3>
+<ul><li>add spectral_species_full_tiles to produce spectral species from tiles</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.4.2" id="biodivmapr-v242">biodivMapR v2.4.2<a class="anchor" aria-label="anchor" href="#biodivmapr-v242"></a></h2>
+<div class="section level3">
+<h3 id="addition-2-4-2">addition<a class="anchor" aria-label="anchor" href="#addition-2-4-2"></a></h3>
+<ul><li>add biodivMapR_full_sdm and alphabeta_window_sdm to produce diversity metrics from sdm</li>
+</ul></div>
+<div class="section level3">
+<h3 id="fix-2-4-2">fix<a class="anchor" aria-label="anchor" href="#fix-2-4-2"></a></h3>
+<ul><li>name weightIQR instead of weightIRQ</li>
+</ul></div>
+<div class="section level3">
+<h3 id="change-2-4-2">change<a class="anchor" aria-label="anchor" href="#change-2-4-2"></a></h3>
+<ul><li>remove compute_bc_diss and use only dissUtils::diss instead</li>
+<li>rename ‘get_ssd_full’ ‘get_normalized_ssd’</li>
+<li>added function ‘file_path_sans_ext’ (copied from zonator) to avoid importing ‘tools’</li>
+<li>use ‘progressr’ instead of ‘progress’</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.4.1" id="biodivmapr-v241">biodivMapR v2.4.1<a class="anchor" aria-label="anchor" href="#biodivmapr-v241"></a></h2>
+<div class="section level3">
+<h3 id="addition-2-4-1">addition<a class="anchor" aria-label="anchor" href="#addition-2-4-1"></a></h3>
+<ul><li>add biodivMapR_full_classif to produce diversity metrics from classification map</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.4.0" id="biodivmapr-v240">biodivMapR v2.4.0<a class="anchor" aria-label="anchor" href="#biodivmapr-v240"></a></h2>
+<div class="section level3">
+<h3 id="addition-2-4-0">addition<a class="anchor" aria-label="anchor" href="#addition-2-4-0"></a></h3>
+<ul><li>add option beta_metrics: set to FALSE to skip beta computation</li>
+<li>add option moving_window for ‘biodivMapR_full’</li>
+<li>add option weightIQR for ‘biodivMapR_full_tiles’</li>
+<li>add function crop_border_tile to avoid artifacts between tiles</li>
+<li>add function mosaic_from_vrt to produce a mosaic from a vrt</li>
+</ul></div>
+<div class="section level3">
+<h3 id="fix-2-4-0">fix<a class="anchor" aria-label="anchor" href="#fix-2-4-0"></a></h3>
+<ul><li>fix bug when checking if mask files already exist</li>
+<li>fix bug when generating hill index</li>
+<li>use try to avoid error when using compression when calling gdal_utils</li>
+</ul></div>
+<div class="section level3">
+<h3 id="change-2-4-0">change<a class="anchor" aria-label="anchor" href="#change-2-4-0"></a></h3>
+<ul><li>fd_metrics instead of FDmetric</li>
+<li>alpha_metrics instead of alphametrics</li>
+<li>add options as input parameter for ‘biodivMapR_full_tiles’ and ‘biodivMapR_full’ in order to reduce nb of inputs</li>
+<li>add possibility to define the IQR when sampling with ‘biodivMapR_sample’ and filtering</li>
+<li>change name for site_name</li>
+<li>updated vignettes</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.3.14" id="biodivmapr-v2314">biodivMapR v2.3.14<a class="anchor" aria-label="anchor" href="#biodivmapr-v2314"></a></h2>
+<div class="section level3">
+<h3 id="fix-2-3-14">fix<a class="anchor" aria-label="anchor" href="#fix-2-3-14"></a></h3>
+<ul><li>fix bug when feature names overlap (e.g. NDVI vs mNDVI705)</li>
+<li>update biodivMapR_full_tiles</li>
+<li>update biodivMapR_full_classif</li>
+<li>add pcelim as input for biodivMapR_sample and biodivMapR_full_tiles</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.3.13" id="biodivmapr-v2313">biodivMapR v2.3.13<a class="anchor" aria-label="anchor" href="#biodivmapr-v2313"></a></h2>
+<div class="section level3">
+<h3 id="addition-2-3-13">addition<a class="anchor" aria-label="anchor" href="#addition-2-3-13"></a></h3>
+<ul><li>added function biodivMapR_sample and biodivMapR_full_classif</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.3.12" id="biodivmapr-v2312">biodivMapR v2.3.12<a class="anchor" aria-label="anchor" href="#biodivmapr-v2312"></a></h2>
+<div class="section level3">
+<h3 id="change-2-3-12">change<a class="anchor" aria-label="anchor" href="#change-2-3-12"></a></h3>
+<ul><li>added mosaic_output as input variable for biodivMapR_full_tiles</li>
+<li>fixed “BIGTIFF=IF_SAFER” when calling sf::gdal_utils to produce mosaics</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.3.11" id="biodivmapr-v2311">biodivMapR v2.3.11<a class="anchor" aria-label="anchor" href="#biodivmapr-v2311"></a></h2>
+<div class="section level3">
+<h3 id="change-2-3-11">change<a class="anchor" aria-label="anchor" href="#change-2-3-11"></a></h3>
+<ul><li>use continuumRemoval from package prospectr instead of internal function</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.3.10" id="biodivmapr-v2310">biodivMapR v2.3.10<a class="anchor" aria-label="anchor" href="#biodivmapr-v2310"></a></h2>
+<div class="section level3">
+<h3 id="change-2-3-10">change<a class="anchor" aria-label="anchor" href="#change-2-3-10"></a></h3>
+<ul><li>add option “BIGTIFF=IF_SAFER” when calling sf::gdal_utils to produce mosaics</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.3.9" id="biodivmapr-v239">biodivMapR v2.3.9<a class="anchor" aria-label="anchor" href="#biodivmapr-v239"></a></h2>
+<div class="section level3">
+<h3 id="fix-2-3-9">fix<a class="anchor" aria-label="anchor" href="#fix-2-3-9"></a></h3>
+<ul><li>create output_dir if does not exist when calling biodivMapR_full</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.3.8" id="biodivmapr-v238">biodivMapR v2.3.8<a class="anchor" aria-label="anchor" href="#biodivmapr-v238"></a></h2>
+<div class="section level3">
+<h3 id="fix-2-3-8">fix<a class="anchor" aria-label="anchor" href="#fix-2-3-8"></a></h3>
+<ul><li>implement fix to adjust global extent when using CRS 4326 (e.g. modis)</li>
+<li>modify sample_from_raster to account for global footprint</li>
+</ul></div>
+<div class="section level3">
+<h3 id="change-2-3-8">change<a class="anchor" aria-label="anchor" href="#change-2-3-8"></a></h3>
+<ul><li>modify ‘sample_from_plots_beta’ to account for no data available</li>
+<li>adjusted min_sun from 0.75 to 0.6 in ‘get_plots_from_tiles’ when sampling to produce beta model</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.3.7" id="biodivmapr-v237">biodivMapR v2.3.7<a class="anchor" aria-label="anchor" href="#biodivmapr-v237"></a></h2>
+<div class="section level3">
+<h3 id="addition-2-3-7">addition<a class="anchor" aria-label="anchor" href="#addition-2-3-7"></a></h3>
+<ul><li>added ‘get_si_tiles_from_raster’ to compute spectral index from raster tile</li>
+<li>implemented functional diversity metrics into tile processing</li>
+</ul></div>
+<div class="section level3">
+<h3 id="change-2-3-7">change<a class="anchor" aria-label="anchor" href="#change-2-3-7"></a></h3>
+<ul><li>delete files corresponding to individual tiles after mosaic</li>
+</ul></div>
+<div class="section level3">
+<h3 id="fix-2-3-7">fix<a class="anchor" aria-label="anchor" href="#fix-2-3-7"></a></h3>
+<ul><li>use basename when calling grep to avoid conflict with directory name</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.3.6" id="biodivmapr-v236">biodivMapR v2.3.6<a class="anchor" aria-label="anchor" href="#biodivmapr-v236"></a></h2>
+<div class="section level3">
+<h3 id="fix-2-3-6">fix<a class="anchor" aria-label="anchor" href="#fix-2-3-6"></a></h3>
+<ul><li>fixed bug when SI values &lt; 0</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.3.5" id="biodivmapr-v235">biodivMapR v2.3.5<a class="anchor" aria-label="anchor" href="#biodivmapr-v235"></a></h2>
+<div class="section level3">
+<h3 id="addition-2-3-5">addition<a class="anchor" aria-label="anchor" href="#addition-2-3-5"></a></h3>
+<ul><li>add possibility to change nb_iter and set it to 10 iterations as default</li>
+</ul></div>
+<div class="section level3">
+<h3 id="change-2-3-5">change<a class="anchor" aria-label="anchor" href="#change-2-3-5"></a></h3>
+<ul><li>updated variable names</li>
+</ul></div>
+<div class="section level3">
+<h3 id="fix-2-3-5">fix<a class="anchor" aria-label="anchor" href="#fix-2-3-5"></a></h3>
+<ul><li>account for presence of aux.xml files</li>
+<li>fix documentation</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.3.4" id="biodivmapr-v234">biodivMapR v2.3.4<a class="anchor" aria-label="anchor" href="#biodivmapr-v234"></a></h2>
+<div class="section level3">
+<h3 id="fix-2-3-4">fix<a class="anchor" aria-label="anchor" href="#fix-2-3-4"></a></h3>
+<ul><li>sample_from_raster adapted to handle distances when crs of input_rast in deg</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.3.3" id="biodivmapr-v233">biodivMapR v2.3.3<a class="anchor" aria-label="anchor" href="#biodivmapr-v233"></a></h2>
+<div class="section level3">
+<h3 id="addition-2-3-3">addition<a class="anchor" aria-label="anchor" href="#addition-2-3-3"></a></h3>
+<ul><li>modified perform_PCA to allow PCA over any type of data</li>
+</ul></div>
+<div class="section level3">
+<h3 id="change-2-3-3">change<a class="anchor" aria-label="anchor" href="#change-2-3-3"></a></h3>
+<ul><li>updated documentation</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.3.2" id="biodivmapr-v232">biodivMapR v2.3.2<a class="anchor" aria-label="anchor" href="#biodivmapr-v232"></a></h2>
+<div class="section level3">
+<h3 id="change-2-3-2">change<a class="anchor" aria-label="anchor" href="#change-2-3-2"></a></h3>
+<ul><li>optimize tile processing with function get_raster_diversity_tile</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.3.1" id="biodivmapr-v231">biodivMapR v2.3.1<a class="anchor" aria-label="anchor" href="#biodivmapr-v231"></a></h2>
+<div class="section level3">
+<h3 id="fix-2-3-1">fix<a class="anchor" aria-label="anchor" href="#fix-2-3-1"></a></h3>
+<ul><li>fix tile mask management when tiles are empty</li>
+</ul></div>
+<div class="section level3">
+<h3 id="change-2-3-1">change<a class="anchor" aria-label="anchor" href="#change-2-3-1"></a></h3>
+<ul><li>change management of parallel processing for steps where it is not optimal</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.3.0" id="biodivmapr-v230">biodivMapR v2.3.0<a class="anchor" aria-label="anchor" href="#biodivmapr-v230"></a></h2>
+<div class="section level3">
+<h3 id="change-2-3-0">change<a class="anchor" aria-label="anchor" href="#change-2-3-0"></a></h3>
+<ul><li>added functions to process large rasters divided into tiles using get_s2_tiling function from preprocS2 package</li>
+<li>added functions to apply biodivMapR using moving window</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.2.1" id="biodivmapr-v221">biodivMapR v2.2.1<a class="anchor" aria-label="anchor" href="#biodivmapr-v221"></a></h2>
+<div class="section level3">
+<h3 id="change-2-2-1">change<a class="anchor" aria-label="anchor" href="#change-2-2-1"></a></h3>
+<ul><li>clean code</li>
+<li>add suppressWarnings when calling progressr</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.2.0" id="biodivmapr-v220">biodivMapR v2.2.0<a class="anchor" aria-label="anchor" href="#biodivmapr-v220"></a></h2>
+<div class="section level3">
+<h3 id="change-2-2-0">change<a class="anchor" aria-label="anchor" href="#change-2-2-0"></a></h3>
+<ul><li>merge v2 from gitlab repository</li>
+<li>update vignettes for use of v2</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.1.4" id="biodivmapr-v214">biodivMapR v2.1.4<a class="anchor" aria-label="anchor" href="#biodivmapr-v214"></a></h2>
+<div class="section level3">
+<h3 id="fix-2-1-4">fix<a class="anchor" aria-label="anchor" href="#fix-2-1-4"></a></h3>
+<ul><li>in ‘get_diversity_from_plots’ :</li>
+<li>initialize Attributes with nrow = nbPlots_init</li>
+<li>initialize functional diversity metrics in Attributes with NA</li>
+<li>correct get_diversity_from_plots : assign to beta diversity values instead of mean Hill</li>
+<li>correct extract_vect_from_rast : update AttributeTable and discard vectors with no data</li>
+</ul></div>
+<div class="section level3">
+<h3 id="addition-2-1-4">addition<a class="anchor" aria-label="anchor" href="#addition-2-1-4"></a></h3>
+<ul><li>create functions init_kmeans_samples and init_PCoA_samples to process samples previously extracted independently from an input raster</li>
+<li>possibility to provide name for output files in addition to directory</li>
+</ul></div>
+<div class="section level3">
+<h3 id="change-2-1-4">change<a class="anchor" aria-label="anchor" href="#change-2-1-4"></a></h3>
+<ul><li>possibility to define updated mask file name as input for radiometric_filtering</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.1.3" id="biodivmapr-v213">biodivMapR v2.1.3<a class="anchor" aria-label="anchor" href="#biodivmapr-v213"></a></h2>
+<div class="section level3">
+<h3 id="fix-2-1-3">fix<a class="anchor" aria-label="anchor" href="#fix-2-1-3"></a></h3>
+<ul><li>correct get_diversity_from_plots: output for FDis corrected to FDis instead of FDiv</li>
+<li>correct spectralspecies_per_polygon : AttributeTable not set to NULL ## addition</li>
+<li>computes all functional diversity when running get_diversity_from_plots</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.1.2" id="biodivmapr-v212">biodivMapR v2.1.2<a class="anchor" aria-label="anchor" href="#biodivmapr-v212"></a></h2>
+<div class="section level3">
+<h3 id="change-2-1-2">change<a class="anchor" aria-label="anchor" href="#change-2-1-2"></a></h3>
+<ul><li>use package fundiversity to compute diversity metrics</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.1.1" id="biodivmapr-v211">biodivMapR v2.1.1<a class="anchor" aria-label="anchor" href="#biodivmapr-v211"></a></h2>
 <div class="section level3">
@@ -535,7 +902,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>

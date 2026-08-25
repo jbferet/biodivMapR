@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.2.0</span>
       </span>
     </div>
 
@@ -80,9 +80,17 @@
         </td>
         <td><p>This function computes interquartile range (IQR) for a SpatRaster</p></td>
       </tr><tr><td>
-          <p><code><a href="IQR_outliers.html">IQR_outliers()</a></code> </p>
+          <p><code><a href="IQR_outliers.html">iqr_outliers()</a></code> </p>
         </td>
-        <td><p>This function computes interquartile range (IQR) criterion, which can be used as a criterion for outlier detection</p></td>
+        <td><p>This function computes interquartile range (IQR) criterion, which can be used as a criterion for outlier detection outlier_range_iqr &lt;- c(range_IQR$1]- weightIQR x iqr, range_IQR(2)+ weightIQR x iqr) with range_IQR(1) the first quartile and range_IQR(2) the third quartile</p></td>
+      </tr><tr><td>
+          <p><code><a href="alpha_metrics_sfs.html">alpha_metrics_sfs()</a></code> </p>
+        </td>
+        <td><p>compute alpha metrics from list of spectral species distributions in the context of sequential feature selection</p></td>
+      </tr><tr><td>
+          <p><code><a href="alphabeta_chunk.html">alphabeta_chunk()</a></code> </p>
+        </td>
+        <td><p>apply alphabeta_window to a list of lists</p></td>
       </tr><tr><td>
           <p><code><a href="alphabeta_window.html">alphabeta_window()</a></code> </p>
         </td>
@@ -100,6 +108,10 @@
         </td>
         <td><p>compute alpha and beta diversity metrics from pixel data corresponding to spectral species extracted from a window</p></td>
       </tr><tr><td>
+          <p><code><a href="apply_bigRaster.html">apply_bigRaster()</a></code> </p>
+        </td>
+        <td><p>This function performs big raster processing It requires user to write a function expecting vectors / matrices / dataframes corresponding to raster data read sequentially, a list of input files, a list of output files, and it is good to go.</p></td>
+      </tr><tr><td>
           <p><code><a href="apply_continuum_removal.html">apply_continuum_removal()</a></code> </p>
         </td>
         <td><p>prepares data into list to apply continuum removal</p></td>
@@ -108,25 +120,33 @@
         </td>
         <td><p>apply kmeans to information extracted from an image and corresponding to a window</p></td>
       </tr><tr><td>
+          <p><code><a href="apply_spectral_species.html">apply_spectral_species()</a></code> </p>
+        </td>
+        <td><p>compute spectral species from a raster</p></td>
+      </tr><tr><td>
           <p><code><a href="apply_spectral_species_plot.html">apply_spectral_species_plot()</a></code> </p>
         </td>
         <td><p>apply biodivMapR to a set of plots identified by a field '<em>id</em>' produced with preprocS2 function get_s2_tiling</p></td>
+      </tr><tr><td>
+          <p><code><a href="bbox_to_poly.html">bbox_to_poly()</a></code> </p>
+        </td>
+        <td><p>converts a bbox to a polygon</p></td>
+      </tr><tr><td>
+          <p><code><a href="beta_metrics_sfs.html">beta_metrics_sfs()</a></code> </p>
+        </td>
+        <td><p>compute beta metrics during sfs</p></td>
+      </tr><tr><td>
+          <p><code><a href="biodivMapR.html">biodivMapR()</a></code> </p>
+        </td>
+        <td><p>computes diversity metrics from raster</p></td>
       </tr><tr><td>
           <p><code><a href="biodivMapR_chunk.html">biodivMapR_chunk()</a></code> </p>
         </td>
         <td><p>apply biodivMapR (computes clusters + diversity metrics) to an image chunk</p></td>
       </tr><tr><td>
-          <p><code><a href="biodivMapR_full.html">biodivMapR_full()</a></code> </p>
+          <p><code><a href="biodivMapR_classif.html">biodivMapR_classif()</a></code> </p>
         </td>
-        <td><p>computes diversity metrics from raster</p></td>
-      </tr><tr><td>
-          <p><code><a href="biodivMapR_full_classif.html">biodivMapR_full_classif()</a></code> </p>
-        </td>
-        <td><p>computes diversity metrics from raster</p></td>
-      </tr><tr><td>
-          <p><code><a href="biodivMapR_full_tiles.html">biodivMapR_full_tiles()</a></code> </p>
-        </td>
-        <td><p>computes diversity metrics from raster</p></td>
+        <td><p>computes diversity metrics from a classification raster containing information on a specific class for each pixel</p></td>
       </tr><tr><td>
           <p><code><a href="biodivMapR_opt_clusters.html">biodivMapR_opt_clusters()</a></code> </p>
         </td>
@@ -138,7 +158,7 @@
       </tr><tr><td>
           <p><code><a href="biodivMapR_sdm.html">biodivMapR_sdm()</a></code> </p>
         </td>
-        <td><p>computes diversity metrics from raster</p></td>
+        <td><p>computes diversity metrics from raster corresponding to SDM</p></td>
       </tr><tr><td>
           <p><code><a href="biodivMapR_sfs.html">biodivMapR_sfs()</a></code> </p>
         </td>
@@ -147,6 +167,18 @@
           <p><code><a href="biodivMapR_tiles.html">biodivMapR_tiles()</a></code> </p>
         </td>
         <td><p>computes diversity metrics from raster</p></td>
+      </tr><tr><td>
+          <p><code><a href="biodivMapR_tiling.html">biodivMapR_tiling()</a></code> </p>
+        </td>
+        <td><p>computes diversity metrics from a set of raster corresponding to tiles as produced with preprocS2</p></td>
+      </tr><tr><td>
+          <p><code><a href="bray_curtis_dissimilarity.html">bray_curtis_dissimilarity()</a></code> </p>
+        </td>
+        <td><p>Compute Bray-Curtis Dissimilarity</p></td>
+      </tr><tr><td>
+          <p><code><a href="bray_curtis_turnover.html">bray_curtis_turnover()</a></code> </p>
+        </td>
+        <td><p>Compute Bray-Curtis Turnover</p></td>
       </tr><tr><td>
           <p><code><a href="center_reduce.html">center_reduce()</a></code> </p>
         </td>
@@ -162,15 +194,15 @@
       </tr><tr><td>
           <p><code><a href="clean_tiff_list.html">clean_tiff_list()</a></code> </p>
         </td>
-        <td><p>computes diversity metrics from raster</p></td>
+        <td><p>exclude .aux.xml and .tfw files from a list of files including .tif extension</p></td>
       </tr><tr><td>
           <p><code><a href="compute_NN_from_ordination.html">compute_nn_from_ordination()</a></code> </p>
         </td>
         <td><p>compute the nearest neighbors among kernels</p></td>
       </tr><tr><td>
-          <p><code><a href="compute_bc_diss.html">compute_bc_diss()</a></code> </p>
+          <p><code><a href="compute_dissimilarity.html">compute_dissimilarity()</a></code> </p>
         </td>
-        <td><p>compute bray curtis dissimilarity matrix corresponding to a list of kernels (rows) defined by their spectral species (columns) ssd_list is a list containing spectral species distribution for two sets of kernels pcelim is the threshold for minimum contribution of a spectral species to be kept</p></td>
+        <td><p>compute dissimilarity matrix corresponding to two distinct matrices, each of them including a list of samples (rows) defined by their spectral species (columns) metrics available: bray, brayturn, simpson_diss, jaccard, jaccardturn, sorensen</p></td>
       </tr><tr><td>
           <p><code><a href="compute_mask_iqr.html">compute_mask_iqr()</a></code> </p>
         </td>
@@ -178,7 +210,7 @@
       </tr><tr><td>
           <p><code><a href="compute_mask_iqr_tiles.html">compute_mask_iqr_tiles()</a></code> </p>
         </td>
-        <td><p>get samples for alpha and beta diversity mapping</p></td>
+        <td><p>computes a mask for a collection of tiles based on interquartile range filtering interquartile is computed for all data included in teh collection samples out of a range defined by quartile_1-weightIQR x (quartile_3 - quartile_1) and quartile_3+weightIQR x (quartile_3-quartile_1) are then considered as outliers</p></td>
       </tr><tr><td>
           <p><code><a href="continuumRemoval.html">continuumRemoval()</a></code> </p>
         </td>
@@ -194,7 +226,7 @@
       </tr><tr><td>
           <p><code><a href="crop_border_tile.html">crop_border_tile()</a></code> </p>
         </td>
-        <td><p>save diversity maps as raster data once moving window process done</p></td>
+        <td><p>crop border of a spatRaster</p></td>
       </tr><tr><td>
           <p><code><a href="define_grid.html">define_grid()</a></code> </p>
         </td>
@@ -204,13 +236,29 @@
         </td>
         <td><p>defines the number of pixels per iteration</p></td>
       </tr><tr><td>
+          <p><code><a href="deprecated.html">biodivMapR_full()</a></code> <code><a href="deprecated.html">biodivMapR_full_tiles()</a></code> </p>
+        </td>
+        <td><p>Deprecated functions in biodivMapR</p></td>
+      </tr><tr><td>
           <p><code><a href="exclude_spectral_domains.html">exclude_spectral_domains()</a></code> </p>
         </td>
         <td><p>define water vapor bands based on spectral sampling of original image</p></td>
       </tr><tr><td>
+          <p><code><a href="explore_cluster_range.html">explore_cluster_range()</a></code> </p>
+        </td>
+        <td><p>explore performances for a range of cluster number</p></td>
+      </tr><tr><td>
+          <p><code><a href="explore_dissimilarity.html">explore_dissimilarity()</a></code> </p>
+        </td>
+        <td><p>explore disimilarity metrics for a range of number of clusters</p></td>
+      </tr><tr><td>
           <p><code><a href="explore_kmeans.html">explore_kmeans()</a></code> </p>
         </td>
         <td><p>Compute kmeans from random subset of pixels extracted from an image and a list of values for k</p></td>
+      </tr><tr><td>
+          <p><code><a href="extract_from_rast_sfs.html">extract_from_rast_sfs()</a></code> </p>
+        </td>
+        <td><p>extract informaton from raster to prepare for SFS</p></td>
       </tr><tr><td>
           <p><code><a href="extract_svc_from_rast.html">extract_svc_from_rast()</a></code> </p>
         </td>
@@ -220,9 +268,21 @@
         </td>
         <td><p>extract pixel information from a raster based on vector footprint</p></td>
       </tr><tr><td>
+          <p><code><a href="fd_metrics_sfs.html">fd_metrics_sfs()</a></code> </p>
+        </td>
+        <td><p>compute functional metrics during sfs</p></td>
+      </tr><tr><td>
           <p><code><a href="file_path_sans_ext.html">file_path_sans_ext()</a></code> </p>
         </td>
         <td><p>Re-implementation of <code>file_path_sans_ext</code> in <code>tools</code>. This version can handle "." just before the file extenstion, unlike the original implementation. taken from https://github.com/cbig/zonator</p></td>
+      </tr><tr><td>
+          <p><code><a href="filenames_explore_cluster_range.html">filenames_explore_cluster_range()</a></code> </p>
+        </td>
+        <td><p>checks if files produced from explore_cluster_range exist</p></td>
+      </tr><tr><td>
+          <p><code><a href="filenames_opt_clusters.html">filenames_opt_clusters()</a></code> </p>
+        </td>
+        <td><p>checks if files produced from biodivMapR_opt_cluster exist</p></td>
       </tr><tr><td>
           <p><code><a href="filter_prior_cr.html">filter_prior_cr()</a></code> </p>
         </td>
@@ -236,7 +296,7 @@
         </td>
         <td><p>apply functional_window to a list of lists</p></td>
       </tr><tr><td>
-          <p><code><a href="get_HDR_name.html">get_HDR_name()</a></code> </p>
+          <p><code><a href="get_HDR_name.html">get_hdr_name()</a></code> </p>
         </td>
         <td><p>get hdr name from image file name</p></td>
       </tr><tr><td>
@@ -252,6 +312,10 @@
         </td>
         <td><p>computes Simpson index from a distribution</p></td>
       </tr><tr><td>
+          <p><code><a href="get_alpha.html">get_alpha()</a></code> </p>
+        </td>
+        <td><p>computes alpha diversity metrics from ssd_mat corresponding to iterations</p></td>
+      </tr><tr><td>
           <p><code><a href="get_alpha_from_SSD.html">get_alpha_from_ssd()</a></code> </p>
         </td>
         <td><p>computes alpha diversity metrics from ssd</p></td>
@@ -260,9 +324,13 @@
         </td>
         <td><p>This function gets path from an asset in the JSON file</p></td>
       </tr><tr><td>
-          <p><code><a href="get_bc_diss_from_ssd.html">get_bc_diss_from_ssd()</a></code> </p>
+          <p><code><a href="get_beta_from_ssd.html">get_beta_from_ssd()</a></code> </p>
         </td>
-        <td><p>Computes BC dissimilarity for a list of spectral species distributions</p></td>
+        <td><p>Computes beta diversity for a list of spectral species distributions</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_cluster_list.html">get_cluster_list()</a></code> </p>
+        </td>
+        <td><p>get cluster list for biodivMapR_opt_clusters</p></td>
       </tr><tr><td>
           <p><code><a href="get_date.html">get_date()</a></code> </p>
         </td>
@@ -284,13 +352,29 @@
         </td>
         <td><p>gets rank of spectral bands in an image</p></td>
       </tr><tr><td>
+          <p><code><a href="get_input_chunk.html">get_input_chunk()</a></code> </p>
+        </td>
+        <td><p>get input chunk data from a list of rasters</p></td>
+      </tr><tr><td>
           <p><code><a href="get_kmeans.html">get_kmeans()</a></code> </p>
         </td>
-        <td><p>computes k-means from nb_iter subsets taken from dataPCA</p></td>
+        <td><p>computes k-means from nb_iter subsets defined from rast_sample</p></td>
       </tr><tr><td>
           <p><code><a href="get_normalized_ssd.html">get_normalized_ssd()</a></code> </p>
         </td>
-        <td><p>get spectral species distribution for all clusters</p></td>
+        <td><p>get spectral species distribution for all clusters including those with 0 abundance</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_normalized_ssd_list.html">get_normalized_ssd_list()</a></code> </p>
+        </td>
+        <td><p>get spectral species distribution from a list for all clusters including those with 0 abundance</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_normalized_ssd_mat.html">get_normalized_ssd_mat()</a></code> </p>
+        </td>
+        <td><p>get spectral species distribution for all clusters including those with 0 abundance</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_plot_list.html">get_plot_list()</a></code> </p>
+        </td>
+        <td><p>get a list of plots defined in a vector file defined as input</p></td>
       </tr><tr><td>
           <p><code><a href="get_plots_from_tiles.html">get_plots_from_tiles()</a></code> </p>
         </td>
@@ -306,7 +390,7 @@
       </tr><tr><td>
           <p><code><a href="get_raster_diversity_tile.html">get_raster_diversity_tile()</a></code> </p>
         </td>
-        <td><p>Computes diversity metrics from raster data based on moving window</p></td>
+        <td><p>Computes diversity metrics from raster data</p></td>
       </tr><tr><td>
           <p><code><a href="get_raster_extent.html">get_raster_extent()</a></code> </p>
         </td>
@@ -348,6 +432,10 @@
         </td>
         <td><p>get xy of pixels to sample from raster</p></td>
       </tr><tr><td>
+          <p><code><a href="harmonize_envi_hdr.html">harmonize_envi_hdr()</a></code> </p>
+        </td>
+        <td><p>Harmonize ENVI header file</p></td>
+      </tr><tr><td>
           <p><code><a href="init_PCoA.html">init_PCoA()</a></code> </p>
         </td>
         <td><p>initialize PCoA for beta diversity mapping</p></td>
@@ -364,17 +452,33 @@
         </td>
         <td><p>Compute kmeans from random subset of pixels extracted from an image</p></td>
       </tr><tr><td>
+          <p><code><a href="jaccard_dissimilarity.html">jaccard_dissimilarity()</a></code> </p>
+        </td>
+        <td><p>Compute Jaccard Dissimilarity</p></td>
+      </tr><tr><td>
+          <p><code><a href="jaccard_turnover.html">jaccard_turnover()</a></code> </p>
+        </td>
+        <td><p>Compute Jaccard Turnover</p></td>
+      </tr><tr><td>
           <p><code><a href="kmeans_iter.html">kmeans_iter()</a></code> </p>
         </td>
         <td><p>computes kmeans for an iteration in biodivMapR</p></td>
       </tr><tr><td>
           <p><code><a href="kmeans_progressr.html">kmeans_progressr()</a></code> </p>
         </td>
-        <td><p>applies results of ordination to full image based on nearest neighbors</p></td>
+        <td><p>applies progression bar flr kmeans clustering</p></td>
       </tr><tr><td>
           <p><code><a href="maxRows_chunk.html">maxRows_chunk()</a></code> </p>
         </td>
         <td><p>redefined chunks based on the max number of rows per chunk</p></td>
+      </tr><tr><td>
+          <p><code><a href="maximize_sfs_criterion.html">maximize_sfs_criterion()</a></code> </p>
+        </td>
+        <td><p>define variable maximizing a criterion</p></td>
+      </tr><tr><td>
+          <p><code><a href="meters_to_decdeg.html">meters_to_decdeg()</a></code> </p>
+        </td>
+        <td><p>Convert from meters to degrees correcting for global position borrowed from <a href="https://github.com/mlammens/occUncertain" class="external-link">https://github.com/mlammens/occUncertain</a></p></td>
       </tr><tr><td>
           <p><code><a href="mnf.html">mnf()</a></code> </p>
         </td>
@@ -386,7 +490,7 @@
       </tr><tr><td>
           <p><code><a href="mosaic_tiles.html">mosaic_tiles()</a></code> </p>
         </td>
-        <td><p>compute spectral indices and composite for a given period of time</p></td>
+        <td><p>produce a mosaic from a series of tiles</p></td>
       </tr><tr><td>
           <p><code><a href="nbRows_chunk.html">nbRows_chunk()</a></code> </p>
         </td>
@@ -395,6 +499,10 @@
           <p><code><a href="noise.html">noise()</a></code> </p>
         </td>
         <td><p>gets noise</p></td>
+      </tr><tr><td>
+          <p><code><a href="num2char.html">num2char()</a></code> </p>
+        </td>
+        <td><p>converts numeric value to characters with specific lengths, adding 0 at beginning</p></td>
       </tr><tr><td>
           <p><code><a href="pca.html">pca()</a></code> </p>
         </td>
@@ -426,9 +534,13 @@
       </tr><tr><td>
           <p><code><a href="randperm.html">randperm()</a></code> </p>
         </td>
-        <td><p>performs random permutation for k samples among the vector defined by a original source: package labdsv https://rdrr.io/cran/labdsv/src/R/pco.R</p></td>
+        <td><p>performs random permutation for k samples among the vector defined by a</p></td>
       </tr><tr><td>
-          <p><code><a href="read_ENVI_header.html">read_ENVI_header()</a></code> </p>
+          <p><code><a href="rast_sample_sfs.html">rast_sample_sfs()</a></code> </p>
+        </td>
+        <td><p>extract informaton from raster to prepare for SFS</p></td>
+      </tr><tr><td>
+          <p><code><a href="read_ENVI_header.html">read_envi_header()</a></code> </p>
         </td>
         <td><p>Reads ENVI hdr file</p></td>
       </tr><tr><td>
@@ -500,21 +612,33 @@
         </td>
         <td><p>produces a figure summarizing alpha and beta diversity on scatterplots</p></td>
       </tr><tr><td>
-          <p><code><a href="select_PCA_components.html">select_PCA_components()</a></code> </p>
-        </td>
-        <td><p>Check if principal components are properly selected as expected by the method</p></td>
-      </tr><tr><td>
           <p><code><a href="set_options_biodivMapR.html">set_options_biodivMapR()</a></code> </p>
         </td>
         <td><p>set options</p></td>
       </tr><tr><td>
-          <p><code><a href="spectral_species_full_tiles.html">spectral_species_full_tiles()</a></code> </p>
+          <p><code><a href="simpson_dissimilarity.html">simpson_dissimilarity()</a></code> </p>
+        </td>
+        <td><p>Compute Simpson Dissimilarity</p></td>
+      </tr><tr><td>
+          <p><code><a href="sorensen_dissimilarity.html">sorensen_dissimilarity()</a></code> </p>
+        </td>
+        <td><p>Compute Sorensen Dissimilarity</p></td>
+      </tr><tr><td>
+          <p><code><a href="spectral_species_full.html">spectral_species_full()</a></code> </p>
         </td>
         <td><p>computes diversity metrics from raster</p></td>
+      </tr><tr><td>
+          <p><code><a href="spectral_species_full_tiles.html">spectral_species_full_tiles()</a></code> </p>
+        </td>
+        <td><p>computes spectral species from raster</p></td>
       </tr><tr><td>
           <p><code><a href="spectralspecies_per_polygon.html">spectralspecies_per_polygon()</a></code> </p>
         </td>
         <td><p>get spectral species corresponding to polygons in a SpatVector object</p></td>
+      </tr><tr><td>
+          <p><code><a href="spectralspecies_per_rast_sample.html">spectralspecies_per_rast_sample()</a></code> </p>
+        </td>
+        <td><p>get spectral species corresponding to raster sample extracted with extract</p></td>
       </tr><tr><td>
           <p><code><a href="split_chunk.html">split_chunk()</a></code> </p>
         </td>
@@ -522,7 +646,7 @@
       </tr><tr><td>
           <p><code><a href="split_line.html">split_line()</a></code> </p>
         </td>
-        <td><p>ENVI functions</p></td>
+        <td><p>split information from a line</p></td>
       </tr><tr><td>
           <p><code><a href="update_mask_from_tiles.html">update_mask_from_tiles()</a></code> </p>
         </td>
@@ -532,9 +656,17 @@
         </td>
         <td><p>Compute weighted coordinates of a spatial unit based on nearest neighbors used during PCoA</p></td>
       </tr><tr><td>
+          <p><code><a href="which_alpha_beta.html">which_alpha_beta()</a></code> </p>
+        </td>
+        <td><p>identifies which alpha/beta metrics should be used for next processes</p></td>
+      </tr><tr><td>
           <p><code><a href="wrapperBig_PCA.html">wrapperBig_PCA()</a></code> </p>
         </td>
         <td><p>this function aims at applying PCA on a raster or list of rasters in combination with the function apply_bigRaster</p></td>
+      </tr><tr><td>
+          <p><code><a href="write_envi_header.html">write_envi_header()</a></code> </p>
+        </td>
+        <td><p>writes ENVI hdr file</p></td>
       </tr></tbody></table></div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -548,7 +680,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>

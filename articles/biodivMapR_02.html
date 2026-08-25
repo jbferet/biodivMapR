@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.2.0</span>
       </span>
     </div>
 
@@ -96,7 +96,7 @@
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2026-03-13</h4>
+            <h4 data-toc-skip class="date">2026-08-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR_02.Rmd" class="external-link"><code>vignettes/biodivMapR_02.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_02.Rmd</code></div>
@@ -197,7 +197,7 @@ resolution (spatial resolution
 <span><span class="co"># central wavelength of S2 spectral bands can be loaded from biodivMapR data</span></span>
 <span><span class="va">hdr_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata'</span>, <span class="st">'HDR'</span>, <span class="st">'SENTINEL_2.hdr'</span>, </span>
 <span>                        package <span class="op">=</span> <span class="st">'biodivMapR'</span><span class="op">)</span></span>
-<span><span class="va">sensor_bands</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/preprocS2/man/read_envi_header.html" class="external-link">read_envi_header</a></span><span class="op">(</span>HDRpath <span class="op">=</span> <span class="va">hdr_path</span><span class="op">)</span><span class="op">$</span><span class="va">wavelength</span></span>
+<span><span class="va">sensor_bands</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_ENVI_header.html">read_envi_header</a></span><span class="op">(</span>hdr_path <span class="op">=</span> <span class="va">hdr_path</span><span class="op">)</span><span class="op">$</span><span class="va">wavelength</span></span>
 <span></span>
 <span><span class="co"># 2- define spectral transformation: select between 'PCA' and 'SPCA'</span></span>
 <span><span class="va">spectral_transformation</span> <span class="op">&lt;-</span> <span class="st">'SPCA'</span></span>
@@ -304,7 +304,7 @@ produces a grid based on the aoi and on cellsize.</p>
 <span><span class="va">rast_obj</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">rast_path</span><span class="op">)</span></span>
 <span><span class="va">mask_obj</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">mask_path</span><span class="op">)</span></span>
 <span><span class="va">crs_target</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/crs.html" class="external-link">crs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">rast_obj</span><span class="op">)</span></span>
-<span><span class="va">path_grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/preprocS2/man/get_grid_aoi.html" class="external-link">get_grid_aoi</a></span><span class="op">(</span>aoi_path <span class="op">=</span> <span class="va">aoi_path</span>,</span>
+<span><span class="va">path_grid</span> <span class="op">&lt;-</span> <span class="fu">get_grid_aoi</span><span class="op">(</span>aoi_path <span class="op">=</span> <span class="va">aoi_path</span>,</span>
 <span>                          cellsize <span class="op">=</span> <span class="va">cellsize</span>,</span>
 <span>                          output_dir <span class="op">=</span> <span class="va">output_dir</span>,</span>
 <span>                          crs_target <span class="op">=</span> <span class="va">crs_target</span><span class="op">)</span></span>
@@ -345,17 +345,17 @@ chlorophyll content and leaf area index (LAI).</li>
 <code>CR_SWIR</code>: continuum removal in the shortwave infrared
 (SWIR). The CR_SWIR is sensitive to vegetation water content.</li>
 </ul>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><msub><mi>R</mi><mtext mathvariant="normal">SWIR</mtext></msub><mo>=</mo><mfrac><msub><mi>R</mi><mtext mathvariant="normal">B11</mtext></msub><mrow><msub><mi>R</mi><mtext mathvariant="normal">B8A</mtext></msub><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>λ</mi><mtext mathvariant="normal">B11</mtext></msub><mo>−</mo><msub><mi>λ</mi><mtext mathvariant="normal">B8A</mtext></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>*</mo><mfrac><mrow><msub><mi>R</mi><mtext mathvariant="normal">B12</mtext></msub><mo>−</mo><msub><mi>R</mi><mtext mathvariant="normal">B8A</mtext></msub></mrow><mrow><msub><mi>λ</mi><mtext mathvariant="normal">B12</mtext></msub><mo>−</mo><msub><mi>λ</mi><mtext mathvariant="normal">B8A</mtext></msub></mrow></mfrac></mrow></mfrac></mrow><annotation encoding="application/x-tex">CR_\text{SWIR} = \frac{R_\text{B11}}{R_\text{B8A}+(\lambda_\text{B11}-\lambda_\text{B8A}) * \frac{R_\text{B12}-R_\text{B8A}}{\lambda_\text{B12}-\lambda_\text{B8A}}}</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><msub><mi>R</mi><mtext mathvariant="normal">SWIR</mtext></msub><mo>=</mo><mfrac><msub><mi>R</mi><mtext mathvariant="normal">B11</mtext></msub><mrow><msub><mi>R</mi><mtext mathvariant="normal">B8A</mtext></msub><mo>+</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>λ</mi><mtext mathvariant="normal">B11</mtext></msub><mo>−</mo><msub><mi>λ</mi><mtext mathvariant="normal">B8A</mtext></msub><mo stretchy="false" form="postfix">)</mo><mo>*</mo><mfrac><mrow><msub><mi>R</mi><mtext mathvariant="normal">B12</mtext></msub><mo>−</mo><msub><mi>R</mi><mtext mathvariant="normal">B8A</mtext></msub></mrow><mrow><msub><mi>λ</mi><mtext mathvariant="normal">B12</mtext></msub><mo>−</mo><msub><mi>λ</mi><mtext mathvariant="normal">B8A</mtext></msub></mrow></mfrac></mrow></mfrac></mrow><annotation encoding="application/x-tex">CR_\text{SWIR} = \frac{R_\text{B11}}{R_\text{B8A}+(\lambda_\text{B11}-\lambda_\text{B8A}) * \frac{R_\text{B12}-R_\text{B8A}}{\lambda_\text{B12}-\lambda_\text{B8A}}}</annotation></semantics></math></p>
 <ul>
 <li>
 <code>LAI_SAVI</code> Soil adjusted vegetation index for LAI.
 Sensitive to LAI.</li>
 </ul>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mi>A</mi><msub><mi>I</mi><mtext mathvariant="normal">SAVI</mtext></msub><mo>=</mo><mfrac><mrow><mo>−</mo><mi>l</mi><mi>o</mi><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0.371</mn><mo>+</mo><mn>1.5</mn><mo>*</mo><mfrac><mrow><msub><mi>R</mi><mtext mathvariant="normal">B08</mtext></msub><mo>−</mo><msub><mi>R</mi><mtext mathvariant="normal">B04</mtext></msub></mrow><mrow><msub><mi>R</mi><mtext mathvariant="normal">B08</mtext></msub><mo>+</mo><msub><mi>R</mi><mtext mathvariant="normal">B04</mtext></msub><mo>+</mo><mn>0.5</mn></mrow></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mn>2.4</mn></mfrac></mrow><annotation encoding="application/x-tex">LAI_\text{SAVI} = \frac{-log(0.371+1.5*\frac{R_\text{B08}-R_\text{B04}}{R_\text{B08}+R_\text{B04}+0.5})}{2.4}</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mi>A</mi><msub><mi>I</mi><mtext mathvariant="normal">SAVI</mtext></msub><mo>=</mo><mfrac><mrow><mi>−</mi><mi>l</mi><mi>o</mi><mi>g</mi><mo stretchy="false" form="prefix">(</mo><mn>0.371</mn><mo>+</mo><mn>1.5</mn><mo>*</mo><mfrac><mrow><msub><mi>R</mi><mtext mathvariant="normal">B08</mtext></msub><mo>−</mo><msub><mi>R</mi><mtext mathvariant="normal">B04</mtext></msub></mrow><mrow><msub><mi>R</mi><mtext mathvariant="normal">B08</mtext></msub><mo>+</mo><msub><mi>R</mi><mtext mathvariant="normal">B04</mtext></msub><mo>+</mo><mn>0.5</mn></mrow></mfrac><mo stretchy="false" form="postfix">)</mo></mrow><mn>2.4</mn></mfrac></mrow><annotation encoding="application/x-tex">LAI_\text{SAVI} = \frac{-log(0.371+1.5*\frac{R_\text{B08}-R_\text{B04}}{R_\text{B08}+R_\text{B04}+0.5})}{2.4}</annotation></semantics></math></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># compute spectral indices</span></span>
 <span><span class="va">si_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'NDVI'</span>, <span class="st">'CR_SWIR'</span>, <span class="st">'LAI_SAVI'</span><span class="op">)</span></span>
-<span><span class="va">output_si</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/preprocS2/man/compute_si_from_grid.html" class="external-link">compute_si_from_grid</a></span><span class="op">(</span>rast_path <span class="op">=</span> <span class="va">rast_path</span>, </span>
+<span><span class="va">output_si</span> <span class="op">&lt;-</span> <span class="fu">compute_si_from_grid</span><span class="op">(</span>rast_path <span class="op">=</span> <span class="va">rast_path</span>, </span>
 <span>                                  mask_path <span class="op">=</span> <span class="va">mask_path</span>, </span>
 <span>                                  plots <span class="op">=</span> <span class="va">plots</span>, overwrite <span class="op">=</span> <span class="cn">F</span>, </span>
 <span>                                  sensor_name <span class="op">=</span> <span class="st">'sentinel-2'</span>,</span>
@@ -480,7 +480,7 @@ applied. This is described in this <a href="https://jbferet.github.io/biodivMapR
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer>

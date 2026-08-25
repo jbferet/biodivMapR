@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.2.0</span>
       </span>
     </div>
 
@@ -84,6 +84,8 @@
 <span>  Beta_info <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  alpha_metrics <span class="op">=</span> <span class="st">"shannon"</span>,</span>
 <span>  Hill_order <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  beta_metrics <span class="op">=</span> <span class="st">"bray"</span>,</span>
+<span>  diss_output <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  pcelim <span class="op">=</span> <span class="fl">0.02</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -113,6 +115,14 @@
 <dd><p>numeric. Hill order</p></dd>
 
 
+<dt id="arg-beta-metrics">beta_metrics<a class="anchor" aria-label="anchor" href="#arg-beta-metrics"></a></dt>
+<dd><p>list. beta diversity metrics</p></dd>
+
+
+<dt id="arg-diss-output">diss_output<a class="anchor" aria-label="anchor" href="#arg-diss-output"></a></dt>
+<dd><p>boolean set TRUE to get dissimilarity matrices as outputs</p></dd>
+
+
 <dt id="arg-pcelim">pcelim<a class="anchor" aria-label="anchor" href="#arg-pcelim"></a></dt>
 <dd><p>numeric. min proportion of pixels to consider spectral species</p></dd>
 
@@ -134,7 +144,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>
