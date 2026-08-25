@@ -1,5 +1,5 @@
 ---
-title: "Produce diversity maps from optical images with biodivMapR"
+title: "Produce diversity maps from raster data with biodivMapR"
 author: "Jean-Baptiste Féret, Florian de Boissieu"
 date: "`r Sys.Date()`"
 output: 
@@ -23,34 +23,51 @@ knitr::opts_chunk$set(
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
-This tutorial describes the processing workflow for `biodivMapR`. It
-goes through the different steps for the production of spectral
-diversity maps using Sentinel-2 imagery. The workflow is divided into
-three steps:
 
--   Acquisition of the Sentinel-2 imagery Sentinel-2 is downloaded from
-    a STAC catalog using the package
-    [`preprocS2`](https://jbferet.gitlab.io/preprocs2/), which is a
-    wrapper of the [`rstac`](https://brazil-data-cube.github.io/rstac/)
-    and [`CDSE`](https://zivankaraman.github.io/CDSE/) packages.
+`biodivMapR` was initially developed to produce $\alpha$ and $\beta$ diversity 
+maps [Féret & Asner (2014)](https://doi.org/10.1890/13-1824.1 "Feret&Asner2014") 
+from airborne imaging spectroscopy data acquired over tropical forests.
+`biodivMapR v1` used spectral transformations as initial pre-processing step. 
+This included reflectance normalization with a continuum removal, followed by a
+spectral transformation (PCA, SPCA, MNF...).
 
-The default STAC collection is
+**Input raster data fom any type of sensor can be used, as long as the input rasters share the same footprint, spatial resolution and projection.**
+Starting from `biodivMapR v2.0`, the workflow aims at being 'sensor agnostic', 
+meaning that users can provide any type of raster data as input, in order to 
+produce diversity metrics from a collection of rasters sharing the same 
+projection, spatial resolution and extent. 
+The workflow described in v1 is still available, but functions have been renamed. 
+
+**The ecological relevance of the input data used with `biodivMapR` is the sole responsibility of users**.
+While latest versions of this package provide functions to perform large scale 
+mapping with computational efficiency and capacity to take advantage of cloud 
+resources, it remains a method dedicated to research. 
+Existing publications provide guidelines for the production of diversity maps. 
+However, the ecological relevance of 'spectral diversity' metrics depends on 
+the type of input data, the parameterization of the method, and the type of 
+ecosystem under study.
+In situ observations remain fundamental to identify the proper parameterization,  
+test hypotheses and produce validation for the diversity maps. 
+
+The [tutorial](https://jbferet.github.io/biodivMapR/articles/biodivMapR_01.html) 
+provided with `biodivMapR` describes a possible processing workflow to take 
+advantage of Sentinel-2 imagery. 
+Sentinel-2 imagery is downloaded from a STAC catalog using the package
+[`preprocS2`](https://jbferet.gitlab.io/preprocs2/), which is a wrapper of the 
+[`rstac`](https://brazil-data-cube.github.io/rstac/) and 
+[`CDSE`](https://zivankaraman.github.io/CDSE/) packages.
+The default STAC collection is 
 [`sentinel-2-l2a`](https://planetarycomputer.microsoft.com/dataset/sentinel-2-l2a)
 from the Planetary computer catalog.
 
--   Preparation of the data `biodivMapR` requires a raster / set of
-    raster as input data. The first `biodivMapR v1` used spectral
-    transformations as initial pre-processing step. This included
-    reflectance normalization with a continuum removal, followed by a
-    spctral transformation (PCA, SPCA, MNF...).
-
 `biodivMapR v2` now allows user to run the preprocessing step of their
-choice. This can consist in computing spectral indices, vegetation
-biophysical variables, or spectral transformation. 
-__Input raster data fom any type of sensor can be used, as long as the input rasters share the same footprint, spatial resolution and projection.__
+choice. 
+This includes spectral indices, vegetation biophysical variables, spectral 
+transformation, or any type of preprocessing dedicated to a specific sensor / 
+sensor combination. 
 
-We provide a few examples here. Users can experiment with the method of
-their choice
+We provide a few examples here. 
+Users can experiment with the method of their choice.
 
 -   Definition of the processing parameters This includes the following
     information:
@@ -62,22 +79,21 @@ their choice
 -   Computation of the diversity maps This includes several diversity
     metrics:
 
-    -   $\alpha$ and $\beta$ diversity maps as defined in [Feret & Asner
+    -   **$\alpha$ and $\beta$ diversity maps** as defined in [Feret & Asner
         (2014)](https://doi.org/10.1890/13-1824.1 "Feret&Asner2014") and
-        [Feret & de Boissieu
-        (2019)](https://doi.org/10.1111/2041-210X.13310 "Feret&deBoissieu2019")
-    -   Functional diversity maps, including Richness, Evenness, and
-        Divergence as defined in [Villeger et al.
+        [Feret & de Boissieu (2019)](https://doi.org/10.1111/2041-210X.13310 "Feret&deBoissieu2019")
+    -   **Functional diversity maps**, including **Richness**, **Evenness**, and
+        **Divergence** as defined in [Villeger et al.
         (2008)](https://doi.org/10.1890/07-1206.1 "Villeger2008"), as well as 
-        Dispersion and Rao entropy. These functional diversity metrics are 
+        **Dispersion** and **Rao entropy**. These functional diversity metrics are 
         computed with the package [`fundiversity`](https://funecology.github.io/fundiversity/)
     -   Since biodivMapR v2 and v3, additional $\alpha$ and $\beta$ diversity metrics 
-        have been implemented. $\alpha$ diversity metrics include Hill index
+        have been implemented. $\alpha$ diversity metrics include **Hill index**
         (with a Hill number to be defined by the parameter `Hill_order`).
-        In addition to Bray-Curtis dissimilarity (`bray`), $\beta$ diversity 
-        metrics include Bray-Curtis turnover (`brayturn`), Jaccard dissimilarity 
-        (`jaccard`), Jaccard turnover (`jaccardturn`), Simpson dissimilarity 
-        (`simpson_diss`) and Sorensen dissimilarity (`sorensen`). Please refer 
+        In addition to **Bray-Curtis dissimilarity** (`bray`), $\beta$ diversity 
+        metrics include **Bray-Curtis turnover** (`brayturn`), **Jaccard dissimilarity**
+        (`jaccard`), **Jaccard turnover** (`jaccardturn`), **Simpson dissimilarity** 
+        (`simpson_diss`) and **Sorensen dissimilarity** (`sorensen`). Please refer 
         to the R package [`bioregion`](https://biorgeo.github.io/bioregion/articles/a3_pairwise_metrics.html#compute-pairwise-dissimilarity-metrics)
         for the definition of these $\beta$ diversity metrics
 
