@@ -69,7 +69,9 @@ init_PCoA_samples <- function(rast_sample, output_dir, Kmeans_info,
                                                beta_metrics =  beta_metrics,
                                                nb_clusters = nb_clusters,
                                                pcelim = pcelim, p = p,
-                                               future.seed = TRUE)
+                                               future.seed = TRUE,
+                                               future.chunk.size = NULL,
+                                               future.scheduling = 1)
     }))
     parallel::stopCluster(cl)
     plan(sequential)

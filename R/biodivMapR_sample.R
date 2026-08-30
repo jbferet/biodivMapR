@@ -6,7 +6,7 @@
 #' @param mask_dir character. path for masks
 #' @param output_dir character. path where to save results
 #' @param window_size numeric. number of clusters used in kmeans
-#' @param plots list. list of sf plots
+#' @param plot_names character. plot names
 #' @param nb_clusters numeric. number of clusters
 #' @param nb_samples_alpha numeric. number of samples to compute alpha diversity
 #' @param beta_metrics vector. list of beta diversity metrics
@@ -23,7 +23,7 @@
 #' @export
 
 biodivMapR_sample <- function(feature_dir, list_features, mask_dir = NULL,
-                              output_dir, window_size, plots, nb_clusters = 50,
+                              output_dir, window_size, plot_names, nb_clusters = 50,
                               nb_samples_alpha = 1e5, beta_metrics = 'bray',
                               compute_beta = TRUE, nb_samples_beta = 2e3,
                               pcelim = 0.02, nbCPU = 1, nb_iter = 10,
@@ -34,13 +34,13 @@ biodivMapR_sample <- function(feature_dir, list_features, mask_dir = NULL,
   mask_path_list <- compute_mask_iqr_tiles(feature_dir = feature_dir,
                                            feature_list = list_features,
                                            mask_dir = mask_dir,
-                                           plots = plots,
+                                           plot_names = plot_names,
                                            nbCPU = nbCPU,
                                            weightIQR = weightIQR)
   gc()
-  # check which masks exist and discard plots with no masks
+  # check which masks exist and discard plot_names with no masks
   ID_aoi <- mask_path_list$tile_exists
-  plots <- plots[ID_aoi]
+  plot_names <- ID_aoi
 
   # set default path for Kmeans_info and Beta_info
   if (is.null(Kmeans_path))
@@ -59,7 +59,7 @@ biodivMapR_sample <- function(feature_dir, list_features, mask_dir = NULL,
     samples_alpha_beta <- sample_from_plots(feature_dir = feature_dir,
                                             list_features = list_features,
                                             mask_dir = mask_dir,
-                                            plots = plots,
+                                            plot_names = plot_names,
                                             window_size = window_size,
                                             nb_samples_alpha = nb_samples_alpha,
                                             Kmeans_info = Kmeans_info,

@@ -50,10 +50,11 @@ These functional diversity metrics are computed with the package
 [`fundiversity`](https://funecology.github.io/fundiversity/)
 
 The default parameterization includes computation of `shannon` and `bray`. 
+
 Functional diversity metrics require significantly larger computational time 
 than $\alpha$ and $\beta$ diversity metrics. 
 
-__We recommend computing functional metrics for validation, or to map them over a limited spatial extent when exploring the package.__
+__Therefore, we recommend computing functional metrics for validation, or to map them over a limited spatial extent when exploring the package.__
 
 ## produce diversity maps from SPCA file
 

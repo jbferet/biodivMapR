@@ -4,12 +4,17 @@
 \alias{get_valid_pixels_from_tiles}
 \title{get valid pixels from list of tiles}
 \usage{
-get_valid_pixels_from_tiles(feature_dir, plots, nbCPU = 1, mask_dir = NULL)
+get_valid_pixels_from_tiles(
+  feature_dir,
+  plot_names,
+  nbCPU = 1,
+  mask_dir = NULL
+)
 }
 \arguments{
 \item{feature_dir}{character. directory where features to be used by biodivMapR are stored.}
 
-\item{plots}{list.}
+\item{plot_names}{character. plot names}
 
 \item{nbCPU}{numeric.}
 

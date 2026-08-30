@@ -10,7 +10,7 @@ biodivMapR_tiles(
   mask_dir = NULL,
   output_dir,
   window_size,
-  plots,
+  plot_names,
   alpha_metrics = "shannon",
   Hill_order = 1,
   beta_metrics = "bray",
@@ -34,7 +34,7 @@ biodivMapR_tiles(
 
 \item{window_size}{numeric. number of clusters used in kmeans}
 
-\item{plots}{list. list of sf plots}
+\item{plot_names}{character. plot names}
 
 \item{alpha_metrics}{character.}
 

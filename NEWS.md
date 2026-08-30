@@ -1,3 +1,13 @@
+# biodivMapR v3.2.1
+## change
+- biodivMapR_tiling now uses plot_names instead of plots (a list of vectors)
+
+## fix
+- fixed bug when samples cannot be extracted in get_plots_from_tiles : 
+  - selplot <- terra::spatSample(...)
+  - last action of sample_from_plots_beta
+
+
 # biodivMapR v3.2.0
 ## addition
 - use c++ codes to compute alpha and beta diversity metrics directly from chunks

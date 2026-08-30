@@ -2,7 +2,7 @@
 #'
 #' @param feature_dir character. directory where features to be used by biodivMapR are stored.
 #' @param list_features list.
-#' @param plots list.
+#' @param plot_names character. plot names
 #' @param nbCPU numeric.
 #' @param nb_pix_valid list.
 #' @param mask_dir character.
@@ -16,7 +16,7 @@
 #' @importFrom future.apply future_mapply
 #' @export
 
-sample_from_plots_alpha <- function(feature_dir, list_features, plots, nbCPU = 1,
+sample_from_plots_alpha <- function(feature_dir, list_features, plot_names, nbCPU = 1,
                                     nb_pix_valid, mask_dir = NULL,
                                     nb_samples_alpha = 1e5, method = 'regular'){
 
@@ -53,10 +53,10 @@ sample_from_plots_alpha <- function(feature_dir, list_features, plots, nbCPU = 1
   if (nbCPU==1){
     handlers("cli")
     suppressWarnings(with_progress({
-      p <- progressr::progressor(steps = length(plots),
+      p <- progressr::progressor(steps = length(plot_names),
                                  message = 'get samples for alpha diversity')
       selpix <- mapply(FUN = get_samples_from_tiles,
-                       plotID = names(plots), pix2sel = pix2sel,
+                       plotID = plot_names, pix2sel = pix2sel,
                        MoreArgs = list(listfiles = listfiles,
                                        feat_list = feat_list,
                                        method = method,
@@ -69,7 +69,7 @@ sample_from_plots_alpha <- function(feature_dir, list_features, plots, nbCPU = 1
     cl <- parallel::makeCluster(nbCPU2)
     with(future::plan("cluster", workers = cl), local = TRUE)
     selpix <- future.apply::future_mapply(FUN = get_samples_from_tiles,
-                                          plotID = names(plots),
+                                          plotID = plot_names,
                                           pix2sel = pix2sel,
                                           MoreArgs = list(listfiles = listfiles,
                                                           feat_list = feat_list,
@@ -77,7 +77,7 @@ sample_from_plots_alpha <- function(feature_dir, list_features, plots, nbCPU = 1
                                                           as.df = TRUE, xy = FALSE),
                                           future.seed = TRUE,
                                           future.chunk.size = NULL,
-                                          future.scheduling = structure(TRUE, ordering = "random"),
+                                          future.scheduling = 1,
                                           SIMPLIFY = FALSE)
     parallel::stopCluster(cl)
     plan(sequential)

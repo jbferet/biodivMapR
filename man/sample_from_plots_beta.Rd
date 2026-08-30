@@ -7,7 +7,7 @@
 sample_from_plots_beta(
   feature_dir,
   list_features,
-  plots,
+  plot_names,
   nb_pix_valid,
   mask_dir = NULL,
   window_size,
@@ -20,7 +20,7 @@ sample_from_plots_beta(
 
 \item{list_features}{character.}
 
-\item{plots}{list.}
+\item{plot_names}{character. plot names}
 
 \item{nb_pix_valid}{numeric.}
 

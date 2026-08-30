@@ -9,7 +9,7 @@ spectral_species_full_tiles(
   list_features,
   mask_dir = NULL,
   output_dir,
-  plots,
+  plot_names,
   nbCPU = 1,
   site_name = NULL,
   overwrite = TRUE,
@@ -25,7 +25,7 @@ spectral_species_full_tiles(
 
 \item{output_dir}{character. path where to save results}
 
-\item{plots}{list. list of sf plots}
+\item{plot_names}{character. plot names}
 
 \item{nbCPU}{numeric. Number of CPUs available}
 

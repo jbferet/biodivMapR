@@ -2,7 +2,7 @@
 #'
 #' @param feature_dir character.
 #' @param list_features character.
-#' @param plots list.
+#' @param plot_names character. plot names
 #' @param nb_pix_valid numeric.
 #' @param mask_dir character.
 #' @param nb_samples_beta numeric.
@@ -13,7 +13,7 @@
 #' @importFrom progressr progressor handlers with_progress
 #' @export
 
-sample_from_plots_beta <- function(feature_dir, list_features, plots,
+sample_from_plots_beta <- function(feature_dir, list_features, plot_names,
                                    nb_pix_valid, mask_dir = NULL, window_size,
                                    nb_samples_beta = 2e3, nbCPU = 1){
 
@@ -43,10 +43,10 @@ sample_from_plots_beta <- function(feature_dir, list_features, plots,
   if (nbCPU==1){
     progressr::handlers("cli")
     suppressWarnings(with_progress({
-      p <- progressr::progressor(steps = length(plots),
+      p <- progressr::progressor(steps = length(plot_names),
                                  message = 'get samples for beta diversity')
       samples_beta_terra <- mapply(FUN = get_plots_from_tiles,
-                                   plotID = names(plots), plots2sel = plots2sel,
+                                   plotID = plot_names, plots2sel = plots2sel,
                                    MoreArgs = list(listfiles = listfiles,
                                                    feat_list = feat_list,
                                                    window_size = window_size,
@@ -57,20 +57,23 @@ sample_from_plots_beta <- function(feature_dir, list_features, plots,
     cl <- parallel::makeCluster(nbCPU)
     with(future::plan("cluster", workers = cl), local = TRUE)
     samples_beta_terra <- future.apply::future_mapply(FUN = get_plots_from_tiles,
-                                                      plotID = names(plots),
+                                                      plotID = plot_names,
                                                       plots2sel = plots2sel,
                                                       MoreArgs = list(listfiles = listfiles,
                                                                       feat_list = feat_list,
                                                                       window_size = window_size),
                                                       future.seed = TRUE,
                                                       future.chunk.size = NULL,
-                                                      future.scheduling = structure(TRUE, ordering = "random"),
+                                                      future.scheduling = 1,
                                                       SIMPLIFY = FALSE)
     parallel::stopCluster(cl)
     plan(sequential)
   }
-  elimNull <- unlist(lapply(samples_beta_terra, function(x){which(is.null(x))}))
-  if (length(elimNull)>0)
-    samples_beta_terra <- samples_beta_terra[-as.numeric(names(elimNull))]
+  elimNull <- unlist(lapply(samples_beta_terra,
+                            function(x){which(is.null(x))}))
+  if (length(elimNull)>0){
+    elim <- match(names(elimNull), names(samples_beta_terra))
+    samples_beta_terra <- samples_beta_terra[-elim]
+  }
   return(samples_beta_terra)
 }

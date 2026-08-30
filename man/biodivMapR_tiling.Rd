@@ -11,7 +11,7 @@ biodivMapR_tiling(
   mask_dir = NULL,
   output_dir,
   window_size,
-  plots,
+  plot_names,
   nbCPU = 1,
   site_name = NULL,
   options = NULL
@@ -28,7 +28,7 @@ biodivMapR_tiling(
 
 \item{window_size}{numeric. number of clusters used in kmeans}
 
-\item{plots}{list. list of sf plots}
+\item{plot_names}{character. plot names}
 
 \item{nbCPU}{numeric. Number of CPUs available}
 

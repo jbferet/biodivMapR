@@ -117,22 +117,22 @@ get_diversity_from_plots <- function(
   windows_per_plot$win_ID <- list(SSValid$win_ID)
 
   alphabetaIdx <- lapply(X = windows_per_plot$SSwindow_perCPU,
-                               # FUN = alphabeta_window_list,
-                               FUN = alphabeta_chunk,
-                             nb_clusters = nb_clusters,
-                             alpha_metrics = alpha_metrics,
-                             beta_metrics = beta_metrics,
-                             Hill_order = Hill_order,
-                             Beta_info = Beta_info, pcelim = pcelim, 
-                             diss_output = TRUE)
+                         # FUN = alphabeta_window_list,
+                         FUN = alphabeta_chunk,
+                         nb_clusters = nb_clusters,
+                         alpha_metrics = alpha_metrics,
+                         beta_metrics = beta_metrics,
+                         Hill_order = Hill_order,
+                         Beta_info = Beta_info, pcelim = pcelim,
+                         diss_output = TRUE)
 
   # alphabetaIdx <- unlist(alphabetaIdx_CPU,recursive = FALSE)
   # rm(alphabetaIdx_CPU)
   gc()
   # 7- reshape alpha diversity metrics
   IDwindow <- unlist(windows_per_plot$IDwindow_perCPU)
-  
-  names_alpha <- c('richness_mean', 'richness_sd', 'shannon_mean', 'shannon_sd', 
+
+  names_alpha <- c('richness_mean', 'richness_sd', 'shannon_mean', 'shannon_sd',
                    'simpson_mean', 'simpson_sd', 'hill_mean', 'hill_sd')
   res_shapeChunk <- list()
   for (aind in names_alpha) {
@@ -150,8 +150,8 @@ get_diversity_from_plots <- function(
   # Attributes$hill_mean <- res_shapeChunk[[9]]
   # Attributes$hill_sd <- res_shapeChunk[[10]]
   # 8- reshape beta diversity metrics
-  names_beta <- c('pcoa_bray', 'pcoa_brayturn', 'pcoa_simpson_diss', 'pcoa_jaccard', 
-                  'pcoa_jaccardturn', 'pcoa_sorensen')   
+  names_beta <- c('pcoa_bray', 'pcoa_brayturn', 'pcoa_simpson_diss', 'pcoa_jaccard',
+                  'pcoa_jaccardturn', 'pcoa_sorensen')
   if (!is.null(Beta_info)){
     for (bind in names_beta) {
       PCoA_BC0 <- do.call(rbind,lapply(alphabetaIdx,'[[',bind))
@@ -175,7 +175,7 @@ get_diversity_from_plots <- function(
     # compute spectral species distribution for each cluster & BC dissimilarity
     SSD_BCval <- lapply(SSdist,
                         FUN = get_beta_from_ssd,
-                        beta_metrics = beta_metrics, 
+                        beta_metrics = beta_metrics,
                         nb_clusters = nb_clusters,
                         pcelim = pcelim)
 
@@ -186,7 +186,7 @@ get_diversity_from_plots <- function(
       dissimilarity_matrices[[beta]] <- matrix(data = NA, nrow = nbPlots_init, ncol = nbPlots_init)
       dissimilarity_matrices[[beta]][IDwindow,IDwindow] <- MatBC
       MatBCdist <- stats::as.dist(MatBC, diag = FALSE, upper = FALSE)
-      colnames(dissimilarity_matrices[[beta]]) <- 
+      colnames(dissimilarity_matrices[[beta]]) <-
         rownames(dissimilarity_matrices[[beta]]) <- Attributes$ID_biodivMapR
       BetaPCO <- pco(MatBCdist, k = dimPCO)
       PCoA_BC <- matrix(data = NA,nrow = nbPlots_init, ncol = dimPCO)
@@ -194,7 +194,7 @@ get_diversity_from_plots <- function(
       Attributes[[paste0(beta, '_plot_pcoa_1')]] <- PCoA_BC[,1]
       Attributes[[paste0(beta, '_plot_pcoa_2')]] <- PCoA_BC[,2]
       Attributes[[paste0(beta, '_plot_pcoa_3')]] <- PCoA_BC[,3]
-      
+
     }
   }
   if (!is.null(fd_metrics)) {

@@ -53,7 +53,7 @@ biodivMapR_full_tiles <- function(
                            mask_dir = mask_dir,
                            output_dir = output_dir,
                            window_size = window_size,
-                           plots = plots,
+                           plot_names = names(plots),
                            nbCPU = nbCPU,
                            site_name = site_name,
                            options = options))

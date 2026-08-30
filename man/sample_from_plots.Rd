@@ -7,7 +7,7 @@
 sample_from_plots(
   feature_dir,
   list_features,
-  plots,
+  plot_names,
   mask_dir = NULL,
   window_size,
   nbCPU = 1,
@@ -22,7 +22,7 @@ sample_from_plots(
 
 \item{list_features}{character.}
 
-\item{plots}{list.}
+\item{plot_names}{character. plot names}
 
 \item{mask_dir}{character.}
 

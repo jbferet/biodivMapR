@@ -1,7 +1,7 @@
 #' get valid pixels from list of tiles
 #'
 #' @param feature_dir character. directory where features to be used by biodivMapR are stored.
-#' @param plots list.
+#' @param plot_names character. plot names
 #' @param nbCPU numeric.
 #' @param mask_dir character.
 #'
@@ -11,7 +11,7 @@
 
 #' @export
 
-get_valid_pixels_from_tiles <- function(feature_dir, plots, nbCPU = 1,
+get_valid_pixels_from_tiles <- function(feature_dir, plot_names, nbCPU = 1,
                                         mask_dir = NULL){
 
   nb_pix_valid <- NULL
@@ -22,10 +22,10 @@ get_valid_pixels_from_tiles <- function(feature_dir, plots, nbCPU = 1,
   # get number of pixels per tile
   handlers("cli")
   suppressWarnings(with_progress({
-    p <- progressr::progressor(steps = length(plots),
+    p <- progressr::progressor(steps = length(plot_names),
                                message = 'get valid pixels from tiles')
-    nb_pix_valid <- lapply(X = names(plots), FUN = get_valid_pixels,
+    nb_pix_valid <- lapply(X = plot_names, FUN = get_valid_pixels,
                            listfiles = listfiles, p = p)}))
-  names(nb_pix_valid) <- names(plots)
+  names(nb_pix_valid) <- plot_names
   return(nb_pix_valid)
 }

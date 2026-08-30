@@ -11,7 +11,7 @@ biodivMapR_sample(
   mask_dir = NULL,
   output_dir,
   window_size,
-  plots,
+  plot_names,
   nb_clusters = 50,
   nb_samples_alpha = 1e+05,
   beta_metrics = "bray",
@@ -36,7 +36,7 @@ biodivMapR_sample(
 
 \item{window_size}{numeric. number of clusters used in kmeans}
 
-\item{plots}{list. list of sf plots}
+\item{plot_names}{character. plot names}
 
 \item{nb_clusters}{numeric. number of clusters}
 

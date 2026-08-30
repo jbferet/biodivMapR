@@ -5,10 +5,10 @@
 #' quartile_3+weightIQR x (quartile_3-quartile_1)
 #' are then considered as outliers
 #'
-#' @param feature_dir character.
-#' @param feature_list character.
+#' @param feature_dir character. directory where all individual features are stored
+#' @param feature_list character. list of features. files are expected to end with '_feature.'
 #' @param mask_dir character.
-#' @param plots list.
+#' @param plot_names character. plot names
 #' @param weightIQR numeric.
 #' @param filetype character.
 #' @param nbCPU numeric.
@@ -21,23 +21,24 @@
 #' @importFrom parallel makeCluster stopCluster
 #' @export
 #'
-compute_mask_iqr_tiles <- function(feature_dir, feature_list, mask_dir, plots,
+compute_mask_iqr_tiles <- function(feature_dir, feature_list, mask_dir, plot_names,
                                    weightIQR = 4, filetype = 'GTiff', nbCPU = 1,
                                    nb_pixstats = 5e6){
 
-  maxCPU <- length(plots)
+  dir.create(path = mask_dir, showWarnings = F, recursive = T)
+  maxCPU <- length(plot_names)
   if (nbCPU > maxCPU)
     nbCPU <-  maxCPU
 
   process_mask <- TRUE
   # first check missing masks
-  mask_path <- file.path(mask_dir, paste0('mask_', names(plots), '_IQR.tiff'))
-  tile_exists <- names(plots)[which(file.exists(mask_path))]
-  mask_missing0 <- names(plots)[which(!file.exists(mask_path))]
-  mask_missing <- paste0('_', names(plots)[which(!file.exists(mask_path))], '_')
+  mask_path <- file.path(mask_dir, paste0('mask_', plot_names, '_IQR.tiff'))
+  tile_exists <- plot_names[which(file.exists(mask_path))]
+  mask_missing0 <- plot_names[which(!file.exists(mask_path))]
+  mask_missing <- paste0('_', plot_names[which(!file.exists(mask_path))], '_')
   if (length(mask_missing0)==0){
     process_mask <- FALSE
-    tile_exists <- names(plots)[which(file.exists(mask_path))]
+    tile_exists <- plot_names[which(file.exists(mask_path))]
   } else {
     # check if features also exist
     feature_list_extended <- paste0('_',feature_list, '.')
@@ -68,9 +69,9 @@ compute_mask_iqr_tiles <- function(feature_dir, feature_list, mask_dir, plots,
     # if (nbCPU==1){
     handlers("cli")
     suppressWarnings(with_progress({
-      p <- progressr::progressor(steps = length(plots),
+      p <- progressr::progressor(steps = length(plot_names),
                                  message = 'get valid pixels from tiles')
-      nb_pix_valid <- lapply(X = names(plots), FUN = get_valid_pixels,
+      nb_pix_valid <- lapply(X = plot_names, FUN = get_valid_pixels,
                              listfiles = listfiles, p = p)}))
     # } else {
     #   message('get valid pixels from tiles')
@@ -96,10 +97,10 @@ compute_mask_iqr_tiles <- function(feature_dir, feature_list, mask_dir, plots,
     if (nbCPU==1){
       handlers("cli")
       suppressWarnings(with_progress({
-        p <- progressr::progressor(steps = length(plots),
+        p <- progressr::progressor(steps = length(plot_names),
                                    message = 'compute stats')
         selpix <- mapply(FUN = get_samples_from_tiles,
-                         plotID = names(plots), pix2sel = pix2sel,
+                         plotID = plot_names, pix2sel = pix2sel,
                          MoreArgs = list(listfiles = listfiles,
                                          feat_list = feature_list,
                                          as.df = TRUE,
@@ -110,7 +111,7 @@ compute_mask_iqr_tiles <- function(feature_dir, feature_list, mask_dir, plots,
       cl <- parallel::makeCluster(nbCPU)
       with(plan("cluster", workers = cl), local = TRUE)
       selpix <- future.apply::future_mapply(FUN = get_samples_from_tiles,
-                                            plotID = names(plots),
+                                            plotID = plot_names,
                                             pix2sel = pix2sel,
                                             MoreArgs = list(listfiles = listfiles,
                                                             feat_list = feature_list,
@@ -133,9 +134,9 @@ compute_mask_iqr_tiles <- function(feature_dir, feature_list, mask_dir, plots,
     handlers("cli")
     suppressWarnings(with_progress({
 
-      p <- progressr::progressor(steps = length(plots),
+      p <- progressr::progressor(steps = length(plot_names),
                                  message = 'update mask')
-      mask_path <- lapply(X = names(plots),
+      mask_path <- lapply(X = plot_names,
                           FUN = update_mask_from_tiles,
                           listfiles = listfiles,
                           iqr_si = iqr_si,
@@ -155,7 +156,7 @@ compute_mask_iqr_tiles <- function(feature_dir, feature_list, mask_dir, plots,
     #   plan(sequential)
     # }
     notnullMask <- which(!unlist(lapply(X = mask_path, FUN = is.null)))
-    tile_exists <- names(plots)[notnullMask]
+    tile_exists <- plot_names[notnullMask]
     mask_path <- mask_path[notnullMask]
   }
   mask_path_list <- list('mask_path' = mask_path,

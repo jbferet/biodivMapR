@@ -5,7 +5,7 @@
 #' @param mask_dir character. path for masks
 #' @param output_dir character. path where to save results
 #' @param window_size numeric. number of clusters used in kmeans
-#' @param plots list. list of sf plots
+#' @param plot_names character. plot names
 #' @param alpha_metrics character.
 #' @param Hill_order numeric.
 #' @param beta_metrics character.
@@ -25,7 +25,7 @@
 #' @export
 
 biodivMapR_tiles <- function(feature_dir, list_features, mask_dir = NULL,
-                             output_dir, window_size, plots,
+                             output_dir, window_size, plot_names,
                              alpha_metrics = 'shannon', Hill_order = 1,
                              beta_metrics = 'bray', fd_metrics = NULL, nbCPU = 1,
                              pcelim = 0.02, maxRows = 1200, moving_window = FALSE,
@@ -35,12 +35,12 @@ biodivMapR_tiles <- function(feature_dir, list_features, mask_dir = NULL,
   mask_path_list <- compute_mask_iqr_tiles(feature_dir = feature_dir,
                                            feature_list = list_features,
                                            mask_dir = mask_dir,
-                                           plots = plots,
+                                           plot_names = plot_names,
                                            nbCPU = nbCPU)
 
   # check which masks exist and discard plots with no masks
   ID_aoi <- mask_path_list$tile_exists
-  plots <- plots[ID_aoi]
+  plot_names <- plot_names[ID_aoi]
 
   # load kmeans and beta info if exist
   Kmeans_path <- file.path(output_dir, 'Kmeans_info.RData')

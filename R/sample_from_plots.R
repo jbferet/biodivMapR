@@ -2,7 +2,7 @@
 #'
 #' @param feature_dir character.
 #' @param list_features character.
-#' @param plots list.
+#' @param plot_names character. plot names
 #' @param mask_dir character.
 #' @param window_size numeric.
 #' @param nbCPU numeric.
@@ -14,19 +14,19 @@
 #' @return samples_alpha_beta
 #' @export
 
-sample_from_plots <- function(feature_dir, list_features, plots, mask_dir = NULL,
+sample_from_plots <- function(feature_dir, list_features, plot_names, mask_dir = NULL,
                               window_size, nbCPU = 1, Kmeans_info = NULL,
                               compute_beta = TRUE, nb_samples_alpha = 1e5,
                               nb_samples_beta = 2e3){
 
-  nb_pix_valid <- get_valid_pixels_from_tiles(feature_dir, plots, nbCPU = 1,
+  nb_pix_valid <- get_valid_pixels_from_tiles(feature_dir, plot_names, nbCPU = 1,
                                             mask_dir = mask_dir)
   samples_alpha_terra <- samples_beta_terra <- NULL
   # sample the plot network for alpha diversity
   if (is.null(Kmeans_info))
     samples_alpha_terra <- sample_from_plots_alpha(feature_dir = feature_dir,
                                                    list_features = list_features,
-                                                   plots = plots,
+                                                   plot_names = plot_names,
                                                    nb_pix_valid = nb_pix_valid,
                                                    mask_dir = mask_dir,
                                                    nb_samples_alpha = nb_samples_alpha,
@@ -36,7 +36,7 @@ sample_from_plots <- function(feature_dir, list_features, plots, mask_dir = NULL
   if (compute_beta){
     samples_beta_terra <- sample_from_plots_beta(feature_dir = feature_dir,
                                                  list_features = list_features,
-                                                 plots = plots,
+                                                 plot_names = plot_names,
                                                  window_size = window_size,
                                                  nb_pix_valid = nb_pix_valid,
                                                  mask_dir = mask_dir,
@@ -44,7 +44,7 @@ sample_from_plots <- function(feature_dir, list_features, plots, mask_dir = NULL
                                                  nbCPU = nbCPU)
     # use a unique ID per plot
     idx <- 0
-    for (i in names(plots)){
+    for (i in plot_names){
       if (!is.null(samples_beta_terra[[i]])){
         for (j in seq_len(length(samples_beta_terra[[i]]))){
           if (!is.null(samples_beta_terra[[i]][[j]])){

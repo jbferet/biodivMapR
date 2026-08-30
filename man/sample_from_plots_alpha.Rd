@@ -7,7 +7,7 @@
 sample_from_plots_alpha(
   feature_dir,
   list_features,
-  plots,
+  plot_names,
   nbCPU = 1,
   nb_pix_valid,
   mask_dir = NULL,
@@ -20,7 +20,7 @@ sample_from_plots_alpha(
 
 \item{list_features}{list.}
 
-\item{plots}{list.}
+\item{plot_names}{character. plot names}
 
 \item{nbCPU}{numeric.}
 

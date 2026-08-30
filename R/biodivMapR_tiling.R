@@ -6,7 +6,7 @@
 #' @param mask_dir character. path for masks
 #' @param output_dir character. path where to save results
 #' @param window_size numeric. number of clusters used in kmeans
-#' @param plots list. list of sf plots
+#' @param plot_names character. plot names
 #' @param nbCPU numeric. Number of CPUs available
 #' @param site_name character. name for the output files
 #' @param options list. including
@@ -31,7 +31,7 @@
 #' @export
 
 biodivMapR_tiling <- function(feature_dir, list_features, mask_dir = NULL,
-                              output_dir, window_size, plots, nbCPU = 1,
+                              output_dir, window_size, plot_names, nbCPU = 1,
                               site_name = NULL, options = NULL){
 
   # define options
@@ -53,8 +53,8 @@ biodivMapR_tiling <- function(feature_dir, list_features, mask_dir = NULL,
   Kmeans_path <- options$Kmeans_path
   Beta_path <- options$Beta_path
 
-  # adjust number of clusters if less than number of plots
-  maxCPU <- length(plots)
+  # adjust number of clusters if less than number of plot_names
+  maxCPU <- length(plot_names)
   if (nbCPU > maxCPU)
     nbCPU <-  maxCPU
   if (nbCPU > parallel::detectCores(logical = FALSE))
@@ -66,7 +66,7 @@ biodivMapR_tiling <- function(feature_dir, list_features, mask_dir = NULL,
                                mask_dir = mask_dir,
                                output_dir = output_dir,
                                window_size = window_size,
-                               plots = plots,
+                               plot_names = plot_names,
                                nb_clusters = nb_clusters,
                                nb_samples_alpha = nb_samples_alpha,
                                beta_metrics = beta_metrics,

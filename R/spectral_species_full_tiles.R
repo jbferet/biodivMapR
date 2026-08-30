@@ -4,7 +4,7 @@
 #' @param list_features character. list of features
 #' @param mask_dir character. path for masks
 #' @param output_dir character. path where to save results
-#' @param plots list. list of sf plots
+#' @param plot_names character. plot names
 #' @param nbCPU numeric. Number of CPUs available
 #' @param site_name character. name for the output files
 #' @param overwrite boolean.
@@ -23,7 +23,7 @@
 
 spectral_species_full_tiles <- function(feature_dir, list_features,
                                         mask_dir = NULL, output_dir,
-                                        plots, nbCPU = 1, site_name = NULL,
+                                        plot_names, nbCPU = 1, site_name = NULL,
                                         overwrite = TRUE, options = NULL){
   nb_iter <- 1
   # define options
@@ -39,12 +39,12 @@ spectral_species_full_tiles <- function(feature_dir, list_features,
   mask_path_list <- compute_mask_iqr_tiles(feature_dir = feature_dir,
                                            feature_list = list_features,
                                            mask_dir = mask_dir,
-                                           plots = plots,
+                                           plot_names = plot_names,
                                            nbCPU = nbCPU,
                                            weightIQR = weightIQR)
 
   # adjust number of clusters if less than number of plots
-  maxCPU <- length(plots)
+  maxCPU <- length(plot_names)
   if (nbCPU > maxCPU)
     nbCPU <-  maxCPU
   if (nbCPU > parallel::detectCores(logical = FALSE))
@@ -54,7 +54,7 @@ spectral_species_full_tiles <- function(feature_dir, list_features,
   gc()
   # check which masks exist and discard plots with no masks
   ID_aoi <- mask_path_list$tile_exists
-  plots <- plots[ID_aoi]
+  plot_names <- plot_names[ID_aoi]
   # set default path for Kmeans_info and Beta_info
   if (is.null(Kmeans_path))
     Kmeans_path <- file.path(output_dir, 'Kmeans_info.RData')
@@ -65,12 +65,14 @@ spectral_species_full_tiles <- function(feature_dir, list_features,
   # compute kmeans and beta info if exist
   if (!file.exists(Kmeans_path)){
     # define sampling points for alpha and beta diversity mapping
-    nb_pix_valid <- get_valid_pixels_from_tiles(feature_dir, plots, nbCPU = 1,
+    nb_pix_valid <- get_valid_pixels_from_tiles(feature_dir = feature_dir,
+                                                plot_names = plot_names,
+                                                nbCPU = 1,
                                                 mask_dir = mask_dir)
     # sample the plot network for alpha diversity
     samples_alpha <- sample_from_plots_alpha(feature_dir = feature_dir,
                                              list_features = list_features,
-                                             plots = plots,
+                                             plot_names = plot_names,
                                              nb_pix_valid = nb_pix_valid,
                                              mask_dir = mask_dir,
                                              nb_samples_alpha = nb_samples_alpha,
@@ -103,9 +105,9 @@ spectral_species_full_tiles <- function(feature_dir, list_features,
                                              Kmeans_info = Kmeans_info,
                                              output_dir = output_dir,
                                              overwrite = overwrite, p = p,
-                                             future.seed = TRUE, future.chunk.size = NULL,
-                                             future.scheduling = structure(TRUE,
-                                                                           ordering = "random"))
+                                             future.seed = TRUE,
+                                             future.chunk.size = NULL,
+                                             future.scheduling = 1)
     })
     parallel::stopCluster(cl)
     plan(sequential)
