@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.2.1</span>
       </span>
     </div>
 
@@ -78,7 +78,12 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_valid_pixels_from_tiles</span><span class="op">(</span><span class="va">feature_dir</span>, <span class="va">plots</span>, nbCPU <span class="op">=</span> <span class="fl">1</span>, mask_dir <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_valid_pixels_from_tiles</span><span class="op">(</span></span>
+<span>  <span class="va">feature_dir</span>,</span>
+<span>  <span class="va">plot_names</span>,</span>
+<span>  nbCPU <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  mask_dir <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -89,8 +94,8 @@
 <dd><p>character. directory where features to be used by biodivMapR are stored.</p></dd>
 
 
-<dt id="arg-plots">plots<a class="anchor" aria-label="anchor" href="#arg-plots"></a></dt>
-<dd><p>list.</p></dd>
+<dt id="arg-plot-names">plot_names<a class="anchor" aria-label="anchor" href="#arg-plot-names"></a></dt>
+<dd><p>character. plot names</p></dd>
 
 
 <dt id="arg-nbcpu">nbCPU<a class="anchor" aria-label="anchor" href="#arg-nbcpu"></a></dt>

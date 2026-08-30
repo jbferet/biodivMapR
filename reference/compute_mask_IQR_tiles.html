@@ -22,7 +22,7 @@ are then considered as outliers"><meta property="og:image" content="/logo.png"><
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodivMapR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.2.1</span>
       </span>
     </div>
 
@@ -74,7 +74,7 @@ are then considered as outliers"><meta property="og:image" content="/logo.png"><
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>computes a mask for a collection of tiles based on interquartile range filtering interquartile is computed for all data included in teh collection samples out of a range defined by quartile_1-weightIQR x (quartile_3 - quartile_1) and quartile_3+weightIQR x (quartile_3-quartile_1) are then considered as outliers</h1>
-    <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/R/compute_mask_iqr_tiles.R" class="external-link"><code>R/compute_mask_iqr_tiles.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/R/compute_mask_IQR_tiles.R" class="external-link"><code>R/compute_mask_IQR_tiles.R</code></a></small>
     <div class="hidden name"><code>compute_mask_iqr_tiles.Rd</code></div>
     </div>
 
@@ -92,7 +92,7 @@ are then considered as outliers</p>
 <span>  <span class="va">feature_dir</span>,</span>
 <span>  <span class="va">feature_list</span>,</span>
 <span>  <span class="va">mask_dir</span>,</span>
-<span>  <span class="va">plots</span>,</span>
+<span>  <span class="va">plot_names</span>,</span>
 <span>  weightIQR <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>  filetype <span class="op">=</span> <span class="st">"GTiff"</span>,</span>
 <span>  nbCPU <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -105,19 +105,19 @@ are then considered as outliers</p>
 
 
 <dl><dt id="arg-feature-dir">feature_dir<a class="anchor" aria-label="anchor" href="#arg-feature-dir"></a></dt>
-<dd><p>character.</p></dd>
+<dd><p>character. directory where all individual features are stored</p></dd>
 
 
 <dt id="arg-feature-list">feature_list<a class="anchor" aria-label="anchor" href="#arg-feature-list"></a></dt>
-<dd><p>character.</p></dd>
+<dd><p>character. list of features. files are expected to end with '_feature.'</p></dd>
 
 
 <dt id="arg-mask-dir">mask_dir<a class="anchor" aria-label="anchor" href="#arg-mask-dir"></a></dt>
 <dd><p>character.</p></dd>
 
 
-<dt id="arg-plots">plots<a class="anchor" aria-label="anchor" href="#arg-plots"></a></dt>
-<dd><p>list.</p></dd>
+<dt id="arg-plot-names">plot_names<a class="anchor" aria-label="anchor" href="#arg-plot-names"></a></dt>
+<dd><p>character. plot names</p></dd>
 
 
 <dt id="arg-weightiqr">weightIQR<a class="anchor" aria-label="anchor" href="#arg-weightiqr"></a></dt>
