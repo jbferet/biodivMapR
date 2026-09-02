@@ -1,3 +1,7 @@
+# biodivMapR v3.2.2
+## fix
+- fix bug occurring in get_samples_from_tiles when path for tileSI includes feature names
+
 # biodivMapR v3.2.1
 ## change
 - biodivMapR_tiling now uses plot_names instead of plots (a list of vectors)

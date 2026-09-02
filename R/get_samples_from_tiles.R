@@ -21,7 +21,7 @@ get_samples_from_tiles <- function(plotID, pix2sel, listfiles, feat_list,
                                    method = 'regular', p = NULL){
   plotID <- paste0('_',plotID,'_')
   tileSI <- listfiles[grepl(x = basename(listfiles), pattern = plotID)]
-  tileSI <- tileSI[unlist(lapply(X = feat_list, FUN = grep, tileSI))]
+  tileSI <- tileSI[unlist(lapply(X = feat_list, FUN = grep, basename(tileSI)))]
   # get statistics on data availability
   selpix <- NULL
   if (length(tileSI) > 0 & pix2sel >0){
