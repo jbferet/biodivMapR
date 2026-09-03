@@ -1,6 +1,6 @@
 # biodivMapR v3.2.2
 ## fix
-- fix bug occurring in get_samples_from_tiles when path for tileSI includes feature names
+- fix bug occurring in get_samples_from_tiles and get_plots_from_tiles when path for tileSI includes feature names
 
 # biodivMapR v3.2.1
 ## change
