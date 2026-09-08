@@ -18,19 +18,17 @@
 #' @param min_sun numeric. minimum proportion of sunlit pixels
 #' @param filetype character. gdal driver name
 #' @param moving_window boolean. should process be moving window (much longer)
+#' @param buffer_mw boolean. should buffer be applied on moving windows?
 #'
 #' @return none
 #' @export
 
-run_biodivMapR <- function(input_raster_path, input_mask_path = NULL,
-                           Kmeans_info, Beta_info,
-                           output_dir, output_raster_name,
-                           selected_bands = NULL, window_size,
-                           alpha_metrics = 'shannon', Hill_order = 1,
-                           beta_metrics = 'bray', fd_metrics = NULL, pcelim = 0.02,
-                           maxRows = NULL, nbCPU = 1, min_sun = 0.25,
-                           filetype = 'GTiff',
-                           moving_window = FALSE){
+run_biodivMapR <- function(
+    input_raster_path, input_mask_path = NULL, Kmeans_info, Beta_info,
+    output_dir, output_raster_name, selected_bands = NULL, window_size,
+    alpha_metrics = 'shannon', Hill_order = 1, beta_metrics = 'bray',
+    fd_metrics = NULL, pcelim = 0.02, maxRows = NULL, nbCPU = 1, min_sun = 0.25,
+    filetype = 'GTiff', moving_window = FALSE, buffer_mw = TRUE){
 
   # read input rasters
   if (inherits(x = input_raster_path, what = 'character'))
@@ -94,7 +92,8 @@ run_biodivMapR <- function(input_raster_path, input_mask_path = NULL,
                                              output_dir = output_dir,
                                              output_raster_name = output_raster_name,
                                              window_size = window_size,
-                                             filetype = filetype)
+                                             filetype = filetype,
+                                             buffer_mw = buffer_mw)
   }
   return()
 }

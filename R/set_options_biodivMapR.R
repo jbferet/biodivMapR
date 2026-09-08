@@ -120,6 +120,8 @@ set_options_biodivMapR <- function(fun, options = NULL){
       options$mosaic_output <- TRUE
     if (is.null(options$weightIQR))
       options$weightIQR <- 4
+    if (is.null(options$buffer_mw))
+      options$buffer_mw <- TRUE
   }
   if (fun == 'biodivMapR_functional_full_tiles'){
     if (is.null(options$nb_clusters))

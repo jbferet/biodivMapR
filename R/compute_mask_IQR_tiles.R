@@ -49,9 +49,18 @@ compute_mask_iqr_tiles <- function(feature_dir, feature_list, mask_dir, plot_nam
     names(features_files) <- feature_list
     feat_exists <- list()
     # which features exist
+    if (length(unlist(features_files))==0){
+      message('no files with pattern corresponding to list_features found in feature_dir')
+      message('process will stop')
+      stop()
+    }
     for (feat in feature_list)
       feat_exists[[feat]] <- unlist(lapply(X = mask_missing,
                                            FUN = grep, x = features_files[[feat]]))
+    # fix 2026-09-08 no reason to set process_mask <- FALSE if features do not exist
+    # here, we assume that if masks are not computed, but features are computed,
+    # if (length(unlist(feat_exists))==0 & !length(unlist(features_files))==0)
+    #   process_mask <- FALSE
     if (length(unlist(feat_exists))==0)
       process_mask <- FALSE
   }

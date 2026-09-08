@@ -22,7 +22,8 @@ run_biodivMapR(
   nbCPU = 1,
   min_sun = 0.25,
   filetype = "GTiff",
-  moving_window = FALSE
+  moving_window = FALSE,
+  buffer_mw = TRUE
 )
 }
 \arguments{
@@ -61,6 +62,8 @@ run_biodivMapR(
 \item{filetype}{character. gdal driver name}
 
 \item{moving_window}{boolean. should process be moving window (much longer)}
+
+\item{buffer_mw}{boolean. should buffer be applied on moving windows?}
 }
 \value{
 none

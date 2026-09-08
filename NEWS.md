@@ -1,3 +1,8 @@
+# biodivMapR v3.2.3
+## addition
+- add boolean 'buffer_mw' in set_options_biodivMapR('biodivMapR_tiling')  to control application of a buffer on raster resulting from moving window process 
+- add a message and stop process when biodivMapR_tiling cannot find any raster files with pattern related to features in the file name
+
 # biodivMapR v3.2.2
 ## fix
 - fix bug occurring in get_samples_from_tiles and get_plots_from_tiles when path for tileSI includes feature names

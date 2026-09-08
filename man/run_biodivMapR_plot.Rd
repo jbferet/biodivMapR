@@ -25,6 +25,7 @@ run_biodivMapR_plot(
   min_sun = 0.25,
   filetype = "GTiff",
   moving_window = FALSE,
+  buffer_mw = TRUE,
   p = NULL,
   ...
 )
@@ -67,6 +68,8 @@ run_biodivMapR_plot(
 \item{filetype}{character. gdal driver for output raster}
 
 \item{moving_window}{boolean. should process be moving window (much longer)}
+
+\item{buffer_mw}{boolean. should buffer be applied on moving windows?}
 
 \item{p}{list. progressbar}
 

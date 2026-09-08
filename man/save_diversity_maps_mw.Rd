@@ -16,7 +16,8 @@ save_diversity_maps_mw(
   output_dir,
   output_raster_name = NULL,
   window_size,
-  filetype = "GTiff"
+  filetype = "GTiff",
+  buffer_mw = TRUE
 )
 }
 \arguments{
@@ -43,6 +44,8 @@ save_diversity_maps_mw(
 \item{window_size}{numeric. window size for square plots}
 
 \item{filetype}{character. GDAL driver}
+
+\item{buffer_mw}{boolean. should buffer be applied on moving windows?}
 }
 \value{
 diversity_maps character. path for diversity maps

@@ -20,6 +20,7 @@
 #' @param min_sun numeric. minimum amount of sunlit pixels in the plots
 #' @param filetype character. gdal driver for output raster
 #' @param moving_window boolean. should process be moving window (much longer)
+#' @param buffer_mw boolean. should buffer be applied on moving windows?
 #' @param p list. progressbar
 #' @param ... list. additional parameters
 #'
@@ -34,7 +35,7 @@ run_biodivMapR_plot <- function(id, feature_dir, mask_dir = NULL,
                                 fd_metrics = NULL, pcelim = 0.02,
                                 maxRows = NULL, nbCPU = 1, min_sun = 0.25,
                                 filetype = 'GTiff', moving_window = FALSE,
-                                p = NULL, ...){
+                                buffer_mw = TRUE, p = NULL, ...){
 
   # betanames <- paste0('beta_',id)
   alphanames <- alphanames_mean <- betanames <- functionalname <- NULL
@@ -99,7 +100,8 @@ run_biodivMapR_plot <- function(id, feature_dir, mask_dir = NULL,
                        alpha_metrics = alpha_metrics, Hill_order = Hill_order,
                        beta_metrics = beta_metrics, fd_metrics = fd_metrics, pcelim = pcelim,
                        maxRows = maxRows, nbCPU = nbCPU, min_sun = min_sun,
-                       filetype = filetype, moving_window = moving_window)
+                       filetype = filetype, moving_window = moving_window,
+                       buffer_mw = buffer_mw)
     }
   }
   if (!is.null(p))
