@@ -6,11 +6,18 @@
 #' @param alpha_metrics list. alpha diversity metrics
 #' @param beta_metrics list. beta diversity metrics
 #' @param Hill_order numeric. Hill order
+#' @param nbCPU numeric. Number of CPUs available
 #'
 #' @return list of alpha and beta diversity metrics corresponding to ssd
+#' @import cli
+#' @importFrom future plan multisession sequential
+#' @importFrom future.apply future_lapply
+#' @importFrom parallel makeCluster stopCluster
+#' @importFrom dplyr filter %>%
 #' @export
 
-alphabeta_window_sdm <- function(ssd, Beta_info, alpha_metrics, beta_metrics, Hill_order = 1){
+alphabeta_window_sdm <- function(ssd, Beta_info, alpha_metrics, beta_metrics,
+                                 Hill_order = 1, nbCPU = 1){
   # get ALPHA diversity
   nb_pix_sunlit <- length(ssd[[1]])
   message('compute alpha diversity')
@@ -61,16 +68,33 @@ alphabeta_window_sdm <- function(ssd, Beta_info, alpha_metrics, beta_metrics, Hi
   }
 
   message('compute beta diversity')
-  pcoa_diss <- if (requireNamespace("pbapply", quietly = TRUE)) {
-    pbapply::pblapply(X = ssd,
-                      FUN = get_pcoa_from_bc,
-                      Beta_info = Beta_info,
-                      beta_metrics = beta_metrics)
+  if (nbCPU == 1){
+    pcoa_diss <- if (requireNamespace("pbapply", quietly = TRUE)) {
+      pbapply::pblapply(X = ssd,
+                        FUN = get_pcoa_from_bc,
+                        Beta_info = Beta_info,
+                        beta_metrics = beta_metrics)
+    } else {
+      lapply(X = ssd,
+             FUN = get_pcoa_from_bc,
+             Beta_info = Beta_info,
+             beta_metrics = beta_metrics)
+    }
   } else {
-    lapply(X = ssd,
-           FUN = get_pcoa_from_bc,
-           Beta_info = Beta_info,
-           beta_metrics = beta_metrics)
+    cl <- parallel::makeCluster(nbCPU)
+    parallel::clusterEvalQ(cl, {library(biodivMapR)})
+    with(plan("cluster", workers = cl), local = TRUE)
+    funct <- future.apply::future_lapply
+    future.seed = TRUE
+    pcoa_diss <- funct(X = ssd,
+                       FUN = get_pcoa_from_bc,
+                       Beta_info = Beta_info,
+                       beta_metrics = beta_metrics,
+                       future.seed = future.seed,
+                       future.chunk.size = NULL,
+                       future.scheduling = 1)
+    parallel::stopCluster(cl)
+    plan(sequential)
   }
   # for (i in seq_along(ssd)){
   #   mat_bc <- list('mat1' = matrix(ssd[[i]], nrow = 1),
@@ -83,10 +107,10 @@ alphabeta_window_sdm <- function(ssd, Beta_info, alpha_metrics, beta_metrics, Hi
               'shannon' = unlist(lapply(alpha, '[[', 'shannon')),
               'simpson' = unlist(lapply(alpha, '[[', 'simpson')),
               'hill' = unlist(lapply(alpha, '[[', 'hill')),
-              'pcoa_bray' = pcoa_diss[['bray']],
-              'pcoa_brayturn' = pcoa_diss[['brayturn']],
-              'pcoa_simpson_diss' = pcoa_diss[['simpson_diss']],
-              'pcoa_jaccard' = pcoa_diss[['jaccard']],
-              'pcoa_jaccardturn' = pcoa_diss[['jaccardturn']],
-              'pcoa_sorensen' = pcoa_diss[['sorensen']]))
+              'pcoa_bray' = do.call(rbind,lapply(pcoa_diss, '[[', 'bray')),
+              'pcoa_brayturn' = do.call(rbind,lapply(pcoa_diss, '[[', 'brayturn')),
+              'pcoa_simpson_diss' = do.call(rbind,lapply(pcoa_diss, '[[', 'simpson_diss')),
+              'pcoa_jaccard' = do.call(rbind,lapply(pcoa_diss, '[[', 'jaccard')),
+              'pcoa_jaccardturn' = do.call(rbind,lapply(pcoa_diss, '[[', 'jaccardturn')),
+              'pcoa_sorensen' = do.call(rbind,lapply(pcoa_diss, '[[', 'sorensen'))))
 }

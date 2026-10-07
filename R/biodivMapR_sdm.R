@@ -7,6 +7,7 @@
 #' @param alpha_metrics character. list of alpha metrics
 #' @param beta_metrics character. list of beta metrics
 #' @param nb_samples_beta numeric. number of samples to compute beta diversity
+#' @param nbCPU numeric. Number of CPUs available
 #'
 #' @return diversity_maps_ground
 #' @importFrom terra rast spatSample values extract writeRaster
@@ -16,7 +17,8 @@ biodivMapR_sdm <- function(input_raster_path, output_dir,
                            input_mask_path = NULL, site_name = NULL,
                            alpha_metrics = 'shannon',
                            beta_metrics = 'bray',
-                           nb_samples_beta = 1000){
+                           nb_samples_beta = 1000,
+                           nbCPU = 1){
 
   # define all alpha metrics
   input_rast <- terra::rast(input_raster_path)
@@ -48,9 +50,10 @@ biodivMapR_sdm <- function(input_raster_path, output_dir,
   # compute spectral dissimilarity
   mat_diss <- compute_dissimilarity(A = ssd, B = ssd,
                                   beta_metrics = beta_metrics)
+  beta_pco <- list()
   for (beta in beta_metrics){
     mat_diss_dist <- stats::as.dist(mat_diss[[beta]], diag = FALSE, upper = FALSE)
-    beta_pco <- pco(mat_diss_dist, k = 3)
+    beta_pco[[beta]] <- pco(mat_diss_dist, k = 3)
     Beta_info <- list('ssd' = ssd, 'mat_diss' = mat_diss, 'beta_pco' = beta_pco)
   }
 
@@ -75,17 +78,20 @@ biodivMapR_sdm <- function(input_raster_path, output_dir,
                                     Beta_info = Beta_info,
                                     alpha_metrics = alpha_metrics,
                                     beta_metrics = beta_metrics,
-                                    Hill_order = 1)
+                                    Hill_order = 1,
+                                    nbCPU = nbCPU)
   cell_order <- which(extracted_mask==1)
 
   # save diversity maps
   diversity_maps_ground <- list()
   output_rast_tmp <- NA*input_rast[[1]]
   for (idx in names(alphabeta)){
-    if (grep(pattern = 'pcoa', x = idx)){
+    if (grepl(pattern = 'pcoa', x = idx)){
+      # Check if metric is in beta. Otherwise there is an error
+      if (!stringr::str_replace(idx, 'pcoa_', '') %in% beta_metrics){next}
       beta <- list(output_rast_tmp, output_rast_tmp, output_rast_tmp)
       for (i in 1:3)
-        beta[[i]][cell_order] <- unlist(lapply(alphabeta[[idx]], '[[', i))
+        beta[[i]][cell_order] <- alphabeta[[idx]][,i]
       beta <- terra::rast(beta)
       names(beta) <- c('pco1', 'pco2', 'pco3')
       filename <- file.path(output_dir, paste0(idx, '_sdm.tiff'))

@@ -10,7 +10,8 @@ alphabeta_window_sdm(
   Beta_info,
   alpha_metrics,
   beta_metrics,
-  Hill_order = 1
+  Hill_order = 1,
+  nbCPU = 1
 )
 }
 \arguments{
@@ -23,6 +24,8 @@ alphabeta_window_sdm(
 \item{beta_metrics}{list. beta diversity metrics}
 
 \item{Hill_order}{numeric. Hill order}
+
+\item{nbCPU}{numeric. Number of CPUs available}
 }
 \value{
 list of alpha and beta diversity metrics corresponding to ssd

@@ -1,3 +1,10 @@
+# biodivMapR v3.2.4
+## addition
+- parallel processing for computation fo beta metric from biodivMapR_sdm
+
+## fix
+- corrected bugs in 'alphabeta_window_sdm' and 'biodivMapR_sdm'
+
 # biodivMapR v3.2.3
 ## addition
 - add boolean 'buffer_mw' in set_options_biodivMapR('biodivMapR_tiling')  to control application of a buffer on raster resulting from moving window process 

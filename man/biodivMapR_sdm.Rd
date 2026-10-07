@@ -11,7 +11,8 @@ biodivMapR_sdm(
   site_name = NULL,
   alpha_metrics = "shannon",
   beta_metrics = "bray",
-  nb_samples_beta = 1000
+  nb_samples_beta = 1000,
+  nbCPU = 1
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ biodivMapR_sdm(
 \item{beta_metrics}{character. list of beta metrics}
 
 \item{nb_samples_beta}{numeric. number of samples to compute beta diversity}
+
+\item{nbCPU}{numeric. Number of CPUs available}
 }
 \value{
 diversity_maps_ground
