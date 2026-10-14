@@ -1,3 +1,7 @@
+# biodivMapR v3.2.5
+## fix
+- corrected bugs in 'alphabeta_window_sdm' : normalization by sum SDM probability unwanted
+
 # biodivMapR v3.2.4
 ## addition
 - parallel processing for computation fo beta metric from biodivMapR_sdm

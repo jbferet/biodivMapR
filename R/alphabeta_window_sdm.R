@@ -42,7 +42,7 @@ alphabeta_window_sdm <- function(ssd, Beta_info, alpha_metrics, beta_metrics,
   for (i in 1:length(ssd)){
     if (any(is.na(ssd[[i]])))
       ssd[[i]][which(is.na(ssd[[i]]))] <- 0
-    ssd[[i]] <- ssd[[i]]/sum(ssd[[i]])
+    # ssd[[i]] <- ssd[[i]]/sum(ssd[[i]])
   }
 
 
