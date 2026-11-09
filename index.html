@@ -105,7 +105,47 @@
 <p><a href="https://github.com/jbferet/biodivMapR/actions" class="external-link"><img src="https://img.shields.io/github/actions/workflow/status/jbferet/biodivMapR/tic.yml?branch=master" alt="build"></a> <a href="https://www.r-project.org/Licenses/GPL-3" class="external-link"><img src="https://img.shields.io/badge/Licence-GPL--3-blue.svg" alt="licence"></a> <a href="https://github.com/jbferet/biodivMapR" class="external-link"><img src="https://img.shields.io/github/v/release/jbferet/biodivMapR?label=version" alt="version"></a> <a href="https://anaconda.org/conda-forge/r-biodivmapr" class="external-link"><img src="https://img.shields.io/conda/vn/conda-forge/r-biodivmapr" alt="version"></a></p>
 </div>
 <div class="section level1">
-<h1 id="id_1-install">1 Install<a class="anchor" aria-label="anchor" href="#id_1-install"></a>
+<h1 id="id_1-main-principles-of-biodivmapr">1 Main principles of <code>biodivMapR</code>
+<a class="anchor" aria-label="anchor" href="#id_1-main-principles-of-biodivmapr"></a>
+</h1>
+<div class="section level2">
+<h2 id="biodivmapr-aims-at-being-sensor-agnostic">
+<code>biodivMapR</code> aims at being sensor agnostic<a class="anchor" aria-label="anchor" href="#biodivmapr-aims-at-being-sensor-agnostic"></a>
+</h2>
+<p><code>biodivMapR</code> is an R package aiming at processing remote sensing data provided as raster files in order to produce spectral diversity metrics.</p>
+<p>The first versions of the method were initially dedicated to optical data processing and the spectral dimension was the key dimension to produce features to relate to ecological information. However, since <code>biodivMapR v2.0</code>, the workflow aims at being <strong>sensor agnostic</strong>: <strong>users can provide raster data obtained from optical sensors (multispectral, hyperspectral sensors), LiDAR or radar data.</strong></p>
+<p>Therefore, diversity metrics are no longer spectral. <strong>Remotely sensed diversity metrics</strong> from a collection of rasters sharing the same projection, spatial resolution and extent but different sensors can also be provided.</p>
+</div>
+<div class="section level2">
+<h2 id="biodivmapr-can-work-with-discrete-and-continuous-representations-of-data">
+<code>biodivMapR</code> can work with discrete and continuous representations of data<a class="anchor" aria-label="anchor" href="#biodivmapr-can-work-with-discrete-and-continuous-representations-of-data"></a>
+</h2>
+<p><code>biodivMapR</code> was initially developed to produce <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math> diversity maps, based on the implementation of the method developed by <a href="https://doi.org/10.1890/13-1824.1" title="Feret&amp;Asner2014" class="external-link">Féret &amp; Asner (2014)</a>.</p>
+<p>Since the earliest versions of the package, our aim is to provide a tool useful for the ecologist community, with the capacity to evolve and provide alternative ways to handle remote sensing data.</p>
+<p>Therefore, two main representations of data are handled by <code>biodivMapR</code>:</p>
+<ul>
+<li><p>a <strong>discrete representation</strong> based on clustering techniques, aiming at producing ‘spectral species’: pixels are grouped into clusters, assuming that user-defined features allow unsupervised clustering to identify ecologically relevant groups corresponding to species, species communities, structurally or functionally similar entities. This representation allows to directly compute diversity metrics usually derived from species inventories (Shannon index, Bray-Curtis dissimilarity…).</p></li>
+<li><p>a <strong>continuous representation</strong> using directly the feature/trait space, aiming at producing Functional diversity metrics <strong>Richness</strong>, <strong>Evenness</strong>, and <strong>Divergence</strong> as defined in <a href="https://doi.org/10.1890/07-1206.1" title="Villeger2008" class="external-link">Villeger et al. (2008)</a>, as well as <strong>Dispersion</strong> and <strong>Rao entropy</strong>. These functional diversity metrics are computed with the package <a href="https://funecology.github.io/fundiversity/" class="external-link"><code>fundiversity</code></a>.</p></li>
+</ul>
+<p><code>biodivMapR</code> aims at providing an open source tool where additional diversity metrics either based on the discrete or continuous representation of data can be easily implemented. <strong>If you need specific metrics, want to suggest additional ones, or contribute to their implementation, please feel free to contact the authors of the package</strong></p>
+</div>
+<div class="section level2">
+<h2 id="biodivmapr-can-produce-large-scale-diversity-maps-from-cloud-infrastructures">
+<code>biodivMapR</code> can produce large scale diversity maps from cloud infrastructures<a class="anchor" aria-label="anchor" href="#biodivmapr-can-produce-large-scale-diversity-maps-from-cloud-infrastructures"></a>
+</h2>
+<p>Efforts have been made in the recent versions to allow the integration of <code>biodivMapR</code> into cloud infrastructures, in order to produce large scale maps.</p>
+<p>Please contact the authors to exchange and collaborate on the integration into cloud infrastructures and the production of large scale maps.</p>
+</div>
+<div class="section level2">
+<h2 id="biodivmapr-needs-your-validation">
+<code>biodivMapR</code> needs (your) validation<a class="anchor" aria-label="anchor" href="#biodivmapr-needs-your-validation"></a>
+</h2>
+<p>As a software developed from researchers and mainly dedicated to researchers, <code>biodivMapR</code> requires validation to identify its potential and limitations.</p>
+<p><code>biodivMapR</code> uses unsupervised methods. It is not based on modern learning techniques. The validation is an on-going process, and contributions are welcome to help us to provide recommendations for the application of <code>biodivMapR</code> in different contexts.</p>
+</div>
+</div>
+<div class="section level1">
+<h1 id="id_2-install">2 Install<a class="anchor" aria-label="anchor" href="#id_2-install"></a>
 </h1>
 <p>The package <code>remotes</code> first needs to be installed from the CRAN</p>
 <pre><code><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span></code></pre>
@@ -113,21 +153,21 @@
 <pre><code><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">'jbferet/biodivMapR'</span><span class="op">)</span></span></code></pre>
 </div>
 <div class="section level1">
-<h1 id="id_2-tutorial">2 Tutorial<a class="anchor" aria-label="anchor" href="#id_2-tutorial"></a>
+<h1 id="id_3-tutorial">3 Tutorial<a class="anchor" aria-label="anchor" href="#id_3-tutorial"></a>
 </h1>
 <p>A tutorial vignette is available <a href="https://jbferet.github.io/biodivMapR/articles/biodivMapR.html" class="external-link">here</a>.</p>
 </div>
 <div class="section level1">
-<h1 id="id_3-citation">3 Citation<a class="anchor" aria-label="anchor" href="#id_3-citation"></a>
+<h1 id="id_4-citation">4 Citation<a class="anchor" aria-label="anchor" href="#id_4-citation"></a>
 </h1>
 <p>If you use <strong>biodivMapR</strong>, please cite the following references:</p>
 <p>Féret, J.-B., de Boissieu, F., 2019. biodivMapR: an R package for α‐ and β‐diversity mapping using remotely‐sensed images. Methods Ecol. Evol. 00:1-7. <a href="https://doi.org/10.1111/2041-210X.13310" class="external-link uri">https://doi.org/10.1111/2041-210X.13310</a></p>
 <p>Féret, J.-B., Asner, G.P., 2014. Mapping tropical forest canopy diversity using high-fidelity imaging spectroscopy. Ecol. Appl. 24, 1289–1296. <a href="https://doi.org/10.1890/13-1824.1" class="external-link uri">https://doi.org/10.1890/13-1824.1</a></p>
 </div>
 <div class="section level1">
-<h1 id="id_4-acknowledgments--fundings">4 Acknowledgments / Fundings<a class="anchor" aria-label="anchor" href="#id_4-acknowledgments--fundings"></a>
+<h1 id="id_5-acknowledgments--fundings">5 Acknowledgments / Fundings<a class="anchor" aria-label="anchor" href="#id_5-acknowledgments--fundings"></a>
 </h1>
-<p>This research was supported by the Agence Nationale de la Recherche (<a href="https://anr.fr/en/open-calls-and-preannouncements/" class="external-link">ANR</a>, France) through the young researchers project <strong>BioCop</strong> (ANR-17-CE32-0001)</p>
+<p>This research was supported by - the Agence Nationale de la Recherche (<a href="https://anr.fr/en/open-calls-and-preannouncements/" class="external-link">ANR</a>, France) through the young researchers project <strong>BioCop</strong> (ANR-17-CE32-0001) - the Centre National d’Etudes Spatiales (<a href="https://cnes.fr/" class="external-link">CNES</a>) through the TOSCA projects HyperTropik, HyperBIO, and CODEX.</p>
 </div>
 
   </div>
