@@ -99,7 +99,7 @@ trait estimation with <code>prosail</code>
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2026-11-09</h4>
+            <h4 data-toc-skip class="date">2026-11-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR_05.Rmd" class="external-link"><code>vignettes/biodivMapR_05.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_05.Rmd</code></div>
@@ -115,11 +115,11 @@ hybrid inversion, then used to estimate spectral diversity with
 <p>This is the tutorial associated to the book chapter <a href="https://doi.org/10.1007/978-3-031-99665-8_7" class="external-link"><code>A Plant Trait-Based Approach to Map Forest Biodiversity Using Imaging Spectroscopy and Physical Modeling</code></a>,
 which is part of the book <a href="https://link.springer.com/book/10.1007/978-3-031-99665-8" class="external-link"><code>R Coding for Ecology</code></a>,
 in the <strong>Use R!</strong> book series (Springer).</p>
-<p><strong>Warning</strong>: this tutorial is appropriate with prosail
-v3.0.0 and later. please install the ‘dev_joss’ branch if the master
-branch is &lt;3.0.0</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_gitlab</span><span class="op">(</span><span class="st">'jbferet/prosail@dev_joss'</span><span class="op">)</span></span></code></pre></div>
+<!-- **Warning**: this tutorial is appropriate with prosail v3.0.0 and later. -->
+<!-- please install the 'dev_joss' branch if the master branch is <3.0.0 -->
+<!-- ```{r, install prosail} -->
+<!-- devtools::install_gitlab('jbferet/prosail@dev_joss') -->
+<!-- ``` -->
 <div class="section level2">
 <h2 id="download-imaging-spectroscopy-data-required-for-the-tutorial">download imaging spectroscopy data required for the tutorial<a class="anchor" aria-label="anchor" href="#download-imaging-spectroscopy-data-required-for-the-tutorial"></a>
 </h2>
@@ -157,7 +157,7 @@ vegetation biophysical parameters obtained from <code>prosail</code>
 hybrid inversion. This tutorial uses functions performing raster tiling
 when processing <code>prosail</code> hybrid inversion, hence the
 definition of a subdirectory named <code>tiles</code>.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># clean workspace</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span>list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ls.html" class="external-link">ls</a></span><span class="op">(</span>all<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/rstudioapi/reference/isAvailable.html" class="external-link">isAvailable</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> </span>
@@ -181,7 +181,7 @@ masking<a class="anchor" aria-label="anchor" href="#prepare-imaging-spectroscopy
 header file. The central wavelength and full width at half maximum
 (FHWM) are needed to produce a spectral response function which will
 then be needed to simulate surface reflectance with sensor response.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># 1.2- define input &amp; output directories</span></span>
 <span><span class="va">input_raster_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">data_dir</span>,<span class="st">'Fabas_HS_mosaic.tif'</span><span class="op">)</span></span>
 <span></span>
@@ -208,7 +208,7 @@ are masked.</p></li>
 thresholding: all pixels with <code>R\text{nir} &lt; NIR_Thresh</code>
 are masked.</p></li>
 </ul>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">##  1.3- spatial filtering: discard with hazy/cloudy, shaded &amp; no vegetation</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jbferet/biodivMapR" class="external-link">biodivMapR</a></span><span class="op">)</span></span>
 <span><span class="va">NDVI_Thresh</span> <span class="op">&lt;-</span> <span class="fl">0.5</span></span>
@@ -233,7 +233,7 @@ threshold of 0.85. Please investigate how to filter out spectral domains
 with low SNR on your own imaging spectroscopy data as it may depend on
 sensor, conditions of acquisitions, and other factors. An additional
 band showing strong noise after careful analysis is also discarded.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># 1.4- spectral filtering</span></span>
 <span><span class="co"># atmospheric transmittance file available on a repository</span></span>
 <span><span class="va">git_repository</span> <span class="op">&lt;-</span> </span>
@@ -293,7 +293,7 @@ used to compute spectral diversity. These are: - leaf area index
 (<code>lai</code>) - leaf chlorophyll content (<code>chl</code>) -
 equivalent water thickness (<code>ewt</code>) - leaf mass per area
 (<code>lma</code>)</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># biophysical variables to estimate</span></span>
 <span><span class="va">parms_to_estimate</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'lai'</span>, <span class="st">'chl'</span>, <span class="st">'ewt'</span>, <span class="st">'lma'</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -307,7 +307,7 @@ each biophysical property of interest. Spectral feature selection may be
 used in order to refine the optimal spectral domain for each property.
 Noise level to be applied on simulated data is also defined for each
 property.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># spectral domain used for estimation of each variable, discard wl_elim</span></span>
 <span><span class="va">selected_bands</span> <span class="op">&lt;-</span> <span class="va">noise_level</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">wl_train</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>min <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'lai'</span><span class="op">=</span><span class="fl">700</span>, <span class="st">'chl'</span><span class="op">=</span><span class="fl">700</span>, <span class="st">'ewt'</span><span class="op">=</span><span class="fl">1200</span>, <span class="st">'lma'</span><span class="op">=</span><span class="fl">1200</span><span class="op">)</span>,</span>
@@ -330,7 +330,7 @@ should be provided, ideally.</p>
 <li><p>sun zenith angle <code>tts</code></p></li>
 <li><p>relative azimuth angle <code>psi</code></p></li>
 </ul>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># define geometry of acquisition based on location and time of acquisition</span></span>
 <span><span class="va">geom_acq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>min <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'tto'</span> <span class="op">=</span> <span class="fl">0</span>, <span class="st">'tts'</span> <span class="op">=</span> <span class="fl">50</span>, <span class="st">'psi'</span> <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>, </span>
 <span>                       max <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'tto'</span> <span class="op">=</span> <span class="fl">15</span>, <span class="st">'tts'</span> <span class="op">=</span> <span class="fl">70</span>, <span class="st">'psi'</span> <span class="op">=</span> <span class="fl">360</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -343,7 +343,7 @@ should be provided, ideally.</p>
 parameterization defined in the <a href="https://step.esa.int/docs/extra/ATBD_S2ToolBox_V2.1.pdf" class="external-link">Algorithm
 Theoretical Based Document</a> (ATBD) of the Sentinel-2 toolbox will be
 used here.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># use same distribution as used in ATBD for Sentinel-2 data</span></span>
 <span><span class="va">input_prosail</span> <span class="op">&lt;-</span> <span class="fu">get_input_prosail</span><span class="op">(</span>atbd <span class="op">=</span> <span class="cn">TRUE</span>, geom_acq <span class="op">=</span> <span class="va">geom_acq</span><span class="op">)</span></span>
 <span><span class="co"># waiting for updated soil database, deactivate soil v3 </span></span>
@@ -359,7 +359,7 @@ simulate sensor reflectance.</p>
 6/7, MODIS, Pleiades, and Venus.</p>
 <p>Here, the SRF of the hyperspectral sensor is produced from central
 wavelengths and FWHM based on a gaussian response model.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get sensor response function corresponding to the sensor</span></span>
 <span><span class="va">sensor_name</span> <span class="op">&lt;-</span> <span class="st">'Hyspex'</span></span>
 <span><span class="va">srf</span> <span class="op">&lt;-</span> <span class="fu">get_srf_sensor</span><span class="op">(</span>sensor_name <span class="op">=</span> <span class="va">sensor_name</span>, </span>
@@ -374,7 +374,7 @@ wavelengths and FWHM based on a gaussian response model.</p>
 training of the ML algorithm based on the information generated in the
 previous steps. It provides a set of regression models for each
 biophysical property to estimate.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">'training ML regression with prosail simulations'</span><span class="op">)</span></span>
 <span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu">set_options_prosail</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">'train_prosail_inversion'</span><span class="op">)</span></span>
 <span><span class="va">options</span><span class="op">$</span><span class="va">noise_level</span> <span class="op">&lt;-</span> <span class="va">noise_level</span></span>
@@ -395,7 +395,7 @@ indices</a>, a grid is first defined on the aoi. Model inversion is then
 applied individually for each tile. The current version of prosail does
 not support multiprocessing for the application of ML algorithm, but
 suggestions are welcome for its implementation.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># apply models on image</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">'applying ML regression on image'</span><span class="op">)</span></span>
 <span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu">set_options_prosail</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">'apply_prosail_inversion_per_tile'</span><span class="op">)</span></span>
@@ -447,7 +447,7 @@ same spatial resolution as original input data. While this option
 produces visually more satisfying outputs, it results in signifiantly
 higher computation time. Hence, <strong>we do not recommend setting this
 option to TRUE if large image datasets are processed</strong>.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># -----------------------------------------------------------------------------</span></span>
 <span><span class="co"># prepare for biodivMapR to run on the set of biophysical properties estimated </span></span>
 <span><span class="co"># in previous step</span></span>
@@ -490,7 +490,7 @@ option to TRUE if large image datasets are processed</strong>.</p>
 <p><code>biodivMapR</code> can run directly using a unique function
 <code>biodivMapR_tiling</code>, as illustrated in the code
 hereafter.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run biodivmapR on tiles defined when processing prosail inversion</span></span>
 <span><span class="va">ResDiv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/biodivMapR_tiling.html">biodivMapR_tiling</a></span><span class="op">(</span>feature_dir <span class="op">=</span> <span class="va">prosail_dir</span>, </span>
 <span>                            list_features <span class="op">=</span> <span class="va">parms_to_estimate</span>, </span>
@@ -548,7 +548,7 @@ inventories.</p>
 <p>The validation plots &amp; inventories can be downloaded from a
 <code>gpkg</code> file available at <a href="https://doi.org/10.57745/NHRNOR" class="external-link">this webpage</a>.</p>
 <p>The code below allows arranging the ground information.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># -----------------------------------------------------------------------------</span></span>
 <span><span class="co"># prepare inventory data for analysis and comparison with biodivMapR estimates</span></span>
@@ -635,7 +635,7 @@ inventories.</p>
 </h3>
 <p>The following code allows production of a figure comparing measured
 and estimated diversity metrics.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># produce scatterplots comparing inventory data with spectral diversity</span></span>
 <span><span class="co"># The code below produces a scatterplot comparing diversity metrics derived from</span></span>
