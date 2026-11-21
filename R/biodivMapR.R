@@ -142,7 +142,8 @@ biodivMapR <- function(
 
   if (moving_window){
     message('compute raster diversity using moving window')
-    message('please set "moving_window = FALSE" if this takes too much time')
+    message('functional diversity metrics are particularly computationally intensive')
+    message('Please set fd_metrics = NULL or moving_window = FALSE if this takes too much time')
     ab_div_metrics <- get_raster_diversity_mw(input_raster_path = input_raster_path,
                                               input_mask_path = input_mask_path,
                                               Kmeans_info = Kmeans_info,

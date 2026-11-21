@@ -7,23 +7,28 @@
 [![version](https://img.shields.io/github/v/release/jbferet/biodivMapR?label=version)](https://github.com/jbferet/biodivMapR)
 [![version](https://img.shields.io/conda/vn/conda-forge/r-biodivmapr)](https://anaconda.org/conda-forge/r-biodivmapr)
 
-# 1 Main principles of `biodivMapR`
+# 1 Main functionalities of `biodivMapR`
 
-## `biodivMapR` aims at being sensor agnostic
+## Diversity mapping from remote sensing imagery
 
-`biodivMapR` is an R package aiming at processing remote sensing data provided 
-as raster files in order to produce spectral diversity metrics. 
+`biodivMapR` was initially developed to produce spectral diversity metrics from 
+remote sensing data provided as raster files.
+Our aim is to provide a tool useful for the ecologist community, accessible even 
+without strong background in remote sensing. 
 
-The first versions of the method were initially dedicated to optical 
-data processing and the spectral dimension was the key dimension to produce 
-features to relate to ecological information. However, since `biodivMapR v2.0`, 
-the workflow aims at being **sensor agnostic**: 
+
+## `biodivMapR` is sensor agnostic
+
+The first versions of the method were initially dedicated to optical data 
+processing and the spectral dimension was the key dimension to produce 
+features which were then related to ecological information. 
+Since `biodivMapR v2.0`, the workflow is **sensor agnostic**: 
 **users can provide raster data obtained from optical sensors (multispectral, hyperspectral sensors), LiDAR or radar data.**
 
-Therefore, diversity metrics are no longer spectral.
+Diversity metrics are therefore no longer spectral.
 **Remotely sensed diversity metrics** from a collection of rasters sharing the 
 same projection, spatial resolution and extent but different sensors can also be 
-provided. 
+provided.
 
 
 ## `biodivMapR` can work with discrete and continuous representations of data
@@ -32,31 +37,27 @@ provided.
 maps, based on the implementation of the method developed by 
 [Féret & Asner (2014)](https://doi.org/10.1890/13-1824.1 "Feret&Asner2014"). 
 
-Since the earliest versions of the package, our aim is to provide a tool useful
-for the ecologist community, with the capacity to evolve and provide alternative 
-ways to handle remote sensing data. 
 
-Therefore, two main representations of data are handled by `biodivMapR`: 
+`biodivMapR` handles two main representations of remote sensing data : 
 
 - a **discrete representation** based on clustering techniques, aiming at 
 producing 'spectral species': pixels are grouped into clusters, assuming that 
 user-defined features allow unsupervised clustering to identify ecologically 
 relevant groups corresponding to species, species communities, structurally or 
 functionally similar entities. This representation allows to directly compute
-diversity metrics usually derived from species inventories (Shannon index, 
-Bray-Curtis dissimilarity...).
+$\alpha$ and $\beta$ diversity metrics usually derived from species inventories 
+(Shannon index, Bray-Curtis dissimilarity...).
 
 - a **continuous representation** using directly the feature/trait space, 
 aiming at producing Functional diversity metrics **Richness**, **Evenness**, and
 **Divergence** as defined in [Villeger et al. (2008)](https://doi.org/10.1890/07-1206.1 "Villeger2008"), 
-as well as **Dispersion** and **Rao entropy**. These functional diversity metrics are 
-computed with the package [`fundiversity`](https://funecology.github.io/fundiversity/).
-
+as well as **Dispersion** and **Rao entropy**. These functional diversity metrics 
+are computed with the package [`fundiversity`](https://funecology.github.io/fundiversity/).
 
 `biodivMapR` aims at providing an open source tool where additional diversity 
 metrics either based on the discrete or continuous representation of data can be 
 easily implemented. 
-**If you need specific metrics, want to suggest additional ones, or contribute to their implementation, please feel free to contact the authors of the package**
+**If you need specific metrics, want to suggest additional ones, or contribute to their implementation, please contact the authors of the package**
 
 
 ## `biodivMapR` can produce large scale diversity maps from cloud infrastructures
@@ -68,15 +69,29 @@ Please contact the authors to exchange and collaborate on the integration
 into cloud infrastructures and the production of large scale maps.
 
 
-## `biodivMapR` needs (your) validation
+## `biodivMapR` needs (your) validation and expertise
 
-As a software developed from researchers and mainly dedicated to researchers, 
-`biodivMapR` requires validation to identify its potential and limitations. 
+We want to provide tools performing advanced remote sensing data processing 
+to users with little to no initial expertise in this domain, but with expertise 
+in ecology. 
 
-`biodivMapR` uses unsupervised methods. It is not based on modern learning 
-techniques. The validation is an on-going process, and contributions are welcome 
-to help us to provide recommendations for the application of `biodivMapR` in
-different contexts. 
+`biodivMapR` includes a set of functions to easily perform validation and 
+compare geolocated ground observations with diversity metrics produced from 
+remotely sensed features. 
+
+
+**We do not guarantee the ecological relevance of the products obtained with our software**, 
+and we strongly value ecological expertise, field observations, in situ 
+measurements and long term inventories. 
+These are key contributions to the validation of `biodivMapR`, in order to 
+identify its potential and limitations.
+
+`biodivMapR` is maintained by scientists. 
+Please submit an [issue](https://github.com/jbferet/biodivMapR/issues) to report 
+bugs, and if possible provide a full description of the error and a scrpit 
+allowing reproducing the bug on a small dataset.
+Contributions and suggestions for additional features are welcome.
+
 
 
 # 2 Install

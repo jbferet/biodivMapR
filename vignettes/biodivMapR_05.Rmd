@@ -39,12 +39,12 @@ book [`R Coding for Ecology`](https://link.springer.com/book/10.1007/978-3-031-9
 in the **Use R!** book series (Springer).
 
 
-**Warning**: this tutorial is appropriate with prosail v3.0.0 and later.
-please install the 'dev_joss' branch if the master branch is <3.0.0
+<!-- **Warning**: this tutorial is appropriate with prosail v3.0.0 and later. -->
+<!-- please install the 'dev_joss' branch if the master branch is <3.0.0 -->
 
-```{r, install prosail}
-devtools::install_gitlab('jbferet/prosail@dev_joss')
-```
+<!-- ```{r, install prosail} -->
+<!-- devtools::install_gitlab('jbferet/prosail@dev_joss') -->
+<!-- ``` -->
 
 
 
