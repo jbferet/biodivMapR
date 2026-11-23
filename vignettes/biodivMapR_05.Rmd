@@ -38,6 +38,9 @@ This is the tutorial associated to the book chapter
 book [`R Coding for Ecology`](https://link.springer.com/book/10.1007/978-3-031-99665-8), 
 in the **Use R!** book series (Springer).
 
+A repository dedicated to this book chapter is also available [online](https://github.com/RCodingForEcology/biodivMapR).
+
+
 
 <!-- **Warning**: this tutorial is appropriate with prosail v3.0.0 and later. -->
 <!-- please install the 'dev_joss' branch if the master branch is <3.0.0 -->
@@ -403,7 +406,7 @@ Here, we defined `options$moving_window <- TRUE`.
 This results in a moving window process instead of cell grid process, with map 
 produced with the same spatial resolution as original input data. 
 While this option produces visually more satisfying outputs, it results in 
-signifiantly higher computation time. 
+significantly higher computation time. 
 Hence, **we do not recommend setting this option to TRUE if large image datasets are processed**.
 
 
@@ -439,7 +442,8 @@ nbCPU <- 6
 # set optional parameters
 options <- set_options_biodivMapR(fun = 'biodivMapR_tiling', options = NULL)
 options$alpha_metrics <- c('hill', 'shannon') 
-options$beta_metrics <- TRUE
+options$beta_metrics <- 'bray'
+options$fd_metrics <- c('FRic', 'FEve', 'FDiv', 'FDis', 'FRaoq') 
 options$moving_window <- TRUE
 options$nb_clusters <- 25
 site_name <- 'Fabas_HS_mosaic'
@@ -458,7 +462,7 @@ ResDiv <- biodivMapR_tiling(feature_dir = prosail_dir,
                             list_features = parms_to_estimate, 
                             site_name = site_name, 
                             mask_dir = mask_dir, 
-                            plots = plots, 
+                            plot_names = names(plots), 
                             output_dir = biodivMapR_dir, 
                             window_size = window_size, 
                             nbCPU = nbCPU, 
@@ -598,6 +602,7 @@ validation <- get_diversity_from_plots(input_rast = input_rast,
                                        Kmeans_info = Kmeans_info, 
                                        Beta_info = Beta_info, 
                                        alpha_metrics = alpha_metrics,
+                                       beta_metrics = beta_metrics,
                                        fd_metrics = fd_metrics)
 
 ```
