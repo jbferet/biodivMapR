@@ -99,7 +99,7 @@ trait estimation with <code>prosail</code>
                         <h4 data-toc-skip class="author">Jean-Baptiste
 Féret, Florian de Boissieu</h4>
             
-            <h4 data-toc-skip class="date">2026-11-21</h4>
+            <h4 data-toc-skip class="date">2026-11-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jbferet/biodivMapR/blob/master/vignettes/biodivMapR_05.Rmd" class="external-link"><code>vignettes/biodivMapR_05.Rmd</code></a></small>
       <div class="hidden name"><code>biodivMapR_05.Rmd</code></div>
@@ -115,6 +115,7 @@ hybrid inversion, then used to estimate spectral diversity with
 <p>This is the tutorial associated to the book chapter <a href="https://doi.org/10.1007/978-3-031-99665-8_7" class="external-link"><code>A Plant Trait-Based Approach to Map Forest Biodiversity Using Imaging Spectroscopy and Physical Modeling</code></a>,
 which is part of the book <a href="https://link.springer.com/book/10.1007/978-3-031-99665-8" class="external-link"><code>R Coding for Ecology</code></a>,
 in the <strong>Use R!</strong> book series (Springer).</p>
+<p>A repository dedicated to this book chapter is also available <a href="https://github.com/RCodingForEcology/biodivMapR" class="external-link">online</a>.</p>
 <!-- **Warning**: this tutorial is appropriate with prosail v3.0.0 and later. -->
 <!-- please install the 'dev_joss' branch if the master branch is <3.0.0 -->
 <!-- ```{r, install prosail} -->
@@ -444,7 +445,7 @@ identifier of the tile. the grid produced during the
 <code>options$moving_window &lt;- TRUE</code>. This results in a moving
 window process instead of cell grid process, with map produced with the
 same spatial resolution as original input data. While this option
-produces visually more satisfying outputs, it results in signifiantly
+produces visually more satisfying outputs, it results in significantly
 higher computation time. Hence, <strong>we do not recommend setting this
 option to TRUE if large image datasets are processed</strong>.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
@@ -479,7 +480,8 @@ option to TRUE if large image datasets are processed</strong>.</p>
 <span><span class="co"># set optional parameters</span></span>
 <span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_options_biodivMapR.html">set_options_biodivMapR</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="st">'biodivMapR_tiling'</span>, options <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span><span class="va">options</span><span class="op">$</span><span class="va">alpha_metrics</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'hill'</span>, <span class="st">'shannon'</span><span class="op">)</span> </span>
-<span><span class="va">options</span><span class="op">$</span><span class="va">beta_metrics</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></span>
+<span><span class="va">options</span><span class="op">$</span><span class="va">beta_metrics</span> <span class="op">&lt;-</span> <span class="st">'bray'</span></span>
+<span><span class="va">options</span><span class="op">$</span><span class="va">fd_metrics</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'FRic'</span>, <span class="st">'FEve'</span>, <span class="st">'FDiv'</span>, <span class="st">'FDis'</span>, <span class="st">'FRaoq'</span><span class="op">)</span> </span>
 <span><span class="va">options</span><span class="op">$</span><span class="va">moving_window</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></span>
 <span><span class="va">options</span><span class="op">$</span><span class="va">nb_clusters</span> <span class="op">&lt;-</span> <span class="fl">25</span></span>
 <span><span class="va">site_name</span> <span class="op">&lt;-</span> <span class="st">'Fabas_HS_mosaic'</span></span></code></pre></div>
@@ -496,7 +498,7 @@ hereafter.</p>
 <span>                            list_features <span class="op">=</span> <span class="va">parms_to_estimate</span>, </span>
 <span>                            site_name <span class="op">=</span> <span class="va">site_name</span>, </span>
 <span>                            mask_dir <span class="op">=</span> <span class="va">mask_dir</span>, </span>
-<span>                            plots <span class="op">=</span> <span class="va">plots</span>, </span>
+<span>                            plot_names <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">plots</span><span class="op">)</span>, </span>
 <span>                            output_dir <span class="op">=</span> <span class="va">biodivMapR_dir</span>, </span>
 <span>                            window_size <span class="op">=</span> <span class="va">window_size</span>, </span>
 <span>                            nbCPU <span class="op">=</span> <span class="va">nbCPU</span>, </span>
@@ -628,6 +630,7 @@ inventories.</p>
 <span>                                       Kmeans_info <span class="op">=</span> <span class="va">Kmeans_info</span>, </span>
 <span>                                       Beta_info <span class="op">=</span> <span class="va">Beta_info</span>, </span>
 <span>                                       alpha_metrics <span class="op">=</span> <span class="va">alpha_metrics</span>,</span>
+<span>                                       beta_metrics <span class="op">=</span> <span class="va">beta_metrics</span>,</span>
 <span>                                       fd_metrics <span class="op">=</span> <span class="va">fd_metrics</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
